@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" preserveAspectRatio="xMidYMid meet">
+  <rect width="400" height="260" fill="#f0f0f2"/>
+  <g fill="none" stroke="#c0c0c4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M70 160 L90 110 Q100 95 120 92 L260 92 Q285 92 300 115 L330 160 Z"/>
+    <path d="M60 160 L60 185 Q60 195 70 195 L100 195"/>
+    <path d="M180 195 L260 195"/>
+    <path d="M340 195 L355 195 Q365 195 365 185 L365 160 L60 160"/>
+    <circle cx="125" cy="195" r="22" fill="#f0f0f2"/>
+    <circle cx="305" cy="195" r="22" fill="#f0f0f2"/>
+  </g>
+  <text x="200" y="240" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#a0a0a4" font-weight="500">Brak zdjęcia</text>
+</svg>

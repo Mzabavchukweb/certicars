@@ -45,8 +45,8 @@
             --font-body:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
             --font-heading:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
         }
-        html{scroll-behavior:smooth}
-        body{font-family:var(--font-body);color:var(--text);background:var(--white);line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+        html{scroll-behavior:smooth;overflow-x:hidden}
+        body{font-family:var(--font-body);color:var(--text);background:var(--white);line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;max-width:100vw}
         h1,h2,h3,h4{font-family:var(--font-heading);letter-spacing:-.02em}
         a{color:inherit;text-decoration:none}
         img{max-width:100%;display:block}
@@ -104,53 +104,71 @@
 
 
         /* ============ FOOTER ============ */
-        .footer{background:#0a0a0a;color:rgba(255,255,255,.6);padding:72px 0 0;margin-top:0}
-        .footer-in{max-width:1200px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1.6fr 1.2fr 1.2fr 1fr;gap:48px}
-        .footer h3{color:rgba(255,255,255,.4);font-size:10px;margin-bottom:18px;text-transform:uppercase;letter-spacing:1.2px;font-weight:700}
+        .footer{background:#08080a;color:rgba(255,255,255,.6);padding:0;margin-top:0;position:relative}
+        .footer::before{content:'';display:block;height:3px;background:linear-gradient(90deg,#0066ff 0%,#4ea3ff 40%,#0066ff 100%)}
+        .footer-in{max-width:1200px;margin:0 auto;padding:56px 24px 0;display:grid;grid-template-columns:1.6fr 1.2fr 1.2fr 1fr;gap:48px}
+        .footer h3{color:rgba(255,255,255,.35);font-size:10.5px;margin-bottom:20px;text-transform:uppercase;letter-spacing:1.4px;font-weight:700}
         .footer p,.footer a,.footer li{font-size:13.5px;line-height:1.9;color:rgba(255,255,255,.5)}
         .footer ul{list-style:none}
+        .footer a{transition:color .2s}
         .footer a:hover{color:#fff}
         /* Col 1 — brand */
-        .footer-logo{display:flex;align-items:center;gap:14px;margin-bottom:20px;text-decoration:none}
+        .footer-logo{display:flex;align-items:center;gap:14px;margin-bottom:22px;text-decoration:none}
         .footer-logo-badge{width:38px;height:38px;flex-shrink:0}
         .footer-logo-wordmark{font-size:23px;font-weight:900;letter-spacing:-.6px;color:#fff;line-height:1;font-family:'Inter',sans-serif}
         .footer-logo-wordmark span{color:var(--blue)}
-        .footer-logo-sep{width:1px;height:32px;background:rgba(255,255,255,.15);flex-shrink:0;margin:0 2px}
+        .footer-logo-sep{width:1px;height:32px;background:rgba(255,255,255,.12);flex-shrink:0;margin:0 2px}
         .footer-logo-tagline{display:flex;flex-direction:column;gap:0;line-height:1.3}
-        .footer-logo-tagline span{font-size:11px;font-weight:400;color:rgba(255,255,255,.35);letter-spacing:0}
-        .footer-brand p{font-size:13px;color:rgba(255,255,255,.45);line-height:1.75;margin-bottom:20px}
-        .footer-brand a.fb-link{display:inline-flex;align-items:center;gap:6px;color:var(--blue);font-weight:600;font-size:13px;text-decoration:none}
-        .footer-brand a.fb-link:hover{color:#fff}
+        .footer-logo-tagline span{font-size:11px;font-weight:400;color:rgba(255,255,255,.3);letter-spacing:0}
+        .footer-brand p{font-size:13px;color:rgba(255,255,255,.4);line-height:1.75;margin-bottom:24px}
+        .footer-brand a.fb-link{display:inline-flex;align-items:center;gap:6px;color:var(--blue);font-weight:600;font-size:13px;text-decoration:none;transition:all .2s}
+        .footer-brand a.fb-link:hover{color:#4ea3ff;gap:10px}
+        .footer-trust{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+        .footer-trust-badge{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 12px;font-size:11px;font-weight:600;color:rgba(255,255,255,.5);transition:border-color .2s}
+        .footer-trust-badge:hover{border-color:rgba(255,255,255,.15)}
+        .footer-trust-badge svg{width:14px;height:14px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
         /* Col 2 — contact cards */
-        .fcc{display:flex;flex-direction:column;gap:14px}
-        .fcc-card{display:flex;align-items:center;gap:16px;text-decoration:none;transition:opacity .15s}
-        .fcc-card:hover{opacity:.75}
-        .fcc-icon{width:44px;height:44px;border-radius:12px;background:rgba(0,102,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-        .fcc-icon svg{width:20px;height:20px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-        .fcc-body{display:flex;flex-direction:column;gap:3px}
-        .fcc-body strong{font-size:11px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px}
-        .fcc-body span{font-size:15px;color:#fff;font-weight:600;line-height:1.4}
-        .fcc-addr{display:flex;align-items:flex-start;gap:16px;transition:opacity .15s}
-        .fcc-addr:hover{opacity:.75}
+        .fcc{display:flex;flex-direction:column;gap:16px}
+        .fcc-card{display:flex;align-items:center;gap:14px;text-decoration:none;transition:all .2s;padding:10px 14px;margin:-10px -14px;border-radius:12px}
+        .fcc-card:hover{background:rgba(255,255,255,.04)}
+        .fcc-icon{width:42px;height:42px;border-radius:10px;background:rgba(0,102,255,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s}
+        .fcc-card:hover .fcc-icon{background:rgba(0,102,255,.2)}
+        .fcc-icon svg{width:18px;height:18px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+        .fcc-body{display:flex;flex-direction:column;gap:2px}
+        .fcc-body strong{font-size:10.5px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1px}
+        .fcc-body span{font-size:14.5px;color:#fff;font-weight:600;line-height:1.4}
+        .fcc-addr{display:flex;align-items:flex-start;gap:14px;transition:all .2s;padding:10px 14px;margin:-10px -14px;border-radius:12px}
+        .fcc-addr:hover{background:rgba(255,255,255,.04)}
         .fcc-addr .fcc-icon{margin-top:2px}
         /* Col 3 — social */
-        .fsoc{display:flex;flex-direction:column;gap:16px}
-        .fsoc-card{display:flex;align-items:center;gap:16px;text-decoration:none;transition:opacity .15s}
-        .fsoc-card:hover{opacity:.75}
-        .fsoc-logo-fb{width:44px;height:44px;border-radius:12px;background:rgba(0,102,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-        .fsoc-logo-ig{width:44px;height:44px;border-radius:12px;background:rgba(0,102,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-        .fsoc-logo-fb svg,.fsoc-logo-ig svg{width:20px;height:20px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-        .fsoc-txt strong{display:block;font-size:15px;font-weight:700;color:#fff;margin-bottom:3px}
-        .fsoc-txt span{font-size:13px;color:rgba(255,255,255,.5)}
+        .fsoc{display:flex;flex-direction:column;gap:12px}
+        .fsoc-card{display:flex;align-items:center;gap:14px;text-decoration:none;transition:all .2s;padding:10px 14px;margin:-10px -14px;border-radius:12px}
+        .fsoc-card:hover{background:rgba(255,255,255,.04)}
+        .fsoc-logo-fb,.fsoc-logo-ig{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+        .fsoc-logo-fb{background:rgba(24,119,242,.15)}
+        .fsoc-logo-ig{background:rgba(228,64,95,.12)}
+        .fsoc-card:hover .fsoc-logo-fb{background:rgba(24,119,242,.25)}
+        .fsoc-card:hover .fsoc-logo-ig{background:rgba(228,64,95,.2)}
+        .fsoc-logo-fb svg{width:18px;height:18px;stroke:#1877f2;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+        .fsoc-logo-ig svg{width:18px;height:18px;stroke:#e4405f;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+        .fsoc-txt strong{display:block;font-size:14.5px;font-weight:700;color:#fff;margin-bottom:2px}
+        .fsoc-txt span{font-size:12.5px;color:rgba(255,255,255,.4)}
+
         /* Col 4 */
-        .footer-hours li{padding:3px 0;color:rgba(255,255,255,.45);font-size:13px}
+        .footer-hours li{padding:4px 0;color:rgba(255,255,255,.4);font-size:13px}
         .footer-hours li strong{color:#fff;font-weight:600}
         .footer-nav-list{list-style:none;margin-bottom:28px}
-        .footer-nav-list li{padding:2px 0}
-        .footer-nav-list a{font-size:13.5px;color:rgba(255,255,255,.5);text-decoration:none;transition:color .15s}
-        .footer-nav-list a:hover{color:#fff}
+        .footer-nav-list li{padding:3px 0}
+        .footer-nav-list a{font-size:13.5px;color:#fff;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:4px}
+        .footer-nav-list a:hover{color:var(--blue)}
+        .footer-nav-list a::before{content:'';display:inline-block;width:12px;height:2px;background:var(--blue);transition:all .2s;margin-right:6px;border-radius:1px}
+        .footer-nav-list a:hover::before{width:16px;background:#fff}
         /* Bottom bar */
-        .footer-btm{max-width:1200px;margin:56px auto 0;padding:20px 24px 20px 24px;padding-right:88px;border-top:1px solid var(--blue);font-size:12px;color:rgba(255,255,255,.35);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+        .footer-btm{max-width:1200px;margin:48px auto 0;padding:20px 24px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(255,255,255,.3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+        .footer-btm a{color:rgba(255,255,255,.35);text-decoration:none;transition:color .2s}
+        .footer-btm a:hover{color:rgba(255,255,255,.7)}
+        .footer-btm-links{display:flex;gap:20px;align-items:center}
+        .footer-btm-links span{color:rgba(255,255,255,.12)}
 
         /* ============ COMPONENTS ============ */
         .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;border:none;cursor:pointer;transition:all .15s;text-decoration:none;line-height:1}
@@ -203,17 +221,17 @@
         .section-title{font-size:32px;font-weight:800;color:var(--text);margin-bottom:8px;letter-spacing:-.6px}
         .section-sub{font-size:16px;color:var(--text-2);max-width:640px;margin:0 auto}
 
+        /* ============ RESPONSIVE ============ */
         @media(max-width:1024px){
             .topbar-left .tb-hide-lg,.topbar-right .tb-hide-lg{display:none}
             .header-nav .nav-link{padding:10px 12px;font-size:14px}
             .header-in{gap:24px}
-            .footer-in{grid-template-columns:1.4fr 1fr 1fr}
-        }
-        @media(max-width:860px){
-            .footer-in{grid-template-columns:1fr 1fr;gap:36px}
-        }
-        @media(max-width:480px){
-            .footer-in{grid-template-columns:1fr;gap:28px}
+            .footer-in{grid-template-columns:1.5fr 1fr 1fr;gap:40px}
+            .footer-in > div:last-child{grid-column:1 / -1;display:grid;grid-template-columns:1fr 1fr;gap:12px 40px}
+            .footer-in > div:last-child h3:first-child{grid-column:1}
+            .footer-in > div:last-child h3:nth-of-type(2){grid-column:2;grid-row:1}
+            .footer-in > div:last-child .footer-nav-list{grid-column:1;grid-row:2}
+            .footer-in > div:last-child .footer-hours{grid-column:2;grid-row:2}
         }
         @media(max-width:900px){
             .topbar{display:none}
@@ -223,23 +241,42 @@
         @media(max-width:768px){
             .mmb{display:flex}
             .header-nav,.header-cta{display:none}
-
             .header-in{height:64px;padding:0 20px;gap:0}
             .header-logo{margin-right:0}
+            .header-logo-tagline span{font-size:10px}
             .nav-mobile{position:fixed;top:64px;left:0;right:0;bottom:0;background:#fff;padding:24px 20px;display:none;flex-direction:column;gap:4px;z-index:99;overflow-y:auto;animation:slideDown .25s ease}
             .nav-mobile.open{display:flex}
-            
             .nav-mobile .nav-link{font-size:16px;padding:16px 18px;border-radius:12px;color:var(--text);font-weight:500;border:1px solid var(--border-l);display:flex;align-items:center;gap:10px}
             .nav-mobile .nav-link.active{background:var(--blue-bg);border-color:var(--blue-bg);color:var(--blue);font-weight:600}
             .nav-mobile-cta{margin-top:12px;background:var(--blue)!important;color:#fff!important;border:none!important;justify-content:center;font-weight:600!important}
             .nav-mobile-contact{margin-top:auto;padding-top:24px;border-top:1px solid var(--border-l);display:flex;flex-direction:column;gap:12px;font-size:14px;color:var(--text-2)}
             .nav-mobile-contact a{display:flex;align-items:center;gap:10px;color:var(--text-2)}
             .nav-mobile-contact i{width:16px;height:16px;color:var(--blue)}
-            .footer-in{grid-template-columns:1fr;gap:32px}
-            .footer-hours-col{display:block}
+            /* Footer: 2 columns on tablet */
+            .footer-in{grid-template-columns:1fr 1fr;gap:32px 40px;padding:40px 20px 0}
+            .footer-in > div:last-child{grid-column:1 / -1;display:grid;grid-template-columns:1fr 1fr;gap:12px 40px}
+            .footer-brand{grid-column:1 / -1}
+            .footer-brand p{max-width:480px}
+            .footer-trust{margin-bottom:4px}
+            .footer-btm{margin-top:32px;padding:16px 20px;flex-direction:column;text-align:center;gap:8px}
             .section{padding:48px 0}
             .section-title{font-size:24px}
             .container{padding:0 20px}
+        }
+        @media(max-width:480px){
+            /* Footer: single column on small mobile */
+            .footer-in{grid-template-columns:1fr;gap:28px;padding:32px 20px 0}
+            .footer-brand{grid-column:1}
+            .footer-in > div:last-child{grid-column:1;grid-template-columns:1fr 1fr;gap:8px 24px}
+            .fcc-card{padding:8px 10px;margin:-8px -10px}
+            .fcc-icon{width:36px;height:36px;border-radius:8px}
+            .fcc-icon svg{width:16px;height:16px}
+            .fcc-body span{font-size:13.5px}
+            .fsoc-card{padding:8px 10px;margin:-8px -10px}
+            .fsoc-logo-fb,.fsoc-logo-ig{width:36px;height:36px;border-radius:8px}
+            .fsoc-logo-fb svg,.fsoc-logo-ig svg{width:16px;height:16px}
+            .footer-btm{margin-top:24px;padding:16px 20px}
+            .footer-btm-links{gap:14px}
         }
         @keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
         @keyframes floatPulse{0%,100%{box-shadow:0 6px 20px rgba(0,102,255,.4),0 0 0 0 rgba(0,102,255,.45)}50%{box-shadow:0 6px 20px rgba(0,102,255,.4),0 0 0 12px rgba(0,102,255,0)}}
@@ -373,6 +410,16 @@
                 </a>
                 <p>Certyfikowane samochody używane z pełną inspekcją techniczną, historią lakieru i dokumentacją stanu.</p>
                 <a href="<?php echo e(route('catalog')); ?>" class="fb-link">Każde auto sprawdzone →</a>
+                <div class="footer-trust">
+                    <div class="footer-trust-badge">
+                        <svg viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+                        CertiCheck
+                    </div>
+                    <div class="footer-trust-badge">
+                        <svg viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        Pełna historia
+                    </div>
+                </div>
             </div>
 
             
@@ -417,6 +464,7 @@
                         <div class="fsoc-txt"><strong>Instagram</strong><span>Obserwuj nas →</span></div>
                     </a>
                 </div>
+
             </div>
 
             
@@ -427,6 +475,7 @@
                     <li><a href="<?php echo e(route('catalog')); ?>">Oferta</a></li>
                     <li><a href="<?php echo e(route('about')); ?>">O nas</a></li>
                     <li><a href="<?php echo e(route('contact')); ?>">Kontakt</a></li>
+                    <li><a href="<?php echo e(route('favorites')); ?>">Obserwowane</a></li>
                 </ul>
                 <h3>Godziny otwarcia</h3>
                 <ul class="footer-hours">
@@ -439,7 +488,13 @@
         </div>
         <div class="footer-btm">
             <span>© <?php echo e(date('Y')); ?> CertiCars. Wszelkie prawa zastrzeżone.</span>
-            <span>Sprawdzone samochody używane</span>
+            <div class="footer-btm-links">
+                <a href="#">Polityka prywatności</a>
+                <span>·</span>
+                <a href="#">Regulamin</a>
+                <span>·</span>
+                <a href="#">Cookies</a>
+            </div>
         </div>
     </footer>
 

@@ -13,6 +13,8 @@
 .cat-header-row h1 span{font-size:14px;font-weight:500;color:var(--text-3);margin-left:10px;letter-spacing:0}
 /* Body-type card grid — compact tabs with car images */
 .cat-bt-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:14px 0 16px}
+@media(max-width:700px){.cat-bt-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:460px){.cat-bt-grid{display:flex;overflow-x:auto;gap:8px;padding:14px 0 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.cat-bt-grid::-webkit-scrollbar{display:none}.cat-bt-card{flex-shrink:0;min-width:72px}}
 .cat-bt-card{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px 8px;border-radius:10px;background:transparent;border:1.5px solid transparent;cursor:pointer;transition:all .18s;text-decoration:none}
 .cat-bt-card:hover{background:var(--blue-bg);border-color:rgba(0,102,255,.2);transform:translateY(-1px)}
 .cat-bt-card.active{background:var(--blue-bg);border-color:var(--blue)}
@@ -138,6 +140,14 @@
 .lcard-btn{margin-top:auto;background:var(--blue);color:#fff;font-size:12px;font-weight:700;padding:9px 18px;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .18s;white-space:nowrap}
 .lcard-btn:hover{background:var(--blue-h);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,102,255,.3)}
 .lcard-btn svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.4}
+
+/* CertiCheck badge — COS Check style */
+.cc-badge{display:inline-flex;align-items:stretch;border-radius:8px;overflow:hidden;cursor:pointer;transition:all .18s;box-shadow:0 1px 4px rgba(0,0,0,.1);text-decoration:none}
+.cc-badge:hover{box-shadow:0 3px 12px rgba(0,0,0,.18);transform:translateY(-1px)}
+.cc-badge-icon{display:flex;align-items:center;justify-content:center;background:rgba(0,102,255,.1);padding:6px 10px}
+.cc-badge-icon svg{width:18px;height:18px}
+.cc-badge-text{display:flex;align-items:center;background:#1a1a1a;color:#fff;font-size:13px;font-weight:800;letter-spacing:-.2px;padding:6px 12px 6px 10px;white-space:nowrap}
+.cc-badge-text em{font-style:normal;color:var(--blue)}
 
 /* Wrap — transparent, no background (cards are self-contained) */
 .cat-cards-wrap{background:transparent}
@@ -383,6 +393,36 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
     
     <div>
+        <?php
+            $pillMap = [
+                'brand'       => $brands->firstWhere('id', request('brand'))?->name,
+                'fuel_type'   => request('fuel_type'),
+                'category'    => request('category'),
+                'transmission'=> request('transmission'),
+                'price_min'   => request('price_min') ? 'Cena od ' . number_format(request('price_min'), 0, '', ' ') . ' zł' : null,
+                'price_max'   => request('price_max') ? 'Cena do ' . number_format(request('price_max'), 0, '', ' ') . ' zł' : null,
+                'year_min'    => request('year_min')  ? 'Rok od '   . request('year_min')  : null,
+                'year_max'    => request('year_max')  ? 'Rok do '   . request('year_max')  : null,
+                'mileage_min' => request('mileage_min') ? 'Przebieg od ' . number_format(request('mileage_min'), 0, '', ' ') . ' km' : null,
+                'mileage_max' => request('mileage_max') ? 'Przebieg do ' . number_format(request('mileage_max'), 0, '', ' ') . ' km' : null,
+                'power_min'   => request('power_min') ? 'Moc od ' . request('power_min') . ' KM' : null,
+                'power_max'   => request('power_max') ? 'Moc do ' . request('power_max') . ' KM' : null,
+            ];
+            $activePills = array_filter($pillMap);
+        ?>
+        <?php if(count($activePills)): ?>
+        <div class="cat-pills" style="margin-bottom:16px">
+            <?php $__currentLoopData = $activePills; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $label): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <span class="cat-pill">
+                <?php echo e($label); ?>
+
+                <a href="<?php echo e(route('catalog', request()->except($key))); ?>" style="color:inherit;display:flex;align-items:center;margin-left:2px" aria-label="Usuń filtr">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </a>
+            </span>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </div>
+        <?php endif; ?>
         <div class="cat-results-head">
             <p class="cat-count">Znaleziono: <strong><?php echo e($cars->total()); ?></strong> <?php echo e($cars->total()==1?'samochód':($cars->total()<5&&$cars->total()>0?'samochody':'samochodów')); ?></p>
             <select onchange="window.location=this.value" class="cat-sort">
@@ -409,10 +449,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
                             <svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
                         </div>
                     <?php if($car->is_featured): ?><div class="lcard-badge-top">Wyróżnione</div><?php endif; ?>
-                    <div class="lcard-certi">
-                        <svg viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
-                        CertiCheck
-                    </div>
+
                     <?php $imgCount = $car->images->count(); ?>
                     <?php if($imgCount > 1): ?>
                     <div class="lcard-photo-count">
@@ -438,7 +475,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
                             <?php if($car->mileage): ?>
                             <div class="lcard-spec">
                                 <svg viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
-                                <?php echo e(number_format($car->mileage, 0, '.', ' ')); ?> km
+                                <?php echo e(number_format((float) $car->mileage, 0, '.', ' ')); ?> km
                             </div>
                             <?php endif; ?>
                             <?php if($car->fuel_type): ?>
@@ -464,16 +501,12 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
                         </div>
 
                         <div class="lcard-meta">
-                            <div class="lcard-meta-item">
-                                <svg viewBox="0 0 24 24"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
-                                Warszawa
-                            </div>
-                            <div class="lcard-meta-dot"></div>
-                            <div class="lcard-meta-item">Salon</div>
-                            <?php if($car->created_at): ?>
-                            <div class="lcard-meta-dot"></div>
-                            <div class="lcard-meta-item"><?php echo e($car->created_at->diffForHumans()); ?></div>
-                            <?php endif; ?>
+                            <span class="cc-badge" onclick="event.preventDefault();event.stopPropagation();var a=document.createElement('a');a.href='/samochody/<?php echo e($car->slug); ?>/pdf';a.download='';document.body.appendChild(a);a.click();a.remove()">
+                                <span class="cc-badge-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="#0066ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
+                                </span>
+                                <span class="cc-badge-text"><em>Certi</em>Check</span>
+                            </span>
                         </div>
                     </div>
 
@@ -481,12 +514,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
                     <div class="lcard-price-col">
                         <div>
                             <div class="lcard-price"><?php echo e($car->formatted_price); ?></div>
-                            <div class="lcard-price-label"><?php echo e($car->price_type ?? 'brutto'); ?></div>
                         </div>
-                        <span class="lcard-btn">
-                            Szczegóły
-                            <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                        </span>
                     </div>
                 </div>
             </a>
@@ -535,18 +563,30 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 <script>
 (function(){
     const form = document.getElementById('catFilterForm');
+    const wrap = document.querySelector('.cat-cards-wrap');
     if(!form) return;
+
+    function submitWithFeedback(){
+        if(wrap){ wrap.style.opacity = '.45'; wrap.style.pointerEvents = 'none'; wrap.style.transition = 'opacity .15s'; }
+        form.submit();
+    }
+
     // Auto-submit on select change
     form.querySelectorAll('select').forEach(sel=>{
-        sel.addEventListener('change',()=>form.submit());
+        sel.addEventListener('change', submitWithFeedback);
     });
     // Debounced submit on numeric inputs (600ms)
     let timer;
     form.querySelectorAll('input[type="number"]').forEach(inp=>{
         inp.addEventListener('input',()=>{
             clearTimeout(timer);
-            timer = setTimeout(()=>form.submit(), 600);
+            timer = setTimeout(submitWithFeedback, 600);
         });
+    });
+
+    // Restore opacity if page loaded from cache (bfcache)
+    window.addEventListener('pageshow', ()=>{
+        if(wrap){ wrap.style.opacity = ''; wrap.style.pointerEvents = ''; }
     });
 })();
 </script>

@@ -88,65 +88,49 @@
 .section-head p{font-size:14px;color:var(--text-3)}
 .section-head-link{color:var(--blue);font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:5px}
 .section-head-link svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4}
-/* Home listings (Otomoto horizontal) */
-/* Home listings — transparent container, cards self-contained */
-.home-listings{background:transparent;border:none;border-radius:0;overflow:visible;box-shadow:none}
-.home-lcard{display:flex;text-decoration:none;border-bottom:1px solid var(--border-l);transition:background .15s;position:relative;overflow:hidden}
-.home-lcard:last-child{border-bottom:none}
-.home-lcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue);transform:scaleY(0);transform-origin:center;transition:transform .2s}
-.home-lcard:hover{background:#fafafa}
-.home-lcard:hover::before{transform:scaleY(1)}
-.home-lcard-img{width:280px;min-width:280px;height:200px;position:relative;overflow:hidden;flex-shrink:0;background:var(--bg)}
-.home-lcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
-.home-lcard:hover .home-lcard-img img{transform:scale(1.03)}
-.home-lcard-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
-.home-lcard-img-placeholder svg{width:48px;height:48px;stroke:var(--text-4);stroke-width:1.2;fill:none}
-.home-lcard-badge{position:absolute;top:10px;left:10px;background:var(--orange);color:#fff;font-size:10px;font-weight:800;padding:4px 10px;border-radius:6px;letter-spacing:.5px}
-.home-lcard-certi{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.72);color:#fff;font-size:10px;font-weight:700;padding:4px 9px;border-radius:6px;display:flex;align-items:center;gap:4px;backdrop-filter:blur(4px)}
-.home-lcard-certi svg{width:10px;height:10px;stroke:#4ea3ff;fill:none;stroke-width:2.5}
-.home-lcard-fav{position:absolute;top:8px;right:8px;width:30px;height:30px;background:rgba(255,255,255,.9);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.1)}
-.home-lcard-fav:hover{background:#fff;transform:scale(1.1)}
-.home-lcard-fav svg{width:14px;height:14px;stroke:#bbb;fill:none;stroke-width:2;transition:all .2s}
-.home-lcard-fav.active svg{stroke:var(--orange);fill:var(--orange)}
-/* Each card: self-contained, separated, with gap */
-.home-listings{display:flex;flex-direction:column;gap:12px}
-.home-lcard{display:flex;text-decoration:none;border:1px solid var(--border-l);border-radius:12px;background:#fff;transition:all .18s;position:relative;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05)}
-.home-lcard:hover{background:#fafafe;border-color:#c5c5cc;box-shadow:0 4px 20px rgba(0,0,0,.1);transform:translateY(-1px)}
-.home-lcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--orange);transform:scaleX(0);transform-origin:left;transition:transform .2s;border-radius:2px 0 0 2px}
-.home-lcard:hover::before{transform:scaleX(1)}
-.home-lcard-content{flex:1;padding:18px 22px;display:flex;gap:16px;min-width:0}
-.home-lcard-info{flex:1;min-width:0;display:flex;flex-direction:column}
-.home-lcard-title{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.3px;margin-bottom:4px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.home-lcard-sub{font-size:12px;color:var(--text-3);margin-bottom:14px}
-.home-lcard-specs{display:flex;flex-wrap:wrap;gap:4px 0;margin-bottom:16px}
-.home-lcard-spec{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-2);font-weight:500;padding-right:14px;margin-right:10px;border-right:1px solid var(--border-l)}
-.home-lcard-spec:last-child{border-right:none;padding-right:0;margin-right:0}
-.home-lcard-spec svg{width:13px;height:13px;stroke:var(--text-3);fill:none;stroke-width:2;flex-shrink:0}
-.home-lcard-cta-wrap{margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--border-l)}
-.home-lcard-loc{font-size:11px;color:var(--text-3);display:flex;align-items:center;gap:4px}
-.home-lcard-loc svg{width:11px;height:11px;stroke:var(--text-3);fill:none;stroke-width:2}
-.home-lcard-price-col{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;min-width:170px;padding-top:2px}
-.home-lcard-price{font-size:26px;font-weight:900;color:#000;letter-spacing:-.6px;line-height:1;white-space:nowrap}
-.home-lcard-price-lbl{font-size:11px;color:var(--text-3);font-weight:500;margin-top:3px;margin-bottom:14px}
-.home-lcard-btn{display:inline-flex;align-items:center;gap:7px;background:var(--blue);color:#fff;font-size:13px;font-weight:700;padding:11px 22px;border-radius:9px;text-decoration:none;transition:all .18s;white-space:nowrap;width:100%;justify-content:center}
-.home-lcard-btn:hover{background:var(--blue-h);box-shadow:0 6px 18px rgba(0,102,255,.35);transform:translateY(-1px)}
-.home-lcard-btn svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.4}
+/* Home listings — reuse lcard from catalog */
+.home-listings{display:flex;flex-direction:column;gap:12px;background:transparent}
+.lcard{display:flex;background:#fff;border:1px solid var(--border-l);border-radius:12px;text-decoration:none;transition:all .18s;position:relative;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.lcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform .2s;border-radius:2px 0 0 2px}
+.lcard:hover{background:#fafafe;border-color:#c5c5cc;box-shadow:0 4px 20px rgba(0,0,0,.1);transform:translateY(-1px)}
+.lcard:hover::before{transform:scaleX(1)}
+.lcard-img{width:260px;min-width:260px;height:190px;position:relative;overflow:hidden;flex-shrink:0;background:var(--bg)}
+.lcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.lcard:hover .lcard-img img{transform:scale(1.03)}
+.lcard-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.lcard-img-placeholder svg{width:48px;height:48px;stroke:var(--text-4);stroke-width:1.2;fill:none}
+.lcard-badge-top{position:absolute;top:10px;left:10px;background:var(--orange);color:#fff;font-size:10px;font-weight:800;padding:4px 8px;border-radius:6px;letter-spacing:.5px}
+.lcard-certi{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.7);color:#fff;font-size:10px;font-weight:700;padding:4px 8px;border-radius:6px;display:flex;align-items:center;gap:4px;backdrop-filter:blur(4px)}
+.lcard-certi svg{width:10px;height:10px;stroke:#4ea3ff;fill:none;stroke-width:2.5}
+.lcard-fav{position:absolute;top:8px;right:8px;width:32px;height:32px;background:rgba(255,255,255,.9);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.lcard-fav:hover{background:#fff;transform:scale(1.1)}
+.lcard-fav svg{width:15px;height:15px;stroke:#bbb;fill:none;stroke-width:2;transition:stroke .2s}
+.lcard-fav.active svg{stroke:var(--orange);fill:var(--orange)}
+.lcard-photo-count{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;font-weight:600;padding:3px 7px;border-radius:5px;display:flex;align-items:center;gap:4px}
+.lcard-photo-count svg{width:11px;height:11px;stroke:#fff;fill:none;stroke-width:2}
+.lcard-content{flex:1;padding:16px 20px;display:flex;gap:16px;min-width:0}
+.lcard-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:0}
+.lcard-title{font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.3px;margin-bottom:6px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lcard-subtitle{font-size:12px;color:var(--text-3);margin-bottom:12px}
+.lcard-specs{display:flex;flex-wrap:wrap;gap:4px 0;margin-bottom:14px}
+.lcard-spec{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-2);font-weight:500;padding-right:14px;margin-right:10px;border-right:1px solid var(--border-l)}
+.lcard-spec:last-child{border-right:none;padding-right:0;margin-right:0}
+.lcard-spec svg{width:13px;height:13px;stroke:var(--text-3);fill:none;stroke-width:2;flex-shrink:0}
+.lcard-meta{margin-top:auto;padding-top:12px;border-top:1px solid var(--border-l);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lcard-price-col{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;min-width:160px;padding-top:2px}
+.lcard-price{font-size:24px;font-weight:900;color:#000;letter-spacing:-.5px;line-height:1;white-space:nowrap}
+.lcard-price-label{font-size:11px;color:var(--text-3);font-weight:500;margin-top:3px}
+.cc-badge{display:inline-flex;align-items:stretch;border-radius:8px;overflow:hidden;cursor:pointer;transition:all .18s;box-shadow:0 1px 4px rgba(0,0,0,.1);text-decoration:none}
+.cc-badge:hover{box-shadow:0 3px 12px rgba(0,0,0,.18);transform:translateY(-1px)}
+.cc-badge-icon{display:flex;align-items:center;justify-content:center;background:rgba(0,102,255,.1);padding:6px 10px}
+.cc-badge-icon svg{width:18px;height:18px}
+.cc-badge-text{display:flex;align-items:center;background:#1a1a1a;color:#fff;font-size:13px;font-weight:800;letter-spacing:-.2px;padding:6px 12px 6px 10px;white-space:nowrap}
+.cc-badge-text em{font-style:normal;color:var(--blue)}
 .home-listings-cta{margin-top:20px;text-align:center}
 .home-listings-cta-btn{display:inline-flex;align-items:center;gap:9px;border:2px solid var(--blue);color:var(--blue);font-size:14px;font-weight:700;padding:13px 32px;border-radius:50px;text-decoration:none;transition:all .2s}
 .home-listings-cta-btn:hover{background:var(--blue);color:#fff;box-shadow:0 8px 24px rgba(0,102,255,.25)}
 .home-listings-cta-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
-@media(max-width:900px){
-    .home-lcard-img{width:200px;min-width:200px;height:170px}
-    .home-lcard-price{font-size:22px}
-    .home-lcard-price-col{min-width:140px}
-}
-@media(max-width:600px){
-    .home-lcard{flex-direction:column}
-    .home-lcard-img{width:100%;min-width:0;height:200px}
-    .home-lcard-content{flex-direction:column}
-    .home-lcard-price-col{flex-direction:row;align-items:center;min-width:0;width:100%}
-    .home-lcard-price-col .home-lcard-btn{width:auto;margin-left:auto}
-}
+
 
 .body-types{background:var(--bg);border-top:1px solid var(--border-l);border-bottom:1px solid var(--border-l);padding:60px 0 56px}
 .body-types-inner{max-width:1200px;margin:0 auto;padding:0 24px}
@@ -182,13 +166,32 @@
     .hero-text{max-width:none;text-align:center;margin:0 auto}
     .hero-text h1{font-size:44px}
     .hero-text .lead{margin-left:auto;margin-right:auto}
+    .hero-text .hero-ctas{justify-content:center}
+    .hero-trust{justify-content:center;gap:24px}
     .hero-search-wrap{margin-top:-50px}
+    .hero-search-header{flex-direction:column;align-items:flex-start;gap:12px}
     .hero-search-fields{grid-template-columns:1fr 1fr}
     .body-types-grid{grid-template-columns:repeat(3,1fr)}
     .body-types{padding:28px 24px 24px}
+    .body-types-head{flex-direction:column;align-items:flex-start;gap:8px}
+    .lcard-img{width:180px;min-width:180px;height:160px}
+    .lcard-price{font-size:20px}
+    .lcard-price-col{min-width:130px}
+    .certicheck-section{padding:64px 0}
+    .certicheck-inner{grid-template-columns:1fr;gap:40px;text-align:center}
+    .certicheck-left p{max-width:480px;margin-left:auto;margin-right:auto}
+    .certicheck-cards{max-width:560px;margin:0 auto}
+    .cc-card .cc-ico{margin:0 auto}
     .feature-strip-in{grid-template-columns:1fr 1fr;gap:20px}
     .section{padding:56px 0}
     .section-head h2{font-size:24px}
+}
+@media(max-width:600px){
+    .lcard{flex-direction:column}
+    .lcard-img{width:100%;min-width:0;height:200px}
+    .lcard-content{flex-direction:column}
+    .lcard-price-col{flex-direction:row;align-items:center;min-width:0;width:100%;padding-top:12px;border-top:1px solid var(--border-l);margin-top:auto}
+    .lcard-price{font-size:22px}
 }
 @media(max-width:560px){
     .hero-wrap{padding:10px}
@@ -196,8 +199,11 @@
     .hero-in{padding:48px 18px 50px;min-height:380px}
     .hero-text h1{font-size:36px;letter-spacing:-1.2px}
     .hero-text .lead{font-size:15px}
+    .hero-text .hero-ctas{flex-direction:column;align-items:stretch;gap:12px}
+    .hero-text .btn{justify-content:center}
+    .hero-secondary-link{justify-content:center}
     .hero-search{padding:18px 18px 20px}
-    .hero-search-head{flex-direction:column;align-items:flex-start;gap:10px}
+    .hero-search-title{font-size:17px}
     .hero-search-fields{grid-template-columns:1fr}
     .hero-search-field{border-right:none;border-bottom:1.5px solid var(--border-l)}
     .hero-search-field:last-child{border-bottom:none}
@@ -206,6 +212,13 @@
     .body-types-grid{grid-template-columns:repeat(2,1fr)}
     .body-types{padding:22px 16px 20px;border-radius:14px}
     .body-types h3{font-size:16px}
+    .certicheck-section{padding:48px 0}
+    .certicheck-inner{gap:28px}
+    .certicheck-left h2{font-size:28px}
+    .certicheck-cards{grid-template-columns:1fr;gap:2px}
+    .cc-card{border-radius:0!important}
+    .cc-card:first-child{border-radius:12px 12px 0 0!important}
+    .cc-card:last-child{border-radius:0 0 12px 12px!important}
     .feature-strip-in{grid-template-columns:1fr}
     .cat-cards{grid-template-columns:1fr}
 }
@@ -345,54 +358,63 @@
 
         <div class="home-listings">
             <?php $__currentLoopData = $featuredCars; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $car): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <a href="<?php echo e(route('catalog.show',$car)); ?>" class="home-lcard">
+            <a href="<?php echo e(route('catalog.show',$car)); ?>" class="lcard">
                 
-                <div class="home-lcard-img">
+                <div class="lcard-img">
                     <?php if($car->primaryImage): ?>
-                        <img src="<?php echo e($car->primaryImage->url); ?>" alt="<?php echo e($car->primaryImage->alt); ?>" loading="lazy">
+                        <img src="<?php echo e($car->primaryImage->url); ?>" alt="<?php echo e($car->primaryImage->alt); ?>" loading="lazy"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="lcard-img-placeholder" style="display:none">
                     <?php else: ?>
-                        <div class="home-lcard-img-placeholder">
+                        <div class="lcard-img-placeholder">
+                    <?php endif; ?>
                             <svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
                         </div>
-                    <?php endif; ?>
-                    <div class="home-lcard-certi">
-                        <svg viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
-                        CertiCheck
+                    <?php if($car->is_featured): ?><div class="lcard-badge-top">Wyróżnione</div><?php endif; ?>
+
+                    <?php $imgCount = $car->images->count(); ?>
+                    <?php if($imgCount > 1): ?>
+                    <div class="lcard-photo-count">
+                        <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                        <?php echo e($imgCount); ?>
+
                     </div>
-                    <?php if($car->is_featured): ?><div class="home-lcard-badge">Wyróżnione</div><?php endif; ?>
-                    <button class="home-lcard-fav" data-id="<?php echo e($car->id); ?>" aria-label="Dodaj do ulubionych" onclick="toggleFav(event,<?php echo e($car->id); ?>)">
+                    <?php endif; ?>
+                    <button class="lcard-fav" data-id="<?php echo e($car->id); ?>" aria-label="Dodaj do ulubionych" onclick="toggleFav(event,<?php echo e($car->id); ?>)">
                         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                     </button>
                 </div>
 
                 
-                <div class="home-lcard-content">
-                    <div class="home-lcard-info">
-                        <div class="home-lcard-title"><?php echo e($car->title); ?></div>
-                        <div class="home-lcard-sub"><?php echo e(implode(' · ', array_filter([$car->category, $car->transmission])) ?: 'Certyfikowany pojazd używany'); ?></div>
+                <div class="lcard-content">
+                    <div class="lcard-info">
+                        <div class="lcard-title"><?php echo e($car->title); ?></div>
+                        <?php if($car->category || $car->transmission): ?>
+                        <div class="lcard-subtitle"><?php echo e(implode(' · ', array_filter([$car->category, $car->transmission]))); ?></div>
+                        <?php endif; ?>
 
-                        <div class="home-lcard-specs">
+                        <div class="lcard-specs">
                             <?php if($car->mileage): ?>
-                            <div class="home-lcard-spec">
+                            <div class="lcard-spec">
                                 <svg viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
-                                <?php echo e(number_format($car->mileage, 0, '.', ' ')); ?> km
+                                <?php echo e(number_format((float) $car->mileage, 0, '.', ' ')); ?> km
                             </div>
                             <?php endif; ?>
                             <?php if($car->fuel_type): ?>
-                            <div class="home-lcard-spec">
-                                <svg viewBox="0 0 24 24"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/></svg>
+                            <div class="lcard-spec">
+                                <svg viewBox="0 0 24 24"><line x1="3" x2="15" y1="22" y2="22"/><line x1="4" x2="14" y1="9" y2="9"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>
                                 <?php echo e($car->fuel_type); ?>
 
                             </div>
                             <?php endif; ?>
                             <?php if($car->power_hp): ?>
-                            <div class="home-lcard-spec">
+                            <div class="lcard-spec">
                                 <svg viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
                                 <?php echo e($car->power_hp); ?> KM
                             </div>
                             <?php endif; ?>
                             <?php if($car->first_registration): ?>
-                            <div class="home-lcard-spec">
+                            <div class="lcard-spec">
                                 <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
                                 <?php echo e($car->first_registration); ?>
 
@@ -400,24 +422,21 @@
                             <?php endif; ?>
                         </div>
 
-                        <div class="home-lcard-cta-wrap">
-                            <div class="home-lcard-loc">
-                                <svg viewBox="0 0 24 24"><path d="M20 10c0 5-7 13-8 13S4 15 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
-                                Warszawa · Salon CertiCars
-                            </div>
+                        <div class="lcard-meta">
+                            <span class="cc-badge" onclick="event.preventDefault();event.stopPropagation();var a=document.createElement('a');a.href='/samochody/<?php echo e($car->slug); ?>/pdf';a.download='';document.body.appendChild(a);a.click();a.remove()">
+                                <span class="cc-badge-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="#0066ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
+                                </span>
+                                <span class="cc-badge-text"><em>Certi</em>Check</span>
+                            </span>
                         </div>
                     </div>
 
                     
-                    <div class="home-lcard-price-col">
+                    <div class="lcard-price-col">
                         <div>
-                            <div class="home-lcard-price"><?php echo e($car->formatted_price); ?></div>
-                            <div class="home-lcard-price-lbl"><?php echo e($car->price_type ?? 'brutto'); ?></div>
+                            <div class="lcard-price"><?php echo e($car->formatted_price); ?></div>
                         </div>
-                        <span class="home-lcard-btn">
-                            Sprawdź auto
-                            <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                        </span>
                     </div>
                 </div>
             </a>

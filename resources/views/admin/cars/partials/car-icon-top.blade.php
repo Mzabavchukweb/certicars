@@ -1,0 +1,1 @@
+<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="3"/><path d="M6 9h12M6 15h12"/><circle cx="12" cy="5" r=".5" fill="currentColor"/></svg>

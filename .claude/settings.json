@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -b /tmp/cookies.txt -o /dev/null -w \"global search JSON: %{http_code}\\\\n\" \"http://127.0.0.1:8000/admin/cars?search=audi&format=json\")",
+      "Bash(curl -s -b /tmp/cookies.txt \"http://127.0.0.1:8000/admin/cars?search=audi&format=json\")",
+      "Bash(curl -s -b /tmp/cookies.txt -o /dev/null -w \"sort by price asc: %{http_code}\\\\n\" \"http://127.0.0.1:8000/admin/cars?sort=price&dir=asc\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" -X POST \"http://127.0.0.1:8000/admin/login\" -d \"_token=x&email=x&password=x\")",
+      "Bash(curl -s -b /tmp/cookies.txt -o /dev/null -w \"msg show: %{http_code}\\\\n\" \"http://127.0.0.1:8000/admin/messages/1\")",
+      "Bash(curl -s -b /tmp/cookies.txt -o /dev/null -w \"dashboard: %{http_code}\\\\n\" \"http://127.0.0.1:8000/admin\")",
+      "Bash(curl -s -b /tmp/cookies.txt \"http://127.0.0.1:8000/admin\")",
+      "Bash(php -l resources/views/admin/layouts/app.blade.php)",
+      "Bash(curl -s -b /tmp/cookies.txt \"http://127.0.0.1:8000/admin/cars?search=audi&price_min=10000\")",
+      "Bash(curl -s -c /tmp/c.txt \"http://127.0.0.1:8000/admin/login\")",
+      "Bash(grep -oE 'spin360[^<]{0,200}' /tmp/resp.html)",
+      "Bash(php -r \"echo 'max_file_uploads: '.ini_get\\('max_file_uploads'\\).PHP_EOL.'post_max_size: '.ini_get\\('post_max_size'\\).PHP_EOL.'upload_max_filesize: '.ini_get\\('upload_max_filesize'\\);\")",
+      "Bash(grep -nA1 'cs-gallery{' resources/views/catalog/show.blade.php)",
+      "Bash(curl -s \"http://127.0.0.1:8000/samochody/audi-a4-20-tfsi-quattro\")",
+      "Bash(grep -nB1 -A1 \"cs-grid{\" resources/views/catalog/show.blade.php)",
+      "Bash(curl -sL \"https://pannellum.org/images/cerro-toco-0.jpg\" -o /tmp/pano_real.jpg)",
+      "Bash(grep -oE 'SPIN360_FRAMES[^;]{0,200}')",
+      "Bash(curl -s -o /dev/null -w \"catalog: %{http_code}\\\\n\" \"http://127.0.0.1:8000/samochody\")",
+      "Bash(curl -s -o /dev/null -w \"audi-a4: %{http_code}\\\\n\" \"http://127.0.0.1:8000/samochody/audi-a4-20-tfsi-quattro\")",
+      "Bash(curl -s -o /dev/null -w \"bmw-320: %{http_code}\\\\n\" \"http://127.0.0.1:8000/samochody/bmw-320d-m-sport\")",
+      "Bash(curl -s -o /dev/null -w \"porsche: %{http_code}\\\\n\" \"http://127.0.0.1:8000/samochody/porsche-911-carrera-s\")",
+      "Bash(open \"http://127.0.0.1:8000/samochody\")",
+      "Bash(curl -s -o /dev/null -w 'show: %{http_code}\\\\n' http://127.0.0.1:8000/samochody/audi-a4-20-tfsi-quattro)",
+      "Bash(curl -s -o /dev/null -w 'show: %{http_code}\\\\n' http://127.0.0.1:8000/samochody/__TRACKED_VAR__)",
+      "Bash(grep -nA3 \"Panorama 360°<\" resources/views/admin/cars/form.blade.php)",
+      "Bash(curl -s -b /tmp/c.txt -o /dev/null -w \"edit: %{http_code}\\\\n\" \"http://127.0.0.1:8000/admin/cars/1/edit\")"
+    ],
+    "additionalDirectories": [
+      "/Users/maksymzabavchuk/Desktop/certicars/storage/app/public/cars/*"
+    ]
+  }
+}
