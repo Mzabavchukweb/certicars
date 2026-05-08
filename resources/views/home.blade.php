@@ -4,11 +4,11 @@
 
 @section('styles')
 /* HERO — inset card with rounded corners */
-.hero-wrap{background:var(--bg);padding:20px}
-.hero{position:relative;background:#0a0a0a;color:#fff;overflow:hidden;margin-bottom:0;min-height:580px;border-radius:20px}
+.hero-wrap{background:#0a0a0a;padding:0}
+.hero{position:relative;background:#0a0a0a;color:#fff;overflow:hidden;margin-bottom:0;min-height:620px;border-radius:0}
 .hero::before{content:'';position:absolute;inset:0;background-image:url('/img/hero-car.jpg');background-size:cover;background-position:center center;background-repeat:no-repeat;z-index:1}
 .hero::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,10,10,1) 0%,rgba(10,10,10,.97) 22%,rgba(10,10,10,.82) 38%,rgba(10,10,10,.38) 58%,rgba(10,10,10,.08) 80%,rgba(10,10,10,.25) 100%);z-index:2}
-.hero-in{position:relative;z-index:3;padding:100px 24px 80px;max-width:1200px;margin:0 auto;min-height:580px;display:flex;flex-direction:column;justify-content:center}
+.hero-in{position:relative;z-index:3;padding:100px 24px 120px;max-width:1200px;margin:0 auto;min-height:620px;display:flex;flex-direction:column;justify-content:center}
 .hero-text{max-width:560px}
 .hero-text h1{font-size:72px;font-weight:900;line-height:.95;letter-spacing:-2.5px;margin-bottom:24px}
 .hero-text h1 .line1{color:#fff;display:block}
@@ -30,7 +30,7 @@
 
 
 /* SEARCH FORM */
-.hero-search-wrap{position:relative;margin-top:-72px;z-index:4;padding-bottom:0}
+.hero-search-wrap{position:relative;margin-top:-90px;z-index:4;padding-bottom:0}
 .hero-search{background:#fff;border-radius:22px;box-shadow:0 24px 64px rgba(0,0,0,.16),0 4px 16px rgba(0,0,0,.06);padding:32px 40px 32px;max-width:1200px;margin:0 auto}
 
 /* Header row */
@@ -155,15 +155,15 @@
 
 @media(max-width:1024px){
     .hero-text h1{font-size:56px}
-    .hero-in{padding:80px 24px 70px;min-height:480px}
-    .hero{min-height:480px}
+    .hero-in{padding:80px 24px 100px;min-height:520px}
+    .hero{min-height:520px}
 }
 @media(max-width:900px){
-    .hero-wrap{padding:12px}
-    .hero{border-radius:16px;min-height:420px}
+    .hero-wrap{padding:0}
+    .hero{border-radius:0;min-height:460px}
     .hero::before{background-position:center}
     .hero::after{background:linear-gradient(180deg,rgba(10,10,10,.7) 0%,rgba(10,10,10,.85) 60%,#0a0a0a 100%)}
-    .hero-in{padding:64px 24px 60px;min-height:420px}
+    .hero-in{padding:64px 24px 80px;min-height:460px}
     .hero-text{max-width:none;text-align:center;margin:0 auto}
     .hero-text h1{font-size:44px}
     .hero-text .lead{margin-left:auto;margin-right:auto}
@@ -178,11 +178,16 @@
     .lcard-img{width:180px;min-width:180px;height:160px}
     .lcard-price{font-size:20px}
     .lcard-price-col{min-width:130px}
-    .certicheck-section{padding:64px 0}
-    .certicheck-inner{grid-template-columns:1fr;gap:40px;text-align:center}
+    /* CertiCheck section — tighter on tablet */
+    .certicheck-section{padding:56px 0}
+    .certicheck-inner{grid-template-columns:1fr;gap:32px;text-align:center}
     .certicheck-left p{max-width:480px;margin-left:auto;margin-right:auto}
     .certicheck-cards{max-width:560px;margin:0 auto}
     .cc-card .cc-ico{margin:0 auto}
+    .cc-card{padding:24px 22px}
+    .cc-card .cc-num{font-size:22px}
+    .cc-card .cc-title{font-size:15px}
+    .cc-card .cc-desc{font-size:12px;line-height:1.55}
     .feature-strip-in{grid-template-columns:1fr 1fr;gap:20px}
     .section{padding:56px 0}
     .section-head h2{font-size:24px}
@@ -190,38 +195,73 @@
 @media(max-width:600px){
     .lcard{flex-direction:column}
     .lcard-img{width:100%;min-width:0;height:200px}
-    .lcard-content{flex-direction:column}
-    .lcard-price-col{flex-direction:row;align-items:center;min-width:0;width:100%;padding-top:12px;border-top:1px solid var(--border-l);margin-top:auto}
-    .lcard-price{font-size:22px}
+    .lcard-content{flex-direction:column;padding:14px 16px;gap:10px}
+    .lcard-info{gap:0}
+    .lcard-title{font-size:16px;margin-bottom:4px}
+    .lcard-subtitle{font-size:11px;margin-bottom:8px}
+    .lcard-specs{gap:2px 0;margin-bottom:10px}
+    .lcard-spec{font-size:12px;padding-right:10px;margin-right:8px}
+    /* Price — BIGGER and bolder on mobile */
+    .lcard-price-col{flex-direction:row;align-items:center;justify-content:space-between;min-width:0;width:100%;padding-top:10px;border-top:1px solid var(--border-l);margin-top:4px}
+    .lcard-price{font-size:26px;font-weight:900;letter-spacing:-.6px}
+    .lcard-price-label{font-size:10px}
+    /* CertiCheck badge — compact on mobile */
+    .cc-badge{transform:scale(.88);transform-origin:left center}
+    .lcard-meta{padding-top:8px;gap:6px}
 }
 @media(max-width:560px){
-    .hero-wrap{padding:10px}
-    .hero{border-radius:14px;min-height:380px}
-    .hero-in{padding:48px 18px 50px;min-height:380px}
+    .hero-wrap{padding:0}
+    .hero{border-radius:0;min-height:400px}
+    .hero-in{padding:48px 18px 70px;min-height:400px}
     .hero-text h1{font-size:36px;letter-spacing:-1.2px}
     .hero-text .lead{font-size:15px}
     .hero-text .hero-ctas{flex-direction:column;align-items:stretch;gap:12px}
-    .hero-text .btn{justify-content:center}
+    .hero-text .btn{justify-content:center;padding:14px 24px;font-size:13px}
     .hero-secondary-link{justify-content:center}
-    .hero-search{padding:18px 18px 20px}
-    .hero-search-title{font-size:17px}
+    .hero-search{padding:16px 16px 18px}
+    .hero-search-title{font-size:16px}
+    .hero-search-badge{font-size:10px;padding:2px 8px}
     .hero-search-fields{grid-template-columns:1fr}
-    .hero-search-field{border-right:none;border-bottom:1.5px solid var(--border-l)}
+    .hero-search-field{border-right:none;border-bottom:1.5px solid var(--border-l);padding:12px 16px}
     .hero-search-field:last-child{border-bottom:none}
-    .hero-search-bottom{flex-direction:column;gap:12px}
-    .hero-search-submit{width:100%;justify-content:center}
-    .body-types-grid{grid-template-columns:repeat(2,1fr)}
-    .body-types{padding:22px 16px 20px;border-radius:14px}
+    .hero-search-field label{font-size:9px;letter-spacing:.5px;margin-bottom:3px}
+    .hero-search-field select,.hero-search-field input{font-size:13px}
+    .hero-search-bottom{flex-direction:column;gap:10px}
+    .hero-search-submit{width:100%;justify-content:center;height:44px;font-size:13px}
+    .hero-search-reset{font-size:12px}
+    .body-types-grid{grid-template-columns:repeat(2,1fr);gap:6px}
+    .body-types{padding:20px 16px 18px}
     .body-types h3{font-size:16px}
-    .certicheck-section{padding:48px 0}
-    .certicheck-inner{gap:28px}
-    .certicheck-left h2{font-size:28px}
-    .certicheck-cards{grid-template-columns:1fr;gap:2px}
-    .cc-card{border-radius:0!important}
-    .cc-card:first-child{border-radius:12px 12px 0 0!important}
-    .cc-card:last-child{border-radius:0 0 12px 12px!important}
+    .body-types-head h2{font-size:24px}
+    .body-types-head p{font-size:13px}
+    /* CertiCheck section — COMPACT on mobile */
+    .certicheck-section{padding:36px 0}
+    .certicheck-inner{gap:20px}
+    .certicheck-left .cc-label{font-size:10px;letter-spacing:1.2px;margin-bottom:10px}
+    .certicheck-left h2{font-size:24px;margin-bottom:14px}
+    .certicheck-left p{font-size:13px;line-height:1.6;margin-bottom:24px}
+    .certicheck-cta{padding:12px 22px;font-size:13px}
+    .certicheck-cards{grid-template-columns:1fr;gap:1px}
+    .cc-card{padding:14px 18px;gap:6px;border-radius:0!important}
+    .cc-card:first-child{border-radius:10px 10px 0 0!important}
+    .cc-card:last-child{border-radius:0 0 10px 10px!important}
+    .cc-card .cc-num{font-size:16px;margin-bottom:-2px}
+    .cc-card .cc-ico{width:32px;height:32px;border-radius:8px}
+    .cc-card .cc-ico svg{width:16px;height:16px}
+    .cc-card .cc-title{font-size:13px;letter-spacing:-.1px}
+    .cc-card .cc-desc{font-size:11px;line-height:1.45;margin-top:0;color:rgba(255,255,255,.5)}
     .feature-strip-in{grid-template-columns:1fr}
     .cat-cards{grid-template-columns:1fr}
+    /* Price — even MORE prominent on small mobile */
+    .lcard-price{font-size:28px;letter-spacing:-.8px}
+    .lcard-img{height:180px}
+    /* Sections tighter */
+    .section{padding:40px 0}
+    .section-head h2{font-size:22px}
+    .section-head p{font-size:13px}
+    .home-listings{gap:10px}
+    .home-listings-cta{margin-top:14px}
+    .home-listings-cta-btn{padding:11px 24px;font-size:13px}
 }
 @endsection
 

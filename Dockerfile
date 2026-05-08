@@ -53,9 +53,16 @@ RUN mkdir -p /var/www/html/database \
     && chmod 666 /var/www/html/database/database.sqlite \
     && chown www-data:www-data /var/www/html/database/database.sqlite
 
-# Create startup script that runs migrations + seed then starts Apache
+# Create startup script that configures port, runs migrations + seed, starts Apache
 RUN echo '#!/bin/bash\n\
 set -e\n\
+\n\
+# Railway provides PORT env var — default to 80\n\
+PORT="${PORT:-80}"\n\
+\n\
+# Configure Apache to listen on the correct port\n\
+sed -i "s/Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf\n\
+sed -i "s/:80/:${PORT}/" /etc/apache2/sites-available/000-default.conf\n\
 \n\
 # Create .env from example if not exists\n\
 if [ ! -f /var/www/html/.env ]; then\n\
@@ -80,10 +87,11 @@ php artisan view:cache\n\
 # Create storage link\n\
 php artisan storage:link 2>/dev/null || true\n\
 \n\
-# Start Apache\n\
+echo "Starting Apache on port ${PORT}..."\n\
 exec apache2-foreground\n\
 ' > /var/www/html/start.sh && chmod +x /var/www/html/start.sh
 
 EXPOSE 80
 
 CMD ["/var/www/html/start.sh"]
+
