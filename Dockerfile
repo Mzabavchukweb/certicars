@@ -1,12 +1,16 @@
 FROM php:8.4-apache
 
-# Install system dependencies + Node.js
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     libpng-dev libjpeg-dev libfreetype6-dev libzip-dev libsqlite3-dev unzip git curl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd pdo pdo_sqlite zip bcmath \
     && a2enmod rewrite  && a2dismod mpm_event && a2enmod mpm_prefork \
     && rm -rf /var/lib/apt/lists/*
+
+# Fix MPM conflict — disable event, enable prefork (required for mod_php)
+RUN a2dismod mpm_event 2>/dev/null || true \
+    && a2enmod mpm_prefork 2>/dev/null || true
 
 # Install Node.js 20 LTS for Vite build
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
@@ -53,45 +57,10 @@ RUN mkdir -p /var/www/html/database \
     && chmod 666 /var/www/html/database/database.sqlite \
     && chown www-data:www-data /var/www/html/database/database.sqlite
 
-# Create startup script that configures port, runs migrations + seed, starts Apache
-RUN echo '#!/bin/bash\n\
-set -e\n\
-\n\
-# Railway provides PORT env var — default to 80\n\
-PORT="${PORT:-80}"\n\
-\n\
-# Configure Apache to listen on the correct port\n\
-sed -i "s/Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf\n\
-sed -i "s/:80/:${PORT}/" /etc/apache2/sites-available/000-default.conf\n\
-\n\
-# Create .env from example if not exists\n\
-if [ ! -f /var/www/html/.env ]; then\n\
-  cp /var/www/html/.env.example /var/www/html/.env\n\
-fi\n\
-\n\
-# Generate app key if not set\n\
-php artisan key:generate --force 2>/dev/null || true\n\
-\n\
-# Clear caches for fresh start\n\
-php artisan config:clear\n\
-php artisan cache:clear 2>/dev/null || true\n\
-\n\
-# Run migrations and seed\n\
-php artisan migrate --force --seed\n\
-\n\
-# Cache config and routes for performance\n\
-php artisan config:cache\n\
-php artisan route:cache\n\
-php artisan view:cache\n\
-\n\
-# Create storage link\n\
-php artisan storage:link 2>/dev/null || true\n\
-\n\
-echo "Starting Apache on port ${PORT}..."\n\
-exec apache2-foreground\n\
-' > /var/www/html/start.sh && chmod +x /var/www/html/start.sh
+# Copy startup script
+COPY docker-start.sh /var/www/html/start.sh
+RUN chmod +x /var/www/html/start.sh
 
 EXPOSE 80
 
 CMD ["/var/www/html/start.sh"]
-
