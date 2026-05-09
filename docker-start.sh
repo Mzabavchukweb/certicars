@@ -1,12 +1,8 @@
 #!/bin/bash
 set -e
 
-# Railway provides PORT env var — default to 80
-PORT="${PORT:-80}"
-
-# Configure Apache to listen on the correct port
-sed -i "s/Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf
-sed -i "s/:80/:${PORT}/" /etc/apache2/sites-available/000-default.conf
+# Railway provides PORT env var — default to 8080
+PORT="${PORT:-8080}"
 
 # Create .env from example if not exists
 if [ ! -f /var/www/html/.env ]; then
@@ -36,5 +32,5 @@ php artisan view:cache
 # Create storage link (ignore if exists)
 php artisan storage:link 2>/dev/null || true
 
-echo "Starting Apache on port ${PORT}..."
-exec apache2-foreground
+echo "Starting Laravel server on port ${PORT}..."
+exec php artisan serve --host=0.0.0.0 --port="${PORT}"
