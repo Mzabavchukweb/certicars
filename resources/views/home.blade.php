@@ -20,19 +20,19 @@
 @endsection
 
 @section('styles')
-/* HERO — split layout: text left, illustration right */
+/* HERO — full-bleed illustration background, text overlay on left */
 .hero-wrap{background:#0a1838;padding:0}
-.hero{position:relative;color:#fff;overflow:hidden;margin-bottom:0;min-height:620px;background:radial-gradient(ellipse 100% 80% at 80% 50%,#1e3a8a 0%,#0a1838 55%,#050d24 100%)}
-.hero-in{position:relative;z-index:3;padding:80px 24px 120px;max-width:1200px;margin:0 auto;min-height:620px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:40px;align-items:center}
+.hero{position:relative;color:#fff;overflow:hidden;margin-bottom:0;min-height:620px;background:#0a1838}
+.hero::before{content:'';position:absolute;inset:0;background-image:url('/img/hero.png');background-size:cover;background-position:center right;background-repeat:no-repeat;z-index:1}
+.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#0a1838 0%,rgba(10,24,56,.92) 28%,rgba(10,24,56,.55) 48%,rgba(10,24,56,.1) 68%,rgba(10,24,56,0) 100%);z-index:2}
+.hero-in{position:relative;z-index:3;padding:100px 24px 120px;max-width:1200px;margin:0 auto;min-height:620px;display:flex;flex-direction:column;justify-content:center}
 .hero-text{max-width:560px;position:relative;z-index:2}
 .hero-text h1{font-size:64px;font-weight:900;line-height:1;letter-spacing:-2px;margin-bottom:24px}
 .hero-text h1 .line1{color:#fff;display:block}
 .hero-text h1 .line2{color:var(--blue);display:block}
-.hero-text .lead{font-size:16px;color:rgba(255,255,255,.72);max-width:460px;margin-bottom:36px;line-height:1.65;font-weight:400}
+.hero-text .lead{font-size:16px;color:rgba(255,255,255,.78);max-width:460px;margin-bottom:36px;line-height:1.65;font-weight:400}
 .hero-text .lead a{color:#4ea3ff;font-weight:600;text-decoration:none;border-bottom:1px dotted rgba(78,163,255,.5)}
 .hero-text .lead a:hover{border-bottom-color:#4ea3ff}
-.hero-illustration{position:relative;display:flex;align-items:center;justify-content:center}
-.hero-illustration img{width:100%;height:auto;max-width:680px;display:block;filter:drop-shadow(0 30px 60px rgba(0,0,0,.4))}
 .hero-text .hero-ctas{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .hero-text .btn{padding:16px 30px;font-size:14px;border-radius:50px;box-shadow:0 8px 24px rgba(0,102,255,.4);font-weight:700;letter-spacing:.1px;display:inline-flex;align-items:center;gap:8px}
 .hero-text .btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,102,255,.5)}
@@ -174,20 +174,21 @@
 
 @media(max-width:1024px){
     .hero-text h1{font-size:56px}
-    .hero-in{padding:64px 24px 100px;min-height:520px;gap:24px}
+    .hero-in{padding:80px 24px 100px;min-height:520px}
     .hero{min-height:520px}
-    .hero-illustration img{max-width:520px}
+    .hero::before{background-position:right center;background-size:auto 100%}
+    .hero::after{background:linear-gradient(90deg,#0a1838 0%,rgba(10,24,56,.95) 35%,rgba(10,24,56,.6) 55%,rgba(10,24,56,.15) 75%,rgba(10,24,56,0) 100%)}
 }
 @media(max-width:900px){
     .hero-wrap{padding:0}
-    .hero{border-radius:0;min-height:auto;background:radial-gradient(ellipse 120% 60% at 50% 30%,#1e3a8a 0%,#0a1838 60%,#050d24 100%)}
-    .hero-in{padding:56px 24px 80px;min-height:auto;grid-template-columns:1fr;gap:16px;text-align:center}
-    .hero-text{max-width:none;margin:0 auto;order:1}
+    .hero{border-radius:0;min-height:560px}
+    .hero::before{background-position:center top;background-size:cover;opacity:.55}
+    .hero::after{background:linear-gradient(180deg,rgba(10,24,56,.4) 0%,rgba(10,24,56,.85) 55%,#0a1838 100%)}
+    .hero-in{padding:64px 24px 80px;min-height:560px;text-align:center}
+    .hero-text{max-width:none;margin:0 auto}
     .hero-text h1{font-size:44px}
     .hero-text .lead{margin-left:auto;margin-right:auto}
     .hero-text .hero-ctas{justify-content:center}
-    .hero-illustration{order:2;max-width:520px;margin:0 auto}
-    .hero-illustration img{max-width:100%}
     .hero-trust{justify-content:center;gap:24px}
     .hero-search-wrap{margin-top:-50px}
     .hero-search-header{flex-direction:column;align-items:flex-start;gap:12px}
@@ -305,9 +306,6 @@
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </a>
                 </div>
-            </div>
-            <div class="hero-illustration">
-                <img src="/img/hero.png" alt="Certyfikowany samochód — ilustracja" fetchpriority="high" decoding="async" width="1850" height="850">
             </div>
         </div>
     </section>
