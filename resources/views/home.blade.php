@@ -2,18 +2,37 @@
 @section('title','Certyfikowane samochody używane')
 @section('description','CertiCars — komis premium z pełną inspekcją techniczną. '.$totalCars.' certyfikowanych pojazdów w ofercie.')
 
+@section('extra_head')
+    <link rel="preload" as="image" href="/img/hero.png" fetchpriority="high">
+    <script type="application/ld+json">
+    {!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'WebSite',
+        'name' => 'CertiCars',
+        'url' => url('/'),
+        'potentialAction' => [
+            '@type' => 'SearchAction',
+            'target' => url('/samochody').'?q={search_term_string}',
+            'query-input' => 'required name=search_term_string',
+        ],
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+    </script>
+@endsection
+
 @section('styles')
-/* HERO — inset card with rounded corners */
-.hero-wrap{background:#0a0a0a;padding:0}
-.hero{position:relative;background:#0a0a0a;color:#fff;overflow:hidden;margin-bottom:0;min-height:620px;border-radius:0}
-.hero::before{content:'';position:absolute;inset:0;background-image:url('/img/hero-car.jpg');background-size:cover;background-position:center center;background-repeat:no-repeat;z-index:1}
-.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,10,10,1) 0%,rgba(10,10,10,.97) 22%,rgba(10,10,10,.82) 38%,rgba(10,10,10,.38) 58%,rgba(10,10,10,.08) 80%,rgba(10,10,10,.25) 100%);z-index:2}
-.hero-in{position:relative;z-index:3;padding:100px 24px 120px;max-width:1200px;margin:0 auto;min-height:620px;display:flex;flex-direction:column;justify-content:center}
-.hero-text{max-width:560px}
-.hero-text h1{font-size:72px;font-weight:900;line-height:.95;letter-spacing:-2.5px;margin-bottom:24px}
+/* HERO — split layout: text left, illustration right */
+.hero-wrap{background:#0a1838;padding:0}
+.hero{position:relative;color:#fff;overflow:hidden;margin-bottom:0;min-height:620px;background:radial-gradient(ellipse 100% 80% at 80% 50%,#1e3a8a 0%,#0a1838 55%,#050d24 100%)}
+.hero-in{position:relative;z-index:3;padding:80px 24px 120px;max-width:1200px;margin:0 auto;min-height:620px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:40px;align-items:center}
+.hero-text{max-width:560px;position:relative;z-index:2}
+.hero-text h1{font-size:64px;font-weight:900;line-height:1;letter-spacing:-2px;margin-bottom:24px}
 .hero-text h1 .line1{color:#fff;display:block}
 .hero-text h1 .line2{color:var(--blue);display:block}
-.hero-text .lead{font-size:17px;color:rgba(255,255,255,.7);max-width:400px;margin-bottom:36px;line-height:1.6;font-weight:400}
+.hero-text .lead{font-size:16px;color:rgba(255,255,255,.72);max-width:460px;margin-bottom:36px;line-height:1.65;font-weight:400}
+.hero-text .lead a{color:#4ea3ff;font-weight:600;text-decoration:none;border-bottom:1px dotted rgba(78,163,255,.5)}
+.hero-text .lead a:hover{border-bottom-color:#4ea3ff}
+.hero-illustration{position:relative;display:flex;align-items:center;justify-content:center}
+.hero-illustration img{width:100%;height:auto;max-width:680px;display:block;filter:drop-shadow(0 30px 60px rgba(0,0,0,.4))}
 .hero-text .hero-ctas{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .hero-text .btn{padding:16px 30px;font-size:14px;border-radius:50px;box-shadow:0 8px 24px rgba(0,102,255,.4);font-weight:700;letter-spacing:.1px;display:inline-flex;align-items:center;gap:8px}
 .hero-text .btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,102,255,.5)}
@@ -155,19 +174,20 @@
 
 @media(max-width:1024px){
     .hero-text h1{font-size:56px}
-    .hero-in{padding:80px 24px 100px;min-height:520px}
+    .hero-in{padding:64px 24px 100px;min-height:520px;gap:24px}
     .hero{min-height:520px}
+    .hero-illustration img{max-width:520px}
 }
 @media(max-width:900px){
     .hero-wrap{padding:0}
-    .hero{border-radius:0;min-height:460px}
-    .hero::before{background-position:center}
-    .hero::after{background:linear-gradient(180deg,rgba(10,10,10,.7) 0%,rgba(10,10,10,.85) 60%,#0a0a0a 100%)}
-    .hero-in{padding:64px 24px 80px;min-height:460px}
-    .hero-text{max-width:none;text-align:center;margin:0 auto}
+    .hero{border-radius:0;min-height:auto;background:radial-gradient(ellipse 120% 60% at 50% 30%,#1e3a8a 0%,#0a1838 60%,#050d24 100%)}
+    .hero-in{padding:56px 24px 80px;min-height:auto;grid-template-columns:1fr;gap:16px;text-align:center}
+    .hero-text{max-width:none;margin:0 auto;order:1}
     .hero-text h1{font-size:44px}
     .hero-text .lead{margin-left:auto;margin-right:auto}
     .hero-text .hero-ctas{justify-content:center}
+    .hero-illustration{order:2;max-width:520px;margin:0 auto}
+    .hero-illustration img{max-width:100%}
     .hero-trust{justify-content:center;gap:24px}
     .hero-search-wrap{margin-top:-50px}
     .hero-search-header{flex-direction:column;align-items:flex-start;gap:12px}
@@ -272,19 +292,22 @@
             <div class="hero-text">
                 <h1>
                     <span class="line1">Pewne auta.</span>
-                    <span class="line2">Pełna historia.</span>
+                    <span class="line2">Przejrzyste opisy.</span>
                 </h1>
-                <p class="lead">Każdy pojazd z certyfikatem inspekcji technicznej i pełną dokumentacją stanu.</p>
+                <p class="lead">Znajdź samochód z jasnym opisem stanu, wyposażenia i pochodzenia. Wybrane auta sprawdzamy dodatkowo w ramach <a href="#certicheck">CertiCheck</a>.</p>
                 <div class="hero-ctas">
                     <a href="{{ route('catalog') }}" class="btn btn-blue">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                         Przeglądaj ofertę
                     </a>
-                    <a href="#jak-dzialamy" class="hero-secondary-link">
-                        Jak weryfikujemy?
+                    <a href="#certicheck" class="hero-secondary-link">
+                        Jak sprawdzamy auta?
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </a>
                 </div>
+            </div>
+            <div class="hero-illustration">
+                <img src="/img/hero.png" alt="Certyfikowany samochód — ilustracja" fetchpriority="high" decoding="async" width="1850" height="850">
             </div>
         </div>
     </section>
@@ -491,7 +514,7 @@
 </section>
 @endif
 
-<section class="certicheck-section" id="jak-dzialamy">
+<section class="certicheck-section" id="certicheck">
     <div class="container">
         <div class="certicheck-inner">
             <div class="certicheck-left">

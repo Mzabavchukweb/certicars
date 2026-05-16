@@ -593,7 +593,7 @@ html{scroll-behavior:smooth}
             <div class="cs-gallery-stage">
                 <div class="cs-gallery-main active" id="csGalleryStandard">
                     @if($galleryList->count())
-                        <img src="{{ $galleryList->first()->url }}" id="csMainImg" alt="{{ $galleryList->first()->alt }}" style="cursor:zoom-in" onclick="openCarGallery(0)">
+                        <img src="{{ $galleryList->first()->url }}" id="csMainImg" alt="{{ $galleryList->first()->alt }}" style="cursor:zoom-in" onclick="openCarGallery(0)" fetchpriority="high" decoding="async">
                         <div class="cs-gallery-counter" style="cursor:zoom-in" onclick="openCarGallery(parseInt(document.getElementById('csImgCounter').textContent)-1)"><i data-lucide="maximize-2" aria-hidden="true"></i> <span id="csImgCounter">1</span>/<span id="csImgTotal">{{ $galleryList->count() }}</span></div>
                     @else
                         <div class="empty"><i data-lucide="car" aria-hidden="true"></i></div>
