@@ -43,8 +43,11 @@ if [ -n "$RAILWAY_PUBLIC_DOMAIN" ]; then
   sed -i "s|APP_URL=.*|APP_URL=https://${RAILWAY_PUBLIC_DOMAIN}|" /var/www/html/.env
 fi
 
-# Generate app key if not set
-php artisan key:generate --force 2>/dev/null || true
+# Generate app key only if NOT provided via Railway env (APP_KEY)
+# Otherwise sessions get invalidated on every deploy.
+if [ -z "$APP_KEY" ]; then
+  php artisan key:generate --force 2>/dev/null || true
+fi
 
 # Clear caches for fresh start
 php artisan config:clear
