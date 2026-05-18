@@ -80,26 +80,33 @@
 .hero-search-submit svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5}
 
 /* CERTICHECK SECTION */
-.certicheck-section{background:#0a0a0a;padding:96px 0}
-.certicheck-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
-.certicheck-left .cc-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--orange);margin-bottom:16px}
-.certicheck-left h2{font-size:40px;font-weight:900;color:#fff;letter-spacing:-.8px;line-height:1.1;margin-bottom:20px}
-.certicheck-left p{font-size:15px;color:rgba(255,255,255,.55);line-height:1.7;margin-bottom:36px}
-.certicheck-cta{display:inline-flex;align-items:center;gap:9px;background:var(--blue);color:#fff;padding:14px 28px;border-radius:50px;font-weight:700;font-size:14px;text-decoration:none;transition:all .2s}
-.certicheck-cta:hover{background:var(--blue-h);box-shadow:0 8px 24px rgba(0,102,255,.4);transform:translateY(-1px)}
+.certicheck-section{background:#0a1838;padding:88px 0;position:relative;overflow:hidden}
+.certicheck-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 15% 50%,rgba(30,58,138,.5) 0%,rgba(10,24,56,0) 60%);pointer-events:none}
+.certicheck-inner{display:grid;grid-template-columns:1fr 1.15fr;gap:80px;align-items:center;position:relative;z-index:2}
+.certicheck-left .cc-label{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#7eb3ff;margin-bottom:24px}
+.certicheck-left .cc-label::before{content:'';width:18px;height:1.5px;background:#7eb3ff;display:inline-block}
+.certicheck-left h2{font-size:44px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1.05;margin-bottom:22px}
+.certicheck-left p.cc-desc-main{font-size:15px;color:rgba(255,255,255,.7);line-height:1.7;margin-bottom:32px;max-width:480px}
+.certicheck-ctas{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:28px}
+.certicheck-cta{display:inline-flex;align-items:center;gap:9px;background:var(--blue);color:#fff;padding:14px 26px;border-radius:50px;font-weight:700;font-size:14px;text-decoration:none;transition:all .2s;border:1px solid var(--blue)}
+.certicheck-cta:hover{background:var(--blue-h);border-color:var(--blue-h);color:#fff;box-shadow:0 8px 24px rgba(0,102,255,.4);transform:translateY(-1px)}
 .certicheck-cta svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2.4}
-.certicheck-cards{display:grid;grid-template-columns:1fr 1fr;gap:2px}
-.cc-card{background:rgba(255,255,255,.04);padding:32px 28px;display:flex;flex-direction:column;gap:16px;transition:background .2s;border-radius:0}
-.cc-card:first-child{border-radius:16px 0 0 0}
-.cc-card:nth-child(2){border-radius:0 16px 0 0}
-.cc-card:nth-child(3){border-radius:0 0 0 16px}
-.cc-card:last-child{border-radius:0 0 16px 0}
-.cc-card:hover{background:rgba(255,255,255,.07)}
-.cc-card .cc-num{font-size:28px;font-weight:900;color:rgba(255,255,255,.15);letter-spacing:-1px;line-height:1}
-.cc-card .cc-ico{width:44px;height:44px;background:rgba(0,102,255,.12);border-radius:12px;display:flex;align-items:center;justify-content:center}
-.cc-card .cc-ico svg{width:22px;height:22px;stroke:var(--blue);fill:none;stroke-width:1.8}
-.cc-card .cc-title{font-size:16px;font-weight:700;color:#fff;letter-spacing:-.2px}
-.cc-card .cc-desc{font-size:13px;color:rgba(255,255,255,.62);line-height:1.65;margin-top:2px}
+.certicheck-cta-ghost{display:inline-flex;align-items:center;gap:9px;background:transparent;color:#fff;padding:14px 24px;border-radius:50px;font-weight:600;font-size:14px;text-decoration:none;transition:all .2s;border:1px solid rgba(255,255,255,.2)}
+.certicheck-cta-ghost:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.35);color:#fff;transform:translateY(-1px)}
+.certicheck-cta-ghost svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;transition:transform .2s}
+.certicheck-cta-ghost:hover svg{transform:translateX(3px)}
+.cc-foot{display:inline-flex;align-items:center;gap:9px;font-size:13px;color:rgba(255,255,255,.55);font-weight:500}
+.cc-foot svg{width:16px;height:16px;stroke:#4ea3ff;fill:none;stroke-width:2.2;flex-shrink:0}
+.certicheck-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cc-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);padding:26px 24px;display:flex;flex-direction:column;gap:12px;transition:all .2s;border-radius:16px;position:relative;text-decoration:none;color:inherit}
+.cc-card:hover{background:rgba(255,255,255,.06);border-color:rgba(126,179,255,.35);transform:translateY(-2px)}
+.cc-card .cc-ico{width:44px;height:44px;background:rgba(78,163,255,.12);border:1px solid rgba(78,163,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.cc-card .cc-ico svg{width:20px;height:20px;stroke:#7eb3ff;fill:none;stroke-width:1.8}
+.cc-card .cc-title{font-size:17px;font-weight:700;color:#fff;letter-spacing:-.3px;margin-top:4px}
+.cc-card .cc-desc{font-size:13.5px;color:rgba(255,255,255,.6);line-height:1.6;margin-top:-2px}
+.cc-card .cc-arrow{position:absolute;bottom:22px;right:22px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;opacity:.4;transition:opacity .2s,transform .2s}
+.cc-card:hover .cc-arrow{opacity:1;transform:translateX(3px)}
+.cc-card .cc-arrow svg{width:18px;height:18px;stroke:rgba(255,255,255,.7);fill:none;stroke-width:2}
 
 .section{padding:80px 0}
 .section-inner{max-width:1200px;margin:0 auto;padding:0 24px}
@@ -171,6 +178,7 @@
 .body-type-card .bt-icon img.flip{transform:scaleX(-1)}
 .body-type-card:hover .bt-icon img.flip{transform:scaleX(-1) translateY(-3px)}
 .body-type-card .bt-label{font-size:13px;font-weight:700;color:#444;letter-spacing:-.1px}
+.body-type-card .bt-count{font-size:11.5px;font-weight:600;color:var(--blue);letter-spacing:.1px;margin-top:-4px}
 
 @media(max-width:1024px){
     .hero-text h1{font-size:56px}
@@ -201,14 +209,15 @@
     .lcard-price-col{min-width:130px}
     /* CertiCheck section — tighter on tablet */
     .certicheck-section{padding:56px 0}
-    .certicheck-inner{grid-template-columns:1fr;gap:32px;text-align:center}
-    .certicheck-left p{max-width:480px;margin-left:auto;margin-right:auto}
-    .certicheck-cards{max-width:560px;margin:0 auto}
-    .cc-card .cc-ico{margin:0 auto}
-    .cc-card{padding:24px 22px}
-    .cc-card .cc-num{font-size:22px}
+    .certicheck-inner{grid-template-columns:1fr;gap:40px;text-align:center}
+    .certicheck-left .cc-label{justify-content:center}
+    .certicheck-left h2{font-size:32px}
+    .certicheck-left p.cc-desc-main{max-width:520px;margin-left:auto;margin-right:auto}
+    .certicheck-ctas{justify-content:center}
+    .certicheck-cards{max-width:640px;margin:0 auto;text-align:left}
+    .cc-card{padding:22px 22px}
     .cc-card .cc-title{font-size:15px}
-    .cc-card .cc-desc{font-size:12px;line-height:1.55}
+    .cc-card .cc-desc{font-size:13px;line-height:1.6}
     .feature-strip-in{grid-template-columns:1fr 1fr;gap:20px}
     .section{padding:56px 0}
     .section-head h2{font-size:24px}
@@ -256,21 +265,22 @@
     .body-types-head h2{font-size:24px}
     .body-types-head p{font-size:13px}
     /* CertiCheck section — COMPACT on mobile */
-    .certicheck-section{padding:36px 0}
-    .certicheck-inner{gap:20px}
-    .certicheck-left .cc-label{font-size:10px;letter-spacing:1.2px;margin-bottom:10px}
-    .certicheck-left h2{font-size:24px;margin-bottom:14px}
-    .certicheck-left p{font-size:13px;line-height:1.6;margin-bottom:24px}
-    .certicheck-cta{padding:12px 22px;font-size:13px}
-    .certicheck-cards{grid-template-columns:1fr;gap:1px}
-    .cc-card{padding:14px 18px;gap:6px;border-radius:0!important}
-    .cc-card:first-child{border-radius:10px 10px 0 0!important}
-    .cc-card:last-child{border-radius:0 0 10px 10px!important}
-    .cc-card .cc-num{font-size:16px;margin-bottom:-2px}
-    .cc-card .cc-ico{width:32px;height:32px;border-radius:8px}
-    .cc-card .cc-ico svg{width:16px;height:16px}
-    .cc-card .cc-title{font-size:13px;letter-spacing:-.1px}
-    .cc-card .cc-desc{font-size:11px;line-height:1.45;margin-top:0;color:rgba(255,255,255,.5)}
+    .certicheck-section{padding:48px 0}
+    .certicheck-inner{gap:28px}
+    .certicheck-left .cc-label{font-size:10.5px;letter-spacing:1.5px;margin-bottom:14px}
+    .certicheck-left h2{font-size:26px;margin-bottom:14px}
+    .certicheck-left p.cc-desc-main{font-size:14px;line-height:1.6;margin-bottom:24px}
+    .certicheck-ctas{gap:10px}
+    .certicheck-cta,.certicheck-cta-ghost{padding:12px 22px;font-size:13px}
+    .cc-foot{font-size:12px}
+    .certicheck-cards{grid-template-columns:1fr;gap:10px}
+    .cc-card{padding:20px 20px;gap:10px;border-radius:14px}
+    .cc-card .cc-ico{width:38px;height:38px}
+    .cc-card .cc-ico svg{width:18px;height:18px}
+    .cc-card .cc-title{font-size:15px}
+    .cc-card .cc-desc{font-size:13px;line-height:1.55}
+    .cc-card .cc-arrow{bottom:18px;right:18px;width:18px;height:18px}
+    .cc-card .cc-arrow svg{width:16px;height:16px}
     .feature-strip-in{grid-template-columns:1fr}
     .cat-cards{grid-template-columns:1fr}
     /* Price — even MORE prominent on small mobile */
@@ -375,31 +385,33 @@
             </div>
             <a href="{{ route('catalog') }}" class="body-types-head-link">Pokaż wszystkie <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
         </div>
+        @php
+            $plCars = function ($n) {
+                $n = (int) $n;
+                if ($n === 1) return 'samochód';
+                $mod10 = $n % 10;
+                $mod100 = $n % 100;
+                if ($mod10 >= 2 && $mod10 <= 4 && ($mod100 < 12 || $mod100 > 14)) return 'samochody';
+                return 'samochodów';
+            };
+            $bodyTypes = [
+                ['Sedan',     'sedan.png'],
+                ['SUV',       'suv.png'],
+                ['Coupé',     'coupe.png'],
+                ['Bus',       'van.png'],
+                ['Kombi',     'kombi.png'],
+                ['Hatchback', 'hatchback.png'],
+            ];
+        @endphp
         <div class="body-types-grid">
-            <a href="{{ route('catalog', ['category' => 'Sedan']) }}" class="body-type-card">
-                <div class="bt-icon"><img src="/img/body-types/sedan.png" alt="" aria-hidden="true" loading="lazy"></div>
-                <span class="bt-label">Sedan</span>
-            </a>
-            <a href="{{ route('catalog', ['category' => 'SUV']) }}" class="body-type-card">
-                <div class="bt-icon"><img src="/img/body-types/suv.png" alt="" aria-hidden="true" loading="lazy"></div>
-                <span class="bt-label">SUV</span>
-            </a>
-            <a href="{{ route('catalog', ['category' => 'Coupé']) }}" class="body-type-card">
-                <div class="bt-icon"><img src="/img/body-types/coupe.png" alt="" aria-hidden="true" loading="lazy"></div>
-                <span class="bt-label">Coupé</span>
-            </a>
-            <a href="{{ route('catalog', ['category' => 'Bus']) }}" class="body-type-card">
-                <div class="bt-icon"><img src="/img/body-types/van.png" alt="" aria-hidden="true" loading="lazy"></div>
-                <span class="bt-label">Bus</span>
-            </a>
-            <a href="{{ route('catalog', ['category' => 'Kombi']) }}" class="body-type-card">
-                <div class="bt-icon"><img src="/img/body-types/kombi.png" alt="" aria-hidden="true" loading="lazy"></div>
-                <span class="bt-label">Kombi</span>
-            </a>
-            <a href="{{ route('catalog', ['category' => 'Hatchback']) }}" class="body-type-card">
-                <div class="bt-icon"><img src="/img/body-types/hatchback.png" alt="" aria-hidden="true" loading="lazy"></div>
-                <span class="bt-label">Hatchback</span>
-            </a>
+            @foreach($bodyTypes as [$cat, $img])
+                @php $count = (int) ($bodyTypeCounts[$cat] ?? 0); @endphp
+                <a href="{{ route('catalog', ['category' => $cat]) }}" class="body-type-card">
+                    <div class="bt-icon"><img src="/img/body-types/{{ $img }}" alt="" aria-hidden="true" loading="lazy"></div>
+                    <span class="bt-label">{{ $cat }}</span>
+                    <span class="bt-count">{{ $count }} {{ $plCars($count) }}</span>
+                </a>
+            @endforeach
         </div>
     </div>
 </div>
@@ -516,39 +528,49 @@
     <div class="container">
         <div class="certicheck-inner">
             <div class="certicheck-left">
-                <p class="cc-label">CertiCheck — jak to działa</p>
-                <h2>Inspekcja zanim wystawimy auto na sprzedaż</h2>
-                <p>Cztery etapy kontroli dają Ci pełny obraz stanu pojazdu. Żadnych niespodzianek przy odbiorze.</p>
-                <a href="{{ route('catalog') }}" class="certicheck-cta">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                    Przeglądaj ofertę
-                </a>
+                <p class="cc-label">CertiCheck — dla wybranych aut</p>
+                <h2>Wiesz więcej<br>przed przyjazdem</h2>
+                <p class="cc-desc-main">Przy wybranych autach przygotowujemy rozszerzony opis CertiCheck z dodatkowymi informacjami o stanie pojazdu, lakierze, śladach użytkowania i dokumentach. Dzięki temu łatwiej oceniasz auto jeszcze przed wizytą.</p>
+                <div class="certicheck-ctas">
+                    <a href="{{ route('catalog') }}" class="certicheck-cta">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        Zobacz auta z CertiCheck
+                    </a>
+                    <a href="{{ route('about') }}" class="certicheck-cta-ghost">
+                        Jak działa CertiCheck?
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                </div>
+                <div class="cc-foot">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+                    CertiCheck dotyczy wybranych pojazdów w naszej ofercie.
+                </div>
             </div>
             <div class="certicheck-cards">
-                <div class="cc-card">
-                    <span class="cc-num">01</span>
-                    <div class="cc-ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.622 17.897-10.68-2.913"/><path d="M18.376 2.622a1 1 0 1 1 3.002 3.002L17.36 9.643a.5.5 0 0 0 0 .707l.944.944a2.41 2.41 0 0 1 0 3.408l-.944.944a.5.5 0 0 1-.707 0L8.354 7.348a.5.5 0 0 1 0-.707l.944-.944a2.41 2.41 0 0 1 3.408 0l.944.944a.5.5 0 0 0 .707 0z"/><path d="M9 8c-1.804 2.71-3.97 3.46-6.583 3.948a.507.507 0 0 0-.302.819l7.32 8.883a1 1 0 0 0 1.185.204C12.735 20.405 16 16.792 16 15"/></svg></div>
-                    <div class="cc-title">Pomiar lakieru</div>
-                    <div class="cc-desc">Każdy element karoserii mierzony osobno. Wykrywamy reperacją i przemalowania.</div>
-                </div>
-                <div class="cc-card">
-                    <span class="cc-num">02</span>
-                    <div class="cc-ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></div>
-                    <div class="cc-title">Mapa uszkodzeń</div>
-                    <div class="cc-desc">Interaktywna mapa z dokładną lokalizacją każdego uszkodzenia i dokumentacją foto.</div>
-                </div>
-                <div class="cc-card">
-                    <span class="cc-num">03</span>
+                <a href="{{ route('catalog') }}" class="cc-card">
+                    <div class="cc-ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 11a3 3 0 1 0 0 6v0a3 3 0 0 0 0-6"/><path d="M12 2v2"/><path d="M5 5l2 2"/><path d="M2 12h2"/><path d="M17 7l2-2"/><path d="M22 12h-2"/><path d="M19 19l-2-2"/><path d="M12 22v-2"/></svg></div>
+                    <div class="cc-title">Pomiary lakieru</div>
+                    <div class="cc-desc">Wykryjemy ponowne malowania i grubsze powłoki w punktach kontrolnych.</div>
+                    <div class="cc-arrow"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+                </a>
+                <a href="{{ route('catalog') }}" class="cc-card">
                     <div class="cc-ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
                     <div class="cc-title">Stan techniczny</div>
-                    <div class="cc-desc">Inspekcja punkt po punkcie. Silnik, zawieszenie, układ hamulcowy i elektryka.</div>
-                </div>
-                <div class="cc-card">
-                    <span class="cc-num">04</span>
+                    <div class="cc-desc">Sprawdzamy kluczowe elementy mechaniczne i eksploatacyjne pojazdu.</div>
+                    <div class="cc-arrow"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+                </a>
+                <a href="{{ route('catalog') }}" class="cc-card">
+                    <div class="cc-ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12c1.5-1 2.5-1 4 0s2.5 1 4 0"/><circle cx="9" cy="9" r=".5" fill="currentColor"/><circle cx="15" cy="9" r=".5" fill="currentColor"/></svg></div>
+                    <div class="cc-title">Ślady użytkowania</div>
+                    <div class="cc-desc">Wskazujemy widoczne ślady eksploatacji i ich dokładną lokalizację.</div>
+                    <div class="cc-arrow"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+                </a>
+                <a href="{{ route('catalog') }}" class="cc-card">
                     <div class="cc-ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></div>
-                    <div class="cc-title">Broszura PDF</div>
-                    <div class="cc-desc">Pełny raport CertiCheck do pobrania. Transparentna historia dla każdego kupującego.</div>
-                </div>
+                    <div class="cc-title">Raport PDF</div>
+                    <div class="cc-desc">Czytelne podsumowanie ze zdjęciami i danymi do pobrania.</div>
+                    <div class="cc-arrow"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+                </a>
             </div>
         </div>
     </div>

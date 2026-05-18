@@ -21,6 +21,12 @@ class HomeController extends Controller
             ->get()
             ->filter(fn($b) => $b->cars_count > 0);
 
-        return view('home', compact('featuredCars', 'totalCars', 'brands'));
+        $bodyTypeCounts = Car::available()
+            ->selectRaw('category, COUNT(*) as total')
+            ->whereNotNull('category')
+            ->groupBy('category')
+            ->pluck('total', 'category');
+
+        return view('home', compact('featuredCars', 'totalCars', 'brands', 'bodyTypeCounts'));
     }
 }
