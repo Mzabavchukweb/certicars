@@ -17,9 +17,17 @@ class BrandController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(['name' => 'required|string|max:255|unique:brands,name']);
-        Brand::create(['name' => $request->name]);
+        $validated = $request->validate(['name' => 'required|string|max:255|unique:brands,name']);
+        $brand = Brand::create(['name' => $validated['name']]);
         Cache::forget('catalog.filters');
+
+        if ($request->expectsJson() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'brand'   => ['id' => $brand->id, 'name' => $brand->name],
+            ], 201);
+        }
+
         return back()->with('success', 'Marka została dodana.');
     }
 

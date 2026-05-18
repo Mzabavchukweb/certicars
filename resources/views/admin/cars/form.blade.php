@@ -92,13 +92,19 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
         <h2>Dane podstawowe</h2>
         <div class="field-row">
             <div class="field">
-                <label>Marka *</label>
-                <select name="brand_id" required>
+                <label>Marka * <a href="#" id="brandAddToggle" style="float:right;font-size:11px;font-weight:600;color:var(--blue);text-decoration:none;display:inline-flex;align-items:center;gap:4px"><i data-lucide="plus" style="width:12px;height:12px"></i> Dodaj nową</a></label>
+                <select name="brand_id" id="brandSelect" required>
                     <option value="">— wybierz —</option>
                     @foreach($brands as $b)
                         <option value="{{ $b->id }}" {{ old('brand_id',$car?->brand_id)==$b->id?'selected':'' }}>{{ $b->name }}</option>
                     @endforeach
                 </select>
+                <div id="brandAddRow" style="display:none;margin-top:8px;gap:6px;align-items:stretch">
+                    <input type="text" id="brandAddName" placeholder="Nazwa nowej marki" maxlength="255" style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px">
+                    <button type="button" id="brandAddSubmit" class="btn btn-blue btn-sm" style="white-space:nowrap"><i data-lucide="check" style="width:14px;height:14px"></i> Dodaj</button>
+                    <button type="button" id="brandAddCancel" class="btn btn-outline btn-sm" style="white-space:nowrap"><i data-lucide="x" style="width:14px;height:14px"></i></button>
+                </div>
+                <div id="brandAddError" style="display:none;color:#dc2626;font-size:12px;margin-top:6px"></div>
             </div>
             <div class="field">
                 <label>Model *</label>
@@ -752,6 +758,96 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
 
 @push('scripts')
 <script>
+// ===== Inline brand creation =====
+(function(){
+    const toggle = document.getElementById('brandAddToggle');
+    const row    = document.getElementById('brandAddRow');
+    const input  = document.getElementById('brandAddName');
+    const submit = document.getElementById('brandAddSubmit');
+    const cancel = document.getElementById('brandAddCancel');
+    const errBox = document.getElementById('brandAddError');
+    const select = document.getElementById('brandSelect');
+    if (!toggle || !row || !select) return;
+
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content
+              || document.querySelector('input[name="_token"]')?.value;
+
+    function showError(msg){ errBox.textContent = msg; errBox.style.display = 'block'; }
+    function clearError(){ errBox.textContent = ''; errBox.style.display = 'none'; }
+
+    function open(){
+        row.style.display = 'flex';
+        input.value = '';
+        clearError();
+        setTimeout(()=>input.focus(), 30);
+    }
+    function close(){
+        row.style.display = 'none';
+        clearError();
+    }
+
+    toggle.addEventListener('click', e => { e.preventDefault(); row.style.display === 'flex' ? close() : open(); });
+    cancel.addEventListener('click', close);
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); submit.click(); }
+        if (e.key === 'Escape') { e.preventDefault(); close(); }
+    });
+
+    submit.addEventListener('click', async () => {
+        const name = (input.value || '').trim();
+        if (!name) { showError('Podaj nazwę marki.'); input.focus(); return; }
+
+        clearError();
+        submit.disabled = true;
+        const originalText = submit.innerHTML;
+        submit.innerHTML = '...';
+
+        try {
+            const res = await fetch('{{ route("admin.brands.store") }}', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrf,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ name }),
+            });
+            const data = await res.json().catch(() => ({}));
+
+            if (!res.ok) {
+                const msg = data?.errors?.name?.[0] || data?.message || 'Nie udało się dodać marki.';
+                showError(msg);
+                return;
+            }
+
+            const opt = document.createElement('option');
+            opt.value = data.brand.id;
+            opt.textContent = data.brand.name;
+            opt.selected = true;
+            // Insert sorted by name (case-insensitive)
+            const opts = Array.from(select.options).filter(o => o.value);
+            let inserted = false;
+            for (const o of opts) {
+                if (o.textContent.localeCompare(data.brand.name, 'pl', { sensitivity: 'base' }) > 0) {
+                    select.insertBefore(opt, o);
+                    inserted = true;
+                    break;
+                }
+            }
+            if (!inserted) select.appendChild(opt);
+            select.value = data.brand.id;
+            close();
+        } catch (e) {
+            showError('Błąd sieci — spróbuj ponownie.');
+        } finally {
+            submit.disabled = false;
+            submit.innerHTML = originalText;
+            if (window.lucide) lucide.createIcons();
+        }
+    });
+})();
+
 (function(){
     // ===== Tabs =====
     const tabs=document.querySelectorAll('.tab-btn'),panels=document.querySelectorAll('.tab-panel');
