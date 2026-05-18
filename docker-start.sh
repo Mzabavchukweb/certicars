@@ -11,9 +11,24 @@ mkdir -p \
   /var/www/html/storage/framework/sessions \
   /var/www/html/storage/framework/testing \
   /var/www/html/storage/framework/views \
-  /var/www/html/storage/logs
+  /var/www/html/storage/logs \
+  /var/www/html/storage/database
 chown -R www-data:www-data /var/www/html/storage 2>/dev/null || true
 chmod -R 775 /var/www/html/storage 2>/dev/null || true
+
+# Persistent SQLite DB lives in the storage volume.
+# First boot: migrate the ephemeral DB into the volume if a fresh volume.
+PERSISTENT_DB=/var/www/html/storage/database/database.sqlite
+EPHEMERAL_DB=/var/www/html/database/database.sqlite
+if [ ! -f "$PERSISTENT_DB" ]; then
+  if [ -f "$EPHEMERAL_DB" ] && [ -s "$EPHEMERAL_DB" ]; then
+    cp "$EPHEMERAL_DB" "$PERSISTENT_DB"
+  else
+    touch "$PERSISTENT_DB"
+  fi
+fi
+chmod 664 "$PERSISTENT_DB"
+chown www-data:www-data "$PERSISTENT_DB" 2>/dev/null || true
 
 # Create .env from example if not exists
 if [ ! -f /var/www/html/.env ]; then

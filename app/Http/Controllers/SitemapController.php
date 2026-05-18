@@ -22,7 +22,7 @@ class SitemapController extends Controller
 
     private function build(): string
     {
-        $cars = Car::with(['primaryImage'])
+        $cars = Car::with(['images'])
             ->where('status', 'active')
             ->where('is_sold', false)
             ->where('noindex', false)
