@@ -1,48 +1,48 @@
-FROM php:8.4-cli
+FROM php:8.4-fpm
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    libpng-dev libjpeg-dev libfreetype6-dev libzip-dev libsqlite3-dev unzip git curl \
+# System deps + nginx + node
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        nginx supervisor \
+        libpng-dev libjpeg-dev libfreetype6-dev libzip-dev libsqlite3-dev \
+        unzip git curl ca-certificates \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_sqlite zip bcmath \
+    && docker-php-ext-install gd pdo pdo_sqlite zip bcmath opcache \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js 20 LTS for Vite build
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && rm -rf /var/lib/apt/lists/*
+# PHP ini hardening + opcache + uploads
+COPY docker/php-security.ini /usr/local/etc/php/conf.d/zz-security.ini
+COPY docker/php-opcache.ini  /usr/local/etc/php/conf.d/zz-opcache.ini
+COPY docker/php-uploads.ini  /usr/local/etc/php/conf.d/zz-uploads.ini
 
-# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
 WORKDIR /var/www/html
 
-# Copy composer files first for caching
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+RUN composer install --no-dev --optimize-autoloader --no-scripts --prefer-dist
 
-# Copy package files and install npm dependencies
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --no-audit --no-fund
 
-# Copy application
 COPY . .
 
-# Build Vite assets for production
-RUN npm run build
+RUN npm run build && rm -rf node_modules
 
-# Post-install scripts
 RUN composer dump-autoload --optimize
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+# nginx + supervisord + php-fpm pool config
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+COPY docker/php-fpm.conf /usr/local/etc/php-fpm.d/zz-app.conf
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Ensure database directory is writable
-RUN mkdir -p /var/www/html/database \
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
+    && mkdir -p /var/www/html/database \
     && touch /var/www/html/database/database.sqlite \
     && chmod 666 /var/www/html/database/database.sqlite \
-    && chown -R www-data:www-data /var/www/html/database
+    && chown -R www-data:www-data /var/www/html/database \
+    && mkdir -p /var/log/supervisor /run/nginx /run/php
 
 COPY docker-start.sh /var/www/html/start.sh
 RUN chmod +x /var/www/html/start.sh

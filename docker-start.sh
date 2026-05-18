@@ -4,6 +4,9 @@ set -e
 # Railway provides PORT env var — default to 8080
 PORT="${PORT:-8080}"
 
+# Substitute PORT in nginx config (default site listens on 8080)
+sed -i "s/listen 8080 default_server;/listen ${PORT} default_server;/" /etc/nginx/nginx.conf
+
 # Ensure Laravel storage subdirectories exist (Railway mounts persistent volume here)
 mkdir -p \
   /var/www/html/storage/app/public \
@@ -59,5 +62,8 @@ php artisan view:cache
 rm -f /var/www/html/public/storage
 php artisan storage:link 2>/dev/null || true
 
-echo "Starting Laravel server on port ${PORT}..."
-exec php artisan serve --host=0.0.0.0 --port="${PORT}"
+# Final permission pass (volume mount may reset uid/gid)
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
+
+echo "Starting nginx + php-fpm on port ${PORT}..."
+exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
