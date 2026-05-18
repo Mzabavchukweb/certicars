@@ -736,6 +736,7 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
 
 {{-- ====== SIDEBAR: STATUS ====== --}}
 <div>
+    <input type="hidden" name="active_tab" id="activeTabInput" value="basic">
     <div class="card" style="position:sticky;top:80px">
         <h2>Publikacja</h2>
         <div class="field">
@@ -930,6 +931,8 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
         tabs.forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
         panels.forEach(p=>p.classList.toggle('active',p.dataset.panel===name));
         history.replaceState(null,'',location.pathname+'#'+name);
+        const hidden=document.getElementById('activeTabInput');
+        if(hidden)hidden.value=name;
         if(window.initLightbox)initLightbox();
     }
     tabs.forEach(t=>t.addEventListener('click',()=>activateTab(t.dataset.tab)));

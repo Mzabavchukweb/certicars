@@ -114,7 +114,7 @@ class CarController extends Controller
     {
         $validated = $this->validateCar($request);
         $validated = $this->processEquipment($validated);
-        unset($validated['engine_video_file'], $validated['remove_engine_video'], $validated['image_alt']);
+        unset($validated['engine_video_file'], $validated['remove_engine_video'], $validated['image_alt'], $validated['active_tab']);
         $car = Car::create($validated);
 
         $this->handleEngineVideo($car, $request);
@@ -123,7 +123,7 @@ class CarController extends Controller
 
         Cache::forget('catalog.filters');
 
-        return redirect()->route('admin.cars.edit', $car)
+        return redirect($this->editUrlWithTab($car, $request))
             ->with('success', 'Samochód został dodany.');
     }
 
@@ -160,7 +160,7 @@ class CarController extends Controller
     {
         $validated = $this->validateCar($request);
         $validated = $this->processEquipment($validated);
-        unset($validated['engine_video_file'], $validated['remove_engine_video'], $validated['image_alt']);
+        unset($validated['engine_video_file'], $validated['remove_engine_video'], $validated['image_alt'], $validated['active_tab']);
         $car->update($validated);
 
         $this->handleEngineVideo($car, $request);
@@ -169,8 +169,21 @@ class CarController extends Controller
 
         Cache::forget('catalog.filters');
 
-        return redirect()->route('admin.cars.edit', $car)
+        return redirect($this->editUrlWithTab($car, $request))
             ->with('success', 'Samochód został zaktualizowany.');
+    }
+
+    private function editUrlWithTab(Car $car, Request $request): string
+    {
+        $url = route('admin.cars.edit', $car);
+        $tab = $request->input('active_tab');
+        $allowedTabs = ['basic','engine','vehicle','service','seller','equipment','condition','damages','tires','images','seo'];
+
+        if (is_string($tab) && in_array($tab, $allowedTabs, true)) {
+            $url .= '#' . $tab;
+        }
+
+        return $url;
     }
 
     private function handleEngineVideo(Car $car, Request $request): void
@@ -325,6 +338,7 @@ class CarController extends Controller
             'delete_images.*' => 'integer|exists:car_images,id',
             'image_order' => 'nullable|array',
             'image_order.*' => 'integer|exists:car_images,id',
+            'active_tab' => 'nullable|string|max:32',
             'paint_measurements' => 'nullable|array',
             'technical_conditions' => 'nullable|array',
             'equipment' => 'nullable|array',
