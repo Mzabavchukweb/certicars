@@ -303,6 +303,7 @@ class CarController extends Controller
             'remove_engine_video' => 'nullable|boolean',
             'is_featured' => 'nullable|boolean',
             'is_sold' => 'nullable|boolean',
+            'has_certicheck' => 'nullable|boolean',
             'status' => 'nullable|string|in:draft,active,sold,reserved',
             'meta_title' => 'nullable|string|max:180',
             'meta_description' => 'nullable|string|max:320',

@@ -493,6 +493,7 @@
                             @endif
                         </div>
 
+                        @if($car->has_certicheck)
                         <div class="lcard-meta">
                             <span class="cc-badge" onclick="event.preventDefault();event.stopPropagation();var a=document.createElement('a');a.href='/samochody/{{ $car->slug }}/pdf';a.download='';document.body.appendChild(a);a.click();a.remove()">
                                 <span class="cc-badge-icon">
@@ -501,6 +502,7 @@
                                 <span class="cc-badge-text"><em>Certi</em>Check</span>
                             </span>
                         </div>
+                        @endif
                     </div>
 
                     {{-- Price --}}

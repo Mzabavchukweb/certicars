@@ -105,7 +105,13 @@ class CatalogController extends Controller
 
     public function certicheck(Car $car)
     {
-        if ($car->status !== 'active' && !(auth()->user()?->is_admin)) {
+        $isAdmin = auth()->user()?->is_admin;
+
+        if ($car->status !== 'active' && !$isAdmin) {
+            abort(404);
+        }
+
+        if (! $car->has_certicheck && !$isAdmin) {
             abort(404);
         }
 

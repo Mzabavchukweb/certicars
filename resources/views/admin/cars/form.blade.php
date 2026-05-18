@@ -759,6 +759,14 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
                 <input type="checkbox" name="is_sold" value="1" {{ old('is_sold',$car?->is_sold)?'checked':'' }}> Oznacz jako sprzedane
             </label>
         </div>
+        <div class="field" style="background:rgba(0,102,255,.06);border:1px solid rgba(0,102,255,.18);border-radius:10px;padding:12px 14px;margin-bottom:14px">
+            <label class="inline-label" style="font-weight:600">
+                <input type="hidden" name="has_certicheck" value="0">
+                <input type="checkbox" name="has_certicheck" value="1" {{ old('has_certicheck',$car?->has_certicheck)?'checked':'' }}>
+                <span style="display:flex;align-items:center;gap:6px"><i data-lucide="shield-check" style="width:14px;height:14px;color:var(--blue)"></i> CertiCheck</span>
+            </label>
+            <p style="font-size:11.5px;color:var(--text-3);margin:6px 0 0 24px;line-height:1.45">Pokazuje plakietkę "CertiCheck" w katalogu oraz udostępnia broszurę PDF na stronie auta.</p>
+        </div>
         <button type="submit" class="btn btn-blue" id="carFormSubmit" style="width:100%;justify-content:center;padding:13px"><i data-lucide="save"></i> {{ $car ? 'Zapisz zmiany' : 'Utwórz' }}</button>
         <a href="{{ route('admin.cars.index') }}" class="btn btn-outline" style="width:100%;justify-content:center;margin-top:8px">Anuluj</a>
     </div>

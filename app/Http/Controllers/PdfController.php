@@ -9,7 +9,13 @@ class PdfController extends Controller
 {
     public function generate(Car $car)
     {
-        if (($car->status !== 'active' || $car->is_sold) && !(auth()->user()?->is_admin)) {
+        $isAdmin = auth()->user()?->is_admin;
+
+        if (($car->status !== 'active' || $car->is_sold) && !$isAdmin) {
+            abort(404);
+        }
+
+        if (! $car->has_certicheck && ! $isAdmin) {
             abort(404);
         }
 
