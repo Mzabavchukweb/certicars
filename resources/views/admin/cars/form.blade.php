@@ -65,6 +65,13 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
 @keyframes view-fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 .damage-item.dim{opacity:.45}
 .damage-item.dim:hover{opacity:.9}
+.sort-item{cursor:grab;transition:transform .15s,opacity .15s,box-shadow .15s}
+.sort-item:active{cursor:grabbing}
+.sort-item.dragging{opacity:.5;transform:scale(.95)}
+.sort-item.drag-over{box-shadow:0 0 0 3px var(--blue);transform:scale(1.02)}
+.drag-handle{position:absolute;top:6px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;border-radius:6px;width:26px;height:22px;display:flex;align-items:center;justify-content:center;cursor:grab;opacity:0;transition:opacity .15s;pointer-events:none}
+.sort-item:hover .drag-handle{opacity:1}
+.drag-handle i{width:14px;height:14px}
 </style>
 
 <div class="card" style="padding:0;margin-bottom:18px">
@@ -78,7 +85,7 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
         <button type="button" class="tab-btn" data-tab="condition"><i data-lucide="shield-check"></i> Stan i lakier</button>
         <button type="button" class="tab-btn" data-tab="damages"><i data-lucide="alert-triangle"></i> Uszkodzenia <span class="badge-count" id="cntDamages">{{ $existingDamages->count() }}</span></button>
         <button type="button" class="tab-btn" data-tab="tires"><i data-lucide="circle"></i> Opony <span class="badge-count" id="cntTires">{{ $existingTireSets->count() }}</span></button>
-        @if($car)<button type="button" class="tab-btn" data-tab="images"><i data-lucide="image"></i> Zdjęcia <span class="badge-count">{{ $car->images->count() }}</span></button>@endif
+        <button type="button" class="tab-btn" data-tab="images"><i data-lucide="image"></i> Zdjęcia <span class="badge-count">{{ $car?->images->count() ?? 0 }}</span></button>
         <button type="button" class="tab-btn" data-tab="seo"><i data-lucide="search"></i> SEO <span class="badge-count" id="seoScoreBadge">—</span></button>
     </div>
 </div>
@@ -463,20 +470,29 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
 </div>
 
 {{-- ====== TAB: IMAGES ====== --}}
-@if($car)
 <div class="tab-panel" data-panel="images">
+    @if(!$car)
+    <div class="card" style="background:#eff6ff;border:1px solid #bfdbfe">
+        <p style="font-size:13px;color:#1e40af;margin:0;display:flex;gap:8px;align-items:center">
+            <i data-lucide="info" style="width:16px;height:16px;flex-shrink:0"></i>
+            <span>Wybierz zdjęcia poniżej. Zostaną zapisane razem z autem po kliknięciu <strong>"Zapisz"</strong>.</span>
+        </p>
+    </div>
+    @endif
     <div class="card">
-        <h2>Galeria</h2>
+        <h2>Galeria <span style="font-size:12px;font-weight:500;color:var(--text-3);margin-left:8px">— przeciągnij, aby zmienić kolejność</span></h2>
         <p style="font-size:12px;color:var(--text-3);margin:-6px 0 14px">Alt text wypełniany automatycznie z tytułu auta — możesz nadpisać dla lepszego SEO.</p>
-        @if($car->galleryImages->count())
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:14px">
+        @if($car && $car->galleryImages->count())
+        <div id="galleryGrid" data-sortable data-type="gallery" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:14px">
             @foreach($car->galleryImages as $img)
-            <div style="background:#fff;border:1px solid var(--border-l);border-radius:10px;overflow:hidden">
+            <div class="sort-item" data-img-id="{{ $img->id }}" draggable="true" style="background:#fff;border:1px solid var(--border-l);border-radius:10px;overflow:hidden">
                 <div class="img-tile" data-img-id="{{ $img->id }}" data-lightbox="{{ $img->url }}" data-gallery="admin-gallery" data-caption="{{ $img->alt }}" style="border:none;border-radius:0">
                     <img src="{{ $img->url }}" alt="{{ $img->alt }}">
+                    <span class="drag-handle" title="Przeciągnij, aby zmienić kolejność"><i data-lucide="grip-vertical"></i></span>
                     <label class="primary-badge" title="Zaznacz jako główne"><input type="radio" name="primary_image_id" value="{{ $img->id }}" {{ $img->is_primary?'checked':'' }}> Główne</label>
                     <button type="button" class="del-toggle" onclick="toggleDelete(this,{{ $img->id }},'gallery')"><i data-lucide="x"></i></button>
                     <input type="checkbox" name="delete_images[]" value="{{ $img->id }}" style="display:none">
+                    <input type="hidden" name="image_order[]" value="{{ $img->id }}" class="sort-order-input">
                 </div>
                 <div style="padding:8px 10px">
                     <input type="text" name="image_alt[{{ $img->id }}]" value="{{ $img->alt_text }}" placeholder="{{ $img->alt }}" style="width:100%;padding:6px 9px;border:1px solid var(--border);border-radius:6px;font-size:11.5px" title="Alt text — opis zdjęcia dla SEO i accessibility">
@@ -484,7 +500,7 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
             </div>
             @endforeach
         </div>
-        @else
+        @elseif($car)
         <p style="color:var(--text-3);font-size:12.5px;margin-bottom:10px">Brak zdjęć galerii.</p>
         @endif
         <label class="file-drop" id="galleryDrop">
@@ -496,7 +512,7 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
 
     <div class="card">
         <h2>Zdjęcia uszkodzeń</h2>
-        @if($car->damageImages->count())
+        @if($car && $car->damageImages->count())
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:14px">
             @foreach($car->damageImages as $img)
             <div style="background:#fff;border:1px solid var(--border-l);border-radius:10px;overflow:hidden">
@@ -511,7 +527,7 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
             </div>
             @endforeach
         </div>
-        @else
+        @elseif($car)
         <p style="color:var(--text-3);font-size:12.5px;margin-bottom:10px">Brak zdjęć uszkodzeń.</p>
         @endif
         <label class="file-drop" id="damageDrop">
@@ -610,7 +626,6 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
         </label>
     </div>
 </div>
-@endif
 
 {{-- ====== TAB: SEO ====== --}}
 <div class="tab-panel" data-panel="seo">
@@ -758,6 +773,58 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
 
 @push('scripts')
 <script>
+// ===== Drag-and-drop gallery reorder =====
+(function(){
+    const grid = document.getElementById('galleryGrid');
+    if (!grid) return;
+
+    let draggedEl = null;
+
+    function syncOrder(){
+        const items = grid.querySelectorAll('.sort-item');
+        items.forEach((it, idx) => {
+            const inp = it.querySelector('.sort-order-input');
+            if (inp) inp.value = it.dataset.imgId;
+            // image_order[] keeps DOM order naturally — but force re-index for clarity
+        });
+        // Re-collect hidden inputs in DOM order so the form submits the new sequence
+        const hidden = grid.querySelectorAll('input[name="image_order[]"]');
+        hidden.forEach(h => h.parentNode.appendChild(h));
+    }
+
+    grid.querySelectorAll('.sort-item').forEach(item => {
+        item.addEventListener('dragstart', e => {
+            draggedEl = item;
+            item.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', item.dataset.imgId);
+        });
+        item.addEventListener('dragend', () => {
+            item.classList.remove('dragging');
+            grid.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+            draggedEl = null;
+            syncOrder();
+        });
+        item.addEventListener('dragover', e => {
+            e.preventDefault();
+            if (!draggedEl || draggedEl === item) return;
+            item.classList.add('drag-over');
+            e.dataTransfer.dropEffect = 'move';
+        });
+        item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+        item.addEventListener('drop', e => {
+            e.preventDefault();
+            item.classList.remove('drag-over');
+            if (!draggedEl || draggedEl === item) return;
+            const rect = item.getBoundingClientRect();
+            const after = (e.clientY - rect.top) > rect.height / 2 || (e.clientX - rect.left) > rect.width / 2;
+            if (after) item.parentNode.insertBefore(draggedEl, item.nextSibling);
+            else item.parentNode.insertBefore(draggedEl, item);
+            syncOrder();
+        });
+    });
+})();
+
 // ===== Inline brand creation =====
 (function(){
     const toggle = document.getElementById('brandAddToggle');

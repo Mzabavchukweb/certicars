@@ -322,6 +322,8 @@ class CarController extends Controller
             'primary_image_id' => 'nullable|integer|exists:car_images,id',
             'delete_images' => 'nullable|array',
             'delete_images.*' => 'integer|exists:car_images,id',
+            'image_order' => 'nullable|array',
+            'image_order.*' => 'integer|exists:car_images,id',
             'paint_measurements' => 'nullable|array',
             'technical_conditions' => 'nullable|array',
             'equipment' => 'nullable|array',
@@ -453,6 +455,12 @@ class CarController extends Controller
         if ($request->filled('primary_image_id')) {
             $car->images()->update(['is_primary' => false]);
             $car->images()->where('id', $request->primary_image_id)->update(['is_primary' => true]);
+        }
+
+        if ($request->filled('image_order') && is_array($request->image_order)) {
+            foreach ($request->image_order as $position => $imageId) {
+                $car->images()->where('id', (int) $imageId)->update(['sort_order' => $position]);
+            }
         }
 
         if ($request->has('image_alt') && is_array($request->image_alt)) {
