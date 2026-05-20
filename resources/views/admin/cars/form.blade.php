@@ -10,6 +10,8 @@ $techCategories = [
     'engine'       => 'Silnik',
     'transmission' => 'Skrzynia / napęd',
     'suspension'   => 'Zawieszenie / hamulce',
+    'air_conditioning' => 'Klimatyzacja',
+    'braking'      => 'Układ hamulcowy',
     'electronics'  => 'Elektronika',
     'body'         => 'Nadwozie / lakier',
 ];
@@ -120,7 +122,14 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
         </div>
         <div class="field-row-3">
             <div class="field"><label>Kategoria</label><input type="text" name="category" value="{{ old('category',$car?->category) }}" placeholder="Sedan, SUV, Coupé..."></div>
-            <div class="field"><label>Nadwozie</label><input type="text" name="body_type" value="{{ old('body_type',$car?->body_type) }}"></div>
+            <div class="field"><label>Nadwozie</label>
+                <select name="body_type" id="bodyTypeSelect">
+                    <option value="">— wybierz —</option>
+                    @foreach(['Sedan','SUV','Coupé','Bus','Kombi','Hatchback','Kabriolet','Pickup'] as $bt)
+                    <option value="{{ $bt }}" {{ old('body_type',$car?->body_type)==$bt?'selected':'' }}>{{ $bt }}</option>
+                    @endforeach
+                </select>
+            </div>
             <div class="field"><label>Identyfikator</label><input type="text" value="{{ $car?->identifier ?? '— zostanie wygenerowany —' }}" disabled></div>
         </div>
     </div>
@@ -157,12 +166,12 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
     <div class="card">
         <h2>Jednostka napędowa</h2>
         <div class="field-row-3">
-            <div class="field"><label>Paliwo</label><input type="text" name="fuel_type" value="{{ old('fuel_type',$car?->fuel_type) }}"></div>
-            <div class="field"><label>Skrzynia</label><input type="text" name="transmission" value="{{ old('transmission',$car?->transmission) }}" placeholder="Automat, Manual..."></div>
+            <div class="field"><label>Paliwo</label><select name="fuel_type"><option value="">Wybierz typ paliwa</option>@foreach(['Benzyna','Diesel','Hybryda','Hybryda plug-in','Elektryczny','LPG','CNG'] as $ft)<option value="{{ $ft }}" {{ old('fuel_type',$car?->fuel_type)==$ft?'selected':'' }}>{{ $ft }}</option>@endforeach</select></div>
+            <div class="field"><label>Skrzynia</label><select name="transmission"><option value="">Wybierz skrzynię biegów</option>@foreach(['Automatyczna','Manualna','CVT','Półautomatyczna (DSG/DCT)'] as $tr)<option value="{{ $tr }}" {{ old('transmission',$car?->transmission)==$tr?'selected':'' }}>{{ $tr }}</option>@endforeach</select></div>
             <div class="field"><label>Szczegóły skrzyni</label><input type="text" name="transmission_detail" value="{{ old('transmission_detail',$car?->transmission_detail) }}" placeholder="8-biegowa, DSG..."></div>
         </div>
         <div class="field-row-3">
-            <div class="field"><label>Pojemność (ccm)</label><input type="number" name="engine_capacity" value="{{ old('engine_capacity',$car?->engine_capacity) }}" min="0"></div>
+            <div class="field"><label>Pojemność (ccm)</label><input type="number" name="engine_capacity" value="{{ old('engine_capacity',$car?->engine_capacity) }}" min="0" placeholder="np. 1984" step="1"></div>
             <div class="field"><label>Moc (KM)</label><input type="number" name="power_hp" value="{{ old('power_hp',$car?->power_hp) }}" min="0"></div>
             <div class="field"><label>Moc (kW)</label><input type="number" name="power_kw" value="{{ old('power_kw',$car?->power_kw) }}" min="0"></div>
         </div>
@@ -210,7 +219,7 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
     <div class="card">
         <h2>Nadwozie</h2>
         <div class="field-row-3">
-            <div class="field"><label>Drzwi</label><input type="text" name="doors" value="{{ old('doors',$car?->doors) }}"></div>
+            <div class="field"><label>Drzwi</label><input type="number" name="doors" value="{{ old('doors',$car?->doors) }}" min="1" max="7"></div>
             <div class="field"><label>Siedzenia</label><input type="number" name="seats" value="{{ old('seats',$car?->seats) }}" min="1"></div>
             <div class="field"><label>Masa (kg)</label><input type="number" name="weight" value="{{ old('weight',$car?->weight) }}" min="0"></div>
         </div>
@@ -221,13 +230,13 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
         </div>
         <div class="field-row">
             <div class="field"><label>VIN</label><input type="text" name="vin" value="{{ old('vin',$car?->vin) }}" maxlength="50"></div>
-            <div class="field">
-                <label style="display:block">&nbsp;</label>
-                <label class="inline-label">
-                    <input type="hidden" name="is_imported" value="0">
-                    <input type="checkbox" name="is_imported" value="1" {{ old('is_imported',$car?->is_imported ?? true)?'checked':'' }}> Import (sprowadzony z zagranicy)
-                </label>
-            </div>
+            <div class="field"><label>Kraj pochodzenia</label><input type="text" name="country_registration" value="{{ old('country_registration',$car?->country_registration) }}" placeholder="Niemcy, Polska, Francja..."></div>
+        </div>
+        <div class="field">
+            <label class="inline-label">
+                <input type="hidden" name="is_imported" value="0">
+                <input type="checkbox" name="is_imported" value="1" {{ old('is_imported',$car?->is_imported ?? true)?'checked':'' }}> Import (sprowadzony z zagranicy)
+            </label>
         </div>
     </div>
 
@@ -330,8 +339,8 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
                 <div class="repeater-item paint-item">
                     <button type="button" class="rmv" onclick="this.closest('.paint-item').remove()"><i data-lucide="x"></i></button>
                     <div class="field-row" style="margin:0">
-                        <div class="field" style="margin:0"><label>Element</label><input type="text" name="paint_measurements[{{ $i }}][area]" value="{{ $area }}" placeholder="Maska, dach, błotnik pr..."></div>
-                        <div class="field" style="margin:0"><label>Wartość (µm)</label><input type="text" name="paint_measurements[{{ $i }}][value]" value="{{ $value }}" placeholder="120"></div>
+                        <div class="field" style="margin:0;flex:1.2"><label>Element nadwozia</label><input type="text" name="paint_measurements[{{ $i }}][area]" value="{{ $area }}" placeholder="Maska, dach, błotnik pr..."></div>
+                        <div class="field" style="margin:0;flex:0.8"><label>Grubość</label><div style="display:flex;align-items:center;gap:6px"><input type="number" name="paint_measurements[{{ $i }}][value]" value="{{ preg_replace('/[^0-9]/', '', $value) }}" placeholder="120" min="0" max="9999" style="flex:1"><span style="font-size:12px;font-weight:600;color:var(--text-3);white-space:nowrap">µm</span></div></div>
                     </div>
                 </div>
             @endforeach
@@ -767,6 +776,36 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
                 <span style="display:flex;align-items:center;gap:6px"><i data-lucide="shield-check" style="width:14px;height:14px;color:var(--blue)"></i> CertiCheck</span>
             </label>
             <p style="font-size:11.5px;color:var(--text-3);margin:6px 0 0 24px;line-height:1.45">Pokazuje plakietkę "CertiCheck" w katalogu oraz udostępnia broszurę PDF na stronie auta.</p>
+        </div>
+        <div class="field" style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.18);border-radius:10px;padding:12px 14px;margin-bottom:14px">
+            <label class="inline-label" style="font-weight:600">
+                <input type="hidden" name="available_now" value="0">
+                <input type="checkbox" name="available_now" value="1" {{ old('available_now',$car?->available_now)?'checked':'' }}>
+                <span style="display:flex;align-items:center;gap:6px"><i data-lucide="zap" style="width:14px;height:14px;color:#10b981"></i> Dostępny od ręki</span>
+            </label>
+            <p style="font-size:11.5px;color:var(--text-3);margin:6px 0 0 24px;line-height:1.45">Badge "Dostępny od ręki" na zdjęciu auta.</p>
+        </div>
+        <div class="field" style="background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.18);border-radius:10px;padding:12px 14px;margin-bottom:14px">
+            <label class="inline-label" style="font-weight:600">
+                <input type="hidden" name="home_delivery" value="0">
+                <input type="checkbox" name="home_delivery" value="1" {{ old('home_delivery',$car?->home_delivery)?'checked':'' }}>
+                <span style="display:flex;align-items:center;gap:6px"><i data-lucide="truck" style="width:14px;height:14px;color:#6366f1"></i> Dostawa pod dom</span>
+            </label>
+            <p style="font-size:11.5px;color:var(--text-3);margin:6px 0 0 24px;line-height:1.45">Badge "Dostawa pod dom" na zdjęciu auta.</p>
+        </div>
+        <div class="field" style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.18);border-radius:10px;padding:12px 14px;margin-bottom:14px">
+            <label class="inline-label" style="font-weight:600">
+                <input type="hidden" name="has_gethelp" value="0">
+                <input type="checkbox" name="has_gethelp" value="1" {{ old('has_gethelp',$car?->has_gethelp)?'checked':'' }}>
+                <span style="display:flex;align-items:center;gap:6px"><i data-lucide="shield" style="width:14px;height:14px;color:#f59e0b"></i> GetHelp w cenie</span>
+            </label>
+            <div class="field" style="margin:8px 0 0 24px">
+                <select name="gethelp_package" style="padding:7px 10px;font-size:12px;border-radius:8px;border:1px solid var(--border)">
+                    <option value="Classic" {{ old('gethelp_package',$car?->gethelp_package)=='Classic'?'selected':'' }}>Classic</option>
+                    <option value="Comfort" {{ old('gethelp_package',$car?->gethelp_package)=='Comfort'?'selected':'' }}>Comfort</option>
+                    <option value="Grand" {{ old('gethelp_package',$car?->gethelp_package)=='Grand'?'selected':'' }}>Grand</option>
+                </select>
+            </div>
         </div>
         <button type="submit" class="btn btn-blue" id="carFormSubmit" style="width:100%;justify-content:center;padding:13px"><i data-lucide="save"></i> {{ $car ? 'Zapisz zmiany' : 'Utwórz' }}</button>
         <a href="{{ route('admin.cars.index') }}" class="btn btn-outline" style="width:100%;justify-content:center;margin-top:8px">Anuluj</a>
@@ -1230,8 +1269,8 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
         const html=`<div class="repeater-item paint-item">
             <button type="button" class="rmv" onclick="this.closest('.paint-item').remove()"><i data-lucide="x"></i></button>
             <div class="field-row" style="margin:0">
-                <div class="field" style="margin:0"><label>Element</label><input type="text" name="paint_measurements[${i}][area]" placeholder="Maska, dach, błotnik pr..."></div>
-                <div class="field" style="margin:0"><label>Wartość (µm)</label><input type="text" name="paint_measurements[${i}][value]" placeholder="120"></div>
+                <div class="field" style="margin:0;flex:1.2"><label>Element nadwozia</label><input type="text" name="paint_measurements[${i}][area]" placeholder="Maska, dach, błotnik pr..."></div>
+                <div class="field" style="margin:0;flex:0.8"><label>Grubość</label><div style="display:flex;align-items:center;gap:6px"><input type="number" name="paint_measurements[${i}][value]" placeholder="120" min="0" max="9999" style="flex:1"><span style="font-size:12px;font-weight:600;color:var(--text-3);white-space:nowrap">µm</span></div></div>
             </div>
         </div>`;
         wrap.insertAdjacentHTML('beforeend',html);
