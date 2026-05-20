@@ -68,9 +68,20 @@ class CatalogController extends Controller
 
         $this->trackCarView($request, $car);
 
+        $isAdmin = auth()->user()?->is_admin;
+        $cacheKey = 'car.show.' . $car->id;
+
+        [$car, $prevCar, $nextCar, $relatedCars] = $isAdmin
+            ? $this->loadCarShowData($car)
+            : Cache::remember($cacheKey, 300, fn () => $this->loadCarShowData($car));
+
+        return view('catalog.show', compact('car', 'relatedCars', 'prevCar', 'nextCar'));
+    }
+
+    private function loadCarShowData(Car $car): array
+    {
         $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages', 'tireSets.tires', 'pano360Image', 'exteriorPano360Image');
 
-        // Prev / Next navigation (ordered by created_at desc, same as catalog index)
         $prevCar = Car::available()
             ->where('created_at', '>', $car->created_at)
             ->orderBy('created_at', 'asc')
@@ -81,7 +92,6 @@ class CatalogController extends Controller
             ->orderBy('created_at', 'desc')
             ->first(['id', 'slug']);
 
-        // Related cars: same brand first, then fill with other cars to always get 3
         $relatedCars = Car::with(['brand', 'images'])
             ->available()
             ->where('id', '!=', $car->id)
@@ -100,7 +110,7 @@ class CatalogController extends Controller
             $relatedCars = $relatedCars->concat($filler);
         }
 
-        return view('catalog.show', compact('car', 'relatedCars', 'prevCar', 'nextCar'));
+        return [$car, $prevCar, $nextCar, $relatedCars];
     }
 
     public function certicheck(Car $car)

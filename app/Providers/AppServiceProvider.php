@@ -26,15 +26,17 @@ class AppServiceProvider extends ServiceProvider
             $view->with('unreadMessagesCount', ContactMessage::whereNull('read_at')->count());
         });
 
-        Car::saved(function () {
+        Car::saved(function (Car $car) {
             Cache::forget('sitemap.xml');
             Cache::forget('home.content');
             Cache::forget('catalog.filters');
+            Cache::forget('car.show.' . $car->id);
         });
-        Car::deleted(function () {
+        Car::deleted(function (Car $car) {
             Cache::forget('sitemap.xml');
             Cache::forget('home.content');
             Cache::forget('catalog.filters');
+            Cache::forget('car.show.' . $car->id);
         });
     }
 }
