@@ -26,9 +26,9 @@ Route::get('/_ping', function () {
 
 Route::get('/_ping_db', function () {
     $t0 = microtime(true);
-    \DB::select('SELECT 1');
+    \Illuminate\Support\Facades\DB::select('SELECT 1');
     $db = round((microtime(true) - $t0) * 1000, 2);
-    return response()->json(['db_connect_ms' => $db]);
+    return response()->json(['db_ms' => $db, 'pid' => getmypid()]);
 })->withoutMiddleware([\App\Http\Middleware\TrackPageView::class]);
 
 // Public
