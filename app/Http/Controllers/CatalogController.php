@@ -68,18 +68,6 @@ class CatalogController extends Controller
 
         $this->trackCarView($request, $car);
 
-        $isAdmin = auth()->user()?->is_admin;
-        $cacheKey = 'car.show.' . $car->id;
-
-        [$car, $prevCar, $nextCar, $relatedCars] = $isAdmin
-            ? $this->loadCarShowData($car)
-            : Cache::remember($cacheKey, 300, fn () => $this->loadCarShowData($car));
-
-        return view('catalog.show', compact('car', 'relatedCars', 'prevCar', 'nextCar'));
-    }
-
-    private function loadCarShowData(Car $car): array
-    {
         $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages', 'tireSets.tires', 'pano360Image', 'exteriorPano360Image');
 
         $prevCar = Car::available()
@@ -110,7 +98,7 @@ class CatalogController extends Controller
             $relatedCars = $relatedCars->concat($filler);
         }
 
-        return [$car, $prevCar, $nextCar, $relatedCars];
+        return view('catalog.show', compact('car', 'relatedCars', 'prevCar', 'nextCar'));
     }
 
     public function certicheck(Car $car)
