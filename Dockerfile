@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libpng-dev libjpeg-dev libfreetype6-dev libzip-dev libsqlite3-dev \
         unzip git curl ca-certificates \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_sqlite zip bcmath opcache \
+    && docker-php-ext-install gd pdo pdo_sqlite pdo_mysql zip bcmath opcache \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
@@ -39,9 +39,6 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
     && mkdir -p /var/www/html/database \
-    && touch /var/www/html/database/database.sqlite \
-    && chmod 666 /var/www/html/database/database.sqlite \
-    && chown -R www-data:www-data /var/www/html/database \
     && mkdir -p /var/log/supervisor /run/nginx /run/php
 
 COPY docker-start.sh /var/www/html/start.sh
