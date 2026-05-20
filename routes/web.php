@@ -17,39 +17,6 @@ use App\Http\Controllers\PdfController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
-// Timing diagnostics (temporary)
-Route::get('/_ping', function () {
-    $t0 = microtime(true);
-    $db = round((microtime(true) - $t0) * 1000, 2);
-    return response()->json(['middleware_ms' => round(microtime(true) * 1000), 'db_ms' => $db]);
-})->withoutMiddleware([\App\Http\Middleware\TrackPageView::class]);
-
-Route::get('/_ping_db', function () {
-    $pid = getmypid();
-
-    // Test 1: raw PDO (bypasses Laravel entirely)
-    $t0 = microtime(true);
-    $pdo = new \PDO(
-        'mysql:host=' . env('DB_HOST') . ';port=' . env('DB_PORT') . ';dbname=' . env('DB_DATABASE'),
-        env('DB_USERNAME'), env('DB_PASSWORD'),
-        [\PDO::ATTR_TIMEOUT => 5]
-    );
-    $pdo->query('SELECT 1')->fetch();
-    $raw_pdo_ms = round((microtime(true) - $t0) * 1000, 2);
-
-    // Test 2: Laravel DB facade (uses persistent pool)
-    $t1 = microtime(true);
-    \Illuminate\Support\Facades\DB::select('SELECT 1');
-    $laravel_ms = round((microtime(true) - $t1) * 1000, 2);
-
-    // Test 3: second Laravel query (should reuse same connection)
-    $t2 = microtime(true);
-    \Illuminate\Support\Facades\DB::select('SELECT 2');
-    $laravel2_ms = round((microtime(true) - $t2) * 1000, 2);
-
-    return response()->json(compact('raw_pdo_ms', 'laravel_ms', 'laravel2_ms', 'pid'));
-})->withoutMiddleware([\App\Http\Middleware\TrackPageView::class]);
-
 // Public
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/samochody', [CatalogController::class, 'index'])->name('catalog');

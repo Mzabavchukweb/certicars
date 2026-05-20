@@ -130,25 +130,30 @@ class CatalogController extends Controller
             if (str_contains($ua, $p)) return;
         }
 
+        $carId     = $car->id;
         $sessionId = $request->hasSession() ? $request->session()->getId() : null;
+        $ip        = $request->ip();
+        $referer   = substr((string) $request->headers->get('referer'), 0, 500) ?: null;
 
-        $already = \App\Models\CarView::where('car_id', $car->id)
-            ->where('session_id', $sessionId)
-            ->where('created_at', '>=', now()->subMinutes(30))
-            ->exists();
+        defer(function () use ($carId, $sessionId, $ip, $referer, $ua) {
+            try {
+                $already = \App\Models\CarView::where('car_id', $carId)
+                    ->where('session_id', $sessionId)
+                    ->where('created_at', '>=', now()->subMinutes(30))
+                    ->exists();
 
-        if ($already) return;
+                if ($already) return;
 
-        try {
-            \App\Models\CarView::create([
-                'car_id'     => $car->id,
-                'session_id' => $sessionId,
-                'ip'         => $request->ip(),
-                'referer'    => substr((string) $request->headers->get('referer'), 0, 500) ?: null,
-                'user_agent' => substr($ua, 0, 500) ?: null,
-            ]);
-        } catch (\Throwable $e) {
-            // Silent.
-        }
+                \App\Models\CarView::create([
+                    'car_id'     => $carId,
+                    'session_id' => $sessionId,
+                    'ip'         => $ip,
+                    'referer'    => $referer,
+                    'user_agent' => substr($ua, 0, 500) ?: null,
+                ]);
+            } catch (\Throwable) {
+                // Silent.
+            }
+        });
     }
 }
