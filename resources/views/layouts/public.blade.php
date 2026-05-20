@@ -315,6 +315,9 @@
         .float-call:hover{transform:translateY(-2px) scale(1.05)}
         .float-call svg{width:22px;height:22px}
         @media(max-width:768px){.float-call{bottom:18px;right:18px;width:52px;height:52px}}
+        /* ============ SHARP CORNERS GLOBAL ============ */
+        *,*::before,*::after{border-radius:0!important}
+        .float-call,.lcard-fav,.cs-damage-marker-dot,.cs-tire-status-icon{border-radius:50%!important}
         @yield('styles')
     </style>
 </head>
