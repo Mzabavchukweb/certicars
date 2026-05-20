@@ -41,7 +41,7 @@ Route::post('/admin/logout', [LoginController::class, 'logout'])->name('logout')
 Route::get('/admin/password/reset', [PasswordResetController::class, 'showRequestForm'])->name('password.request');
 Route::post('/admin/password/email', [PasswordResetController::class, 'sendLink'])->middleware('throttle:5,1')->name('password.email');
 Route::get('/admin/password/reset/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
-Route::post('/admin/password/update', [PasswordResetController::class, 'reset'])->name('password.update');
+Route::post('/admin/password/update', [PasswordResetController::class, 'reset'])->middleware('throttle:5,1')->name('password.update');
 
 // Admin Panel
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
