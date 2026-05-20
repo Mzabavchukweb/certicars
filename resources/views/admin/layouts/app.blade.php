@@ -275,6 +275,11 @@
                 <i data-lucide="inbox"></i> Wiadomości
                 @if(($unreadMessagesCount ?? 0) > 0)<span class="badge">{{ $unreadMessagesCount }}</span>@endif
             </a>
+            @php $unreadInquiries = App\Models\Inquiry::unread()->count(); @endphp
+            <a href="{{ route('admin.inquiries.index') }}" class="{{ request()->routeIs('admin.inquiries.*')?'active':'' }}">
+                <i data-lucide="mail-question"></i> Zapytania
+                @if($unreadInquiries > 0)<span class="badge">{{ $unreadInquiries }}</span>@endif
+            </a>
             <div class="section-lbl">Zarządzanie</div>
             <a href="{{ route('admin.cars.index') }}" class="{{ request()->routeIs('admin.cars.*')?'active':'' }}"><i data-lucide="car"></i> Samochody</a>
             <a href="{{ route('admin.brands.index') }}" class="{{ request()->routeIs('admin.brands.*')?'active':'' }}"><i data-lucide="tag"></i> Marki</a>

@@ -108,6 +108,7 @@
 .cc-card:hover .cc-arrow{opacity:1;transform:translateX(3px)}
 .cc-card .cc-arrow svg{width:18px;height:18px;stroke:rgba(255,255,255,.7);fill:none;stroke-width:2}
 
+.featured-section{padding:80px 0 0}
 .section{padding:80px 0}
 .section-inner{max-width:1200px;margin:0 auto;padding:0 24px}
 .section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;gap:20px;flex-wrap:wrap}
@@ -159,8 +160,9 @@
 .home-listings-cta-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
 
 
-.body-types{background:var(--bg);border-top:1px solid var(--border-l);border-bottom:1px solid var(--border-l);padding:60px 0 56px}
-.body-types-inner{max-width:1200px;margin:0 auto;padding:0 24px}
+.body-types{background:#fff;border:none;padding:0;margin-top:16px}
+.body-types-card{background:#fff;border-radius:22px;box-shadow:0 24px 64px rgba(0,0,0,.16),0 4px 16px rgba(0,0,0,.06);padding:32px 40px 36px;max-width:1200px;margin:0 auto}
+.body-types-inner{max-width:1200px;margin:0 auto;padding:0}
 .body-types-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;gap:20px}
 .body-types-head h2{font-size:32px;font-weight:900;color:#000;letter-spacing:-.6px;line-height:1.1;margin:0}
 .body-types-head p{font-size:14px;color:var(--text-3);margin-top:6px}
@@ -202,7 +204,7 @@
     .hero-search-header{flex-direction:column;align-items:flex-start;gap:12px}
     .hero-search-fields{grid-template-columns:1fr 1fr}
     .body-types-grid{grid-template-columns:repeat(3,1fr)}
-    .body-types{padding:28px 24px 24px}
+    .body-types-card{padding:24px 24px 20px;border-radius:16px}
     .body-types-head{flex-direction:column;align-items:flex-start;gap:8px}
     .lcard-img{width:180px;min-width:180px;height:160px}
     .lcard-price{font-size:20px}
@@ -260,7 +262,7 @@
     .hero-search-submit{width:100%;justify-content:center;height:44px;font-size:13px}
     .hero-search-reset{font-size:12px}
     .body-types-grid{grid-template-columns:repeat(2,1fr);gap:6px}
-    .body-types{padding:20px 16px 18px}
+    .body-types-card{padding:18px 16px 14px;border-radius:14px}
     .body-types h3{font-size:16px}
     .body-types-head h2{font-size:24px}
     .body-types-head p{font-size:13px}
@@ -330,10 +332,7 @@
                     Znajdź sprawdzony samochód
                     <span class="hero-search-badge">{{ $totalCars }} ofert</span>
                 </div>
-                <nav class="hero-search-nav">
-                    <button type="button" class="active">Samochody</button>
-                    <a href="{{ route('catalog') }}">Oferta</a>
-                </nav>
+
             </div>
 
             <div class="hero-search-fields">
@@ -377,41 +376,43 @@
 
 <!-- Body type selector -->
 <div class="body-types">
-    <div class="body-types-inner">
-        <div class="body-types-head">
-            <div>
-                <h2>Szukaj po typie nadwozia</h2>
-                <p>Wybierz rodzaj auta który Cię interesuje</p>
+    <div class="container">
+        <div class="body-types-card">
+            <div class="body-types-head">
+                <div>
+                    <h2>Przeglądaj auta według nadwozia</h2>
+                    <p>Wybierz typ samochodu, który najlepiej pasuje do Twoich potrzeb</p>
+                </div>
+                <a href="{{ route('catalog') }}" class="body-types-head-link">Pokaż wszystkie <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
             </div>
-            <a href="{{ route('catalog') }}" class="body-types-head-link">Pokaż wszystkie <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
-        </div>
-        @php
-            $plCars = function ($n) {
-                $n = (int) $n;
-                if ($n === 1) return 'samochód';
-                $mod10 = $n % 10;
-                $mod100 = $n % 100;
-                if ($mod10 >= 2 && $mod10 <= 4 && ($mod100 < 12 || $mod100 > 14)) return 'samochody';
-                return 'samochodów';
-            };
-            $bodyTypes = [
-                ['Sedan',     'sedan.png'],
-                ['SUV',       'suv.png'],
-                ['Coupé',     'coupe.png'],
-                ['Bus',       'van.png'],
-                ['Kombi',     'kombi.png'],
-                ['Hatchback', 'hatchback.png'],
-            ];
-        @endphp
-        <div class="body-types-grid">
-            @foreach($bodyTypes as [$cat, $img])
-                @php $count = (int) ($bodyTypeCounts[$cat] ?? 0); @endphp
-                <a href="{{ route('catalog', ['category' => $cat]) }}" class="body-type-card">
-                    <div class="bt-icon"><img src="/img/body-types/{{ $img }}" alt="" aria-hidden="true" loading="lazy"></div>
-                    <span class="bt-label">{{ $cat }}</span>
-                    <span class="bt-count">{{ $count }} {{ $plCars($count) }}</span>
-                </a>
-            @endforeach
+            @php
+                $plCars = function ($n) {
+                    $n = (int) $n;
+                    if ($n === 1) return 'samochód';
+                    $mod10 = $n % 10;
+                    $mod100 = $n % 100;
+                    if ($mod10 >= 2 && $mod10 <= 4 && ($mod100 < 12 || $mod100 > 14)) return 'samochody';
+                    return 'samochodów';
+                };
+                $bodyTypes = [
+                    ['Sedan',     'sedan.png'],
+                    ['SUV',       'suv.png'],
+                    ['Coupé',     'coupe.png'],
+                    ['Bus',       'van.png'],
+                    ['Kombi',     'kombi.png'],
+                    ['Hatchback', 'hatchback.png'],
+                ];
+            @endphp
+            <div class="body-types-grid">
+                @foreach($bodyTypes as [$cat, $img])
+                    @php $count = (int) ($bodyTypeCounts[$cat] ?? 0); @endphp
+                    <a href="{{ route('catalog', ['category' => $cat]) }}" class="body-type-card">
+                        <div class="bt-icon"><img src="/img/body-types/{{ $img }}" alt="" aria-hidden="true" loading="lazy"></div>
+                        <span class="bt-label">{{ $cat }}</span>
+                        <span class="bt-count">{{ $count }} {{ $plCars($count) }}</span>
+                    </a>
+                @endforeach
+            </div>
         </div>
     </div>
 </div>
@@ -420,8 +421,8 @@
 
 
 @if($featuredCars->count())
-<section class="body-types" style="border:none">
-    <div class="body-types-inner">
+<section class="featured-section">
+    <div class="section-inner">
         <div class="body-types-head">
             <div>
                 <h2>Wyróżnione pojazdy</h2>

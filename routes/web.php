@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\InquiryController as AdminInquiryController;
 use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\Admin\BrandController as AdminBrandController;
 use App\Http\Controllers\Admin\CarController as AdminCarController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\SitemapController;
@@ -26,6 +28,7 @@ Route::get('/samochody/{car:slug}/pdf', [PdfController::class, 'generate'])
 Route::get('/o-nas', [PageController::class, 'about'])->name('about');
 Route::get('/kontakt', [PageController::class, 'contact'])->name('contact');
 Route::post('/kontakt', [PageController::class, 'contactSubmit'])->middleware('throttle:5,1')->name('contact.submit');
+Route::post('/zapytanie', [InquiryController::class, 'store'])->middleware('throttle:10,1')->name('inquiry.store');
 Route::get('/obserwowane', [FavoritesController::class, 'index'])->name('favorites');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
@@ -55,6 +58,10 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('messages/bulk', [AdminMessageController::class, 'bulk'])->name('admin.messages.bulk');
     Route::patch('messages/{message}/unread', [AdminMessageController::class, 'markUnread'])->name('admin.messages.unread');
     Route::resource('messages', AdminMessageController::class)->names('admin.messages')->only(['index', 'show', 'destroy']);
+
+    Route::post('inquiries/bulk', [AdminInquiryController::class, 'bulk'])->name('admin.inquiries.bulk');
+    Route::patch('inquiries/{inquiry}/unread', [AdminInquiryController::class, 'markUnread'])->name('admin.inquiries.unread');
+    Route::resource('inquiries', AdminInquiryController::class)->names('admin.inquiries')->only(['index', 'show', 'destroy']);
 
     Route::get('profile', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
     Route::patch('profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');

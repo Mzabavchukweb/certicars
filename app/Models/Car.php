@@ -21,7 +21,7 @@ class Car extends Model
         'fuel_consumption', 'fuel_procedure', 'co2_emission', 'emission_class',
         'service_book', 'coc_documents', 'vehicle_folder', 'hu_au_report',
         'paint_measurements', 'technical_conditions', 'equipment', 'engine_video_url', 'engine_video_path',
-        'is_featured', 'is_sold', 'has_certicheck', 'status',
+        'is_featured', 'is_sold', 'has_certicheck', 'available_now', 'home_delivery', 'has_gethelp', 'gethelp_package', 'status',
         'meta_title', 'meta_description', 'focus_keyword', 'noindex',
     ];
 
@@ -33,6 +33,9 @@ class Car extends Model
         'is_sold' => 'boolean',
         'has_certicheck' => 'boolean',
         'is_imported' => 'boolean',
+        'available_now' => 'boolean',
+        'home_delivery' => 'boolean',
+        'has_gethelp' => 'boolean',
         'noindex' => 'boolean',
         'price' => 'decimal:2',
         'reception_date' => 'date',

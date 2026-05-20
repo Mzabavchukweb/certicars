@@ -52,16 +52,11 @@
 @endsection
 
 @section('styles')
-html{scroll-behavior:smooth}
 .cs-wrap{padding:0 0 40px;background:#f5f5f7;min-height:100vh;overflow-x:hidden}
 .cs-wrap .container{max-width:1200px;padding-left:24px;padding-right:24px;box-sizing:border-box;overflow:hidden}
 .cs-wrap *,.cs-wrap *::before,.cs-wrap *::after{box-sizing:border-box}
-
-/* 2-COLUMN DATA BLOCKS (COS style — side by side cards within a section) */
-.cs-data-2col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-@media(max-width:768px){.cs-data-2col{grid-template-columns:1fr}}
-.cs-data-block{background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:20px}
-.cs-data-block-title{font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #e5e7eb}
+/* Focus visible */
+.cs-wrap button:focus-visible,.cs-wrap a:focus-visible,.cs-wrap [tabindex]:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:inherit}
 
 
 /* NAVIGATION BAR (COS style — breadcrumb + prev/next) */
@@ -100,38 +95,49 @@ html{scroll-behavior:smooth}
 .cs-gallery-stage{position:relative;width:100%;aspect-ratio:16/9;background:#e8e8ea;overflow:hidden}
 .cs-gallery-main{position:absolute;inset:0;background:#e8e8ea;display:flex;align-items:center;justify-content:center;width:100%;height:100%;box-sizing:border-box}
 .cs-gallery-main:not(.active){display:none!important}
-.cs-gallery-main img{max-width:100%;max-height:100%}
 .cs-gallery-main img{width:100%;height:100%;object-fit:cover}
-.cs-gallery-main .empty{color:var(--border)}
+.cs-gallery-main .empty{color:#9ca3af}
 .cs-gallery-main .empty i{width:80px;height:80px}
-.cs-gallery-counter{position:absolute;bottom:12px;right:12px;background:rgba(10,10,10,.75);color:#fff;padding:6px 12px;border-radius:50px;font-size:12px;display:flex;align-items:center;gap:5px;backdrop-filter:blur(10px);font-weight:600}
+.cs-gallery-counter{position:absolute;top:12px;right:12px;background:rgba(10,10,10,.75);color:#fff;padding:6px 12px;border-radius:50px;font-size:12px;display:flex;align-items:center;gap:5px;backdrop-filter:blur(10px);font-weight:600}
 .cs-gallery-counter i{width:13px;height:13px}
+.cs-gallery-nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;background:rgba(255,255,255,.9);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;box-shadow:0 2px 8px rgba(0,0,0,.15);transition:all .15s}
+.cs-gallery-nav:hover{background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.2);transform:translateY(-50%) scale(1.05)}
+.cs-gallery-nav svg{width:20px;height:20px;stroke:#333;fill:none;stroke-width:2.5}
+.cs-gallery-nav.prev{left:12px}
+.cs-gallery-nav.next{right:12px}
 
-/* GALLERY MEDIA TABS (COS style — flat inline row ABOVE gallery) */
+/* GALLERY MEDIA TABS (pill-style badges) */
 .cs-gallery-tabs-wrap{position:relative;overflow:hidden;max-width:100%}
 .cs-gallery-tabs-wrap::after{content:'';position:absolute;right:0;top:0;bottom:0;width:48px;background:linear-gradient(to right,transparent,#f5f5f7);pointer-events:none;border-radius:0}
-.cs-gallery-tabs{display:flex;align-items:center;gap:20px;padding:14px 0 10px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;max-width:100%}
+.cs-gallery-tabs{display:flex;align-items:center;gap:6px;padding:14px 0 10px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;max-width:100%}
 .cs-gallery-tabs::-webkit-scrollbar{display:none}
-.cs-gallery-tab{display:inline-flex;align-items:center;gap:7px;padding:0;background:none;border:none;font-size:13.5px;font-weight:500;color:#6b7280;cursor:pointer;transition:color .15s;white-space:nowrap;position:relative;line-height:1.4}
-.cs-gallery-tab:hover{color:#1a1a1a}
-.cs-gallery-tab.active{color:#0a0a0a;font-weight:600}
-.cs-gallery-tab svg,.cs-gallery-tab i{width:18px;height:18px;flex-shrink:0;color:inherit}
-.cs-gallery-tab .cs-tab-count{font-size:12px;font-weight:400;color:inherit}
+.cs-gallery-tab{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;background:#f0f0f2;border:1px solid #e5e5e7;border-radius:50px;font-size:12px;font-weight:600;color:#6b7280;cursor:pointer;transition:all .15s;white-space:nowrap;line-height:1.3}
+.cs-gallery-tab:hover{background:#e8e8ea;color:#374151}
+.cs-gallery-tab.active{background:#0066ff;color:#fff;border-color:#0066ff}
+.cs-gallery-tab svg,.cs-gallery-tab i{width:14px;height:14px;flex-shrink:0}
+.cs-gallery-tab .cs-tab-count{font-size:11px;font-weight:400;color:inherit}
 .cs-gallery-tab.disabled{opacity:.35;pointer-events:none}
 
 .cs-gallery-thumbs{display:flex;gap:6px;padding:10px 10px;overflow-x:auto;background:#fff}
 .cs-thumb{width:96px;height:64px;object-fit:cover;cursor:pointer;border-radius:6px;flex-shrink:0;opacity:.55;border:2px solid transparent;transition:all .15s}
 .cs-thumb.active,.cs-thumb:hover{opacity:1;border-color:var(--blue)}
 .cs-thumb[data-hidden]{display:none}
+.cs-thumb-360{width:96px;height:64px;flex-shrink:0;border-radius:6px;border:2px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:linear-gradient(135deg,#e8f1ff,#d0e0ff);cursor:pointer;transition:all .15s;font-size:10px;font-weight:700;color:#0066ff}
+.cs-thumb-360:hover,.cs-thumb-360.active{border-color:#0066ff;background:linear-gradient(135deg,#d0e0ff,#b8d4ff)}
+.cs-thumb-360 svg{width:20px;height:20px;stroke:#0066ff;fill:none;stroke-width:1.8}
+.cs-thumb-more{width:96px;height:64px;flex-shrink:0;border-radius:6px;border:2px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;background:#e8e8ea;cursor:pointer;transition:all .15s;font-weight:800;color:#374151;font-size:16px}
+.cs-thumb-more span{font-size:9px;font-weight:600;color:#6b7280}
+.cs-thumb-more:hover{background:#ddd;border-color:#bbb}
 
 /* SIDEBAR CARD (COS style — white) */
 .cs-sidebar-card{background:#fff;border:1px solid #e5e5e7;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.06)}
 
 /* SIDEBAR VEHICLE SUMMARY (COS-style key-value pairs) */
 .cs-sidebar-summary{padding:0 22px;border-bottom:1px solid #f0f0f2}
-.cs-sidebar-summary-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #f5f5f5;font-size:13px}
+.cs-sidebar-summary-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #f5f5f5;font-size:13.5px}
 .cs-sidebar-summary-row:last-child{border-bottom:none}
-.cs-sidebar-summary-row .lbl{color:#6b7280;font-weight:400}
+.cs-sidebar-summary-row .cs-row-icon{width:18px;height:18px;stroke:#9ca3af;fill:none;stroke-width:1.8;flex-shrink:0}
+.cs-sidebar-summary-row .lbl{color:#6b7280;font-weight:400;flex:1}
 .cs-sidebar-summary-row .val{font-weight:700;color:#1a1a1a;text-align:right}
 
 /* PRICE SECTION (inside card) */
@@ -142,6 +148,15 @@ html{scroll-behavior:smooth}
 
 /* CTA BUTTONS (inside card) */
 .cs-price-actions{padding:18px 22px 22px;display:flex;flex-direction:column;gap:8px}
+.cs-btn-phone{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:15px 24px;background:#0066ff;color:#fff;border:none;border-radius:50px;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;box-shadow:0 4px 14px rgba(0,102,255,.35)}
+.cs-btn-phone:hover{background:#0052cc;color:#fff;box-shadow:0 8px 24px rgba(0,102,255,.45);transform:translateY(-1px)}
+.cs-btn-phone svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2;flex-shrink:0}
+.cs-btn-message{width:100%;display:flex;align-items:center;gap:10px;padding:14px 20px;background:#f8f9fa;border:1.5px solid #e5e7eb;border-radius:12px;cursor:pointer;transition:all .15s;text-decoration:none;color:#1a1a1a}
+.cs-btn-message:hover{background:#f0f1f3;border-color:#d1d5db}
+.cs-btn-message svg{width:20px;height:20px;stroke:#0066ff;fill:none;stroke-width:1.8;flex-shrink:0}
+.cs-btn-message .cs-msg-text{text-align:left}
+.cs-btn-message .cs-msg-text strong{display:block;font-size:14px;font-weight:700;color:#1a1a1a}
+.cs-btn-message .cs-msg-text small{display:block;font-size:11px;font-weight:400;color:#9ca3af;margin-top:2px}
 
 /* 360° PANORAMA */
 .cs-pano360-embed{width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;position:relative}
@@ -162,68 +177,7 @@ html{scroll-behavior:smooth}
 .cs-calc-trigger:hover .cs-calc-trigger-arrow{stroke:#0066ff;transform:translateX(2px)}
 
 /* FLOATING CALC WIDGET */
-.cs-calc-overlay{position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
-.cs-calc-overlay.open{opacity:1;visibility:visible}
-.cs-calc-float{position:fixed;right:24px;bottom:24px;z-index:9999;width:400px;max-height:calc(100vh - 48px);overflow-y:auto;transform:translateY(20px) scale(.96);opacity:0;visibility:hidden;transition:transform .3s cubic-bezier(.22,1,.36,1),opacity .25s,visibility .25s;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.25),0 0 0 1px rgba(0,0,0,.08)}
-.cs-calc-float.open{transform:translateY(0) scale(1);opacity:1;visibility:visible}
-.cs-calc-float-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#fff;border-bottom:1px solid #f0f0f2}
-.cs-calc-float-header h3{font-size:15px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;display:flex;align-items:center;gap:8px}
-.cs-calc-float-header h3 svg{width:18px;height:18px;stroke:#0066ff}
-.cs-calc-float-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none;background:#f5f5f7;border-radius:8px;cursor:pointer;transition:all .15s;color:#6b7280}
-.cs-calc-float-close:hover{background:#e5e5e7;color:#0a0a0a}
-.cs-calc-float-close svg{width:16px;height:16px}
-@media(max-width:768px){
-    .cs-calc-float{right:8px;left:8px;bottom:8px;width:auto;max-height:calc(100vh - 16px);border-radius:16px}
-    .cs-calc-float-header{padding:10px 16px}
-    .cs-calc-float-header h3{font-size:13px;gap:6px}
-    .cs-calc-float-header h3 svg{width:15px;height:15px}
-    .cs-calc-float-close{width:28px;height:28px}
-    .cs-calc-float-close svg{width:14px;height:14px}
-    .cs-calc-tab{padding:8px 10px;font-size:11.5px;gap:5px}
-    .cs-calc-tab svg{width:13px;height:13px}
-    .cs-calc-body{padding:12px 16px 8px}
-    .cs-calc-field{margin-bottom:10px}
-    .cs-calc-field label{font-size:10px;margin-bottom:5px;letter-spacing:.2px}
-    .cs-calc-range-row{gap:8px}
-    .cs-calc-range-row input[type=range]{height:5px}
-    .cs-calc-range-row input[type=range]::-webkit-slider-thumb{width:18px;height:18px;border-width:2px}
-    .cs-calc-range-val{font-size:11.5px;min-width:56px}
-    .cs-calc-range-labels{font-size:9px;margin-top:1px}
-    .cs-calc-result{padding:12px 16px;border-radius:0 0 16px 16px}
-    .cs-calc-result-label{font-size:9.5px;margin-bottom:3px}
-    .cs-calc-result-value{font-size:24px;margin-bottom:8px}
-    .cs-calc-result-details{gap:4px;margin-bottom:6px}
-    .cs-calc-result-details>div{font-size:11px}
-    .cs-calc-disclaimer{font-size:9px;line-height:1.3}
-}
 
-/* CALC INTERNALS (shared) */
-.cs-calc{background:#fff;border-radius:0;overflow:hidden}
-.cs-calc-header{padding:0;border-bottom:1px solid #e5e5e5}
-.cs-calc-tabs{display:grid;grid-template-columns:1fr 1fr}
-.cs-calc-tab{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 12px;font-size:13px;font-weight:700;color:#6b7280;background:#f9fafb;border:none;cursor:pointer;transition:all .2s;letter-spacing:-.1px}
-.cs-calc-tab:first-child{border-right:1px solid #e5e5e5}
-.cs-calc-tab.active{background:#fff;color:#0066ff}
-.cs-calc-tab svg{width:16px;height:16px}
-.cs-calc-body{padding:20px 22px 16px}
-.cs-calc-field{margin-bottom:18px}
-.cs-calc-field:last-child{margin-bottom:0}
-.cs-calc-field label{display:block;font-size:12px;font-weight:700;color:#1a1a1a;margin-bottom:10px;text-transform:uppercase;letter-spacing:.3px}
-.cs-calc-range-row{display:flex;align-items:center;gap:12px}
-.cs-calc-range-row input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:6px;background:#e5e5e5;border-radius:3px;outline:none}
-.cs-calc-range-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;background:#0066ff;border-radius:50%;cursor:pointer;box-shadow:0 2px 6px rgba(0,102,255,.35);border:3px solid #fff;transition:transform .15s}
-.cs-calc-range-row input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
-.cs-calc-range-row input[type=range]::-moz-range-thumb{width:14px;height:14px;background:#0066ff;border-radius:50%;cursor:pointer;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,102,255,.35)}
-.cs-calc-range-val{font-size:13px;font-weight:800;color:#1a1a1a;min-width:72px;text-align:right;white-space:nowrap}
-.cs-calc-range-labels{display:flex;justify-content:space-between;font-size:10.5px;color:#9ca3af;margin-top:4px;font-weight:500}
-.cs-calc-result{background:linear-gradient(135deg,#0a0a0a 0%,#1a1a2e 100%);padding:22px;color:#fff;border-radius:0 0 20px 20px}
-.cs-calc-result-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.cs-calc-result-value{font-size:34px;font-weight:900;letter-spacing:-1px;line-height:1.1;margin-bottom:16px}
-.cs-calc-result-details{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
-.cs-calc-result-details>div{display:flex;justify-content:space-between;font-size:12.5px}
-.cs-calc-result-details .lbl{color:rgba(255,255,255,.5)}
-.cs-calc-result-details .val{font-weight:700;color:#fff}
-.cs-calc-disclaimer{font-size:10px;color:rgba(255,255,255,.35);line-height:1.4}
 
 /* CARD (generic) */
 .cs-card{background:#fff;border:1px solid #e5e5e7;border-radius:16px;padding:28px;margin-bottom:20px}
@@ -243,14 +197,16 @@ html{scroll-behavior:smooth}
 .cs-damage-tab{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--yellow-bg);color:var(--yellow-dark);border:1px solid #fde68a;border-radius:50px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s}
 .cs-damage-tab.active{background:var(--yellow);color:#fff;border-color:var(--yellow)}
 .cs-damage-tab i{width:12px;height:12px}
-.cs-damage-grid{display:grid;grid-template-columns:280px 1fr;gap:24px;min-height:340px}
-.cs-damage-diagram{background:var(--bg);border-radius:12px;padding:20px;display:flex;align-items:center;justify-content:center;position:relative}
-.cs-damage-diagram-inner{position:relative;width:200px;height:370px}
+.cs-damage-grid{display:grid;grid-template-columns:300px 1fr;gap:0;border:1px solid #eeeef0;border-radius:14px;overflow:hidden;background:#fff}
+.cs-damage-diagram{background:#f5f5f7;position:relative;overflow:hidden;min-height:500px}
+.cs-damage-diagram-inner{position:absolute;inset:0;overflow:hidden}
+.cs-damage-diagram-inner>img{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(1.7);width:100%;height:auto;pointer-events:none}
 .cs-damage-marker{position:absolute;transform:translate(-50%,-50%);cursor:pointer;z-index:5;background:none;border:none;padding:0}
-.cs-damage-marker-dot{width:30px;height:30px;background:var(--yellow);border:3px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 2px 8px rgba(245,158,11,.4);transition:transform .15s}
+.cs-damage-marker-dot{width:28px;height:28px;background:var(--yellow);border:2.5px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 2px 8px rgba(245,158,11,.4);transition:all .15s}
+.cs-damage-marker.active .cs-damage-marker-dot{transform:scale(1.2);box-shadow:0 0 0 4px rgba(245,158,11,.25),0 2px 8px rgba(245,158,11,.4)}
 .cs-damage-marker:hover .cs-damage-marker-dot{transform:scale(1.15)}
-.cs-damage-marker-dot i{width:14px;height:14px;stroke-width:2.6}
-.cs-damage-detail{padding:20px;display:flex;flex-direction:column}
+.cs-damage-marker-dot i{width:13px;height:13px;stroke-width:2.6}
+.cs-damage-detail{padding:24px;display:flex;flex-direction:column;border-left:1px solid #eeeef0}
 .cs-damage-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;color:var(--text-4);font-size:13.5px;gap:10px}
 .cs-damage-empty i{width:36px;height:36px}
 .cs-damage-item{display:none}
@@ -262,12 +218,17 @@ html{scroll-behavior:smooth}
 .cs-damage-item p{font-size:13.5px;color:var(--text-2);line-height:1.65}
 
 /* PAINT GRID */
-.cs-paint-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:0;border:1px solid #eeeef0;border-radius:12px;overflow:hidden;background:#fff}
-.cs-paint-item{background:#fff;padding:14px 16px;border-right:1px solid #eeeef0;border-bottom:1px solid #eeeef0}
-.cs-paint-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--text-3);margin-bottom:4px}
-.cs-paint-value{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.3px}
-.cs-paint-warn{color:#f59e0b}
-.cs-paint-danger{color:#ef4444}
+.cs-paint-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0;border:1px solid #eeeef0;border-radius:12px;overflow:hidden;background:#fff}
+.cs-paint-item{background:#fff;padding:14px 16px;border-bottom:1px solid #f0f0f2;transition:all .15s}
+.cs-paint-item.paint-ok{background:linear-gradient(90deg,#f0fdf4,#fff 60%)}
+.cs-paint-item.paint-warn{background:linear-gradient(90deg,#fffbeb,#fff 60%)}
+.cs-paint-item.paint-danger{background:linear-gradient(90deg,#fef2f2,#fff 60%)}
+.cs-paint-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--text-3);margin-bottom:4px;white-space:nowrap}
+.cs-paint-value{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.3px;display:flex;align-items:center;gap:6px}
+.paint-ok .cs-paint-value{color:#059669}
+.paint-warn .cs-paint-value{color:#d97706}
+.paint-danger .cs-paint-value{color:#dc2626}
+.cs-paint-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
 /* SERVICE / INSPECTION GRID */
 .cs-svc-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px 40px}
@@ -342,6 +303,18 @@ html{scroll-behavior:smooth}
 .cs-data-row .val{font-weight:600;color:#1a1a1a;text-align:right;line-height:1.5;overflow:hidden;text-overflow:ellipsis;word-break:break-word;min-width:0;flex-shrink:1;max-width:60%}
 @media(max-width:768px){.cs-data-2col{grid-template-columns:1fr}.cs-data-block+.cs-data-block{margin-top:12px}}
 
+/* DATA COLUMNS (5-col horizontal layout) */
+.cs-data-columns{display:grid;grid-template-columns:repeat(5,1fr);gap:0}
+.cs-data-col{padding:20px 18px;border-right:1px solid #eeeef0}
+.cs-data-col:last-child{border-right:none}
+.cs-data-col-title{font-size:13.5px;font-weight:800;color:#1a1a1a;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #eeeef0;letter-spacing:-.1px}
+.cs-data-col .cs-data-row{display:flex;flex-direction:column;gap:2px;padding:7px 0;border-bottom:none;font-size:12px}
+.cs-data-col .cs-data-row .lbl{font-size:12px;color:#6b7280;font-weight:500;line-height:1.4}
+.cs-data-col .cs-data-row .val{font-size:13.5px;font-weight:700;color:#1a1a1a;text-align:left;max-width:none;word-break:break-word;overflow-wrap:break-word;line-height:1.4}
+@media(max-width:1024px){.cs-data-columns{grid-template-columns:repeat(3,1fr)}.cs-data-col{border-bottom:1px solid #eeeef0;padding:16px}.cs-data-col:nth-child(3){border-right:none}}
+@media(max-width:768px){.cs-data-columns{grid-template-columns:repeat(2,1fr)}.cs-data-col:nth-child(2n){border-right:none}}
+@media(max-width:500px){.cs-data-columns{grid-template-columns:1fr}.cs-data-col{border-right:none}}
+
 /* SUB-ACCORDION inside cs-data-section (Dane pojazdu sub-sections) */
 .cs-sub-hd{display:flex;align-items:center;justify-content:space-between;padding:13px 24px;user-select:none;border-top:1px solid #f0f0f2;font-size:13.5px;font-weight:700;color:#374151;background:#fafafa}
 .cs-sub-chev{display:none}
@@ -357,13 +330,14 @@ html{scroll-behavior:smooth}
     .cs-grid{grid-template-columns:1fr;gap:20px}
     .cs-grid > div{min-width:0;max-width:100%}
     .cs-sidebar{position:static}
+    .cs-calc-inline{display:none}
     .cs-tire-table{grid-template-columns:180px repeat(4,1fr)}
     .cs-equipment-grid{grid-template-columns:1fr}
 }
 /* RELATED CARS */
-.cs-related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-@media(max-width:900px){.cs-related-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.cs-related-grid{grid-template-columns:1fr;gap:12px}}
+.cs-related-grid{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px}
+.cs-related-grid::-webkit-scrollbar{display:none}
+.cs-related-grid>*{flex:0 0 calc(33.333% - 14px);scroll-snap-align:start;min-width:260px}
 
 @media(max-width:768px){
     .cs-wrap .container{padding-left:14px;padding-right:14px}
@@ -380,11 +354,19 @@ html{scroll-behavior:smooth}
     .cs-keyfacts::-webkit-scrollbar{display:none}
     .cs-keyfact{padding:7px 10px;font-size:11.5px;flex-shrink:0}
     .cs-gallery{border-radius:10px}
-    .cs-gallery-tabs{gap:14px;padding:10px 0 8px}
-    .cs-gallery-tab{font-size:12px;gap:5px}
-    .cs-gallery-tab svg,.cs-gallery-tab i{width:15px;height:15px}
+    .cs-gallery-tabs{gap:5px;padding:10px 0 8px}
+    .cs-gallery-tab{font-size:11px;gap:4px;padding:5px 10px}
+    .cs-gallery-tab svg,.cs-gallery-tab i{width:12px;height:12px}
     .cs-gallery-thumbs{padding:8px}
     .cs-thumb{width:72px;height:48px}
+    .cs-thumb-360{width:72px;height:48px;font-size:9px}
+    .cs-thumb-360 svg{width:16px;height:16px}
+    .cs-thumb-more{width:72px;height:48px;font-size:14px}
+    .cs-thumb-more span{font-size:8px}
+    .cs-gallery-nav{width:34px;height:34px}
+    .cs-gallery-nav svg{width:16px;height:16px}
+    .cs-gallery-nav.prev{left:8px}
+    .cs-gallery-nav.next{right:8px}
     .cs-sidebar-card{border-radius:14px}
     .cs-price-section{padding:18px 16px 12px}
     .cs-price-actions{padding:14px 16px 16px}
@@ -399,12 +381,12 @@ html{scroll-behavior:smooth}
     .cs-data-row .lbl{flex-shrink:1;min-width:0}
     .cs-data-row .val{max-width:55%;font-size:12.5px}
     .cs-sections-2col{padding:0 14px;gap:12px}
-    .cs-damage-grid{grid-template-columns:1fr;gap:12px;min-height:auto}
-    .cs-damage-diagram{padding:14px}
-    .cs-damage-diagram-inner{width:160px;height:280px}
-    .cs-damage-marker-dot{width:26px;height:26px}
-    .cs-damage-marker-dot i{width:12px;height:12px}
-    .cs-damage-detail{padding:14px}
+    .cs-damage-grid{grid-template-columns:1fr;min-height:auto;border:none;border-radius:0}
+    .cs-damage-diagram{border-radius:12px;border:1px solid #eeeef0}
+    .cs-damage-diagram-inner{min-height:300px}
+    .cs-damage-marker-dot{width:24px;height:24px}
+    .cs-damage-marker-dot i{width:11px;height:11px}
+    .cs-damage-detail{padding:14px;border-left:none;border-top:1px solid #eeeef0}
     .cs-damage-item h3{font-size:14px}
     .cs-damage-item p{font-size:12.5px}
     .cs-damage-tags span{font-size:10px;padding:4px 9px}
@@ -421,7 +403,7 @@ html{scroll-behavior:smooth}
     .cs-tire-data-row:last-child{border-right:none}
     .cs-equipment-grid{grid-template-columns:1fr}
     .cs-equipment-item{padding:10px 0;font-size:12.5px}
-    .cs-feat-eq{grid-template-columns:1fr}
+    .cs-feat-eq{flex-direction:column}
     .cs-price-value{font-size:28px}
     .cs-fuel-grid{grid-template-columns:1fr 1fr}
     .cs-pano360-embed{aspect-ratio:4/3}
@@ -449,9 +431,9 @@ html{scroll-behavior:smooth}
     .cs-price-value{font-size:26px}
     .cs-sections-2col{padding:0 12px}
     .cs-nav-btn{padding:6px 8px;font-size:11px}
-    .cs-damage-diagram-inner{width:140px;height:240px}
-    .cs-damage-marker-dot{width:24px;height:24px;border-width:2px}
-    .cs-damage-marker-dot i{width:11px;height:11px}
+    .cs-damage-diagram-inner{min-height:260px}
+    .cs-damage-marker-dot{width:22px;height:22px;border-width:2px}
+    .cs-damage-marker-dot i{width:10px;height:10px}
     .cs-paint-grid{grid-template-columns:repeat(2,1fr)}
     .cs-paint-item{padding:10px 12px}
     .cs-paint-value{font-size:15px}
@@ -459,9 +441,56 @@ html{scroll-behavior:smooth}
     .cs-tire-icon{width:48px;height:48px}
     .cs-data-body{padding:12px 14px 14px}
     .cs-data-header{padding:12px 14px}
-    .cs-gallery-tabs{gap:10px;padding:8px 0 6px}
-    .cs-gallery-tab{font-size:11px}
+    .cs-gallery-tabs{gap:4px;padding:8px 0 6px}
+    .cs-gallery-tab{font-size:10px;padding:4px 8px;gap:3px}
+    .cs-gallery-tab svg,.cs-gallery-tab i{width:11px;height:11px}
+    .cs-gallery-nav{width:30px;height:30px}
+    .cs-gallery-nav svg{width:14px;height:14px}
+    .cs-gallery-nav.prev{left:6px}
+    .cs-gallery-nav.next{right:6px}
 }
+/* INLINE CALCULATOR */
+.cs-calc-inline{background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;margin-top:12px}
+.cs-calc-result{padding:20px 20px 16px;border-bottom:1px solid #f0f0f2}
+.cs-calc-rate-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:#6b7280;margin-bottom:6px}
+.cs-calc-rate-value{font-size:30px;font-weight:800;color:#1a1a1a;letter-spacing:-.5px;line-height:1}
+.cs-calc-rate-suffix{font-size:14px;font-weight:500;color:#6b7280}
+.cs-calc-rate-sub{font-size:11.5px;color:#9ca3af;margin-top:8px}
+.cs-calc-controls{display:flex;align-items:flex-end;gap:10px;padding:16px 20px;flex-wrap:wrap}
+.cs-calc-field{flex:1;min-width:130px}
+.cs-calc-field label{display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:#6b7280;margin-bottom:5px}
+.cs-calc-input-wrap{display:flex;align-items:center;background:#fff;border:1.5px solid #d1d5db;border-radius:8px;padding:0 12px;height:42px;transition:border-color .15s}
+.cs-calc-input-wrap:focus-within{border-color:#0066ff;box-shadow:0 0 0 3px rgba(0,102,255,.08)}
+.cs-calc-input-wrap input{border:none;background:none;font-size:15px;font-weight:700;color:#1a1a1a;width:100%;outline:none;padding:0}
+.cs-calc-input-wrap span{font-size:12px;font-weight:600;color:#9ca3af;margin-left:4px;white-space:nowrap}
+.cs-calc-field select{width:100%;height:42px;background:#fff;border:1.5px solid #d1d5db;border-radius:8px;padding:0 12px;font-size:15px;font-weight:700;color:#1a1a1a;cursor:pointer;outline:none;appearance:auto;transition:border-color .15s}
+.cs-calc-field select:focus{border-color:#0066ff;box-shadow:0 0 0 3px rgba(0,102,255,.08)}
+.cs-calc-cta{height:42px;padding:0 22px;background:#0066ff;color:#fff;border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;white-space:nowrap;transition:all .15s;box-shadow:0 2px 8px rgba(0,102,255,.25)}
+.cs-calc-cta:hover{background:#0052cc;box-shadow:0 4px 14px rgba(0,102,255,.35)}
+.cs-calc-footer{padding:12px 20px;background:#fafafa;border-top:1px solid #f0f0f2}
+.cs-calc-disclaimer{font-size:9.5px;color:#b0b0b4;line-height:1.4}
+/* INQUIRY MODAL */
+.cs-inquiry-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.cs-inquiry-overlay.open{display:flex}
+.cs-inquiry-panel{background:#fff;border-radius:16px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;padding:32px;position:relative;animation:csSlideUp .25s ease}
+@keyframes csSlideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.cs-inquiry-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:24px;color:#9ca3af;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:all .15s}
+.cs-inquiry-close:hover{background:#f5f5f5;color:#1a1a1a}
+.cs-inquiry-panel h3{font-size:20px;font-weight:800;color:#1a1a1a;margin:0 0 4px}
+.cs-inquiry-car{font-size:13px;color:#6b7280;margin:0 0 20px;padding-bottom:16px;border-bottom:1px solid #f0f0f2}
+.cs-inquiry-field{margin-bottom:14px}
+.cs-inquiry-field label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:5px}
+.cs-inquiry-field input,.cs-inquiry-field textarea{width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;color:#1a1a1a;outline:none;transition:border-color .15s;font-family:inherit;box-sizing:border-box}
+.cs-inquiry-field input:focus,.cs-inquiry-field textarea:focus{border-color:#0066ff;box-shadow:0 0 0 3px rgba(0,102,255,.1)}
+.cs-inquiry-submit{width:100%;padding:14px;background:#0066ff;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:8px}
+.cs-inquiry-submit:hover{background:#0052cc}
+.cs-inquiry-submit:disabled{opacity:.6;cursor:not-allowed}
+.cs-inquiry-legal{font-size:10px;color:#9ca3af;text-align:center;margin-top:12px;line-height:1.4}
+.cs-inquiry-success{text-align:center;padding:20px 0}
+.cs-inquiry-success h4{font-size:20px;font-weight:800;color:#1a1a1a;margin:16px 0 6px}
+.cs-inquiry-success p{font-size:14px;color:#6b7280;margin:0 0 20px}
+.cs-inquiry-success button{padding:10px 28px;background:#f5f5f7;border:none;border-radius:10px;font-size:14px;font-weight:600;color:#374151;cursor:pointer}
+.cs-inquiry-success button:hover{background:#e8e8ea}
 @endsection
 
 @section('content')
@@ -560,43 +589,56 @@ html{scroll-behavior:smooth}
 
     <div class="cs-grid">
         <div>
-        <!-- GALLERY MEDIA TABS (COS style — above gallery, left column only) -->
-        <div class="cs-gallery-tabs-wrap">
+        <!-- GALLERY MEDIA TABS (pill-style badges) -->
+        <div class="cs-gallery-tabs-wrap" role="tablist">
         <div class="cs-gallery-tabs">
-            <button type="button" class="cs-gallery-tab active" data-gallery-filter="all" onclick="csFilterGallery(this,'all')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            <button type="button" class="cs-gallery-tab active" data-gallery-filter="all" onclick="csFilterGallery(this,'all')" role="tab" aria-selected="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
                 Wszystkie zdjęcia
             </button>
-            <button type="button" class="cs-gallery-tab {{ $damageImgList->count() ? '' : 'disabled' }}" data-gallery-filter="damage" onclick="csFilterGallery(this,'damage')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-                Zdjęcia przedstawiające stan pojazdu
+            <button type="button" class="cs-gallery-tab {{ $car->exteriorPano360Image ? '' : 'disabled' }}" data-gallery-filter="pano360ext" onclick="csFilterGallery(this,'pano360ext')" role="tab" aria-selected="false">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                360° z zewnątrz
             </button>
-            <button type="button" class="cs-gallery-tab disabled" data-gallery-filter="documents">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
+            <button type="button" class="cs-gallery-tab {{ $car->pano360Image ? '' : 'disabled' }}" data-gallery-filter="pano360" onclick="csFilterGallery(this,'pano360')" role="tab" aria-selected="false">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                360° wnętrza
+            </button>
+            <button type="button" class="cs-gallery-tab {{ $damageImgList->count() ? '' : 'disabled' }}" data-gallery-filter="damage" onclick="csFilterGallery(this,'damage')" role="tab" aria-selected="false">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                Zdjęcia stanu pojazdu
+            </button>
+            <button type="button" class="cs-gallery-tab" data-gallery-filter="documents" onclick="csFilterGallery(this,'documents')" role="tab" aria-selected="false">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
                 Dokumenty
             </button>
-            <button type="button" class="cs-gallery-tab {{ $hasEngineVideo ? '' : 'disabled' }}" data-gallery-filter="video" onclick="csFilterGallery(this,'video')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                Nagranie z pracy silnika
+            <button type="button" class="cs-gallery-tab {{ $hasEngineVideo ? '' : 'disabled' }}" data-gallery-filter="video" onclick="csFilterGallery(this,'video')" role="tab" aria-selected="false">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Wideo pracy silnika
             </button>
-            <button type="button" class="cs-gallery-tab {{ $car->pano360Image ? '' : 'disabled' }}" data-gallery-filter="pano360" onclick="csFilterGallery(this,'pano360')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                Wnętrze 360°
-            </button>
-            <button type="button" class="cs-gallery-tab {{ $car->exteriorPano360Image ? '' : 'disabled' }}" data-gallery-filter="pano360ext" onclick="csFilterGallery(this,'pano360ext')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                Zewnętrz 360°
+            <button type="button" class="cs-gallery-tab" data-gallery-filter="paint" onclick="csFilterGallery(this,'paint')" role="tab" aria-selected="false">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5"/><path d="M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></svg>
+                Pomiary lakieru
             </button>
         </div>
         </div>{{-- /cs-gallery-tabs-wrap --}}
         <div class="cs-gallery">
             <div class="cs-gallery-stage">
+                <button type="button" class="cs-gallery-nav prev" onclick="csGalleryPrev()" aria-label="Poprzednie zdjęcie"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+                <button type="button" class="cs-gallery-nav next" onclick="csGalleryNext()" aria-label="Następne zdjęcie"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
                 <div class="cs-gallery-main active" id="csGalleryStandard">
                     @if($galleryList->count())
                         <img src="{{ $galleryList->first()->url }}" id="csMainImg" alt="{{ $galleryList->first()->alt }}" style="cursor:zoom-in" onclick="openCarGallery(0)" fetchpriority="high" decoding="async">
-                        <div class="cs-gallery-counter" style="cursor:zoom-in" onclick="openCarGallery(parseInt(document.getElementById('csImgCounter').textContent)-1)"><i data-lucide="maximize-2" aria-hidden="true"></i> <span id="csImgCounter">1</span>/<span id="csImgTotal">{{ $galleryList->count() }}</span></div>
+                        <div class="cs-gallery-counter" style="cursor:zoom-in" onclick="openCarGallery(parseInt(document.getElementById('csImgCounter').textContent)-1)"><span id="csImgCounter">1</span> / <span id="csImgTotal">{{ $galleryList->count() }}</span></div>
                     @else
                         <div class="empty"><i data-lucide="car" aria-hidden="true"></i></div>
+                    @endif
+                    @if($car->available_now || $car->home_delivery || $car->has_gethelp)
+                    <div style="position:absolute;bottom:12px;left:12px;display:flex;flex-wrap:wrap;gap:5px;z-index:4">
+                        @if($car->available_now)<span style="background:rgba(16,185,129,.92);color:#fff;padding:5px 10px;border-radius:50px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;backdrop-filter:blur(6px)"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>Od ręki</span>@endif
+                        @if($car->home_delivery)<span style="background:rgba(99,102,241,.92);color:#fff;padding:5px 10px;border-radius:50px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;backdrop-filter:blur(6px)"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 13.52 9H12v9"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>Dostawa</span>@endif
+                        @if($car->has_gethelp)<span style="background:rgba(217,119,6,.92);color:#fff;padding:5px 10px;border-radius:50px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;backdrop-filter:blur(6px)"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>GetHelp {{ $car->gethelp_package ?? 'Classic' }} w cenie</span>@endif
+                    </div>
                     @endif
                 </div>
 
@@ -622,59 +664,147 @@ html{scroll-behavior:smooth}
                 </div>
                 @endif
             </div>
-            @if($galleryList->count() > 1 || $damageImgList->count())
+            @if($galleryList->count() > 0 || $car->exteriorPano360Image)
             <div class="cs-gallery-thumbs" id="csGalleryThumbs">
-                @foreach($galleryList as $i => $img)
-                    <img src="{{ $img->url }}" loading="lazy" alt="{{ $img->alt }}" class="cs-thumb {{ $i===0?'active':'' }}" data-type="gallery" data-idx="{{ $i }}" onclick="csSelImg(this,{{ $i+1 }})" ondblclick="openCarGallery({{ $i }})" tabindex="0" onkeypress="if(event.key==='Enter')csSelImg(this,{{ $i+1 }})">
+                @if($car->exteriorPano360Image)
+                <div class="cs-thumb-360" onclick="csFilterGallery(document.querySelector('[data-gallery-filter=pano360ext]'),'pano360ext')" title="Widok 360°" tabindex="0" role="button" onkeypress="if(event.key==='Enter')this.click()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    360°
+                </div>
+                @endif
+                @php $maxThumbs = 6; $showMore = $galleryList->count() > $maxThumbs; @endphp
+                @foreach($galleryList->take($showMore ? $maxThumbs - 1 : $maxThumbs) as $i => $img)
+                    <img src="{{ $img->url }}" loading="lazy" alt="{{ $img->alt }}" class="cs-thumb {{ $i===0 && !$car->exteriorPano360Image ? 'active' : '' }}" data-type="gallery" data-idx="{{ $i }}" onclick="csSelImg(this,{{ $i+1 }})" ondblclick="openCarGallery({{ $i }})" tabindex="0" onkeypress="if(event.key==='Enter')csSelImg(this,{{ $i+1 }})">
                 @endforeach
+                @if($showMore)
+                <div class="cs-thumb-more" onclick="openCarGallery({{ $maxThumbs - 1 }})" title="Zobacz wszystkie zdjęcia" tabindex="0" role="button" onkeypress="if(event.key==='Enter')this.click()">
+                    +{{ $galleryList->count() - $maxThumbs + 1 }}
+                    <span>Zobacz więcej</span>
+                </div>
+                @endif
                 @foreach($damageImgList as $j => $dimg)
-                    <img src="{{ $dimg->url }}" loading="lazy" alt="{{ $dimg->alt }}" class="cs-thumb" data-type="damage" data-idx="{{ $galleryList->count() + $j }}" onclick="csSelImg(this,{{ $galleryList->count() + $j + 1 }})" tabindex="0">
+                    <img src="{{ $dimg->url }}" loading="lazy" alt="{{ $dimg->alt }}" class="cs-thumb" data-type="damage" data-idx="{{ $galleryList->count() + $j }}" onclick="csSelImg(this,{{ $galleryList->count() + $j + 1 }})" tabindex="0" data-hidden>
                 @endforeach
             </div>
             @endif
         </div>
 
-        <!-- KALKULATOR TRIGGER (left column) -->
-        <button type="button" class="cs-calc-trigger" onclick="csOpenCalc()">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="8" x2="10" y1="10" y2="10"/><line x1="14" x2="16" y1="10" y2="10"/><line x1="8" x2="10" y1="14" y2="14"/><line x1="14" x2="16" y1="14" y2="14"/><line x1="8" x2="10" y1="18" y2="18"/><line x1="14" x2="16" y1="18" y2="18"/></svg>
-            <span class="cs-calc-trigger-text">Oblicz ratę kredytu / leasingu<small>Kalkulator finansowania</small></span>
-            <svg class="cs-calc-trigger-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
+        <!-- KALKULATOR KREDYTU (inline) -->
+        <div class="cs-calc-inline">
+            <div class="cs-calc-result">
+                <div class="cs-calc-rate-label">Rata od</div>
+                <div class="cs-calc-rate-value"><span id="csCalcInlineRate">—</span> <span class="cs-calc-rate-suffix">/ mies.*</span></div>
+                <div class="cs-calc-rate-sub">Szacowana rata dla wybranych parametrów</div>
+            </div>
+            <div class="cs-calc-controls">
+                <div class="cs-calc-field">
+                    <label>Wpłata własna</label>
+                    <div class="cs-calc-input-wrap">
+                        <input type="number" id="csCalcDp" value="{{ $car->price ? round($car->price * 0.2) : 0 }}" min="0" max="{{ $car->price ?? 0 }}" step="1000">
+                        <span>zł</span>
+                    </div>
+                </div>
+                <div class="cs-calc-field">
+                    <label>Okres finansowania</label>
+                    <select id="csCalcTerm">
+                        <option value="12">12 miesięcy</option>
+                        <option value="24">24 miesiące</option>
+                        <option value="36">36 miesięcy</option>
+                        <option value="48" selected>48 miesięcy</option>
+                        <option value="60">60 miesięcy</option>
+                        <option value="72">72 miesiące</option>
+                        <option value="84">84 miesiące</option>
+                        <option value="96">96 miesięcy</option>
+                    </select>
+                </div>
+                <div class="cs-calc-field" style="flex:0 0 auto;min-width:auto">
+                    <label>&nbsp;</label>
+                    <button type="button" class="cs-calc-cta" onclick="csOpenInquiry('financing')">
+                        Zapytaj o finansowanie
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="cs-calc-footer">
+                <span class="cs-calc-disclaimer">*Przykładowa rata przy RRSO 7,9%. Nie stanowi oferty w rozumieniu prawa.</span>
+            </div>
+        </div>
+
 
         </div><!-- /left column: gallery -->
 
 
-        <!-- PRICE + CALC SIDEBAR (sticky) -->
+        <!-- PRICE + SIDEBAR (sticky) -->
         <div class="cs-sidebar">
-            <!-- SIDEBAR CARD (COS style) -->
             <div class="cs-sidebar-card">
                 <!-- PRICE -->
                 <div class="cs-price-section">
-                    <div class="cs-price-label">Cena sprzedaży</div>
-                    <div class="cs-price-value">{{ $car->formatted_price }}@if($car->price_type)<small>{{ $car->price_type }}</small>@endif</div>
+                    <div class="cs-price-value">{{ $car->formatted_price }}</div>
+                    <div style="font-size:12px;color:#6b7280;font-weight:500;margin-top:6px">Cena brutto @if($car->price_type)· {{ $car->price_type }}@endif</div>
                 </div>
-                <!-- VEHICLE SUMMARY (COS-style key-value pairs) -->
+                <!-- VEHICLE SUMMARY with icons -->
                 <div class="cs-sidebar-summary">
-                    @if($car->first_registration)<div class="cs-sidebar-summary-row"><span class="lbl">Rejestracja</span><span class="val">{{ $car->first_registration }}</span></div>@endif
-                    @if($car->mileage)<div class="cs-sidebar-summary-row"><span class="lbl">Przebieg</span><span class="val">{{ number_format((float) $car->mileage,0,'',' ') }} km</span></div>@endif
-                    @if($car->fuel_type)<div class="cs-sidebar-summary-row"><span class="lbl">Paliwo</span><span class="val">{{ $car->fuel_type }}</span></div>@endif
-                    @if($car->transmission)<div class="cs-sidebar-summary-row"><span class="lbl">Skrzynia</span><span class="val">{{ $car->transmission }}</span></div>@endif
-                    @if($car->power_hp)<div class="cs-sidebar-summary-row"><span class="lbl">Moc</span><span class="val">{{ $car->power_hp }} KM</span></div>@endif
-                    @if($car->engine_capacity)<div class="cs-sidebar-summary-row"><span class="lbl">Seria</span><span class="val">{{ number_format((float) $car->engine_capacity,0,'',' ') }} cm³</span></div>@endif
-                    @if($car->body_type ?? $car->category)<div class="cs-sidebar-summary-row"><span class="lbl">Nadwozie</span><span class="val">{{ $car->body_type ?? $car->category }}</span></div>@endif
-                    @if($car->co2_emission)<div class="cs-sidebar-summary-row"><span class="lbl">CCL</span><span class="val">{{ $car->co2_emission }} g/km</span></div>@endif
-                    @if($car->color)<div class="cs-sidebar-summary-row"><span class="lbl">Kolor</span><span class="val">{{ $car->color }}</span></div>@endif
+                    @if($car->mileage)
+                    <div class="cs-sidebar-summary-row">
+                        <svg class="cs-row-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
+                        <span class="lbl">Przebieg</span>
+                        <span class="val">{{ number_format((float) $car->mileage,0,'',' ') }} km</span>
+                    </div>
+                    @endif
+                    @if($car->first_registration)
+                    <div class="cs-sidebar-summary-row">
+                        <svg class="cs-row-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                        <span class="lbl">Rok produkcji</span>
+                        <span class="val">{{ $car->first_registration }}</span>
+                    </div>
+                    @endif
+                    @if($car->fuel_type)
+                    <div class="cs-sidebar-summary-row">
+                        <svg class="cs-row-icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>
+                        <span class="lbl">Paliwo</span>
+                        <span class="val">{{ $car->fuel_type }}</span>
+                    </div>
+                    @endif
+                    @if($car->transmission)
+                    <div class="cs-sidebar-summary-row">
+                        <svg class="cs-row-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22V8"/><path d="m5 12-3 3 3 3"/><path d="m19 12 3 3-3 3"/><path d="M2 15h20"/></svg>
+                        <span class="lbl">Skrzynia biegów</span>
+                        <span class="val">{{ $car->transmission }}</span>
+                    </div>
+                    @endif
+                    @if($car->power_hp)
+                    <div class="cs-sidebar-summary-row">
+                        <svg class="cs-row-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+                        <span class="lbl">Moc</span>
+                        <span class="val">{{ $car->power_hp }} KM</span>
+                    </div>
+                    @endif
+                    @if($car->body_type ?? $car->category)
+                    <div class="cs-sidebar-summary-row">
+                        <svg class="cs-row-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+                        <span class="lbl">Nadwozie</span>
+                        <span class="val">{{ $car->body_type ?? $car->category }}</span>
+                    </div>
+                    @endif
                 </div>
                 <!-- CTA BUTTONS -->
                 <div class="cs-price-actions">
-                    <a href="tel:+48123456789" class="btn btn-blue btn-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    <a href="tel:+48585586090" class="cs-btn-phone">
+                        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                         Zadzwoń
+                        <span style="font-weight:400;opacity:.85">+48 58 558 60 90</span>
                     </a>
-                    <div style="display:flex;gap:8px">
+                    <button type="button" class="cs-btn-message" onclick="csOpenInquiry('general')">
+                        <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        <span class="cs-msg-text">
+                            <strong>Napisz wiadomość</strong>
+                            <small>Odpowiadamy na każde pytanie</small>
+                        </span>
+                    </button>
+                    <div style="display:flex;gap:8px;margin-top:4px">
                         <button type="button" class="cs-btn-secondary" id="csSidebarFav" data-id="{{ $car->id }}" onclick="toggleFav(event,{{ $car->id }});csSidebarFavUpdate()" style="flex:1">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="csFavIcon"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                            <span id="csFavLabel">Obserwuj</span>
+                            <span id="csFavLabel" style="visibility:hidden">Dodaj do ulubionych</span>
                         </button>
                         @if($car->has_certicheck)
                         <a href="{{ route('car.pdf', $car->slug) }}" class="cs-sidebar-certi" title="Pobierz raport CertiCheck PDF">
@@ -684,121 +814,86 @@ html{scroll-behavior:smooth}
                         @endif
                     </div>
                 </div>
+
+
+
+                @if($car->is_imported || $car->country_registration)
+                <div style="padding:0 22px 18px">
+                    <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:linear-gradient(135deg,#f0fdf4 0%,#ecfdf5 100%);border:1px solid #bbf7d0;border-radius:12px">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+                        <div>
+                            <div style="font-size:13px;font-weight:700;color:#166534;line-height:1.3">Sprowadzony z {{ $car->country_registration ?? 'zagranicy' }}</div>
+                            <div style="font-size:11px;color:#16a34a;margin-top:2px">{{ $car->taxation ?? 'Opłacony — bez PCC 2%' }}</div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+            </div>{{-- /cs-sidebar-card --}}
+
+            {{-- INFO TILES — separate from main card --}}
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 16px;text-align:center">
+                    <div style="width:44px;height:44px;border-radius:12px;background:#e8f1ff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0066ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                    </div>
+                    <div style="font-size:14px;font-weight:800;color:#1a1a1a;margin-bottom:4px">Dostępny od ręki</div>
+                    <div style="font-size:11.5px;color:#6b7280;line-height:1.5">Auto gotowe do odbioru<br>Możliwa jazda próbna</div>
+                </div>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 16px;text-align:center">
+                    <div style="width:44px;height:44px;border-radius:12px;background:#e8f1ff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0066ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+                    </div>
+                    <div style="font-size:14px;font-weight:800;color:#1a1a1a;margin-bottom:4px">Dostawa pod dom</div>
+                    <div style="font-size:11.5px;color:#6b7280;line-height:1.5">Po wcześniejszych oględzinach<br>Cena do ustalenia</div>
+                    <a href="{{ route('contact') }}" style="font-size:11.5px;font-weight:600;color:#0066ff;text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-top:6px">Dowiedz się więcej <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                </div>
             </div>
-
-
         </div>
         </div><!-- /cs-sidebar -->
 
     </div><!-- /cs-grid: gallery + sidebar only -->
 
-    <!-- DATA SECTIONS (full width, below grid — COS Check style) -->
-    <div class="cs-sections-2col">
-
-    <!-- LEFT COLUMN -->
-    <div class="cs-col-left">
-
-        <!-- Dane pojazdu -->
-        <div class="cs-data-section">
-            <div class="cs-data-header"><h2>Dane pojazdu</h2></div>
-            <div class="cs-data-body open" style="padding:0">
-                <div class="cs-sub-bd open">
-                    @if($car->brand?->name)<div class="cs-data-row"><span class="lbl">Marka</span><span class="val">{{ $car->brand->name }}</span></div>@endif
-                    @if($car->model)<div class="cs-data-row"><span class="lbl">Model</span><span class="val">{{ $car->model }}</span></div>@endif
-                    @if($car->category)<div class="cs-data-row"><span class="lbl">Kategoria</span><span class="val">{{ $car->category }}</span></div>@endif
-                    @if($car->color)<div class="cs-data-row"><span class="lbl">Kolor</span><span class="val">{{ $car->color }}@if($car->color_code) ({{ $car->color_code }})@endif</span></div>@endif
-                    @if($car->doors)<div class="cs-data-row"><span class="lbl">Drzwi</span><span class="val">{{ $car->doors }}@if($car->seats)/{{ $car->seats }}@endif</span></div>@endif
-                    @if($car->seats && !$car->doors)<div class="cs-data-row"><span class="lbl">Siedzenia</span><span class="val">{{ $car->seats }}</span></div>@endif
-                    @if($car->weight)<div class="cs-data-row"><span class="lbl">Masa</span><span class="val">{{ number_format((float) $car->weight, 0, '', ' ') }} kg</span></div>@endif
-                    @if($car->upholstery)<div class="cs-data-row"><span class="lbl">Tapicerka</span><span class="val">{{ $car->upholstery }}</span></div>@endif
-                    @if($car->vin)<div class="cs-data-row"><span class="lbl">VIN</span><span class="val">{{ $car->vin }}</span></div>@endif
-                </div>
+    <!-- DATA SECTIONS (5-column horizontal layout) -->
+    <div class="cs-data-section" style="max-width:calc(1200px - 48px);margin:16px auto 16px;padding:0 24px">
+        <div class="cs-data-header"><h2>Dane pojazdu</h2></div>
+        <div class="cs-data-columns">
+            <!-- Col 1: Pochodzenie -->
+            <div class="cs-data-col">
+                <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Pochodzenie</div>
+                @if($car->country_registration)<div class="cs-data-row"><span class="lbl">Kraj pochodzenia</span><span class="val">{{ $car->country_registration }}</span></div>@endif
+                @if($car->first_registration)<div class="cs-data-row"><span class="lbl">Pierwsza rejestracja</span><span class="val">{{ $car->first_registration }}</span></div>@endif
+            </div>
+            <!-- Col 2: Historia pojazdu -->
+            <div class="cs-data-col">
+                <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="m2 14 6-6 6 6 6-6"/></svg>Historia pojazdu</div>
+                @if($car->previous_owners !== null)<div class="cs-data-row"><span class="lbl">Właściciele</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->previous_owners == 0 ? 'Bezwypadkowy' : $car->previous_owners }}</span></div>@endif
+                @if($car->service_book)<div class="cs-data-row"><span class="lbl">Sprawdzony w bazach</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->service_book }}</span></div>@endif
+                @if($car->vin)<div class="cs-data-row"><span class="lbl">VIN</span><span class="val" style="font-size:10.5px;letter-spacing:.3px">{{ $car->vin }}</span></div>@endif
+            </div>
+            <!-- Col 3: Serwisowanie i inspekcja -->
+            <div class="cs-data-col">
+                <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Serwisowanie</div>
+                @if($car->service_documentation)<div class="cs-data-row"><span class="lbl">Serwisowany w ASO</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->service_documentation }}</span></div>@endif
+                @if($car->last_service)<div class="cs-data-row"><span class="lbl">Ostatni przegląd</span><span class="val">{{ $car->last_service }}</span></div>@endif
+                @if($car->next_inspection)<div class="cs-data-row"><span class="lbl">Następny przegląd</span><span class="val">{{ $car->next_inspection }}</span></div>@endif
+            </div>
+            <!-- Col 4: Dokumenty pojazdu -->
+            <div class="cs-data-col">
+                <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>Dokumenty</div>
+                @if($car->coc_documents)<div class="cs-data-row"><span class="lbl">Komplet dokumentów</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->coc_documents }}</span></div>@endif
+                @if($car->vehicle_folder)<div class="cs-data-row"><span class="lbl">Dowód rejestracyjny</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->vehicle_folder }}</span></div>@endif
+                @if($car->hu_au_report)<div class="cs-data-row"><span class="lbl">Polisa OC</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->hu_au_report }}</span></div>@endif
+            </div>
+            <!-- Col 5: Zużycie paliwa -->
+            <div class="cs-data-col">
+                <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>Zużycie paliwa</div>
+                @if($car->fuel_consumption)<div class="cs-data-row"><span class="lbl">Miasto</span><span class="val">{{ $car->fuel_consumption }} l/100km</span></div>@endif
+                @if($car->co2_emission)<div class="cs-data-row"><span class="lbl">Emisja CO₂</span><span class="val">{{ $car->co2_emission }} g/km</span></div>@endif
+                @if($car->emission_class)<div class="cs-data-row"><span class="lbl">Norma emisji</span><span class="val">{{ $car->emission_class }}</span></div>@endif
             </div>
         </div>
-
-        <!-- Historia pojazdu -->
-        <div class="cs-data-section">
-            <div class="cs-data-header"><h2>Historia pojazdu</h2></div>
-            <div class="cs-data-body open" style="padding:0">
-                <div class="cs-sub-bd open">
-                    @if($car->first_registration)<div class="cs-data-row"><span class="lbl">Pierwsza rejestracja</span><span class="val">{{ $car->first_registration }}</span></div>@endif
-                    @if($car->mileage)<div class="cs-data-row"><span class="lbl">Przebieg</span><span class="val">{{ number_format((float) $car->mileage, 0, '', ' ') }} km</span></div>@endif
-                    @if($car->previous_owners !== null)<div class="cs-data-row"><span class="lbl">Poprzedni właściciele</span><span class="val">{{ $car->previous_owners }}</span></div>@endif
-                    @if($car->number_of_keys)<div class="cs-data-row"><span class="lbl">Liczba kluczyków</span><span class="val">{{ $car->number_of_keys }}</span></div>@endif
-                    @if($car->business_use)<div class="cs-data-row"><span class="lbl">Użytkowanie</span><span class="val">{{ $car->business_use }}</span></div>@endif
-                </div>
-            </div>
-        </div>
-
-        <!-- Silnik -->
-        <div class="cs-data-section">
-            <div class="cs-data-header"><h2>Silnik</h2></div>
-            <div class="cs-data-body open" style="padding:0">
-                <div class="cs-sub-bd open">
-                    @if($car->fuel_type)<div class="cs-data-row"><span class="lbl">Paliwo</span><span class="val">{{ $car->fuel_type }}</span></div>@endif
-                    @if($car->power_hp)<div class="cs-data-row"><span class="lbl">Moc</span><span class="val">{{ $car->power_hp }} KM{{ $car->power_kw ? ' ('.$car->power_kw.' kW)' : '' }}</span></div>@endif
-                    @if($car->engine_capacity)<div class="cs-data-row"><span class="lbl">Pojemność silnika</span><span class="val">{{ number_format((float) $car->engine_capacity, 0, '', ' ') }} ccm</span></div>@endif
-                    @if($car->transmission)<div class="cs-data-row"><span class="lbl">Skrzynia biegów</span><span class="val">{{ $car->transmission }}{{ $car->transmission_detail ? ' ('.$car->transmission_detail.')' : '' }}</span></div>@endif
-                </div>
-            </div>
-        </div>
-    </div><!-- /cs-col-left -->
-
-    <!-- RIGHT COLUMN -->
-    <div class="cs-col-right">
-
-        <!-- Pochodzenie i podatek -->
-        <div class="cs-data-section">
-            <div class="cs-data-header"><h2>Pochodzenie i podatek</h2></div>
-            <div class="cs-data-body open" style="padding:0">
-                <div class="cs-sub-bd open">
-                    <div class="cs-data-row"><span class="lbl">Pojazd importowany</span><span class="val">{{ $car->is_imported ? 'Tak' : 'Nie' }}</span></div>
-                    @if($car->country_registration)<div class="cs-data-row"><span class="lbl">Kraj ostatniej rejestracji</span><span class="val">{{ $car->country_registration }}</span></div>@endif
-                    @if($car->taxation)<div class="cs-data-row"><span class="lbl">Opodatkowanie</span><span class="val">{{ $car->taxation }}</span></div>@endif
-                </div>
-            </div>
-        </div>
-
-        <!-- Serwisowanie i inspekcja -->
-        <div class="cs-data-section">
-            <div class="cs-data-header"><h2>Serwisowanie i inspekcja pojazdu</h2></div>
-            <div class="cs-data-body open" style="padding:0">
-                <div class="cs-sub-bd open">
-                    @if($car->last_service)<div class="cs-data-row"><span class="lbl">Ostatni serwis</span><span class="val">{{ $car->last_service }}</span></div>@endif
-                    @if($car->last_service_mileage)<div class="cs-data-row"><span class="lbl">Przebieg przy serwisie</span><span class="val">{{ number_format((float) $car->last_service_mileage,0,'',' ') }} km</span></div>@endif
-                    @if($car->service_documentation)<div class="cs-data-row"><span class="lbl">Dokumentacja serwisowa</span><span class="val">{{ $car->service_documentation }}</span></div>@endif
-                    @if($car->next_inspection)<div class="cs-data-row"><span class="lbl">Raport HU/AU ważny do</span><span class="val">{{ $car->next_inspection }}</span></div>@endif
-                </div>
-            </div>
-        </div>
-
-        <!-- Zużycie paliwa -->
-        <div class="cs-data-section">
-            <div class="cs-data-header"><h2>Zużycie paliwa</h2></div>
-            <div class="cs-data-body open" style="padding:0">
-                <div class="cs-sub-bd open">
-                    @if($car->fuel_consumption)<div class="cs-data-row"><span class="lbl">Zużycie paliwa</span><span class="val">{{ $car->fuel_consumption }} l/100km</span></div>@endif
-                    @if($car->co2_emission)<div class="cs-data-row"><span class="lbl">Emisja CO₂</span><span class="val">{{ $car->co2_emission }} g/km</span></div>@endif
-                    @if($car->emission_class)<div class="cs-data-row"><span class="lbl">Klasa emisji</span><span class="val">{{ $car->emission_class }}</span></div>@endif
-                </div>
-            </div>
-        </div>
-
-        <!-- Dokumenty pojazdu -->
-        <div class="cs-data-section">
-            <div class="cs-data-header"><h2>Dokumenty pojazdu</h2></div>
-            <div class="cs-data-body open" style="padding:0">
-                <div class="cs-sub-bd open">
-                    @if($car->service_book)<div class="cs-data-row"><span class="lbl">Książka serwisowa</span><span class="val">{{ $car->service_book }}</span></div>@endif
-                    @if($car->coc_documents)<div class="cs-data-row"><span class="lbl">Dokumenty COC</span><span class="val">{{ $car->coc_documents }}</span></div>@endif
-                    @if($car->vehicle_folder)<div class="cs-data-row"><span class="lbl">Teczka pojazdu</span><span class="val">{{ $car->vehicle_folder }}</span></div>@endif
-                    @if($car->hu_au_report)<div class="cs-data-row"><span class="lbl">Raport HU/AU</span><span class="val">{{ $car->hu_au_report }}</span></div>@endif
-                </div>
-            </div>
-        </div>
-    </div><!-- /cs-col-right -->
-
-    </div><!-- /cs-sections-2col -->
+    </div>
 
         <!-- USZKODZENIA (CarOnSale style) -->
     @if($car->damages->count())
@@ -817,12 +912,16 @@ html{scroll-behavior:smooth}
             <div class="cs-damage-grid">
                 <div class="cs-damage-diagram">
                     <div class="cs-damage-diagram-inner">
-                        <svg viewBox="0 0 200 380" style="width:100%;height:100%" aria-hidden="true">
-                            <path d="M60,30 Q60,10 100,10 Q140,10 140,30 L155,80 L160,120 L160,260 L155,300 L140,350 Q140,370 100,370 Q60,370 60,350 L45,300 L40,260 L40,120 L45,80 Z" fill="#e5e5e7" stroke="#cfcfd2" stroke-width="1.5"/>
-                            <path d="M65,80 L135,80 L150,120 L50,120 Z" fill="#d4d4d7" stroke="#b8b8bc" stroke-width="1"/>
-                            <path d="M55,280 L145,280 L140,330 L60,330 Z" fill="#d4d4d7" stroke="#b8b8bc" stroke-width="1"/>
-                            <rect x="52" y="130" width="96" height="140" rx="8" fill="#d4d4d7" stroke="#b8b8bc" stroke-width="1"/>
-                        </svg>
+                        @php
+                            $bodyTypeMap = [
+                                'sedan' => 'sedan', 'suv' => 'suv', 'coupé' => 'coupe', 'coupe' => 'coupe',
+                                'bus' => 'van', 'van' => 'van', 'kombi' => 'kombi', 'hatchback' => 'hatchback',
+                                'kabriolet' => 'sedan', 'cabriolet' => 'sedan', 'pickup' => 'suv',
+                            ];
+                            $btKey = strtolower($car->body_type ?? $car->category ?? 'sedan');
+                            $topImg = $bodyTypeMap[$btKey] ?? 'sedan';
+                        @endphp
+                        <img src="/img/body-types-top/{{ $topImg }}.png" alt="" aria-hidden="true" draggable="false">
                         @foreach($car->damages as $d)
                         <button type="button" class="cs-damage-marker" data-damage-marker="{{ $d->id }}" onclick="csSelDamage({{ $d->id }})" aria-label="Uszkodzenie: {{ $d->area }}" style="left:{{ $d->position_x ?? 50 }}%;top:{{ $d->position_y ?? 50 }}%">
                             <span class="cs-damage-marker-dot"><i data-lucide="alert-triangle" aria-hidden="true"></i></span>
@@ -865,10 +964,13 @@ html{scroll-behavior:smooth}
             <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
         </div>
         <div class="cs-data-body open">
-            <p style="font-size:12px;color:var(--text-3);margin-bottom:16px;display:flex;align-items:center;gap:6px">
-                <i data-lucide="info" aria-hidden="true" style="width:14px;height:14px;flex-shrink:0"></i>
-                Norma fabryczna: 80–150 µm · powyżej 200 µm — możliwa naprawa lakiernicza
-            </p>
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+                <p style="font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:6px;margin:0">
+                    <i data-lucide="info" aria-hidden="true" style="width:14px;height:14px;flex-shrink:0"></i>
+                    Pomiary wykonane profesjonalnym czujnikiem lakieru. Normy fabryczne: 90–150 µm.
+                </p>
+                <a href="#" style="font-size:12px;font-weight:700;color:var(--blue);display:inline-flex;align-items:center;gap:4px;text-decoration:none;white-space:nowrap">Jak czytać pomiary? <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+            </div>
             <div class="cs-paint-grid">
                 @php
                     $paintPanelNames = [
@@ -880,14 +982,23 @@ html{scroll-behavior:smooth}
                 @endphp
                 @foreach($car->paint_measurements as $panel => $value)
                 @php
-                    $val = is_array($value) ? ($value['value'] ?? $value[0] ?? 0) : $value;
-                    $panelLabel = is_numeric($panel) ? ($paintPanelNames[$panel] ?? 'Panel '.($panel + 1)) : $panel;
+                    $val = is_array($value) ? ($value['value'] ?? $value[0] ?? '') : $value;
+                    $numVal = (int) preg_replace('/[^0-9]/', '', $val);
+                    if($numVal <= 0) continue; // skip empty measurements
+                    $panelLabel = is_array($value) && isset($value['area']) ? $value['area'] : (is_numeric($panel) ? ($paintPanelNames[$panel] ?? 'Panel '.($panel + 1)) : $panel);
+                    $paintClass = $numVal > 300 ? 'paint-danger' : ($numVal > 150 ? 'paint-warn' : 'paint-ok');
+                    $dotColor = $numVal > 300 ? '#ef4444' : ($numVal > 150 ? '#f59e0b' : '#10b981');
                 @endphp
-                <div class="cs-paint-item">
+                <div class="cs-paint-item {{ $paintClass }}">
                     <div class="cs-paint-label">{{ $panelLabel }}</div>
-                    <div class="cs-paint-value {{ $val > 200 ? 'cs-paint-danger' : ($val > 160 ? 'cs-paint-warn' : '') }}">{{ $val }} <span style="font-size:12px;font-weight:500;color:var(--text-3)">µm</span></div>
+                    <div class="cs-paint-value"><span class="cs-paint-dot" style="background:{{ $dotColor }}"></span>{{ $val }} <span style="font-size:12px;font-weight:500;color:var(--text-3)">µm</span></div>
                 </div>
                 @endforeach
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid #eeeef0;font-size:11px;font-weight:600">
+                <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#10b981"></span> Lakier fabryczny (90–150 µm)</span>
+                <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#f59e0b"></span> Ponownie lakierowany (150–300 µm)</span>
+                <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#ef4444"></span> Naprawa / szpachla (powyżej 300 µm)</span>
             </div>
         </div>
     </div>
@@ -909,7 +1020,9 @@ html{scroll-behavior:smooth}
                             'suspension' => 'Zawieszenie', 'electronics' => 'Elektronika',
                             'body' => 'Nadwozie', 'brakes' => 'Hamulce',
                             'steering' => 'Układ kierowniczy', 'exhaust' => 'Układ wydechowy',
-                            'ac' => 'Klimatyzacja', 'tires' => 'Opony', 'lights' => 'Oświetlenie',
+                            'ac' => 'Klimatyzacja', 'air_conditioning' => 'Klimatyzacja',
+                            'braking' => 'Układ hamulcowy',
+                            'tires' => 'Opony', 'lights' => 'Oświetlenie',
                             'interior' => 'Wnętrze', 'underbody' => 'Podwozie',
                         ];
                     @endphp
@@ -1014,7 +1127,12 @@ html{scroll-behavior:smooth}
         @foreach($car->tireSets as $set)
         @php
             $setTires = $set->tires;
-            $positions = ['Przednia lewa','Przednia prawa','Tylna lewa','Tylna prawa'];
+            $positionLabels = [
+                'front_left' => 'Przednia lewa',
+                'front_right' => 'Przednia prawa',
+                'rear_left' => 'Tylna lewa',
+                'rear_right' => 'Tylna prawa',
+            ];
         @endphp
         <div class="cs-tire-set">
             <h3 class="cs-tire-set-title">
@@ -1023,7 +1141,7 @@ html{scroll-behavior:smooth}
             <div class="cs-tire-table">
                 <div class="cs-tire-th"></div>
                 @foreach($setTires as $t)
-                <div class="cs-tire-th" style="text-align:center">{{ $t->position }}</div>
+                <div class="cs-tire-th" style="text-align:center">{{ $positionLabels[$t->position] ?? $t->position }}</div>
                 @endforeach
                 <div class="cs-tire-info">
                     @if($set->tire_type)
@@ -1038,7 +1156,7 @@ html{scroll-behavior:smooth}
                 @foreach($setTires as $t)
                 @php
                     $depth = (float)($t->tread_depth ?? 0);
-                    $hasIssue = $t->condition && count($t->condition) > 0;
+                    $hasIssue = $t->condition && is_array($t->condition) && count($t->condition) > 0;
                     $statusCls = $hasIssue ? 'warn' : 'ok';
                 @endphp
                 <div class="cs-tire-col">
@@ -1062,7 +1180,7 @@ html{scroll-behavior:smooth}
                                 @else<i data-lucide="check" aria-hidden="true"></i>@endif
                             </span>
                         </div>
-                        <div class="cs-tire-pos-name">{{ $t->position }}</div>
+                        <div class="cs-tire-pos-name">{{ $positionLabels[$t->position] ?? $t->position }}</div>
                     </div>
                     <div class="cs-tire-data-row" style="font-weight:700">{{ $t->tread_depth ?? '—' }}</div>
                     <div class="cs-tire-data-row {{ $hasIssue ? 'warn-txt' : 'ok-txt' }}">
@@ -1106,18 +1224,27 @@ html{scroll-behavior:smooth}
     @endif
 
     @if($relatedCars->count())
-    <div style="margin-top:20px;padding:24px 24px 0;border-top:1px solid var(--border-l);max-width:1200px;margin-left:auto;margin-right:auto">
+    <div style="margin-top:20px;padding:24px 24px 32px;border-top:1px solid var(--border-l);max-width:1200px;margin-left:auto;margin-right:auto">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
             <div>
                 <h2 style="font-size:22px;font-weight:800;letter-spacing:-.4px;color:var(--text)">Podobne pojazdy</h2>
-                <p style="font-size:13px;color:var(--text-3);margin-top:4px">Inne certyfikowane auta z naszej oferty</p>
             </div>
-            <a href="{{ route('catalog') }}" style="font-size:13px;font-weight:700;color:var(--blue);display:inline-flex;align-items:center;gap:5px;text-decoration:none">
-                Pokaż wszystkie
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-            </a>
+            <div style="display:flex;align-items:center;gap:12px">
+                <a href="{{ route('catalog') }}" style="font-size:13px;font-weight:700;color:var(--blue);display:inline-flex;align-items:center;gap:5px;text-decoration:none">
+                    Zobacz wszystkie
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </a>
+                <div style="display:flex;gap:6px">
+                    <button type="button" onclick="csRelScroll(-1)" style="width:36px;height:36px;border-radius:50%;border:1.5px solid #e5e5e7;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#0066ff'" onmouseout="this.style.borderColor='#e5e5e7'">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <button type="button" onclick="csRelScroll(1)" style="width:36px;height:36px;border-radius:50%;border:1.5px solid #e5e5e7;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#0066ff'" onmouseout="this.style.borderColor='#e5e5e7'">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="cs-related-grid">
+        <div class="cs-related-grid" id="csRelatedGrid">
             @foreach($relatedCars as $relCar)
             <a href="{{ route('catalog.show', $relCar) }}" class="vcard">
                 <div class="vcard-img">
@@ -1127,16 +1254,19 @@ html{scroll-behavior:smooth}
                         <div class="vcard-placeholder"><svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></div>
                     @endif
                     @if($relCar->is_featured)<div class="vcard-badge">Wyróżnione</div>@endif
-                    @if($relCar->has_certicheck)<div class="certi-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg> CertiCheck</div>@endif
+                    <button class="lcard-fav" data-id="{{ $relCar->id }}" aria-label="Dodaj do ulubionych" onclick="event.preventDefault();event.stopPropagation();toggleFav(event,{{ $relCar->id }})">
+                        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </button>
                 </div>
                 <div class="vcard-body">
                     <div class="vcard-title">{{ $relCar->title }}</div>
                     <div class="vcard-specs">
-                        @if($relCar->mileage)<span>{{ number_format((float) $relCar->mileage,0,'',' ') }} km</span>@endif
+                        @if($relCar->first_registration)<span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> {{ $relCar->first_registration }}</span>@endif
                         @if($relCar->fuel_type)<span>{{ $relCar->fuel_type }}</span>@endif
-                        @if($relCar->first_registration)<span>{{ $relCar->first_registration }}</span>@endif
+                        @if($relCar->transmission)<span>{{ $relCar->transmission }}</span>@endif
                         @if($relCar->power_hp)<span>{{ $relCar->power_hp }} KM</span>@endif
                     </div>
+                    @if($relCar->mileage)<div style="font-size:12px;color:#6b7280;margin-bottom:8px">{{ number_format((float) $relCar->mileage,0,'',' ') }} km</div>@endif
                     <div class="vcard-bottom">
                         <div class="vcard-price">{{ $relCar->formatted_price }}</div>
                         <span class="vcard-link">Sprawdź <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
@@ -1151,84 +1281,47 @@ html{scroll-behavior:smooth}
 </div>
 </div>
 
-<!-- FLOATING CALCULATOR OVERLAY -->
-<div class="cs-calc-overlay" id="csCalcOverlay" onclick="csCloseCalc()"></div>
-<div class="cs-calc-float" id="csCalcFloat">
-    <div class="cs-calc-float-header">
-        <h3>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="8" x2="10" y1="10" y2="10"/><line x1="14" x2="16" y1="10" y2="10"/><line x1="8" x2="10" y1="14" y2="14"/><line x1="14" x2="16" y1="14" y2="14"/><line x1="8" x2="10" y1="18" y2="18"/><line x1="14" x2="16" y1="18" y2="18"/></svg>
-            Kalkulator finansowania
-        </h3>
-        <button type="button" class="cs-calc-float-close" onclick="csCloseCalc()" title="Zamknij">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-        </button>
-    </div>
-    <div class="cs-calc" id="csCalc">
-        <div class="cs-calc-header">
-            <div class="cs-calc-tabs">
-                <button type="button" class="cs-calc-tab active" data-calc-type="credit" onclick="csCalcTab(this,'credit')">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
-                    Kredyt
-                </button>
-                <button type="button" class="cs-calc-tab" data-calc-type="leasing" onclick="csCalcTab(this,'leasing')">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/><path d="m15 9 6-6"/></svg>
-                    Leasing
-                </button>
+<!-- INQUIRY MODAL -->
+<div id="csInquiryOverlay" class="cs-inquiry-overlay" onclick="if(event.target===this)csCloseInquiry()">
+    <div class="cs-inquiry-panel" id="csInquiryPanel">
+        <button type="button" class="cs-inquiry-close" onclick="csCloseInquiry()">&times;</button>
+        <h3 id="csInquiryTitle">Napisz wiadomość</h3>
+        <p id="csInquiryCarInfo" class="cs-inquiry-car">{{ $car->brand?->name }} {{ $car->model }} {{ $car->year }}</p>
+        <form id="csInquiryForm" onsubmit="return csSubmitInquiry(event)">
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="car_id" value="{{ $car->id }}">
+            <input type="hidden" id="csInquiryType" name="type" value="general">
+            <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off">
+            <div class="cs-inquiry-field">
+                <label>Imię i nazwisko *</label>
+                <input type="text" name="name" required placeholder="Jan Kowalski" maxlength="100">
             </div>
-        </div>
-        <div class="cs-calc-body">
-            @php $carPrice = (float) ($car->price ?? 0); @endphp
-            <input type="hidden" id="csCalcPrice" value="{{ $carPrice }}">
-
-            <div class="cs-calc-field">
-                <label for="csCalcDown">Wpłata własna</label>
-                <div class="cs-calc-range-row">
-                    <input type="range" id="csCalcDown" min="0" max="{{ $carPrice }}" step="1000" value="{{ round($carPrice * 0.2) }}" oninput="csCalcUpdate()">
-                    <span class="cs-calc-range-val" id="csCalcDownVal">{{ number_format(round($carPrice * 0.2), 0, '', ' ') }} zł</span>
-                </div>
-                <div class="cs-calc-range-labels"><span>0 zł</span><span>{{ number_format($carPrice, 0, '', ' ') }} zł</span></div>
+            <div class="cs-inquiry-field">
+                <label>Numer telefonu *</label>
+                <input type="tel" name="phone" required placeholder="+48 600 000 000" maxlength="30">
             </div>
-
-            <div class="cs-calc-field">
-                <label for="csCalcTerm">Okres finansowania</label>
-                <div class="cs-calc-range-row">
-                    <input type="range" id="csCalcTerm" min="12" max="96" step="12" value="48" oninput="csCalcUpdate()">
-                    <span class="cs-calc-range-val" id="csCalcTermVal">48 mies.</span>
-                </div>
-                <div class="cs-calc-range-labels"><span>12 mies.</span><span>96 mies.</span></div>
+            <div class="cs-inquiry-field">
+                <label>E-mail (opcjonalnie)</label>
+                <input type="email" name="email" placeholder="jan@example.pl" maxlength="200">
             </div>
-
-            <div class="cs-calc-field">
-                <label for="csCalcRate">Oprocentowanie roczne</label>
-                <div class="cs-calc-range-row">
-                    <input type="range" id="csCalcRate" min="3" max="15" step="0.5" value="7.9" oninput="csCalcUpdate()">
-                    <span class="cs-calc-range-val" id="csCalcRateVal">7.9%</span>
-                </div>
-                <div class="cs-calc-range-labels"><span>3%</span><span>15%</span></div>
+            <div class="cs-inquiry-field">
+                <label id="csInquiryMsgLabel">Wiadomość</label>
+                <textarea name="message" rows="3" placeholder="Twoje pytanie..." maxlength="2000"></textarea>
             </div>
-
-            <div class="cs-calc-field cs-calc-residual" id="csCalcResidualWrap" style="display:none">
-                <label for="csCalcResidual">Wartość wykupu (% ceny)</label>
-                <div class="cs-calc-range-row">
-                    <input type="range" id="csCalcResidual" min="0" max="50" step="5" value="20" oninput="csCalcUpdate()">
-                    <span class="cs-calc-range-val" id="csCalcResidualVal">20%</span>
-                </div>
-                <div class="cs-calc-range-labels"><span>0%</span><span>50%</span></div>
-            </div>
-        </div>
-
-        <div class="cs-calc-result">
-            <div class="cs-calc-result-label">Szacowana rata miesięczna</div>
-            <div class="cs-calc-result-value" id="csCalcResult">—</div>
-            <div class="cs-calc-result-details">
-                <div><span class="lbl">Kwota finansowania</span><span class="val" id="csCalcFinanced">—</span></div>
-                <div><span class="lbl">Łączny koszt</span><span class="val" id="csCalcTotal">—</span></div>
-            </div>
-            <div class="cs-calc-disclaimer">* Symulacja orientacyjna. Ostateczne warunki ustala instytucja finansowa.</div>
+            <button type="submit" class="cs-inquiry-submit" id="csInquirySubmitBtn">
+                <span id="csInquirySubmitText">Wyślij zapytanie</span>
+                <span id="csInquirySubmitLoader" style="display:none">Wysyłanie...</span>
+            </button>
+            <p class="cs-inquiry-legal">Wysyłając formularz, wyrażasz zgodę na przetwarzanie danych osobowych w celu obsługi zapytania.</p>
+        </form>
+        <div id="csInquirySuccess" style="display:none" class="cs-inquiry-success">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#10b981" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            <h4>Dziękujemy!</h4>
+            <p>Odezwiemy się jak najszybciej.</p>
+            <button type="button" onclick="csCloseInquiry()">Zamknij</button>
         </div>
     </div>
 </div>
-
 
 
 @push('scripts')
@@ -1240,10 +1333,34 @@ function csSelImg(el,n){
     document.querySelectorAll('.cs-thumb').forEach(t=>t.classList.remove('active'));
     el.classList.add('active');
 }
+function csGalleryPrev(){
+    const thumbs=Array.from(document.querySelectorAll('#csGalleryThumbs .cs-thumb:not([style*="display:none"]):not([data-hidden])'));
+    if(!thumbs.length)return;
+    let idx=thumbs.findIndex(t=>t.classList.contains('active'));
+    idx=(idx<=0)?thumbs.length-1:idx-1;
+    csSelImg(thumbs[idx],parseInt(thumbs[idx].dataset.idx)+1);
+}
+function csGalleryNext(){
+    const thumbs=Array.from(document.querySelectorAll('#csGalleryThumbs .cs-thumb:not([style*="display:none"]):not([data-hidden])'));
+    if(!thumbs.length)return;
+    let idx=thumbs.findIndex(t=>t.classList.contains('active'));
+    idx=(idx>=thumbs.length-1)?0:idx+1;
+    csSelImg(thumbs[idx],parseInt(thumbs[idx].dataset.idx)+1);
+}
 window.CAR_GALLERY=@json($galleryList->map(fn($i)=>['src'=>$i->url,'caption'=>$i->alt])->values());
 window.CAR_DAMAGE_GALLERY=@json($damageImgList->map(fn($i)=>['src'=>$i->url,'caption'=>$i->alt])->values());
 window.CAR_ALL_GALLERY=[...CAR_GALLERY,...CAR_DAMAGE_GALLERY];
 window.openCarGallery=(i)=>{if(window.openLbAt)openLbAt(CAR_ALL_GALLERY, i||0)};
+
+// ==== RELATED CARS SCROLL ====
+function csRelScroll(dir){
+    const g=document.getElementById('csRelatedGrid');
+    if(!g)return;
+    const card=g.querySelector('.vcard');
+    if(!card)return;
+    const w=card.offsetWidth+20;
+    g.scrollBy({left:dir*w,behavior:'smooth'});
+}
 
 // ==== 360° SECTION (panorama embed — Pannellum) ====
 function cs360InitPano(){
@@ -1260,8 +1377,9 @@ function cs360InitPano(){
             css.dataset.pannellum = '1';
             document.head.appendChild(css);
         }
+        var retries = 0;
         const onReady = () => {
-            if(typeof pannellum === 'undefined'){ setTimeout(onReady, 50); return; }
+            if(typeof pannellum === 'undefined'){ if(++retries > 200) { console.warn('Pannellum CDN failed to load'); return; } setTimeout(onReady, 50); return; }
             pannellum.viewer(container, {
                 type: 'equirectangular',
                 panorama: src,
@@ -1282,6 +1400,7 @@ function cs360InitPano(){
         if(typeof pannellum === 'undefined'){
             const s = document.createElement('script');
             s.src = 'https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js';
+            s.onerror = function(){ console.warn('Pannellum script failed to load'); };
             s.onload = onReady;
             document.body.appendChild(s);
         } else { onReady(); }
@@ -1293,8 +1412,9 @@ document.addEventListener('DOMContentLoaded', function(){ if(document.querySelec
 // Gallery tab filtering (COS style)
 function csFilterGallery(btn,filter){
     if(btn.classList.contains('disabled'))return;
-    document.querySelectorAll('.cs-gallery-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.cs-gallery-tab').forEach(t=>{t.classList.remove('active');t.setAttribute('aria-selected','false')});
     btn.classList.add('active');
+    btn.setAttribute('aria-selected','true');
 
     // Toggle gallery panes (active class controls visibility — see .cs-gallery-main:not(.active){display:none})
     const std     = document.getElementById('csGalleryStandard');
@@ -1311,8 +1431,19 @@ function csFilterGallery(btn,filter){
     if(filter==='pano360ext'){ if(window.csPano360ExtInit)csPano360ExtInit(); return; }
 
     if(filter==='video'){
-        const vid=document.querySelector('[data-panel-engine-video]');
+        var vid=document.querySelector('[data-panel-engine-video]');
         if(vid)vid.scrollIntoView({behavior:'smooth',block:'center'});
+        return;
+    }
+    if(filter==='paint'){
+        var paintSec=document.querySelector('.cs-paint-grid');
+        if(paintSec)paintSec.scrollIntoView({behavior:'smooth',block:'center'});
+        return;
+    }
+    if(filter==='documents'){
+        var docSec=document.querySelector('[data-panel-documents]');
+        if(docSec)docSec.scrollIntoView({behavior:'smooth',block:'center'});
+        else{ var dataSec=document.querySelector('.cs-data-columns'); if(dataSec)dataSec.scrollIntoView({behavior:'smooth',block:'center'}); }
         return;
     }
 
@@ -1355,8 +1486,9 @@ window.csPano360Init = (function(){
             css.dataset.pannellum = '1';
             document.head.appendChild(css);
         }
+        var retries = 0;
         const onReady = () => {
-            if(typeof pannellum === 'undefined'){ setTimeout(onReady, 50); return; }
+            if(typeof pannellum === 'undefined'){ if(++retries > 200) { console.warn('Pannellum CDN failed to load'); return; } setTimeout(onReady, 50); return; }
             pannellum.viewer(container, {
                 type: 'equirectangular',
                 panorama: src,
@@ -1374,6 +1506,7 @@ window.csPano360Init = (function(){
         if(typeof pannellum === 'undefined'){
             const s = document.createElement('script');
             s.src = 'https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js';
+            s.onerror = function(){ console.warn('Pannellum script failed to load'); };
             s.onload = onReady;
             document.body.appendChild(s);
         } else {
@@ -1401,8 +1534,9 @@ window.csPano360ExtInit = (function(){
             css.dataset.pannellum = '1';
             document.head.appendChild(css);
         }
+        var retries = 0;
         const onReady = () => {
-            if(typeof pannellum === 'undefined'){ setTimeout(onReady, 50); return; }
+            if(typeof pannellum === 'undefined'){ if(++retries > 200) { console.warn('Pannellum CDN failed to load'); return; } setTimeout(onReady, 50); return; }
             pannellum.viewer(container, {
                 type: 'equirectangular',
                 panorama: src,
@@ -1420,6 +1554,7 @@ window.csPano360ExtInit = (function(){
         if(typeof pannellum === 'undefined'){
             const s = document.createElement('script');
             s.src = 'https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js';
+            s.onerror = function(){ console.warn('Pannellum script failed to load'); };
             s.onload = onReady;
             document.body.appendChild(s);
         } else {
@@ -1442,70 +1577,75 @@ function csSelDamage(id){
         dot.style.transform=a?'scale(1.15)':'';
     });
 }
-// — Financing Calculator (floating widget) —
-function csOpenCalc(){
-    document.getElementById('csCalcOverlay').classList.add('open');
-    document.getElementById('csCalcFloat').classList.add('open');
-    document.body.style.overflow='hidden';
-    csCalcUpdate();
+// Inline calculator
+function csCalcInlineUpdate() {
+    var price = {{ $car->price ?? 0 }};
+    var dp = parseInt(document.getElementById('csCalcDp').value) || 0;
+    var term = parseInt(document.getElementById('csCalcTerm').value) || 48;
+    var apr = 0.079;
+    var principal = Math.max(price - dp, 0);
+    var mr = apr / 12;
+    var pmt = principal > 0 ? Math.round(principal * mr / (1 - Math.pow(1 + mr, -term))) : 0;
+    document.getElementById('csCalcInlineRate').textContent = pmt > 0 ? pmt.toLocaleString('pl-PL') + ' zł' : '—';
 }
-function csCloseCalc(){
-    document.getElementById('csCalcOverlay').classList.remove('open');
-    document.getElementById('csCalcFloat').classList.remove('open');
-    document.body.style.overflow='';
-}
-document.addEventListener('keydown',function(e){if(e.key==='Escape')csCloseCalc()});
-let csCalcMode='credit';
-function csCalcTab(el,mode){
-    csCalcMode=mode;
-    document.querySelectorAll('.cs-calc-tab').forEach(t=>t.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById('csCalcResidualWrap').style.display=mode==='leasing'?'':'none';
-    csCalcUpdate();
-}
-function csFmt(n){return n.toLocaleString('pl-PL',{maximumFractionDigits:0})+' zł'}
-function csCalcUpdate(){
-    const price=parseFloat(document.getElementById('csCalcPrice').value)||0;
-    const down=parseFloat(document.getElementById('csCalcDown').value)||0;
-    const months=parseInt(document.getElementById('csCalcTerm').value)||48;
-    const rate=parseFloat(document.getElementById('csCalcRate').value)||7.9;
-    const residualPct=parseFloat(document.getElementById('csCalcResidual').value)||20;
-    
-    document.getElementById('csCalcDownVal').textContent=csFmt(down);
-    document.getElementById('csCalcTermVal').textContent=months+' mies.';
-    document.getElementById('csCalcRateVal').textContent=rate+'%';
-    document.getElementById('csCalcResidualVal').textContent=residualPct+'%';
-    
-    let financed=price-down;
-    let residual=0;
-    if(csCalcMode==='leasing'){residual=price*(residualPct/100);financed=price-down-residual}
-    if(financed<=0){
-        document.getElementById('csCalcResult').textContent='0 zł';
-        document.getElementById('csCalcFinanced').textContent=csFmt(0);
-        document.getElementById('csCalcTotal').textContent=csFmt(0);
-        return;
+document.getElementById('csCalcDp').addEventListener('input', csCalcInlineUpdate);
+document.getElementById('csCalcTerm').addEventListener('change', csCalcInlineUpdate);
+csCalcInlineUpdate();
+
+// Inquiry modal
+function csOpenInquiry(type) {
+    var overlay = document.getElementById('csInquiryOverlay');
+    var title = document.getElementById('csInquiryTitle');
+    var typeInput = document.getElementById('csInquiryType');
+    var msgLabel = document.getElementById('csInquiryMsgLabel');
+    typeInput.value = type;
+    if (type === 'financing') {
+        title.textContent = 'Zapytaj o finansowanie';
+        msgLabel.textContent = 'Dodatkowe informacje';
+    } else {
+        title.textContent = 'Napisz wiadomość';
+        msgLabel.textContent = 'Wiadomość';
     }
-    const mr=rate/100/12;
-    let pmt;
-    if(mr===0){pmt=financed/months}
-    else{pmt=financed*(mr*Math.pow(1+mr,months))/(Math.pow(1+mr,months)-1)}
-    const total=pmt*months+(csCalcMode==='leasing'?residual:0);
-    
-    document.getElementById('csCalcResult').textContent=csFmt(Math.round(pmt));
-    document.getElementById('csCalcFinanced').textContent=csFmt(Math.round(financed));
-    document.getElementById('csCalcTotal').textContent=csFmt(Math.round(total));
-    // update slider progress fills
-    document.querySelectorAll('#csCalc input[type=range]').forEach(csSliderFill);
+    document.getElementById('csInquirySuccess').style.display = 'none';
+    document.getElementById('csInquiryForm').style.display = 'block';
+    document.getElementById('csInquiryForm').reset();
+    typeInput.value = type; // reset clears it
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
 }
-function csSliderFill(el){
-    const pct=((el.value-el.min)/(el.max-el.min))*100;
-    el.style.background=`linear-gradient(to right,#0066ff 0%,#0066ff ${pct}%,#e5e5e5 ${pct}%,#e5e5e5 100%)`;
+function csCloseInquiry() {
+    document.getElementById('csInquiryOverlay').classList.remove('open');
+    document.body.style.overflow = '';
 }
+function csSubmitInquiry(e) {
+    e.preventDefault();
+    var form = document.getElementById('csInquiryForm');
+    var btn = document.getElementById('csInquirySubmitBtn');
+    btn.disabled = true;
+    document.getElementById('csInquirySubmitText').style.display = 'none';
+    document.getElementById('csInquirySubmitLoader').style.display = 'inline';
+    fetch('{{ route("inquiry.store") }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(new FormData(form)))
+    }).then(function(r) { return r.json(); }).then(function(data) {
+        if (data.success) {
+            form.style.display = 'none';
+            document.getElementById('csInquirySuccess').style.display = 'block';
+        } else {
+            alert(data.message || 'Wystąpił błąd. Spróbuj ponownie.');
+        }
+    }).catch(function() {
+        alert('Wystąpił błąd połączenia. Spróbuj ponownie.');
+    }).finally(function() {
+        btn.disabled = false;
+        document.getElementById('csInquirySubmitText').style.display = 'inline';
+        document.getElementById('csInquirySubmitLoader').style.display = 'none';
+    });
+    return false;
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') csCloseInquiry(); });
 document.addEventListener('DOMContentLoaded',()=>{
-    if(document.getElementById('csCalc')){
-        csCalcUpdate();
-        document.querySelectorAll('#csCalc input[type=range]').forEach(csSliderFill);
-    }
     // Sidebar favorite button — sync initial state
     csSidebarFavUpdate();
 });
@@ -1522,7 +1662,7 @@ function csSidebarFavUpdate(){
     const label = document.getElementById('csFavLabel');
     if(icon) icon.style.fill = isActive ? 'var(--orange)' : 'none';
     if(icon) icon.style.stroke = isActive ? 'var(--orange)' : 'currentColor';
-    if(label) label.textContent = isActive ? 'Obserwujesz' : 'Obserwuj';
+    if(label) { label.textContent = isActive ? 'Obserwujesz' : 'Obserwuj'; label.style.visibility = 'visible'; }
 }
 
 </script>

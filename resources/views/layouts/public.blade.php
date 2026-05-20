@@ -40,7 +40,7 @@
         'url' => url('/'),
         'logo' => asset('favicon.svg'),
         'image' => asset('img/og-default.jpg'),
-        'telephone' => '+48123456789',
+        'telephone' => '+48585586090',
         'email' => 'kontakt@certicars.pl',
         'address' => [
             '@type' => 'PostalAddress',
@@ -136,7 +136,7 @@
         /* ============ FOOTER ============ */
         .footer{background:#08080a;color:rgba(255,255,255,.6);padding:0;margin-top:0;position:relative}
         .footer::before{content:'';display:block;height:3px;background:linear-gradient(90deg,#0066ff 0%,#4ea3ff 40%,#0066ff 100%)}
-        .footer-in{max-width:1200px;margin:0 auto;padding:56px 24px 0;display:grid;grid-template-columns:1.6fr 1.2fr 1.2fr 1fr;gap:48px}
+        .footer-in{max-width:1200px;margin:0 auto;padding:56px 24px 0;display:grid;grid-template-columns:1.6fr 1.2fr 1fr;gap:48px}
         .footer h3{color:rgba(255,255,255,.35);font-size:10.5px;margin-bottom:20px;text-transform:uppercase;letter-spacing:1.4px;font-weight:700}
         .footer p,.footer a,.footer li{font-size:13.5px;line-height:1.9;color:rgba(255,255,255,.5)}
         .footer ul{list-style:none}
@@ -256,12 +256,8 @@
             .topbar-left .tb-hide-lg,.topbar-right .tb-hide-lg{display:none}
             .header-nav .nav-link{padding:10px 12px;font-size:14px}
             .header-in{gap:24px}
-            .footer-in{grid-template-columns:1.5fr 1fr 1fr;gap:40px}
-            .footer-in > div:last-child{grid-column:1 / -1;display:grid;grid-template-columns:1fr 1fr;gap:12px 40px}
-            .footer-in > div:last-child h3:first-child{grid-column:1}
-            .footer-in > div:last-child h3:nth-of-type(2){grid-column:2;grid-row:1}
-            .footer-in > div:last-child .footer-nav-list{grid-column:1;grid-row:2}
-            .footer-in > div:last-child .footer-hours{grid-column:2;grid-row:2}
+            .footer-in{grid-template-columns:1fr 1fr;gap:40px}
+            .footer-brand{grid-column:1 / -1}
         }
         @media(max-width:900px){
             .topbar{display:none}
@@ -284,10 +280,8 @@
             .nav-mobile-contact i{width:16px;height:16px;color:var(--blue)}
             /* Footer: 2 columns on tablet */
             .footer-in{grid-template-columns:1fr 1fr;gap:32px 40px;padding:40px 20px 0}
-            .footer-in > div:last-child{grid-column:1 / -1;display:grid;grid-template-columns:1fr 1fr;gap:12px 40px}
             .footer-brand{grid-column:1 / -1}
             .footer-brand p{max-width:480px}
-            .footer-trust{margin-bottom:4px}
             .footer-btm{margin-top:32px;padding:16px 20px;flex-direction:column;text-align:center;gap:8px}
             .section{padding:48px 0}
             .section-title{font-size:24px}
@@ -297,14 +291,10 @@
             /* Footer: single column on small mobile */
             .footer-in{grid-template-columns:1fr;gap:28px;padding:32px 20px 0}
             .footer-brand{grid-column:1}
-            .footer-in > div:last-child{grid-column:1;grid-template-columns:1fr 1fr;gap:8px 24px}
             .fcc-card{padding:8px 10px;margin:-8px -10px}
             .fcc-icon{width:36px;height:36px;border-radius:8px}
             .fcc-icon svg{width:16px;height:16px}
             .fcc-body span{font-size:13.5px}
-            .fsoc-card{padding:8px 10px;margin:-8px -10px}
-            .fsoc-logo-fb,.fsoc-logo-ig{width:36px;height:36px;border-radius:8px}
-            .fsoc-logo-fb svg,.fsoc-logo-ig svg{width:16px;height:16px}
             .footer-btm{margin-top:24px;padding:16px 20px}
             .footer-btm-links{gap:14px}
         }
@@ -324,9 +314,9 @@
     <div class="topbar" role="complementary">
         <div class="topbar-in">
             <div class="topbar-left">
-                <a href="tel:+48123456789">
+                <a href="tel:+48585586090">
                     <svg class="tb-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>
-                    <span class="tb-strong">+48 123 456 789</span>
+                    <span class="tb-strong">+48 58 558 60 90</span>
                 </a>
                 <span class="tb-sep"></span>
                 <a href="mailto:kontakt@certicars.pl" class="tb-hide-lg">
@@ -403,9 +393,9 @@
                 Znajdź auto
             </a>
             <div class="nav-mobile-contact">
-                <a href="tel:+48123456789">
+                <a href="tel:+48585586090">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>
-                    +48 123 456 789
+                    +48 58 558 60 90
                 </a>
                 <a href="mailto:kontakt@certicars.pl">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -417,9 +407,18 @@
 
     <main id="main">@yield('content')</main>
 
-    <a href="tel:+48123456789" class="float-call" aria-label="Zadzwoń +48 123 456 789">
+    <a href="tel:+48585586090" class="float-call" aria-label="Zadzwoń +48 58 558 60 90">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
     </a>
+
+    <!-- MAP SECTION -->
+    <section style="background:#fff;padding:48px 24px">
+        <div style="max-width:1200px;margin:0 auto">
+            <div style="border-radius:16px;overflow:hidden;border:1px solid #e5e7eb;height:300px;background:#f0f0f2">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2443.8!2d18.638!3d54.371!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z!5e0!3m2!1spl!2spl!4v1" width="100%" height="100%" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </section>
 
     <footer class="footer" id="kontakt">
         <div class="footer-in">
@@ -438,9 +437,9 @@
                         <span>samochody używane</span>
                     </span>
                 </a>
-                <p>Certyfikowane samochody używane z pełną inspekcją techniczną, historią lakieru i dokumentacją stanu.</p>
-                <a href="{{ route('catalog') }}" class="fb-link">Każde auto sprawdzone →</a>
-                <div class="footer-trust">
+                <p>Certyfikowane samochody używane z pełną inspekcją techniczną, historią lakieru i dokumentacją stanu pojazdu.</p>
+
+                <div class="footer-trust" style="margin-top:20px">
                     <div class="footer-trust-badge">
                         <svg viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
                         CertiCheck
@@ -449,6 +448,20 @@
                         <svg viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                         Pełna historia
                     </div>
+                    <div class="footer-trust-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        Gwarancja
+                    </div>
+                </div>
+
+                {{-- Social icons --}}
+                <div style="display:flex;gap:10px;margin-top:20px">
+                    <a href="#" style="width:40px;height:40px;border-radius:10px;background:rgba(24,119,242,.12);display:flex;align-items:center;justify-content:center;transition:all .2s;text-decoration:none" aria-label="Facebook">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    </a>
+                    <a href="#" style="width:40px;height:40px;border-radius:10px;background:rgba(228,64,95,.1);display:flex;align-items:center;justify-content:center;transition:all .2s;text-decoration:none" aria-label="Instagram">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e4405f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
                 </div>
             </div>
 
@@ -456,11 +469,11 @@
             <div>
                 <h3>Kontakt</h3>
                 <div class="fcc">
-                    <a href="tel:+48123456789" class="fcc-card">
+                    <a href="tel:+48585586090" class="fcc-card">
                         <div class="fcc-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>
                         </div>
-                        <div class="fcc-body"><strong>Zadzwoń</strong><span>+48 123 456 789</span></div>
+                        <div class="fcc-body"><strong>Zadzwoń</strong><span>+48 58 558 60 90</span></div>
                     </a>
                     <a href="mailto:kontakt@certicars.pl" class="fcc-card">
                         <div class="fcc-icon">
@@ -475,43 +488,33 @@
                         <div class="fcc-body"><strong>Nasz salon</strong><span>ul. Przykładowa 15<br>00-001 Warszawa</span></div>
                     </div>
                 </div>
+
+                {{-- Opening hours --}}
+                <h3 style="margin-top:28px">Godziny otwarcia</h3>
+                <ul class="footer-hours">
+                    <li><span style="display:inline-block;width:60px">Pon–Pt</span> <strong>9:00–18:00</strong></li>
+                    <li><span style="display:inline-block;width:60px">Sobota</span> <strong>10:00–14:00</strong></li>
+                    <li><span style="display:inline-block;width:60px">Niedziela</span> <em style="color:rgba(255,255,255,.25)">zamknięte</em></li>
+                </ul>
             </div>
 
-            {{-- Col 3: Social + Newsletter --}}
-            <div>
-                <h3>Bądź na bieżąco</h3>
-                <div class="fsoc">
-                    <a href="#" class="fsoc-card fsoc-fb">
-                        <div class="fsoc-logo-fb">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                        </div>
-                        <div class="fsoc-txt"><strong>Facebook</strong><span>Odwiedź nasz profil →</span></div>
-                    </a>
-                    <a href="#" class="fsoc-card fsoc-ig">
-                        <div class="fsoc-logo-ig">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-                        </div>
-                        <div class="fsoc-txt"><strong>Instagram</strong><span>Obserwuj nas →</span></div>
-                    </a>
-                </div>
-
-            </div>
-
-            {{-- Col 4: Nav + Hours --}}
+            {{-- Col 3: Navigation + Newsletter --}}
             <div>
                 <h3>Nawigacja</h3>
                 <ul class="footer-nav-list">
                     <li><a href="{{ route('home') }}">Strona główna</a></li>
-                    <li><a href="{{ route('catalog') }}">Oferta</a></li>
+                    <li><a href="{{ route('catalog') }}">Oferta samochodów</a></li>
                     <li><a href="{{ route('about') }}">O nas</a></li>
                     <li><a href="{{ route('contact') }}">Kontakt</a></li>
                     <li><a href="{{ route('favorites') }}">Obserwowane</a></li>
                 </ul>
-                <h3>Godziny otwarcia</h3>
-                <ul class="footer-hours">
-                    <li>Pon–Pt <strong>9:00–18:00</strong></li>
-                    <li>Sob <strong>10:00–14:00</strong></li>
-                    <li>Ndz <em>— zamknięte</em></li>
+
+                <h3>Informacje</h3>
+                <ul class="footer-nav-list">
+                    <li><a href="#">Polityka prywatności</a></li>
+                    <li><a href="#">Regulamin</a></li>
+                    <li><a href="#">Jak kupić auto?</a></li>
+                    <li><a href="#">Finansowanie</a></li>
                 </ul>
             </div>
 

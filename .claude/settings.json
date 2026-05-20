@@ -26,7 +26,19 @@
       "Bash(curl -s -o /dev/null -w 'show: %{http_code}\\\\n' http://127.0.0.1:8000/samochody/audi-a4-20-tfsi-quattro)",
       "Bash(curl -s -o /dev/null -w 'show: %{http_code}\\\\n' http://127.0.0.1:8000/samochody/__TRACKED_VAR__)",
       "Bash(grep -nA3 \"Panorama 360°<\" resources/views/admin/cars/form.blade.php)",
-      "Bash(curl -s -b /tmp/c.txt -o /dev/null -w \"edit: %{http_code}\\\\n\" \"http://127.0.0.1:8000/admin/cars/1/edit\")"
+      "Bash(curl -s -b /tmp/c.txt -o /dev/null -w \"edit: %{http_code}\\\\n\" \"http://127.0.0.1:8000/admin/cars/1/edit\")",
+      "Bash(dig NS certicars.pl +short)",
+      "Bash(dig A certicars.pl +short)",
+      "Bash(dig AAAA certicars.pl +short)",
+      "Bash(dig MX certicars.pl +short)",
+      "Bash(dig SOA certicars.pl +short)",
+      "Bash(whois certicars.pl)",
+      "Bash(dig MX home.pl +short)",
+      "Bash(dig TXT home.pl +short)",
+      "Bash(dig TXT _spf.home.pl +short)",
+      "Bash(dig A mail00.home.net.pl +short)",
+      "Bash(dig A mail01.home.net.pl +short)",
+      "Bash(dig A mail02.home.net.pl +short)"
     ],
     "additionalDirectories": [
       "/Users/maksymzabavchuk/Desktop/certicars/storage/app/public/cars/*"

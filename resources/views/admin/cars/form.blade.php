@@ -331,21 +331,37 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
 
     <div class="card">
         <h2>Pomiar grubości lakieru</h2>
-        <p style="font-size:12px;color:var(--text-3);margin-bottom:14px">Wartości µm per element nadwozia.</p>
-        <div id="paintRepeater">
-            @php $paintItems = collect($paintMeasurements)->values(); @endphp
-            @foreach($paintItems as $i => $p)
-                @php $area = $p['area'] ?? array_key_first((array) $p); $value = is_array($p) ? ($p['value'] ?? reset($p)) : $p; @endphp
-                <div class="repeater-item paint-item">
-                    <button type="button" class="rmv" onclick="this.closest('.paint-item').remove()"><i data-lucide="x"></i></button>
-                    <div class="field-row" style="margin:0">
-                        <div class="field" style="margin:0;flex:1.2"><label>Element nadwozia</label><input type="text" name="paint_measurements[{{ $i }}][area]" value="{{ $area }}" placeholder="Maska, dach, błotnik pr..."></div>
-                        <div class="field" style="margin:0;flex:0.8"><label>Grubość</label><div style="display:flex;align-items:center;gap:6px"><input type="number" name="paint_measurements[{{ $i }}][value]" value="{{ preg_replace('/[^0-9]/', '', $value) }}" placeholder="120" min="0" max="9999" style="flex:1"><span style="font-size:12px;font-weight:600;color:var(--text-3);white-space:nowrap">µm</span></div></div>
-                    </div>
+        <p style="font-size:12px;color:var(--text-3);margin-bottom:14px">Wpisz wartość µm dla każdego elementu. Pozostaw puste jeśli brak pomiaru. <span style="color:#10b981">●</span> 90–150 µm <span style="color:#f59e0b">●</span> 150–300 µm <span style="color:#ef4444">●</span> >300 µm</p>
+        @php
+            $panelNames = [
+                'Maska', 'Błotnik przedni lewy', 'Błotnik przedni prawy',
+                'Drzwi przednie lewe', 'Drzwi przednie prawe',
+                'Drzwi tylne lewe', 'Drzwi tylne prawe',
+                'Klapa bagażnika', 'Dach',
+                'Próg lewy', 'Próg prawy',
+                'Zderzak przedni', 'Zderzak tylny',
+            ];
+            // Build lookup from existing data
+            $paintLookup = [];
+            foreach(collect($paintMeasurements)->values() as $p) {
+                $area = $p['area'] ?? array_key_first((array) $p);
+                $val = is_array($p) ? ($p['value'] ?? reset($p)) : $p;
+                $paintLookup[mb_strtolower(trim($area))] = preg_replace('/[^0-9]/', '', $val);
+            }
+        @endphp
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">
+            @foreach($panelNames as $i => $panel)
+            @php $existing = $paintLookup[mb_strtolower($panel)] ?? ''; @endphp
+            <div style="display:flex;align-items:center;gap:8px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:8px 12px">
+                <input type="hidden" name="paint_measurements[{{ $i }}][area]" value="{{ $panel }}">
+                <span style="flex:1;font-size:12.5px;font-weight:600;color:#374151;white-space:nowrap">{{ $panel }}</span>
+                <div style="display:flex;align-items:center;gap:4px;width:90px">
+                    <input type="number" name="paint_measurements[{{ $i }}][value]" value="{{ $existing }}" placeholder="—" min="0" max="9999" style="width:60px;padding:5px 6px;font-size:13px;font-weight:700;text-align:center;border:1px solid #d1d5db;border-radius:6px">
+                    <span style="font-size:11px;font-weight:600;color:#9ca3af">µm</span>
                 </div>
+            </div>
             @endforeach
         </div>
-        <button type="button" class="repeater-add" onclick="addPaintItem()"><i data-lucide="plus"></i> Dodaj pomiar</button>
     </div>
 </div>
 
@@ -366,7 +382,18 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
         <div style="display:grid;grid-template-columns:1fr;gap:14px">
             <div class="car-diagram-wrap" id="carDiagramWrap" style="position:relative;background:linear-gradient(180deg,#fafafb,#f0f0f2);border:1px solid var(--border-l);border-radius:14px;padding:24px;cursor:crosshair;user-select:none;min-height:360px">
                 <div id="svgStage" style="max-width:540px;margin:0 auto;position:relative">
-                    <div class="svg-view active" data-view="top">@include('admin.cars.partials.view-top')</div>
+                    <div class="svg-view active" data-view="top">
+                        @php
+                            $bodyTypeMap = [
+                                'sedan' => 'sedan', 'suv' => 'suv', 'coupé' => 'coupe', 'coupe' => 'coupe',
+                                'bus' => 'van', 'van' => 'van', 'kombi' => 'kombi', 'hatchback' => 'hatchback',
+                                'kabriolet' => 'sedan', 'cabriolet' => 'sedan', 'pickup' => 'suv',
+                            ];
+                            $btKey = strtolower(old('body_type', $car?->body_type ?? 'sedan'));
+                            $topImg = $bodyTypeMap[$btKey] ?? 'sedan';
+                        @endphp
+                        <img id="damageTopImg" src="/img/body-types-top/{{ $topImg }}.png" alt="Schemat pojazdu" draggable="false" style="width:100%;height:auto;display:block;pointer-events:none">
+                    </div>
                     <div class="svg-view" data-view="front">@include('admin.cars.partials.view-front')</div>
                     <div class="svg-view" data-view="rear">@include('admin.cars.partials.view-rear')</div>
                     <div class="svg-view" data-view="left">@include('admin.cars.partials.view-side')</div>
@@ -1189,6 +1216,18 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
     updateViewCounts();
     applyDamageFilter();
 
+    // ===== Dynamic body-type image for damage diagram =====
+    const btMap = {sedan:'sedan',suv:'suv','coupé':'coupe',coupe:'coupe',bus:'van',van:'van',kombi:'kombi',hatchback:'hatchback',kabriolet:'sedan',cabriolet:'sedan',pickup:'suv'};
+    const btSelect = document.getElementById('bodyTypeSelect');
+    const dtImg = document.getElementById('damageTopImg');
+    if (btSelect && dtImg) {
+        btSelect.addEventListener('change', () => {
+            const key = (btSelect.value || 'sedan').toLowerCase();
+            const img = btMap[key] || 'sedan';
+            dtImg.src = '/img/body-types-top/' + img + '.png';
+        });
+    }
+
     // ===== Engine video URL/File toggle + preview =====
     const vidUrl=document.getElementById('engineVideoUrl');
     const vidFile=document.getElementById('engineVideoFile');
@@ -1263,19 +1302,6 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
     };
 
     // ===== Paint repeater =====
-    window.addPaintItem=()=>{
-        const wrap=document.getElementById('paintRepeater');
-        const i=wrap.querySelectorAll('.paint-item').length;
-        const html=`<div class="repeater-item paint-item">
-            <button type="button" class="rmv" onclick="this.closest('.paint-item').remove()"><i data-lucide="x"></i></button>
-            <div class="field-row" style="margin:0">
-                <div class="field" style="margin:0;flex:1.2"><label>Element nadwozia</label><input type="text" name="paint_measurements[${i}][area]" placeholder="Maska, dach, błotnik pr..."></div>
-                <div class="field" style="margin:0;flex:0.8"><label>Grubość</label><div style="display:flex;align-items:center;gap:6px"><input type="number" name="paint_measurements[${i}][value]" placeholder="120" min="0" max="9999" style="flex:1"><span style="font-size:12px;font-weight:600;color:var(--text-3);white-space:nowrap">µm</span></div></div>
-            </div>
-        </div>`;
-        wrap.insertAdjacentHTML('beforeend',html);
-        lucide.createIcons();
-    };
 
     // ===== Images delete toggle =====
     window.toggleDelete=(btn,id,type)=>{
