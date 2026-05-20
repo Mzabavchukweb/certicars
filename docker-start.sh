@@ -14,9 +14,9 @@ mkdir -p \
   /var/www/html/storage/framework/views \
   /var/www/html/storage/logs
 
-# Compiled views live in tmpfs (fast RAM disk), not the NAS volume
-mkdir -p /tmp/laravel-views
-chown www-data:www-data /tmp/laravel-views
+# Compiled views and file cache live in tmpfs (fast RAM disk), not NAS
+mkdir -p /tmp/laravel-views /tmp/laravel-cache/data
+chown -R www-data:www-data /tmp/laravel-views /tmp/laravel-cache
 chown -R www-data:www-data /var/www/html/storage 2>/dev/null || true
 chmod -R 775 /var/www/html/storage 2>/dev/null || true
 
