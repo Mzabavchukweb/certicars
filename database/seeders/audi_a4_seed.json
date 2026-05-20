@@ -1,0 +1,375 @@
+{
+    "brand": {
+        "id": 1,
+        "name": "Audi",
+        "slug": "audi",
+        "created_at": "2026-05-05T11:42:19.000000Z",
+        "updated_at": "2026-05-05T11:42:19.000000Z"
+    },
+    "car": {
+        "model": "A4 2.0 TFSI Quattro",
+        "slug": "audi-a4-20-tfsi-quattro",
+        "category": "Sedan",
+        "identifier": "CC-2026-001",
+        "price": "74500.00",
+        "currency": "PLN",
+        "price_type": "Brutto (VAT marża)",
+        "seller_name": "CertiCars Sp. z o.o.",
+        "seller_phone": "+48 22 123 45 67",
+        "seller_email": "sprzedaz@certicars.pl",
+        "commission_note": "Pojazd sprawdzony i zweryfikowany przez CertiCars.",
+        "reception_date": "2025-04-10T00:00:00.000000Z",
+        "color": "Florett Silver",
+        "color_code": "FLORETTSILBER",
+        "doors": null,
+        "seats": 5,
+        "weight": 1600,
+        "upholstery": "Skóra nappa czarna",
+        "vin": "WAUZZZ8K9JA567890",
+        "body_type": "Sedan",
+        "first_registration": "11/2018",
+        "mileage": 105200,
+        "previous_owners": 1,
+        "business_use": "Użytkowanie prywatne",
+        "number_of_keys": 2,
+        "fuel_type": "Benzyna",
+        "power_hp": 252,
+        "power_kw": 185,
+        "engine_capacity": 1984,
+        "transmission": null,
+        "transmission_detail": "S tronic 7-bieg.",
+        "location": "Warszawa",
+        "location_distance": null,
+        "source": null,
+        "is_imported": true,
+        "country_registration": "Niemcy",
+        "taxation": "VAT marża",
+        "last_service": "03/2025",
+        "last_service_mileage": "98500",
+        "next_inspection": "09/2026",
+        "service_documentation": "Kompletna dokumentacja serwisowa",
+        "fuel_consumption": "7.2",
+        "fuel_procedure": "WLTP",
+        "co2_emission": "163",
+        "emission_class": "Euro 6d",
+        "service_book": "Dostępna — cyfrowa i papierowa",
+        "coc_documents": "Tak — oryginalne",
+        "vehicle_folder": "Kompletna teczka pojazdu dostępna",
+        "hu_au_report": "Ważny do 09/2026 — bez zastrzeżeń",
+        "paint_measurements": [
+            {
+                "area": "Maska",
+                "value": "120"
+            },
+            {
+                "area": "Błotnik przedni lewy",
+                "value": "170"
+            },
+            {
+                "area": "Błotnik przedni prawy",
+                "value": "400"
+            },
+            {
+                "area": "Drzwi przednie lewe",
+                "value": "323"
+            },
+            {
+                "area": "Drzwi przednie prawe",
+                "value": "190"
+            },
+            {
+                "area": "Drzwi tylne lewe",
+                "value": "100"
+            },
+            {
+                "area": "Drzwi tylne prawe",
+                "value": "100"
+            },
+            {
+                "area": "Klapa bagażnika",
+                "value": "100"
+            },
+            {
+                "area": "Dach",
+                "value": "110"
+            },
+            {
+                "area": "Próg lewy",
+                "value": "300"
+            },
+            {
+                "area": "Próg prawy",
+                "value": "322"
+            },
+            {
+                "area": "Zderzak przedni",
+                "value": "100"
+            },
+            {
+                "area": "Zderzak tylny",
+                "value": "100"
+            }
+        ],
+        "technical_conditions": {
+            "engine": "Olej wymieniony. Brak wycieków.",
+            "transmission": "Brak slippage. Praca płynna.",
+            "suspension": "Nowe amortyzatory przód i tył.",
+            "air_conditioning": null,
+            "braking": null,
+            "electronics": "Wszystko sprawne. Brak błędów DTC.",
+            "body": "Lakier oryginalny fabryczny na wszystkich elementach."
+        },
+        "equipment": {
+            "safety": null,
+            "comfort": null,
+            "exterior": null,
+            "interior": null,
+            "extra": null
+        },
+        "engine_video_url": "https://www.youtube.com/watch?v=E61NTrWcTwU&t=862s",
+        "is_featured": true,
+        "is_sold": false,
+        "status": "active",
+        "created_at": "2026-05-05T11:42:19.000000Z",
+        "updated_at": "2026-05-20T20:16:53.000000Z",
+        "engine_video_path": null,
+        "meta_title": "Audi A4 2.0 TFSI Quattro 2018 — 252 KM, S tronic | CertiCars",
+        "meta_description": "Sprawdzone Audi A4 2.0 TFSI Quattro z 2018 roku. 252 KM, napęd quattro, S tronic. Pełna historia serwisowa, raport CertiCheck. Sprawdź szczegóły i umów się na jazdę próbną.",
+        "focus_keyword": "Audi A4 TFSI Quattro",
+        "noindex": false,
+        "has_certicheck": false,
+        "available_now": false,
+        "home_delivery": false,
+        "has_gethelp": true,
+        "gethelp_package": "Classic"
+    },
+    "images": [
+        {
+            "path": "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=1200&q=80",
+            "type": "exterior",
+            "is_primary": true,
+            "sort_order": 0,
+            "created_at": "2026-05-05T11:42:19.000000Z",
+            "updated_at": "2026-05-05T11:42:19.000000Z",
+            "alt_text": null
+        },
+        {
+            "path": "https://images.unsplash.com/photo-1541443131876-a4246e0b1fc6?w=1200&q=80",
+            "type": "exterior",
+            "is_primary": false,
+            "sort_order": 1,
+            "created_at": "2026-05-05T11:42:19.000000Z",
+            "updated_at": "2026-05-05T11:42:19.000000Z",
+            "alt_text": null
+        },
+        {
+            "path": "https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?w=1200&q=80",
+            "type": "exterior",
+            "is_primary": false,
+            "sort_order": 2,
+            "created_at": "2026-05-05T11:42:19.000000Z",
+            "updated_at": "2026-05-05T11:42:19.000000Z",
+            "alt_text": null
+        },
+        {
+            "path": "https://pannellum.org/images/cerro-toco-0.jpg",
+            "type": "pano360",
+            "is_primary": false,
+            "sort_order": 100,
+            "created_at": "2026-05-06T12:53:15.000000Z",
+            "updated_at": "2026-05-06T12:53:15.000000Z",
+            "alt_text": null
+        },
+        {
+            "path": "https://pannellum.org/images/bma-1.jpg",
+            "type": "pano360ext",
+            "is_primary": false,
+            "sort_order": 101,
+            "created_at": "2026-05-06T12:53:15.000000Z",
+            "updated_at": "2026-05-06T12:53:15.000000Z",
+            "alt_text": null
+        }
+    ],
+    "damages": [
+        {
+            "area": "Maska silnika",
+            "severity": "warning",
+            "type": "damage",
+            "tags": [
+                "Drobne zarysowania"
+            ],
+            "description": "Drobne zarysowania na krawędzi maski. Nie wpływa na integralność.",
+            "position_x": "50.00",
+            "position_y": "18.00",
+            "created_at": "2026-05-05T11:42:19.000000Z",
+            "updated_at": "2026-05-05T11:42:19.000000Z",
+            "image_path": null,
+            "position_view": "top"
+        },
+        {
+            "area": "Błotnik przedni lewy",
+            "severity": "warning",
+            "type": "damage",
+            "tags": [
+                "Otarcie"
+            ],
+            "description": "Otarcie lakieru 3cm.",
+            "position_x": "22.00",
+            "position_y": "30.00",
+            "created_at": "2026-05-05T11:42:19.000000Z",
+            "updated_at": "2026-05-05T11:42:19.000000Z",
+            "image_path": null,
+            "position_view": "top"
+        },
+        {
+            "area": "Drzwi kierowcy",
+            "severity": "warning",
+            "type": "damage",
+            "tags": [
+                "Mikro-rysy"
+            ],
+            "description": "Mikro-rysy od codziennego użytkowania.",
+            "position_x": "24.00",
+            "position_y": "50.00",
+            "created_at": "2026-05-05T11:42:19.000000Z",
+            "updated_at": "2026-05-05T11:42:19.000000Z",
+            "image_path": null,
+            "position_view": "top"
+        },
+        {
+            "area": "Drzwi pasażera",
+            "severity": "warning",
+            "type": "damage",
+            "tags": [
+                "Wgniecenie"
+            ],
+            "description": "Małe wgniecenie 2cm.",
+            "position_x": "78.00",
+            "position_y": "50.00",
+            "created_at": "2026-05-05T11:42:19.000000Z",
+            "updated_at": "2026-05-05T11:42:19.000000Z",
+            "image_path": null,
+            "position_view": "top"
+        },
+        {
+            "area": "Błotnik tylny lewy",
+            "severity": "warning",
+            "type": "damage",
+            "tags": [
+                "Rysa"
+            ],
+            "description": "Rysa przy łuku koła.",
+            "position_x": "22.00",
+            "position_y": "72.00",
+            "created_at": "2026-05-05T11:42:19.000000Z",
+            "updated_at": "2026-05-05T11:42:19.000000Z",
+            "image_path": null,
+            "position_view": "top"
+        },
+        {
+            "area": "Drzwi tylne lewe",
+            "severity": "warning",
+            "type": "damage",
+            "tags": [
+                "Rysa"
+            ],
+            "description": "Rysa wzdłuż dolnej krawędzi.",
+            "position_x": "24.00",
+            "position_y": "62.00",
+            "created_at": "2026-05-05T11:42:19.000000Z",
+            "updated_at": "2026-05-05T11:42:19.000000Z",
+            "image_path": null,
+            "position_view": "top"
+        },
+        {
+            "area": "Zderzak przedni",
+            "severity": "warning",
+            "type": "damage",
+            "tags": [
+                "Otarcie"
+            ],
+            "description": "Otarcie 5cm.",
+            "position_x": "50.00",
+            "position_y": "8.00",
+            "created_at": "2026-05-05T11:42:19.000000Z",
+            "updated_at": "2026-05-05T11:42:19.000000Z",
+            "image_path": null,
+            "position_view": "top"
+        },
+        {
+            "area": "Próg lewy",
+            "severity": "warning",
+            "type": "damage",
+            "tags": [
+                "Rysa"
+            ],
+            "description": null,
+            "position_x": "12.00",
+            "position_y": "58.00",
+            "created_at": "2026-05-05T11:42:19.000000Z",
+            "updated_at": "2026-05-05T11:42:19.000000Z",
+            "image_path": null,
+            "position_view": "top"
+        },
+        {
+            "area": "Próg prawy",
+            "severity": "info",
+            "type": "repaired",
+            "tags": [
+                "Naprawiony"
+            ],
+            "description": "Naprawiony profesjonalnie.",
+            "position_x": "88.00",
+            "position_y": "58.00",
+            "created_at": "2026-05-05T11:42:19.000000Z",
+            "updated_at": "2026-05-05T11:42:19.000000Z",
+            "image_path": null,
+            "position_view": "top"
+        },
+        {
+            "area": "Zderzak tylny",
+            "severity": "warning",
+            "type": "damage",
+            "tags": [
+                "Zadrapanie"
+            ],
+            "description": null,
+            "position_x": "50.00",
+            "position_y": "90.00",
+            "created_at": "2026-05-05T11:42:19.000000Z",
+            "updated_at": "2026-05-05T11:42:19.000000Z",
+            "image_path": null,
+            "position_view": "top"
+        },
+        {
+            "area": "Drzwi tylne prawe",
+            "severity": "warning",
+            "type": "damage",
+            "tags": [
+                "Mikro-rysy"
+            ],
+            "description": null,
+            "position_x": "76.00",
+            "position_y": "62.00",
+            "created_at": "2026-05-05T11:42:19.000000Z",
+            "updated_at": "2026-05-05T11:42:19.000000Z",
+            "image_path": null,
+            "position_view": "top"
+        },
+        {
+            "area": "Błotnik tylny prawy",
+            "severity": "warning",
+            "type": "damage",
+            "tags": [
+                "Wgniecenie"
+            ],
+            "description": "Małe wgniecenie po parkingu.",
+            "position_x": "78.00",
+            "position_y": "72.00",
+            "created_at": "2026-05-05T11:42:19.000000Z",
+            "updated_at": "2026-05-05T11:42:19.000000Z",
+            "image_path": null,
+            "position_view": "top"
+        }
+    ]
+}
