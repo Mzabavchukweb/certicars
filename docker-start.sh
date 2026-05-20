@@ -56,6 +56,7 @@ php artisan config:clear
 php artisan cache:clear 2>/dev/null || true
 
 php artisan migrate --force
+php artisan db:seed --class=AudiA4Seeder --force 2>/dev/null || true
 
 # Cache for performance
 php artisan config:cache
