@@ -17,6 +17,20 @@ use App\Http\Controllers\PdfController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
+// Timing diagnostics (temporary)
+Route::get('/_ping', function () {
+    $t0 = microtime(true);
+    $db = round((microtime(true) - $t0) * 1000, 2);
+    return response()->json(['middleware_ms' => round(microtime(true) * 1000), 'db_ms' => $db]);
+})->withoutMiddleware([\App\Http\Middleware\TrackPageView::class]);
+
+Route::get('/_ping_db', function () {
+    $t0 = microtime(true);
+    \DB::select('SELECT 1');
+    $db = round((microtime(true) - $t0) * 1000, 2);
+    return response()->json(['db_connect_ms' => $db]);
+})->withoutMiddleware([\App\Http\Middleware\TrackPageView::class]);
+
 // Public
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/samochody', [CatalogController::class, 'index'])->name('catalog');
