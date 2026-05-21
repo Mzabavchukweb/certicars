@@ -1044,6 +1044,29 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
     // ===== Dirty check =====
     const form=document.getElementById('carFormSubmit')?.closest('form');
     const bar=document.getElementById('stickySave');
+
+    // Intercept submit: switch to tab with first invalid field so browser can focus it
+    if(form){
+        const submitBtn = document.getElementById('carFormSubmit');
+        if(submitBtn){
+            submitBtn.addEventListener('click', function(e){
+                if(form.checkValidity()) return; // all good, let it submit
+                // Find first invalid field
+                const invalids = form.querySelectorAll(':invalid');
+                for(const inv of invalids){
+                    const panel = inv.closest('.tab-panel');
+                    if(panel && !panel.classList.contains('active')){
+                        e.preventDefault();
+                        const tabName = panel.dataset.panel;
+                        if(tabName) activateTab(tabName);
+                        setTimeout(()=>{ inv.focus(); form.reportValidity(); }, 80);
+                        return;
+                    }
+                }
+            });
+        }
+    }
+
     if(form&&bar){
         let dirty=false;
         const check=()=>{if(!dirty){dirty=true;bar.classList.add('show');window.addEventListener('beforeunload',beforeUnload)}};
