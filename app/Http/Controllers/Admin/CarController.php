@@ -112,19 +112,24 @@ class CarController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $this->validateCar($request);
-        $validated = $this->processEquipment($validated);
-        unset($validated['engine_video_file'], $validated['remove_engine_video'], $validated['image_alt'], $validated['active_tab']);
-        $car = Car::create($validated);
+        try {
+            $validated = $this->validateCar($request);
+            $validated = $this->processEquipment($validated);
+            unset($validated['engine_video_file'], $validated['remove_engine_video'], $validated['image_alt'], $validated['active_tab']);
+            $car = Car::create($validated);
 
-        $this->handleEngineVideo($car, $request);
-        $this->syncRelations($car, $request);
-        $this->handleImages($car, $request);
+            $this->handleEngineVideo($car, $request);
+            $this->syncRelations($car, $request);
+            $this->handleImages($car, $request);
 
-        Cache::forget('catalog.filters');
+            Cache::forget('catalog.filters');
 
-        return redirect($this->editUrlWithTab($car, $request))
-            ->with('success', 'Samochód został dodany.');
+            return redirect($this->editUrlWithTab($car, $request))
+                ->with('success', 'Samochód został dodany.');
+        } catch (\Throwable $e) {
+            \Log::error('Car store failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return back()->withInput()->with('error', 'Błąd zapisu: ' . $e->getMessage());
+        }
     }
 
     public function show(Car $car)
@@ -158,19 +163,24 @@ class CarController extends Controller
 
     public function update(Request $request, Car $car)
     {
-        $validated = $this->validateCar($request);
-        $validated = $this->processEquipment($validated);
-        unset($validated['engine_video_file'], $validated['remove_engine_video'], $validated['image_alt'], $validated['active_tab']);
-        $car->update($validated);
+        try {
+            $validated = $this->validateCar($request);
+            $validated = $this->processEquipment($validated);
+            unset($validated['engine_video_file'], $validated['remove_engine_video'], $validated['image_alt'], $validated['active_tab']);
+            $car->update($validated);
 
-        $this->handleEngineVideo($car, $request);
-        $this->syncRelations($car, $request);
-        $this->handleImages($car, $request);
+            $this->handleEngineVideo($car, $request);
+            $this->syncRelations($car, $request);
+            $this->handleImages($car, $request);
 
-        Cache::forget('catalog.filters');
+            Cache::forget('catalog.filters');
 
-        return redirect($this->editUrlWithTab($car, $request))
-            ->with('success', 'Samochód został zaktualizowany.');
+            return redirect($this->editUrlWithTab($car, $request))
+                ->with('success', 'Samochód został zaktualizowany.');
+        } catch (\Throwable $e) {
+            \Log::error('Car update failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return back()->withInput()->with('error', 'Błąd zapisu: ' . $e->getMessage());
+        }
     }
 
     private function editUrlWithTab(Car $car, Request $request): string
@@ -383,6 +393,7 @@ class CarController extends Controller
                     if ($existing?->image_path && !str_starts_with($existing->image_path, 'http')) {
                         Storage::disk('public')->delete($existing->image_path);
                     }
+                    Storage::disk('public')->makeDirectory('cars/' . $car->id . '/damages');
                     $attrs['image_path'] = $uploads[$index]['image']->store('cars/' . $car->id . '/damages', 'public');
                 }
 
@@ -436,6 +447,12 @@ class CarController extends Controller
 
     private function handleImages(Car $car, Request $request): void
     {
+        // Ensure upload directories exist
+        $basePath = 'cars/' . $car->id;
+        foreach (['gallery', 'damage', 'pano360', 'pano360ext'] as $sub) {
+            Storage::disk('public')->makeDirectory($basePath . '/' . $sub);
+        }
+
         if ($request->hasFile('gallery_images')) {
             foreach ($request->file('gallery_images') as $index => $file) {
                 $path = $file->store('cars/' . $car->id . '/gallery', 'public');
