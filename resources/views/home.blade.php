@@ -154,7 +154,7 @@
 .cc-badge-icon svg{width:18px;height:18px}
 .cc-badge-text{display:flex;align-items:center;background:#1a1a1a;color:#fff;font-size:13px;font-weight:800;letter-spacing:-.2px;padding:6px 12px 6px 10px;white-space:nowrap}
 .cc-badge-text em{font-style:normal;color:var(--blue)}
-.home-listings-cta{margin-top:20px;text-align:center}
+.home-listings-cta{margin-top:20px;padding-bottom:40px;text-align:center}
 .home-listings-cta-btn{display:inline-flex;align-items:center;gap:9px;border:2px solid var(--blue);color:var(--blue);font-size:14px;font-weight:700;padding:13px 32px;border-radius:50px;text-decoration:none;transition:all .2s}
 .home-listings-cta-btn:hover{background:var(--blue);color:#fff;box-shadow:0 8px 24px rgba(0,102,255,.25)}
 .home-listings-cta-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
