@@ -76,6 +76,20 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
 .drag-handle i{width:14px;height:14px}
 </style>
 
+@if($errors->any())
+<div class="card" style="margin-bottom:14px;padding:14px 18px;background:#fef2f2;border:1px solid #fecaca;border-radius:10px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <i data-lucide="alert-circle" style="width:18px;height:18px;color:#dc2626"></i>
+        <strong style="font-size:14px;color:#991b1b">Formularz zawiera błędy:</strong>
+    </div>
+    <ul style="margin:0;padding-left:20px;font-size:12.5px;color:#991b1b;line-height:1.8">
+        @foreach($errors->all() as $err)
+        <li>{{ $err }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+
 <div class="card" style="padding:0;margin-bottom:18px">
     <div class="tabs" role="tablist">
         <button type="button" class="tab-btn active" data-tab="basic"><i data-lucide="info"></i> Podstawowe</button>
@@ -1014,6 +1028,8 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
             seller_name:'seller',seller_phone:'seller',seller_email:'seller',commission_note:'seller',reception_date:'seller',
             equipment:'equipment',technical_conditions:'condition',paint_measurements:'condition',
             damages:'damages',tire_sets:'tires',
+            gallery_images:'images',damage_images:'images',pano360_image:'images',pano360ext_image:'images',
+            primary_image_id:'images',delete_images:'images',image_order:'images',image_alt:'images',
         };
         const errors=@json($errors->keys());
         for(const k of errors){const base=k.split('.')[0];if(fieldToTab[base]){activateTab(fieldToTab[base]);break}}

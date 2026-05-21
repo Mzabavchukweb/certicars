@@ -112,10 +112,11 @@ class CarController extends Controller
 
     public function store(Request $request)
     {
+        $validated = $this->validateCar($request);
+        $validated = $this->processEquipment($validated);
+        unset($validated['engine_video_file'], $validated['remove_engine_video'], $validated['image_alt'], $validated['active_tab']);
+
         try {
-            $validated = $this->validateCar($request);
-            $validated = $this->processEquipment($validated);
-            unset($validated['engine_video_file'], $validated['remove_engine_video'], $validated['image_alt'], $validated['active_tab']);
             $car = Car::create($validated);
 
             $this->handleEngineVideo($car, $request);
@@ -163,10 +164,11 @@ class CarController extends Controller
 
     public function update(Request $request, Car $car)
     {
+        $validated = $this->validateCar($request);
+        $validated = $this->processEquipment($validated);
+        unset($validated['engine_video_file'], $validated['remove_engine_video'], $validated['image_alt'], $validated['active_tab']);
+
         try {
-            $validated = $this->validateCar($request);
-            $validated = $this->processEquipment($validated);
-            unset($validated['engine_video_file'], $validated['remove_engine_video'], $validated['image_alt'], $validated['active_tab']);
             $car->update($validated);
 
             $this->handleEngineVideo($car, $request);
