@@ -26,6 +26,13 @@ class SecurityHeaders
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
         }
 
+        // Skip CSP for admin panel — it uses many CDN resources (Chart.js, Lucide, etc.)
+        if ($request->is('admin/*') || $request->is('admin')) {
+            $response->headers->remove('X-Powered-By');
+            $response->headers->remove('Server');
+            return $response;
+        }
+
         if (! $response->headers->has('Content-Security-Policy')) {
             $csp = [
                 "default-src 'self'",
@@ -35,9 +42,9 @@ class SecurityHeaders
                 "form-action 'self'",
                 "img-src 'self' data: blob: https:",
                 "font-src 'self' data: https://fonts.gstatic.com",
-                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-                "script-src 'self' 'unsafe-inline' https://unpkg.com",
-                "connect-src 'self'",
+                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
+                "script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net",
+                "connect-src 'self' https://cdn.jsdelivr.net",
                 "frame-src 'self' https://www.youtube.com https://player.vimeo.com https://www.google.com",
                 "upgrade-insecure-requests",
             ];
