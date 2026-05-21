@@ -82,8 +82,8 @@
 .cs-keyfact svg{width:15px;height:15px;stroke:#9ca3af;stroke-width:2;fill:none;flex-shrink:0}
 .cs-keyfact strong{color:#0a0a0a;font-weight:800}
 
-.cs-grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:24px;margin-bottom:8px;min-width:0;align-items:start;overflow:hidden}
-.cs-sidebar{position:sticky;top:92px;align-self:start;min-width:0}
+.cs-grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:24px;margin-bottom:8px;min-width:0;overflow:hidden}
+.cs-sidebar{position:sticky;top:92px;min-width:0;display:flex;flex-direction:column}
 
 /* SIDEBAR CERTICHECK BADGE (catalog card style) */
 .cs-sidebar-certi{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;padding:7px 14px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.3px;text-decoration:none;transition:all .18s;border:none;cursor:pointer}
@@ -331,6 +331,12 @@
     .cs-grid > div{min-width:0;max-width:100%}
     .cs-sidebar{position:static}
     .cs-calc-inline{display:none}
+    .cs-head{display:none}
+    .cs-mob-head{display:block!important}
+    .cs-sidebar-summary{display:none!important}
+    .cs-mob-pills{display:flex!important}
+    .cs-price-actions{display:none!important}
+    .cs-mob-cta{display:grid!important}
     .cs-tire-table{grid-template-columns:180px repeat(4,1fr)}
     .cs-equipment-grid{grid-template-columns:1fr}
 }
@@ -341,6 +347,10 @@
 
 @media(max-width:768px){
     .cs-wrap .container{padding-left:14px;padding-right:14px}
+    /* Unify ALL section side margins to match sidebar card */
+    .cs-wrap > .cs-data-section,.cs-wrap > div:not(.container) > .cs-data-section{max-width:none!important;margin-left:14px!important;margin-right:14px!important;padding-left:0!important;padding-right:0!important}
+    .cs-wrap > .cs-data-section[style],.cs-data-section[style]{margin-left:14px!important;margin-right:14px!important;padding-left:0!important;padding-right:0!important;max-width:none!important}
+    .cs-sections-2col{padding:0 14px!important;margin:0!important}
     .cs-nav-bar{flex-direction:row;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0}
     .cs-nav-bar-left{flex:0 0 auto}
     .cs-nav-bar-left .cs-nav-btn{width:auto}
@@ -349,11 +359,7 @@
     .cs-nav-btn svg{width:12px;height:12px}
     .cs-head{flex-direction:column;gap:6px}
     .cs-head h1{font-size:22px;letter-spacing:-.4px}
-    .cs-meta{font-size:11px;gap:4px}
-    .cs-keyfacts{gap:6px;padding:10px 0 12px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
-    .cs-keyfacts::-webkit-scrollbar{display:none}
-    .cs-keyfact{padding:7px 10px;font-size:11.5px;flex-shrink:0}
-    .cs-gallery{border-radius:10px}
+    .cs-gallery{border-radius:14px}
     .cs-gallery-tabs{gap:5px;padding:10px 0 8px}
     .cs-gallery-tab{font-size:11px;gap:4px;padding:5px 10px}
     .cs-gallery-tab svg,.cs-gallery-tab i{width:12px;height:12px}
@@ -367,66 +373,86 @@
     .cs-gallery-nav svg{width:16px;height:16px}
     .cs-gallery-nav.prev{left:8px}
     .cs-gallery-nav.next{right:8px}
-    .cs-sidebar-card{border-radius:14px}
-    .cs-price-section{padding:18px 16px 12px}
+    /* Sidebar */
+    .cs-sidebar-card{border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+    .cs-price-section{padding:20px 20px 14px}
+    .cs-price-value{font-size:30px}
     .cs-price-actions{padding:14px 16px 16px}
     .cs-price-actions .btn{padding:12px 16px;font-size:14px}
     .cs-sidebar-summary{padding:0 16px}
     .cs-sidebar-summary-row{font-size:12.5px;padding:10px 0}
     .cs-calc-trigger{padding:12px 14px;font-size:12px}
-    .cs-data-header{padding:14px 16px}
-    .cs-data-header h2{font-size:15px}
-    .cs-data-body{padding:14px 16px 16px}
-    .cs-data-row{font-size:12.5px;padding:8px 0}
-    .cs-data-row .lbl{flex-shrink:1;min-width:0}
-    .cs-data-row .val{max-width:55%;font-size:12.5px}
+    /* DATA SECTIONS — rounded card */
+    .cs-data-section{border-radius:16px;border:none;box-shadow:0 1px 8px rgba(0,0,0,.06);overflow:hidden}
+    .cs-data-header{padding:20px 20px 16px}
+    .cs-data-header h2{font-size:18px;font-weight:900;letter-spacing:-.3px}
+    .cs-data-body{padding:0 20px 20px}
+    .cs-data-row{font-size:14px;padding:14px 0;border-bottom:1px solid #f0f0f2}
+    .cs-data-row:last-child{border-bottom:none}
+    .cs-data-row .lbl{font-weight:700;color:#1a1a1a;min-width:0;flex-shrink:1}
+    .cs-data-row .val{font-weight:700;color:#1a1a1a;font-size:14px;max-width:55%;text-align:right}
+    /* STAN TECHNICZNY — separate blocks stacked */
+    .cs-data-2col{grid-template-columns:1fr!important;gap:28px}
+    .cs-data-block{padding:0!important;border:none!important;background:transparent!important;box-shadow:none!important}
+    .cs-data-block-title{font-size:18px!important;font-weight:900!important;margin-bottom:4px!important;padding-bottom:0!important;border-bottom:none!important}
+    .cs-data-block .cs-data-row{padding:16px 0;border-bottom:1px solid #f0f0f2;font-size:14px}
+    .cs-data-block .cs-data-row .lbl{font-size:14px;font-weight:700;gap:10px}
+    .cs-data-block .cs-data-row .lbl i[data-lucide="check-circle"]{width:24px;height:24px;color:#16a34a;background:#dcfce7;border-radius:50%;padding:3px;flex-shrink:0}
+    .cs-data-block .cs-data-row .val{font-size:14px;font-weight:700;color:#1a1a1a}
+    /* DAMAGE */
     .cs-sections-2col{padding:0 14px;gap:12px}
     .cs-damage-grid{grid-template-columns:1fr;min-height:auto;border:none;border-radius:0}
-    .cs-damage-diagram{border-radius:12px;border:1px solid #eeeef0}
+    .cs-damage-diagram{border-radius:14px;border:1px solid #eeeef0}
     .cs-damage-diagram-inner{min-height:300px}
     .cs-damage-marker-dot{width:24px;height:24px}
     .cs-damage-marker-dot i{width:11px;height:11px}
-    .cs-damage-detail{padding:14px;border-left:none;border-top:1px solid #eeeef0}
+    .cs-damage-detail{padding:16px;border-left:none;border-top:1px solid #eeeef0}
     .cs-damage-item h3{font-size:14px}
     .cs-damage-item p{font-size:12.5px}
     .cs-damage-tags span{font-size:10px;padding:4px 9px}
     .cs-status-grid{grid-template-columns:1fr}
     .cs-svc-grid{grid-template-columns:1fr}
-    .cs-tire-table{grid-template-columns:1fr}
-    .cs-tire-th{display:none}
-    .cs-tire-info{border-right:none;border-bottom:1px solid var(--border-l)}
-    .cs-tire-col{border-right:none;border-bottom:1px solid var(--border-l);flex-direction:row;flex-wrap:wrap}
-    .cs-tire-col:last-child{border-bottom:none}
-    .cs-tire-col-head{border-right:none;width:100%;border-bottom:1px solid var(--border-l);padding:10px}
-    .cs-tire-icon{width:56px;height:56px}
-    .cs-tire-data-row{flex:1;min-width:50%;border-right:1px solid var(--border-l);padding:8px 10px;font-size:12px}
-    .cs-tire-data-row:last-child{border-right:none}
+    /* TIRES — 2×2 card grid */
+    .cs-tire-set-title{font-size:18px;font-weight:900;margin-bottom:12px}
+    .cs-tire-table{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px;border:none!important;border-radius:0!important;overflow:visible!important}
+    .cs-tire-th{display:none!important}
+    .cs-tire-info{display:none!important}
+    .cs-tire-col{border:1.5px solid #e5e7eb!important;border-radius:14px!important;flex-direction:column!important;align-items:center!important;text-align:center;padding:18px 12px!important;background:#fff}
+    .cs-tire-col-head{border:none!important;padding:0!important;width:auto!important;background:transparent!important;flex-direction:column;align-items:center;gap:4px}
+    .cs-tire-icon{width:48px!important;height:48px!important;margin:0 auto 6px}
+    .cs-tire-pos-name{font-size:13px!important;font-weight:600;color:#6b7280}
+    .cs-tire-data-row{border:none!important;padding:2px 0!important;font-size:18px!important;font-weight:800!important;text-align:center}
+    .cs-tire-data-row:first-of-type{color:#059669}
+    .cs-tire-data-row.ok-txt,.cs-tire-data-row.warn-txt{font-size:0!important;line-height:0;height:0;padding:0!important;overflow:hidden}
+    /* EQUIPMENT */
     .cs-equipment-grid{grid-template-columns:1fr}
     .cs-equipment-item{padding:10px 0;font-size:12.5px}
     .cs-feat-eq{flex-direction:column}
-    .cs-price-value{font-size:28px}
+    /* FUEL */
     .cs-fuel-grid{grid-template-columns:1fr 1fr}
-    .cs-pano360-embed{aspect-ratio:4/3}
+    /* 360° */
+    .cs-pano360-embed{aspect-ratio:4/3;border-radius:14px}
     .cs-pano360-grid{grid-template-columns:1fr!important}
-    .cs-paint-grid{grid-template-columns:repeat(2,1fr)}
-    .cs-paint-item{padding:12px 14px}
-    .cs-paint-value{font-size:16px}
-    .cs-sub-hd{padding:12px 16px}
-    .cs-sub-bd{padding:2px 16px 12px}
-    .cs-data-block{padding:16px}
-    .cs-data-block-title{font-size:13px;margin-bottom:10px;padding-bottom:8px}
+    /* PAINT — clean table (Element | Wynik) */
+    .cs-paint-grid{grid-template-columns:1fr!important;gap:0;border-radius:14px;border:1px solid #eeeef0}
+    .cs-paint-item{padding:16px 20px!important;display:flex!important;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f2;border-right:none!important;background:#fff!important;flex-direction:row!important}
+    .cs-paint-item:last-child{border-bottom:none}
+    .cs-paint-label{font-size:15px!important;font-weight:700!important;color:#1a1a1a!important;text-transform:none!important;letter-spacing:0!important;margin-bottom:0!important;order:0;white-space:nowrap}
+    .cs-paint-value{font-size:16px!important;font-weight:800!important;text-align:right;letter-spacing:0!important}
+    .cs-paint-dot{display:none!important}
+    /* ACCORDION */
+    .cs-sub-hd{padding:14px 20px}
+    .cs-sub-bd{padding:2px 20px 14px}
     .cs-card{padding:20px}
 }
 @media(max-width:500px){
     .cs-wrap .container{padding-left:12px;padding-right:12px}
+    .cs-wrap > .cs-data-section,.cs-wrap > div:not(.container) > .cs-data-section,.cs-data-section[style]{margin-left:12px!important;margin-right:12px!important}
+    .cs-sections-2col{padding:0 12px!important}
     .cs-head h1{font-size:19px}
-    .cs-keyfact{padding:6px 8px;font-size:10.5px}
-    .cs-keyfact svg{width:13px;height:13px}
-    .cs-gallery{border-radius:8px}
-    .cs-sidebar-card{border-radius:12px}
-    .cs-data-section{border-radius:12px}
-    .cs-sidebar-summary-row{flex-direction:column;align-items:flex-start;gap:2px}
-    .cs-sidebar-summary-row .val{text-align:left}
+    .cs-gallery{border-radius:10px}
+    .cs-sidebar-card{border-radius:14px}
+    .cs-data-section{border-radius:14px}
     .cs-data-row .val{max-width:50%}
     .cs-price-value{font-size:26px}
     .cs-sections-2col{padding:0 12px}
@@ -434,13 +460,14 @@
     .cs-damage-diagram-inner{min-height:260px}
     .cs-damage-marker-dot{width:22px;height:22px;border-width:2px}
     .cs-damage-marker-dot i{width:10px;height:10px}
-    .cs-paint-grid{grid-template-columns:repeat(2,1fr)}
-    .cs-paint-item{padding:10px 12px}
-    .cs-paint-value{font-size:15px}
-    .cs-paint-label{font-size:9.5px}
-    .cs-tire-icon{width:48px;height:48px}
-    .cs-data-body{padding:12px 14px 14px}
-    .cs-data-header{padding:12px 14px}
+    .cs-paint-item{padding:14px 16px!important}
+    .cs-paint-value{font-size:15px!important}
+    .cs-paint-label{font-size:13px!important}
+    .cs-tire-icon{width:40px!important;height:40px!important}
+    .cs-tire-col{padding:14px 10px!important}
+    .cs-tire-data-row:first-of-type{font-size:16px!important}
+    .cs-data-body{padding:0 16px 16px}
+    .cs-data-header{padding:16px}
     .cs-gallery-tabs{gap:4px;padding:8px 0 6px}
     .cs-gallery-tab{font-size:10px;padding:4px 8px;gap:3px}
     .cs-gallery-tab svg,.cs-gallery-tab i{width:11px;height:11px}
@@ -533,35 +560,10 @@
     <div class="cs-head">
         <div style="min-width:0">
             <h1>{{ $car->title }}</h1>
-            @php
-                $metaParts = array_values(array_filter([
-                    $car->first_registration ?: null,
-                    $car->mileage ? number_format((float) $car->mileage, 0, '', ' ') . ' km' : null,
-                    $car->fuel_type ?: null,
-                    $car->transmission ?: null,
-                    $car->power_hp ? $car->power_hp . ' KM' : null,
-                ]));
-            @endphp
-            @if(count($metaParts))
-            <div class="cs-meta">
-                @foreach($metaParts as $i => $part)
-                    <span>{{ $part }}</span>@if($i < count($metaParts) - 1)<span class="sep">·</span>@endif
-                @endforeach
-            </div>
-            @endif
         </div>
     </div>
 
-    @if($car->mileage || $car->first_registration || $car->fuel_type || $car->transmission || $car->power_hp || $car->category)
-    <div class="cs-keyfacts">
-        @if($car->mileage)<div class="cs-keyfact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg><strong>{{ number_format((float) $car->mileage,0,'',' ') }} km</strong></div>@endif
-        @if($car->first_registration)<div class="cs-keyfact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><strong>{{ $car->first_registration }}</strong></div>@endif
-        @if($car->fuel_type)<div class="cs-keyfact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/></svg><strong>{{ $car->fuel_type }}</strong></div>@endif
-        @if($car->transmission)<div class="cs-keyfact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V8"/><path d="m5 12-3 3 3 3"/><path d="m19 12 3 3-3 3"/><path d="M2 15h20"/><path d="m5 5-3 3 3 3"/><path d="M2 8h10"/></svg><strong>{{ $car->transmission }}</strong></div>@endif
-        @if($car->power_hp)<div class="cs-keyfact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg><strong>{{ $car->power_hp }} KM</strong></div>@endif
-        @if($car->category)<div class="cs-keyfact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg><strong>{{ $car->category }}</strong></div>@endif
-    </div>
-    @endif
+
 
     @php
         $allEquipmentItems = [];
@@ -737,6 +739,21 @@
         <!-- PRICE + SIDEBAR (sticky) -->
         <div class="cs-sidebar">
             <div class="cs-sidebar-card">
+                <!-- MOBILE-ONLY: Title + Heart + Pills -->
+                <div class="cs-mob-head" style="display:none;padding:20px 22px 0">
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+                        <h2 style="font-size:22px;font-weight:900;color:#0a0a0a;letter-spacing:-.4px;line-height:1.2;margin:0">{{ $car->title }}</h2>
+                        <button type="button" id="csMobFav" data-id="{{ $car->id }}" onclick="toggleFav(event,{{ $car->id }});csSidebarFavUpdate()" style="width:40px;height:40px;border-radius:10px;border:1.5px solid #e5e7eb;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+                            <svg id="csMobFavIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        </button>
+                    </div>
+                    <div class="cs-mob-pills" style="display:none;flex-wrap:wrap;gap:6px;margin-top:12px">
+                        @if($car->mileage)<span style="display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:#1f2937"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>{{ number_format((float) $car->mileage,0,'',' ') }} km</span>@endif
+                        @if($car->first_registration)<span style="display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:#1f2937"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>{{ $car->first_registration }}</span>@endif
+                        @if($car->fuel_type)<span style="display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:#1f2937"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/></svg>{{ $car->fuel_type }}</span>@endif
+                        @if($car->power_hp)<span style="display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:#1f2937"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>{{ $car->power_hp }} KM</span>@endif
+                    </div>
+                </div>
                 <!-- PRICE -->
                 <div class="cs-price-section">
                     <div class="cs-price-value">{{ $car->formatted_price }}</div>
@@ -787,7 +804,7 @@
                     </div>
                     @endif
                 </div>
-                <!-- CTA BUTTONS -->
+                <!-- CTA BUTTONS (desktop) -->
                 <div class="cs-price-actions">
                     <a href="tel:+48585586090" class="cs-btn-phone">
                         <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
@@ -814,25 +831,31 @@
                         @endif
                     </div>
                 </div>
+                <!-- CTA BUTTONS (mobile) -->
+                <div class="cs-mob-cta" style="display:none;grid-template-columns:1fr 1fr;gap:10px;padding:0 22px 16px">
+                    <a href="tel:+48585586090" style="display:flex;align-items:center;justify-content:center;gap:6px;background:#0066ff;color:#fff;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:700;text-decoration:none;border:none">Zadzwoń</a>
+                    <button type="button" onclick="csOpenInquiry('general')" style="display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#1a1a1a;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:700;border:1.5px solid #e5e7eb;cursor:pointer">Napisz wiadomość</button>
+                </div>
 
 
 
                 @if($car->is_imported || $car->country_registration)
-                <div style="padding:0 22px 18px">
-                    <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:linear-gradient(135deg,#f0fdf4 0%,#ecfdf5 100%);border:1px solid #bbf7d0;border-radius:12px">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
-                        <div>
-                            <div style="font-size:13px;font-weight:700;color:#166534;line-height:1.3">Sprowadzony z {{ $car->country_registration ?? 'zagranicy' }}</div>
-                            <div style="font-size:11px;color:#16a34a;margin-top:2px">{{ $car->taxation ?? 'Opłacony — bez PCC 2%' }}</div>
-                        </div>
+                <div style="padding:0 22px 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                    <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:12px">
+                        <span style="width:32px;height:32px;border-radius:8px;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#1e40af;flex-shrink:0">DE</span>
+                        <div style="font-size:13px;font-weight:700;color:#1a1a1a;line-height:1.3">Sprowadzony z {{ $car->country_registration ?? 'Niemiec' }}</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:12px">
+                        <span style="width:32px;height:32px;border-radius:8px;background:#dcfce7;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#166534;flex-shrink:0">OK</span>
+                        <div style="font-size:13px;font-weight:700;color:#1a1a1a;line-height:1.3">Opłacona akcyza</div>
                     </div>
                 </div>
                 @endif
 
             </div>{{-- /cs-sidebar-card --}}
 
-            {{-- INFO TILES — separate from main card --}}
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+            {{-- INFO TILES — separate from main card, stretch to fill --}}
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;flex:1;align-content:stretch">
                 <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 16px;text-align:center">
                     <div style="width:44px;height:44px;border-radius:12px;background:#e8f1ff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px">
                         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0066ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
@@ -1652,17 +1675,31 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 // Sidebar favorite sync
 function csSidebarFavUpdate(){
-    const btn = document.getElementById('csSidebarFav');
-    if(!btn) return;
     const favs = JSON.parse(localStorage.getItem('certicars_favs') || '[]');
-    const id = +btn.dataset.id;
-    const isActive = favs.includes(id);
-    btn.classList.toggle('active', isActive);
-    const icon = document.getElementById('csFavIcon');
-    const label = document.getElementById('csFavLabel');
-    if(icon) icon.style.fill = isActive ? 'var(--orange)' : 'none';
-    if(icon) icon.style.stroke = isActive ? 'var(--orange)' : 'currentColor';
-    if(label) { label.textContent = isActive ? 'Obserwujesz' : 'Obserwuj'; label.style.visibility = 'visible'; }
+    // Desktop fav button
+    const btn = document.getElementById('csSidebarFav');
+    if(btn){
+        const id = +btn.dataset.id;
+        const isActive = favs.includes(id);
+        btn.classList.toggle('active', isActive);
+        const icon = document.getElementById('csFavIcon');
+        const label = document.getElementById('csFavLabel');
+        if(icon){ icon.style.fill = isActive ? 'var(--orange)' : 'none'; icon.style.stroke = isActive ? 'var(--orange)' : 'currentColor'; }
+        if(label){ label.textContent = isActive ? 'Obserwujesz' : 'Obserwuj'; label.style.visibility = 'visible'; }
+    }
+    // Mobile fav button
+    const mobBtn = document.getElementById('csMobFav');
+    if(mobBtn){
+        const id = +mobBtn.dataset.id;
+        const isActive = favs.includes(id);
+        const mobIcon = document.getElementById('csMobFavIcon');
+        if(mobIcon){
+            mobIcon.style.fill = isActive ? '#ef4444' : 'none';
+            mobIcon.style.stroke = isActive ? '#ef4444' : '#9ca3af';
+        }
+        mobBtn.style.borderColor = isActive ? '#fca5a5' : '#e5e7eb';
+        mobBtn.style.background = isActive ? '#fef2f2' : '#fff';
+    }
 }
 
 </script>
