@@ -1437,6 +1437,8 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
 
     // ===== AJAX sequential file upload =====
     async function ajaxUploadFiles(files, type, carId){
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content
+                       || document.querySelector('input[name="_token"]')?.value;
         const prefix = type === 'gallery' ? 'gallery' : 'damage';
         const progressWrap = document.getElementById(prefix+'UploadProgress');
         const progressBar = document.getElementById(prefix+'ProgressBar');
@@ -1455,7 +1457,7 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
             const fd = new FormData();
             fd.append('image', file);
             fd.append('type', type);
-            fd.append('_token', csrf);
+            fd.append('_token', csrfToken);
 
             try {
                 const res = await fetch(`/admin/cars/${carId}/upload-image`, {
