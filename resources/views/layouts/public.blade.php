@@ -134,16 +134,26 @@
 
 
         /* ============ FOOTER ============ */
-        .footer{background:#08080a;color:rgba(255,255,255,.6);padding:0;margin-top:0;position:relative}
+        .footer{background:#fff;color:#4b5563;padding:0;margin-top:0;position:relative;border-top:1px solid #e5e7eb}
         .footer::before{content:'';display:block;height:3px;background:linear-gradient(90deg,#0066ff 0%,#4ea3ff 40%,#0066ff 100%)}
         .footer-in{max-width:1200px;margin:0 auto;padding:56px 24px 0;display:grid;grid-template-columns:1.6fr 1.2fr 1fr;gap:48px}
-        .footer h3{color:rgba(255,255,255,.35);font-size:10.5px;margin-bottom:20px;text-transform:uppercase;letter-spacing:1.4px;font-weight:700}
-        .footer p,.footer a,.footer li{font-size:13.5px;line-height:1.9;color:rgba(255,255,255,.5)}
+        .footer h3{color:#9ca3af;font-size:10.5px;margin-bottom:20px;text-transform:uppercase;letter-spacing:1.4px;font-weight:700}
+        .footer p,.footer li{font-size:13.5px;line-height:1.9;color:#6b7280}
+        .footer a{font-size:13.5px;line-height:1.9;color:#374151;text-decoration:none;transition:color .15s}
         .footer ul{list-style:none}
-        .footer a{text-decoration:none;transition:color .15s}
-        .footer a:hover{color:#fff}
-        .footer-brand p{font-size:13px;color:rgba(255,255,255,.35);line-height:1.7;margin-top:14px;max-width:320px}
-        .footer-btm{max-width:1200px;margin:0 auto;padding:24px 24px;border-top:1px solid rgba(255,255,255,.06);font-size:11.5px;color:rgba(255,255,255,.2);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+        .footer a:hover{color:#0066ff}
+        .footer-brand p{font-size:13px;color:#9ca3af;line-height:1.7;margin-top:14px;max-width:320px}
+        .footer-logo{display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+        .footer-logo-badge{width:26px;height:26px;flex-shrink:0}
+        .footer-logo span{font-family:'Inter',sans-serif;font-size:22px;font-weight:900;letter-spacing:-.5px;color:#0a0a0a;line-height:1}
+        .footer-logo span span{color:#0066ff}
+        .footer-social{width:40px;height:40px;border-radius:10px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;transition:all .2s;text-decoration:none;border:1px solid #e5e7eb}
+        .footer-social:hover{background:#e5e7eb;transform:translateY(-2px)}
+        .footer-hours{font-size:12.5px;color:#9ca3af;line-height:2}
+        .footer-hours div{display:flex;justify-content:space-between}
+        .footer-hours .val{color:#374151;font-weight:600}
+        .footer-hours .closed{color:#d1d5db;font-weight:500}
+        .footer-btm{max-width:1200px;margin:0 auto;padding:24px 24px;border-top:1px solid #e5e7eb;font-size:11.5px;color:#9ca3af;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
         @media(max-width:900px){.footer-in{grid-template-columns:1fr 1fr;gap:32px}}
         @media(max-width:600px){.footer-in{grid-template-columns:1fr;gap:28px;padding:40px 20px 0}.footer-btm{flex-direction:column;text-align:center;padding:20px}}
 
@@ -363,15 +373,21 @@
 
             {{-- Col 1: Brand --}}
             <div class="footer-brand">
-                <a href="{{ route('home') }}" style="font-family:'Inter',sans-serif;font-size:22px;font-weight:900;letter-spacing:-.5px;color:#fff;text-decoration:none;line-height:1">Certi<span style="color:#0066ff">Cars</span></a>
+                <a href="{{ route('home') }}" class="footer-logo">
+                    <svg class="footer-logo-badge" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" fill="#0066ff"/>
+                        <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Certi<span>Cars</span></span>
+                </a>
                 <p>Każdy samochód w naszej ofercie przechodzi pełną inspekcję techniczną i weryfikację historii.</p>
 
                 {{-- Social icons --}}
                 <div style="display:flex;gap:10px;margin-top:20px">
-                    <a href="#" style="width:40px;height:40px;border-radius:10px;background:rgba(24,119,242,.12);display:flex;align-items:center;justify-content:center;transition:all .2s;text-decoration:none" aria-label="Facebook">
+                    <a href="#" class="footer-social" aria-label="Facebook">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                     </a>
-                    <a href="#" style="width:40px;height:40px;border-radius:10px;background:rgba(228,64,95,.1);display:flex;align-items:center;justify-content:center;transition:all .2s;text-decoration:none" aria-label="Instagram">
+                    <a href="#" class="footer-social" aria-label="Instagram">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e4405f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
                     </a>
                 </div>
@@ -394,12 +410,12 @@
                         <span>Warszawa, Polska</span>
                     </li>
                 </ul>
-                <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)">
+                <div style="margin-top:20px;padding-top:16px;border-top:1px solid #e5e7eb">
                     <h3 style="margin-bottom:12px">Godziny otwarcia</h3>
-                    <div style="font-size:12.5px;color:rgba(255,255,255,.4);line-height:2">
-                        <div style="display:flex;justify-content:space-between"><span>Pon – Pt</span><span style="color:rgba(255,255,255,.6);font-weight:600">9:00 – 18:00</span></div>
-                        <div style="display:flex;justify-content:space-between"><span>Sobota</span><span style="color:rgba(255,255,255,.6);font-weight:600">10:00 – 14:00</span></div>
-                        <div style="display:flex;justify-content:space-between"><span>Niedziela</span><span style="color:rgba(255,255,255,.35)">Zamknięte</span></div>
+                    <div class="footer-hours">
+                        <div><span>Pon – Pt</span><span class="val">9:00 – 18:00</span></div>
+                        <div><span>Sobota</span><span class="val">10:00 – 14:00</span></div>
+                        <div><span>Niedziela</span><span class="closed">Zamknięte</span></div>
                     </div>
                 </div>
             </div>
@@ -410,6 +426,7 @@
                 <ul style="margin-bottom:24px">
                     <li><a href="{{ route('home') }}">Strona główna</a></li>
                     <li><a href="{{ route('catalog') }}">Oferta samochodów</a></li>
+                    <li><a href="{{ route('about') }}">O nas</a></li>
                     <li><a href="{{ route('contact') }}">Kontakt</a></li>
                 </ul>
                 <h3>Informacje</h3>
@@ -424,7 +441,7 @@
         <div class="footer-btm">
             <span>© {{ date('Y') }} CertiCars. Wszelkie prawa zastrzeżone.</span>
             <div style="display:flex;align-items:center;gap:16px">
-                <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,.2)"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg> Zweryfikowany dealer</span>
+                <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#9ca3af"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg> Zweryfikowany dealer</span>
             </div>
         </div>
     </footer>
