@@ -518,6 +518,40 @@
 .cs-inquiry-success p{font-size:14px;color:#6b7280;margin:0 0 20px}
 .cs-inquiry-success button{padding:10px 28px;background:#f5f5f7;border:none;border-radius:10px;font-size:14px;font-weight:600;color:#374151;cursor:pointer}
 .cs-inquiry-success button:hover{background:#e8e8ea}
+
+/* STICKY MOBILE CTA BAR */
+.cs-sticky-cta{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e7eb;padding:10px 14px;z-index:999;box-shadow:0 -4px 20px rgba(0,0,0,.08);gap:8px;grid-template-columns:1fr 1fr;transform:translateY(100%);transition:transform .25s ease}
+.cs-sticky-cta.visible{transform:translateY(0)}
+.cs-sticky-cta a,.cs-sticky-cta button{display:flex;align-items:center;justify-content:center;gap:6px;padding:13px 16px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;border:none}
+.cs-sticky-cta .cs-sticky-call{background:#0066ff;color:#fff;box-shadow:0 2px 10px rgba(0,102,255,.3)}
+.cs-sticky-cta .cs-sticky-msg{background:#fff;color:#1a1a1a;border:1.5px solid #e5e7eb}
+.cs-sticky-cta svg{width:16px;height:16px;flex-shrink:0}
+@media(max-width:1024px){.cs-sticky-cta{display:grid}}
+
+/* FULLSCREEN LIGHTBOX */
+.cs-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:10000;flex-direction:column;align-items:center;justify-content:center}
+.cs-lightbox.open{display:flex}
+.cs-lightbox-close{position:absolute;top:16px;right:16px;width:44px;height:44px;background:rgba(255,255,255,.1);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;transition:background .15s}
+.cs-lightbox-close:hover{background:rgba(255,255,255,.2)}
+.cs-lightbox-close svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2}
+.cs-lightbox-img{max-width:90vw;max-height:80vh;object-fit:contain;border-radius:8px;user-select:none;-webkit-user-drag:none}
+.cs-lightbox-counter{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.7);font-size:14px;font-weight:600}
+.cs-lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;background:rgba(255,255,255,.1);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;transition:background .15s}
+.cs-lightbox-nav:hover{background:rgba(255,255,255,.2)}
+.cs-lightbox-nav svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2.5}
+.cs-lightbox-prev{left:16px}
+.cs-lightbox-next{right:16px}
+
+/* CERTICHECK TRUST BANNER */
+.cs-trust-banner{background:linear-gradient(135deg,#f0fdf4 0%,#ecfdf5 100%);border-bottom:1px solid #bbf7d0;padding:16px 22px;display:flex;align-items:center;gap:12px}
+.cs-trust-badge{width:40px;height:40px;border-radius:10px;background:#dcfce7;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cs-trust-badge svg{width:22px;height:22px;stroke:#16a34a;fill:none;stroke-width:2.2}
+.cs-trust-text{flex:1;min-width:0}
+.cs-trust-text strong{display:block;font-size:13.5px;font-weight:800;color:#166534;letter-spacing:-.1px}
+.cs-trust-text small{display:block;font-size:11px;color:#4ade80;font-weight:500;margin-top:2px}
+.cs-trust-dl{font-size:11px;font-weight:700;color:#16a34a;background:#fff;border:1px solid #bbf7d0;border-radius:8px;padding:6px 12px;text-decoration:none;white-space:nowrap;transition:all .15s;display:inline-flex;align-items:center;gap:4px;flex-shrink:0}
+.cs-trust-dl:hover{background:#dcfce7;color:#166534}
+.cs-trust-dl svg{width:12px;height:12px}
 @endsection
 
 @section('content')
@@ -739,6 +773,16 @@
         <!-- PRICE + SIDEBAR (sticky) -->
         <div class="cs-sidebar">
             <div class="cs-sidebar-card">
+                @if($car->has_certicheck)
+                <div class="cs-trust-banner">
+                    <div class="cs-trust-badge"><svg viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></div>
+                    <div class="cs-trust-text">
+                        <strong>Sprawdzony CertiCheck</strong>
+                        <small>Inspekcja 150-punktowa · Pełna historia</small>
+                    </div>
+                    <a href="{{ route('car.pdf', $car->slug) }}" class="cs-trust-dl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</a>
+                </div>
+                @endif
                 <!-- MOBILE-ONLY: Title + Heart + Pills -->
                 <div class="cs-mob-head" style="display:none;padding:20px 22px 0">
                     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
@@ -1346,6 +1390,27 @@
     </div>
 </div>
 
+{{-- LIGHTBOX --}}
+<div class="cs-lightbox" id="csLightbox">
+    <button class="cs-lightbox-close" onclick="csCloseLb()"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <button class="cs-lightbox-nav cs-lightbox-prev" onclick="csLbNav(-1)"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+    <img class="cs-lightbox-img" id="csLbImg" src="" alt="">
+    <button class="cs-lightbox-nav cs-lightbox-next" onclick="csLbNav(1)"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
+    <div class="cs-lightbox-counter" id="csLbCounter"></div>
+</div>
+
+{{-- STICKY MOBILE CTA --}}
+<div class="cs-sticky-cta" id="csStickyBar">
+    <a href="tel:+48585586090" class="cs-sticky-call">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Zadzwoń
+    </a>
+    <button type="button" class="cs-sticky-msg" onclick="csOpenInquiry('general')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        Napisz
+    </button>
+</div>
+
 
 @push('scripts')
 <script>
@@ -1373,7 +1438,85 @@ function csGalleryNext(){
 window.CAR_GALLERY=@json($galleryList->map(fn($i)=>['src'=>$i->url,'caption'=>$i->alt])->values());
 window.CAR_DAMAGE_GALLERY=@json($damageImgList->map(fn($i)=>['src'=>$i->url,'caption'=>$i->alt])->values());
 window.CAR_ALL_GALLERY=[...CAR_GALLERY,...CAR_DAMAGE_GALLERY];
-window.openCarGallery=(i)=>{if(window.openLbAt)openLbAt(CAR_ALL_GALLERY, i||0)};
+window.openCarGallery=(i)=>{csOpenLb(i||0)};
+
+// ==== FULLSCREEN LIGHTBOX ====
+var _lbIdx=0;
+function csOpenLb(idx){
+    _lbIdx=idx||0;
+    const lb=document.getElementById('csLightbox');
+    const img=document.getElementById('csLbImg');
+    if(!lb||!CAR_ALL_GALLERY.length)return;
+    img.src=CAR_ALL_GALLERY[_lbIdx].src;
+    img.alt=CAR_ALL_GALLERY[_lbIdx].caption||'';
+    document.getElementById('csLbCounter').textContent=(_lbIdx+1)+' / '+CAR_ALL_GALLERY.length;
+    lb.classList.add('open');
+    document.body.style.overflow='hidden';
+}
+function csCloseLb(){
+    document.getElementById('csLightbox').classList.remove('open');
+    document.body.style.overflow='';
+}
+function csLbNav(dir){
+    _lbIdx=(_lbIdx+dir+CAR_ALL_GALLERY.length)%CAR_ALL_GALLERY.length;
+    document.getElementById('csLbImg').src=CAR_ALL_GALLERY[_lbIdx].src;
+    document.getElementById('csLbImg').alt=CAR_ALL_GALLERY[_lbIdx].caption||'';
+    document.getElementById('csLbCounter').textContent=(_lbIdx+1)+' / '+CAR_ALL_GALLERY.length;
+}
+document.addEventListener('keydown',function(e){
+    if(!document.getElementById('csLightbox').classList.contains('open'))return;
+    if(e.key==='Escape')csCloseLb();
+    if(e.key==='ArrowLeft')csLbNav(-1);
+    if(e.key==='ArrowRight')csLbNav(1);
+});
+// Click main image → open lightbox
+document.addEventListener('DOMContentLoaded',function(){
+    var mainImg=document.getElementById('csMainImg');
+    if(mainImg) mainImg.style.cursor='zoom-in';
+    if(mainImg) mainImg.addEventListener('click',function(){
+        var thumbs=Array.from(document.querySelectorAll('#csGalleryThumbs .cs-thumb:not([data-hidden])'));
+        var active=thumbs.findIndex(t=>t.classList.contains('active'));
+        csOpenLb(active>=0?active:0);
+    });
+});
+// Lightbox swipe
+(function(){
+    var lb=document.getElementById('csLightbox'),sx=0;
+    if(!lb)return;
+    lb.addEventListener('touchstart',function(e){sx=e.touches[0].clientX},{passive:true});
+    lb.addEventListener('touchend',function(e){
+        var dx=e.changedTouches[0].clientX-sx;
+        if(Math.abs(dx)>50){dx<0?csLbNav(1):csLbNav(-1);}
+    });
+})();
+
+// ==== GALLERY SWIPE ====
+(function(){
+    var stage=document.querySelector('.cs-gallery-stage'),sx=0;
+    if(!stage)return;
+    stage.addEventListener('touchstart',function(e){sx=e.touches[0].clientX},{passive:true});
+    stage.addEventListener('touchend',function(e){
+        var dx=e.changedTouches[0].clientX-sx;
+        if(Math.abs(dx)>50){dx<0?csGalleryNext():csGalleryPrev();}
+    });
+})();
+
+// ==== STICKY CTA BAR ====
+(function(){
+    var bar=document.getElementById('csStickyBar');
+    var mobCta=document.querySelector('.cs-mob-cta');
+    if(!bar)return;
+    var check=function(){
+        if(window.innerWidth>1024){bar.classList.remove('visible');return;}
+        var ref=mobCta||document.querySelector('.cs-price-section');
+        if(!ref){bar.classList.add('visible');return;}
+        var rect=ref.getBoundingClientRect();
+        bar.classList.toggle('visible',rect.bottom<0);
+    };
+    window.addEventListener('scroll',check,{passive:true});
+    window.addEventListener('resize',check,{passive:true});
+    check();
+})();
 
 // ==== RELATED CARS SCROLL ====
 function csRelScroll(dir){
