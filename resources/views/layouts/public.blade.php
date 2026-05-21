@@ -136,15 +136,16 @@
         /* ============ FOOTER ============ */
         .footer{background:#08080a;color:rgba(255,255,255,.6);padding:0;margin-top:0;position:relative}
         .footer::before{content:'';display:block;height:3px;background:linear-gradient(90deg,#0066ff 0%,#4ea3ff 40%,#0066ff 100%)}
-        .footer-row{max-width:1200px;margin:0 auto;padding:24px 24px;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap}
-        .footer-row a{color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;display:inline-flex;align-items:center;gap:5px;transition:color .15s}
-        .footer-row a:hover{color:#fff}
-        .footer-row .f-logo{font-family:'Inter',sans-serif;font-size:18px;font-weight:900;letter-spacing:-.4px;color:#fff;line-height:1}
-        .footer-row .f-logo span{color:var(--blue)}
-        .footer-row .f-sep{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.25);flex-shrink:0}
-        .footer-row .f-item{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:rgba(255,255,255,.55)}
-        .footer-row .f-item svg{width:14px;height:14px;flex-shrink:0}
-        .footer-btm{max-width:1200px;margin:0 auto;padding:16px 24px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;color:rgba(255,255,255,.25);text-align:center}
+        .footer-in{max-width:1200px;margin:0 auto;padding:56px 24px 0;display:grid;grid-template-columns:1.6fr 1.2fr 1fr;gap:48px}
+        .footer h3{color:rgba(255,255,255,.35);font-size:10.5px;margin-bottom:20px;text-transform:uppercase;letter-spacing:1.4px;font-weight:700}
+        .footer p,.footer a,.footer li{font-size:13.5px;line-height:1.9;color:rgba(255,255,255,.5)}
+        .footer ul{list-style:none}
+        .footer a{text-decoration:none;transition:color .15s}
+        .footer a:hover{color:#fff}
+        .footer-brand p{font-size:13px;color:rgba(255,255,255,.35);line-height:1.7;margin-top:14px;max-width:320px}
+        .footer-btm{max-width:1200px;margin:0 auto;padding:24px 24px;border-top:1px solid rgba(255,255,255,.06);font-size:11.5px;color:rgba(255,255,255,.2);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+        @media(max-width:900px){.footer-in{grid-template-columns:1fr 1fr;gap:32px}}
+        @media(max-width:600px){.footer-in{grid-template-columns:1fr;gap:28px;padding:40px 20px 0}.footer-btm{flex-direction:column;text-align:center;padding:20px}}
 
         /* ============ COMPONENTS ============ */
         .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;border:none;cursor:pointer;transition:all .15s;text-decoration:none;line-height:1}
@@ -222,10 +223,9 @@
             .nav-mobile-contact{margin-top:auto;padding-top:24px;border-top:1px solid var(--border-l);display:flex;flex-direction:column;gap:12px;font-size:14px;color:var(--text-2)}
             .nav-mobile-contact a{display:flex;align-items:center;gap:10px;color:var(--text-2)}
             .nav-mobile-contact i{width:16px;height:16px;color:var(--blue)}
-            /* Footer mobile: 2 rows */
-            .footer-row{flex-direction:column;gap:12px;padding:20px 20px}
-            .footer-row .f-row-group{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
-            .footer-btm{padding:14px 20px}
+            /* Footer mobile */
+            .footer-in{grid-template-columns:1fr;gap:28px;padding:40px 20px 0}
+            .footer-btm{flex-direction:column;text-align:center;padding:20px}
             .section{padding:48px 0}
             .section-title{font-size:24px}
             .container{padding:0 20px}
@@ -344,29 +344,83 @@
     </a>
 
 
-    <footer class="footer" id="kontakt">
-        <div class="footer-row">
-            <div class="f-row-group">
-                <a href="{{ route('home') }}" class="f-logo" aria-label="CertiCars">Certi<span>Cars</span></a>
-                <span class="f-sep" aria-hidden="true"></span>
-                <a href="tel:+48585586090">📞 +48 58 558 60 90</a>
-            </div>
-            <span class="f-sep" aria-hidden="true"></span>
-            <div class="f-row-group">
-                <a href="https://instagram.com/certicars" target="_blank" rel="noopener" class="f-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-                    @@certicars
-                </a>
-                <a href="https://facebook.com/certicars" target="_blank" rel="noopener" class="f-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                    /certicars
-                </a>
-                <span class="f-sep" aria-hidden="true"></span>
-                <span class="f-item">📍 Warszawa, Polska</span>
+    <!-- MAP SECTION -->
+    <section style="background:#fff;padding:48px 24px">
+        <div style="max-width:1200px;margin:0 auto">
+            <div style="border-radius:16px;overflow:hidden;border:1px solid #e5e7eb;height:300px;background:#f0f0f2">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2443.8!2d18.638!3d54.371!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z!5e0!3m2!1spl!2spl!4v1" width="100%" height="100%" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
+    </section>
+
+    <footer class="footer" id="kontakt">
+        <div class="footer-in">
+
+            {{-- Col 1: Brand --}}
+            <div class="footer-brand">
+                <a href="{{ route('home') }}" style="font-family:'Inter',sans-serif;font-size:22px;font-weight:900;letter-spacing:-.5px;color:#fff;text-decoration:none;line-height:1">Certi<span style="color:#0066ff">Cars</span></a>
+                <p>Każdy samochód w naszej ofercie przechodzi pełną inspekcję techniczną i weryfikację historii.</p>
+
+                {{-- Social icons --}}
+                <div style="display:flex;gap:10px;margin-top:20px">
+                    <a href="#" style="width:40px;height:40px;border-radius:10px;background:rgba(24,119,242,.12);display:flex;align-items:center;justify-content:center;transition:all .2s;text-decoration:none" aria-label="Facebook">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    </a>
+                    <a href="#" style="width:40px;height:40px;border-radius:10px;background:rgba(228,64,95,.1);display:flex;align-items:center;justify-content:center;transition:all .2s;text-decoration:none" aria-label="Instagram">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e4405f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            {{-- Col 2: Kontakt + Godziny --}}
+            <div>
+                <h3>Kontakt</h3>
+                <ul>
+                    <li style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0066ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        <a href="tel:+48585586090">+48 58 558 60 90</a>
+                    </li>
+                    <li style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0066ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        <a href="mailto:kontakt@certicars.pl">kontakt@certicars.pl</a>
+                    </li>
+                    <li style="display:flex;align-items:center;gap:8px">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0066ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <span>Warszawa, Polska</span>
+                    </li>
+                </ul>
+                <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)">
+                    <h3 style="margin-bottom:12px">Godziny otwarcia</h3>
+                    <div style="font-size:12.5px;color:rgba(255,255,255,.4);line-height:2">
+                        <div style="display:flex;justify-content:space-between"><span>Pon – Pt</span><span style="color:rgba(255,255,255,.6);font-weight:600">9:00 – 18:00</span></div>
+                        <div style="display:flex;justify-content:space-between"><span>Sobota</span><span style="color:rgba(255,255,255,.6);font-weight:600">10:00 – 14:00</span></div>
+                        <div style="display:flex;justify-content:space-between"><span>Niedziela</span><span style="color:rgba(255,255,255,.35)">Zamknięte</span></div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Col 3: Nawigacja + Informacje --}}
+            <div>
+                <h3>Nawigacja</h3>
+                <ul style="margin-bottom:24px">
+                    <li><a href="{{ route('home') }}">Strona główna</a></li>
+                    <li><a href="{{ route('catalog') }}">Oferta samochodów</a></li>
+                    <li><a href="{{ route('contact') }}">Kontakt</a></li>
+                </ul>
+                <h3>Informacje</h3>
+                <ul>
+                    <li><a href="#">Polityka prywatności</a></li>
+                    <li><a href="#">Regulamin</a></li>
+                    <li><a href="#">Jak kupić auto?</a></li>
+                </ul>
+            </div>
+
+        </div>
         <div class="footer-btm">
-            © {{ date('Y') }} CertiCars. Wszelkie prawa zastrzeżone.
+            <span>© {{ date('Y') }} CertiCars. Wszelkie prawa zastrzeżone.</span>
+            <div style="display:flex;align-items:center;gap:16px">
+                <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,.2)"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg> Zweryfikowany dealer</span>
+            </div>
         </div>
     </footer>
 
