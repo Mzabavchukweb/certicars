@@ -52,6 +52,11 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
 .file-drop input{display:none}
 .file-drop i{width:24px;height:24px;margin-bottom:6px;color:var(--text-4)}
 .file-drop:hover i,.file-drop.over i{color:var(--blue)}
+.file-preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:12px}
+.file-preview-item{position:relative;border:1px solid var(--border-l);border-radius:8px;overflow:hidden;background:#fff}
+.file-preview-item img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.file-preview-item .fp-name{padding:4px 8px;font-size:10px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file-preview-item .fp-remove{position:absolute;top:4px;right:4px;width:22px;height:22px;background:rgba(239,68,68,.9);color:#fff;border:none;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;line-height:1}
 .inline-label{display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:13px;font-weight:500;color:var(--text);margin:0;cursor:pointer}
 .damage-item.highlight{outline:3px solid var(--blue);box-shadow:0 0 0 8px rgba(0,102,255,.12);animation:dmg-pulse 1.2s}
 @keyframes dmg-pulse{0%{box-shadow:0 0 0 0 rgba(0,102,255,.4)}100%{box-shadow:0 0 0 10px rgba(0,102,255,0)}}
@@ -848,7 +853,7 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
                 </select>
             </div>
         </div>
-        <button type="submit" class="btn btn-blue" id="carFormSubmit" style="width:100%;justify-content:center;padding:13px"><i data-lucide="save"></i> {{ $car ? 'Zapisz zmiany' : 'Utwórz' }}</button>
+        <button type="submit" class="btn btn-blue" id="carFormSubmit" style="width:100%;justify-content:center;padding:13px"><i data-lucide="save"></i> {{ $car ? 'Zapisz zmiany' : 'Zapisz' }}</button>
         <a href="{{ route('admin.cars.index') }}" class="btn btn-outline" style="width:100%;justify-content:center;margin-top:8px">Anuluj</a>
     </div>
 </div>
@@ -857,7 +862,7 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
 <div class="sticky-save" id="stickySave">
     <div class="hint"><i data-lucide="alert-circle"></i> Masz niezapisane zmiany</div>
     <a href="{{ route('admin.cars.index') }}" class="btn btn-outline">Anuluj</a>
-    <button type="button" class="btn btn-blue" onclick="document.getElementById('carFormSubmit').click()"><i data-lucide="save"></i> {{ $car ? 'Zapisz zmiany' : 'Utwórz' }}</button>
+    <button type="button" class="btn btn-blue" onclick="document.getElementById('carFormSubmit').click()"><i data-lucide="save"></i> {{ $car ? 'Zapisz zmiany' : 'Zapisz' }}</button>
 </div>
 
 @push('scripts')
@@ -1342,11 +1347,38 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
     });
     function updateDropLabel(drop, input){
         const lbl = drop.querySelector('div');
-        if(!input.files.length) return;
+        if(!input.files.length){
+            lbl.textContent = drop.dataset.originalText || 'Kliknij lub przeciągnij pliki';
+            const pg = drop.parentElement.querySelector('.file-preview-grid');
+            if(pg) pg.remove();
+            return;
+        }
+        if(!drop.dataset.originalText) drop.dataset.originalText = lbl.textContent;
         const n = input.files.length;
-        let txt = `${n} plik(ów) gotowych do wgrania`;
+        lbl.textContent = `${n} plik(ów) gotowych do wgrania`;
         lbl.style.color = '';
-        lbl.textContent = txt;
+
+        // Show thumbnail previews
+        let pg = drop.parentElement.querySelector('.file-preview-grid');
+        if(pg) pg.remove();
+        pg = document.createElement('div');
+        pg.className = 'file-preview-grid';
+        drop.parentElement.insertBefore(pg, drop.nextSibling);
+
+        Array.from(input.files).forEach((file, i) => {
+            if(!file.type.startsWith('image/')) return;
+            const item = document.createElement('div');
+            item.className = 'file-preview-item';
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.onload = () => URL.revokeObjectURL(img.src);
+            const name = document.createElement('div');
+            name.className = 'fp-name';
+            name.textContent = file.name;
+            item.appendChild(img);
+            item.appendChild(name);
+            pg.appendChild(item);
+        });
     }
 
     // ===== SEO analyzer (Yoast-style) =====
