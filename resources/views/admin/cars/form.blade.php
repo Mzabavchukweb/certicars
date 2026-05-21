@@ -558,11 +558,20 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
         @elseif($car)
         <p style="color:var(--text-3);font-size:12.5px;margin-bottom:10px">Brak zdjęć galerii.</p>
         @endif
-        <label class="file-drop" id="galleryDrop">
+        <label class="file-drop" id="galleryDrop" data-upload-type="gallery">
             <i data-lucide="image-plus"></i>
             <div>Kliknij lub przeciągnij pliki, aby dodać zdjęcia galerii</div>
             <input type="file" name="gallery_images[]" multiple accept="image/*">
         </label>
+        <div id="galleryUploadProgress" style="display:none;margin-top:10px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                <div style="flex:1;background:#e5e7eb;border-radius:6px;height:8px;overflow:hidden">
+                    <div id="galleryProgressBar" style="width:0%;height:100%;background:#0066ff;border-radius:6px;transition:width .2s"></div>
+                </div>
+                <span id="galleryProgressText" style="font-size:12px;font-weight:600;color:var(--text-2);white-space:nowrap">0/0</span>
+            </div>
+        </div>
+        <div id="galleryUploadedGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:10px"></div>
     </div>
 
     <div class="card">
@@ -585,11 +594,20 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
         @elseif($car)
         <p style="color:var(--text-3);font-size:12.5px;margin-bottom:10px">Brak zdjęć uszkodzeń.</p>
         @endif
-        <label class="file-drop" id="damageDrop">
+        <label class="file-drop" id="damageDrop" data-upload-type="damage">
             <i data-lucide="image-plus"></i>
             <div>Kliknij lub przeciągnij pliki, aby dodać zdjęcia uszkodzeń</div>
             <input type="file" name="damage_images[]" multiple accept="image/*">
         </label>
+        <div id="damageUploadProgress" style="display:none;margin-top:10px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                <div style="flex:1;background:#e5e7eb;border-radius:6px;height:8px;overflow:hidden">
+                    <div id="damageProgressBar" style="width:0%;height:100%;background:#0066ff;border-radius:6px;transition:width .2s"></div>
+                </div>
+                <span id="damageProgressText" style="font-size:12px;font-weight:600;color:var(--text-2);white-space:nowrap">0/0</span>
+            </div>
+        </div>
+        <div id="damageUploadedGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:10px"></div>
     </div>
 
     {{-- ============= 360° PANORAMA (jedno zdjęcie equirectangular) ============= --}}
@@ -1378,10 +1396,23 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
         }
         if(!drop.dataset.originalText) drop.dataset.originalText = lbl.textContent;
         const n = input.files.length;
-        lbl.textContent = `${n} plik(ów) gotowych do wgrania`;
         lbl.style.color = '';
 
-        // Show thumbnail previews
+        const uploadType = drop.dataset.uploadType;
+        const carId = @json($car?->id ?? null);
+
+        // AJAX upload for existing cars
+        if(carId && (uploadType === 'gallery' || uploadType === 'damage')){
+            const files = Array.from(input.files).filter(f => f.type.startsWith('image/'));
+            lbl.textContent = `Wgrywanie ${files.length} zdjęć...`;
+            // Clear the file input so form doesn't re-send them
+            input.value = '';
+            ajaxUploadFiles(files, uploadType, carId);
+            return;
+        }
+
+        // Fallback: show previews for create page (standard form upload)
+        lbl.textContent = `${n} plik(ów) gotowych do wgrania`;
         let pg = drop.parentElement.querySelector('.file-preview-grid');
         if(pg) pg.remove();
         pg = document.createElement('div');
@@ -1402,6 +1433,69 @@ $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? 
             item.appendChild(name);
             pg.appendChild(item);
         });
+    }
+
+    // ===== AJAX sequential file upload =====
+    async function ajaxUploadFiles(files, type, carId){
+        const prefix = type === 'gallery' ? 'gallery' : 'damage';
+        const progressWrap = document.getElementById(prefix+'UploadProgress');
+        const progressBar = document.getElementById(prefix+'ProgressBar');
+        const progressText = document.getElementById(prefix+'ProgressText');
+        const grid = document.getElementById(prefix+'UploadedGrid');
+        const drop = document.getElementById(prefix+'Drop');
+        const lbl = drop?.querySelector('div');
+
+        progressWrap.style.display = '';
+        let done = 0;
+        const total = files.length;
+        progressText.textContent = `0/${total}`;
+        progressBar.style.width = '0%';
+
+        for(const file of files){
+            const fd = new FormData();
+            fd.append('image', file);
+            fd.append('type', type);
+            fd.append('_token', csrf);
+
+            try {
+                const res = await fetch(`/admin/cars/${carId}/upload-image`, {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                    body: fd,
+                });
+                const data = await res.json().catch(()=>({}));
+                done++;
+                progressBar.style.width = Math.round((done/total)*100)+'%';
+                progressText.textContent = `${done}/${total}`;
+
+                if(data.success && data.image){
+                    const tile = document.createElement('div');
+                    tile.className = 'file-preview-item';
+                    tile.style.border = '2px solid #10b981';
+                    tile.innerHTML = `<img src="${data.image.url}" alt="${data.image.alt||''}" style="width:100%;aspect-ratio:4/3;object-fit:cover;display:block"><div class="fp-name" style="color:#10b981">✓ ${file.name}</div>`;
+                    grid.appendChild(tile);
+                } else {
+                    const tile = document.createElement('div');
+                    tile.className = 'file-preview-item';
+                    tile.style.border = '2px solid #ef4444';
+                    tile.innerHTML = `<div style="padding:12px;font-size:11px;color:#ef4444">✗ ${file.name}<br>${data.message||'Błąd'}</div>`;
+                    grid.appendChild(tile);
+                }
+            } catch(err){
+                done++;
+                progressBar.style.width = Math.round((done/total)*100)+'%';
+                progressText.textContent = `${done}/${total}`;
+                const tile = document.createElement('div');
+                tile.className = 'file-preview-item';
+                tile.style.border = '2px solid #ef4444';
+                tile.innerHTML = `<div style="padding:12px;font-size:11px;color:#ef4444">✗ ${file.name}<br>Błąd sieci</div>`;
+                grid.appendChild(tile);
+            }
+        }
+
+        if(lbl) lbl.textContent = `✓ Wgrano ${done}/${total} zdjęć`;
+        progressBar.style.background = '#10b981';
+        if(window.toast) toast(`Wgrano ${done} zdjęć ${type==='gallery'?'galerii':'uszkodzeń'}.`, 'success');
     }
 
     // ===== SEO analyzer (Yoast-style) =====

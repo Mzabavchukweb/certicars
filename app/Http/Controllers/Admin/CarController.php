@@ -252,6 +252,40 @@ class CarController extends Controller
         return back()->with('success', 'Status sprzedaży zmieniony.');
     }
 
+    public function uploadImage(Request $request, Car $car)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpg,jpeg,png,webp,avif|max:20480',
+            'type'  => 'required|in:gallery,damage',
+        ]);
+
+        $type = $request->input('type', 'gallery');
+        $subdir = $type === 'damage' ? 'damage' : 'gallery';
+
+        Storage::disk('public')->makeDirectory('cars/' . $car->id . '/' . $subdir);
+        $path = $request->file('image')->store('cars/' . $car->id . '/' . $subdir, 'public');
+        $this->optimizeImage($path, $type === 'damage' ? 1280 : 1920);
+
+        $img = $car->images()->create([
+            'path'       => $path,
+            'type'       => $type,
+            'is_primary' => $car->images()->count() === 0,
+            'sort_order' => ($car->images()->max('sort_order') ?? 0) + 1,
+        ]);
+
+        Cache::forget('catalog.filters');
+
+        return response()->json([
+            'success' => true,
+            'image'   => [
+                'id'   => $img->id,
+                'url'  => $img->url,
+                'alt'  => $img->alt,
+                'type' => $img->type,
+            ],
+        ]);
+    }
+
     private function processEquipment(array $validated): array
     {
         if (!empty($validated['equipment'])) {

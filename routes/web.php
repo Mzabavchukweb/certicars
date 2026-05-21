@@ -51,6 +51,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::resource('cars', AdminCarController::class)->names('admin.cars');
     Route::patch('cars/{car}/toggle-featured', [AdminCarController::class, 'toggleFeatured'])->name('admin.cars.toggle-featured');
     Route::patch('cars/{car}/toggle-sold', [AdminCarController::class, 'toggleSold'])->name('admin.cars.toggle-sold');
+    Route::post('cars/{car}/upload-image', [AdminCarController::class, 'uploadImage'])->name('admin.cars.upload-image');
     Route::get('cars/{car}/pdf', [PdfController::class, 'generate'])->name('admin.cars.pdf');
 
     Route::resource('brands', AdminBrandController::class)->names('admin.brands')->except(['create', 'show', 'edit']);
