@@ -136,69 +136,15 @@
         /* ============ FOOTER ============ */
         .footer{background:#08080a;color:rgba(255,255,255,.6);padding:0;margin-top:0;position:relative}
         .footer::before{content:'';display:block;height:3px;background:linear-gradient(90deg,#0066ff 0%,#4ea3ff 40%,#0066ff 100%)}
-        .footer-in{max-width:1200px;margin:0 auto;padding:56px 24px 0;display:grid;grid-template-columns:1.6fr 1.2fr 1fr;gap:48px}
-        .footer h3{color:rgba(255,255,255,.35);font-size:10.5px;margin-bottom:20px;text-transform:uppercase;letter-spacing:1.4px;font-weight:700}
-        .footer p,.footer a,.footer li{font-size:13.5px;line-height:1.9;color:rgba(255,255,255,.5)}
-        .footer ul{list-style:none}
-        .footer a{transition:color .2s}
-        .footer a:hover{color:#fff}
-        /* Col 1 — brand */
-        .footer-logo{display:flex;align-items:center;gap:14px;margin-bottom:22px;text-decoration:none}
-        .footer-logo-badge{width:38px;height:38px;flex-shrink:0}
-        .footer-logo-wordmark{font-size:23px;font-weight:900;letter-spacing:-.6px;color:#fff;line-height:1;font-family:'Inter',sans-serif}
-        .footer-logo-wordmark span{color:var(--blue)}
-        .footer-logo-sep{width:1px;height:32px;background:rgba(255,255,255,.12);flex-shrink:0;margin:0 2px}
-        .footer-logo-tagline{display:flex;flex-direction:column;gap:0;line-height:1.3}
-        .footer-logo-tagline span{font-size:11px;font-weight:400;color:rgba(255,255,255,.3);letter-spacing:0}
-        .footer-brand p{font-size:13px;color:rgba(255,255,255,.4);line-height:1.75;margin-bottom:24px}
-        .footer-brand a.fb-link{display:inline-flex;align-items:center;gap:6px;color:var(--blue);font-weight:600;font-size:13px;text-decoration:none;transition:all .2s}
-        .footer-brand a.fb-link:hover{color:#4ea3ff;gap:10px}
-        .footer-trust{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
-        .footer-trust-badge{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 12px;font-size:11px;font-weight:600;color:rgba(255,255,255,.5);transition:border-color .2s}
-        .footer-trust-badge:hover{border-color:rgba(255,255,255,.15)}
-        .footer-trust-badge svg{width:14px;height:14px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-        /* Col 2 — contact cards */
-        .fcc{display:flex;flex-direction:column;gap:16px}
-        .fcc-card{display:flex;align-items:center;gap:14px;text-decoration:none;transition:all .2s;padding:10px 14px;margin:-10px -14px;border-radius:12px}
-        .fcc-card:hover{background:rgba(255,255,255,.04)}
-        .fcc-icon{width:42px;height:42px;border-radius:10px;background:rgba(0,102,255,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s}
-        .fcc-card:hover .fcc-icon{background:rgba(0,102,255,.2)}
-        .fcc-icon svg{width:18px;height:18px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-        .fcc-body{display:flex;flex-direction:column;gap:2px}
-        .fcc-body strong{font-size:10.5px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1px}
-        .fcc-body span{font-size:14.5px;color:#fff;font-weight:600;line-height:1.4}
-        .fcc-addr{display:flex;align-items:flex-start;gap:14px;transition:all .2s;padding:10px 14px;margin:-10px -14px;border-radius:12px}
-        .fcc-addr:hover{background:rgba(255,255,255,.04)}
-        .fcc-addr .fcc-icon{margin-top:2px}
-        /* Col 3 — social */
-        .fsoc{display:flex;flex-direction:column;gap:12px}
-        .fsoc-card{display:flex;align-items:center;gap:14px;text-decoration:none;transition:all .2s;padding:10px 14px;margin:-10px -14px;border-radius:12px}
-        .fsoc-card:hover{background:rgba(255,255,255,.04)}
-        .fsoc-logo-fb,.fsoc-logo-ig{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
-        .fsoc-logo-fb{background:rgba(24,119,242,.15)}
-        .fsoc-logo-ig{background:rgba(228,64,95,.12)}
-        .fsoc-card:hover .fsoc-logo-fb{background:rgba(24,119,242,.25)}
-        .fsoc-card:hover .fsoc-logo-ig{background:rgba(228,64,95,.2)}
-        .fsoc-logo-fb svg{width:18px;height:18px;stroke:#1877f2;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-        .fsoc-logo-ig svg{width:18px;height:18px;stroke:#e4405f;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-        .fsoc-txt strong{display:block;font-size:14.5px;font-weight:700;color:#fff;margin-bottom:2px}
-        .fsoc-txt span{font-size:12.5px;color:rgba(255,255,255,.4)}
-
-        /* Col 4 */
-        .footer-hours li{padding:4px 0;color:rgba(255,255,255,.4);font-size:13px}
-        .footer-hours li strong{color:#fff;font-weight:600}
-        .footer-nav-list{list-style:none;margin-bottom:28px}
-        .footer-nav-list li{padding:3px 0}
-        .footer-nav-list a{font-size:13.5px;color:#fff;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:4px}
-        .footer-nav-list a:hover{color:var(--blue)}
-        .footer-nav-list a::before{content:'';display:inline-block;width:12px;height:2px;background:var(--blue);transition:all .2s;margin-right:6px;border-radius:1px}
-        .footer-nav-list a:hover::before{width:16px;background:#fff}
-        /* Bottom bar */
-        .footer-btm{max-width:1200px;margin:48px auto 0;padding:20px 24px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(255,255,255,.3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-        .footer-btm a{color:rgba(255,255,255,.35);text-decoration:none;transition:color .2s}
-        .footer-btm a:hover{color:rgba(255,255,255,.7)}
-        .footer-btm-links{display:flex;gap:20px;align-items:center}
-        .footer-btm-links span{color:rgba(255,255,255,.12)}
+        .footer-row{max-width:1200px;margin:0 auto;padding:24px 24px;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap}
+        .footer-row a{color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;display:inline-flex;align-items:center;gap:5px;transition:color .15s}
+        .footer-row a:hover{color:#fff}
+        .footer-row .f-logo{font-family:'Inter',sans-serif;font-size:18px;font-weight:900;letter-spacing:-.4px;color:#fff;line-height:1}
+        .footer-row .f-logo span{color:var(--blue)}
+        .footer-row .f-sep{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.25);flex-shrink:0}
+        .footer-row .f-item{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:rgba(255,255,255,.55)}
+        .footer-row .f-item svg{width:14px;height:14px;flex-shrink:0}
+        .footer-btm{max-width:1200px;margin:0 auto;padding:16px 24px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;color:rgba(255,255,255,.25);text-align:center}
 
         /* ============ COMPONENTS ============ */
         .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;border:none;cursor:pointer;transition:all .15s;text-decoration:none;line-height:1}
@@ -256,8 +202,6 @@
             .topbar-left .tb-hide-lg,.topbar-right .tb-hide-lg{display:none}
             .header-nav .nav-link{padding:10px 12px;font-size:14px}
             .header-in{gap:24px}
-            .footer-in{grid-template-columns:1fr 1fr;gap:40px}
-            .footer-brand{grid-column:1 / -1}
         }
         @media(max-width:900px){
             .topbar{display:none}
@@ -278,25 +222,13 @@
             .nav-mobile-contact{margin-top:auto;padding-top:24px;border-top:1px solid var(--border-l);display:flex;flex-direction:column;gap:12px;font-size:14px;color:var(--text-2)}
             .nav-mobile-contact a{display:flex;align-items:center;gap:10px;color:var(--text-2)}
             .nav-mobile-contact i{width:16px;height:16px;color:var(--blue)}
-            /* Footer: 2 columns on tablet */
-            .footer-in{grid-template-columns:1fr 1fr;gap:32px 40px;padding:40px 20px 0}
-            .footer-brand{grid-column:1 / -1}
-            .footer-brand p{max-width:480px}
-            .footer-btm{margin-top:32px;padding:16px 20px;flex-direction:column;text-align:center;gap:8px}
+            /* Footer mobile: 2 rows */
+            .footer-row{flex-direction:column;gap:12px;padding:20px 20px}
+            .footer-row .f-row-group{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+            .footer-btm{padding:14px 20px}
             .section{padding:48px 0}
             .section-title{font-size:24px}
             .container{padding:0 20px}
-        }
-        @media(max-width:480px){
-            /* Footer: single column on small mobile */
-            .footer-in{grid-template-columns:1fr;gap:28px;padding:32px 20px 0}
-            .footer-brand{grid-column:1}
-            .fcc-card{padding:8px 10px;margin:-8px -10px}
-            .fcc-icon{width:36px;height:36px;border-radius:8px}
-            .fcc-icon svg{width:16px;height:16px}
-            .fcc-body span{font-size:13.5px}
-            .footer-btm{margin-top:24px;padding:16px 20px}
-            .footer-btm-links{gap:14px}
         }
         @keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
         @keyframes floatPulse{0%,100%{box-shadow:0 6px 20px rgba(0,102,255,.4),0 0 0 0 rgba(0,102,255,.45)}50%{box-shadow:0 6px 20px rgba(0,102,255,.4),0 0 0 12px rgba(0,102,255,0)}}
@@ -411,123 +343,30 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
     </a>
 
-    <!-- MAP SECTION -->
-    <section style="background:#fff;padding:48px 24px">
-        <div style="max-width:1200px;margin:0 auto">
-            <div style="border-radius:16px;overflow:hidden;border:1px solid #e5e7eb;height:300px;background:#f0f0f2">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2443.8!2d18.638!3d54.371!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z!5e0!3m2!1spl!2spl!4v1" width="100%" height="100%" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
-        </div>
-    </section>
 
     <footer class="footer" id="kontakt">
-        <div class="footer-in">
-
-            {{-- Col 1: Brand --}}
-            <div class="footer-brand">
-                <a href="{{ route('home') }}" class="footer-logo" aria-label="CertiCars">
-                    <svg class="footer-logo-badge" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" fill="#0066ff"/>
-                        <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <span class="footer-logo-wordmark">Certi<span>Cars</span></span>
-                    <span class="footer-logo-sep" aria-hidden="true"></span>
-                    <span class="footer-logo-tagline">
-                        <span>Sprawdzone</span>
-                        <span>samochody używane</span>
-                    </span>
+        <div class="footer-row">
+            <div class="f-row-group">
+                <a href="{{ route('home') }}" class="f-logo" aria-label="CertiCars">Certi<span>Cars</span></a>
+                <span class="f-sep" aria-hidden="true"></span>
+                <a href="tel:+48585586090">📞 +48 58 558 60 90</a>
+            </div>
+            <span class="f-sep" aria-hidden="true"></span>
+            <div class="f-row-group">
+                <a href="https://instagram.com/certicars" target="_blank" rel="noopener" class="f-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    @@certicars
                 </a>
-                <p>Certyfikowane samochody używane z pełną inspekcją techniczną, historią lakieru i dokumentacją stanu pojazdu.</p>
-
-                <div class="footer-trust" style="margin-top:20px">
-                    <div class="footer-trust-badge">
-                        <svg viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
-                        CertiCheck
-                    </div>
-                    <div class="footer-trust-badge">
-                        <svg viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                        Pełna historia
-                    </div>
-                    <div class="footer-trust-badge">
-                        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        Gwarancja
-                    </div>
-                </div>
-
-                {{-- Social icons --}}
-                <div style="display:flex;gap:10px;margin-top:20px">
-                    <a href="#" style="width:40px;height:40px;border-radius:10px;background:rgba(24,119,242,.12);display:flex;align-items:center;justify-content:center;transition:all .2s;text-decoration:none" aria-label="Facebook">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                    </a>
-                    <a href="#" style="width:40px;height:40px;border-radius:10px;background:rgba(228,64,95,.1);display:flex;align-items:center;justify-content:center;transition:all .2s;text-decoration:none" aria-label="Instagram">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e4405f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-                    </a>
-                </div>
+                <a href="https://facebook.com/certicars" target="_blank" rel="noopener" class="f-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    /certicars
+                </a>
+                <span class="f-sep" aria-hidden="true"></span>
+                <span class="f-item">📍 Warszawa, Polska</span>
             </div>
-
-            {{-- Col 2: Contact cards --}}
-            <div>
-                <h3>Kontakt</h3>
-                <div class="fcc">
-                    <a href="tel:+48585586090" class="fcc-card">
-                        <div class="fcc-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>
-                        </div>
-                        <div class="fcc-body"><strong>Zadzwoń</strong><span>+48 58 558 60 90</span></div>
-                    </a>
-                    <a href="mailto:kontakt@certicars.pl" class="fcc-card">
-                        <div class="fcc-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                        </div>
-                        <div class="fcc-body"><strong>Email</strong><span>kontakt@certicars.pl</span></div>
-                    </a>
-                    <div class="fcc-addr">
-                        <div class="fcc-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
-                        </div>
-                        <div class="fcc-body"><strong>Nasz salon</strong><span>ul. Przykładowa 15<br>00-001 Warszawa</span></div>
-                    </div>
-                </div>
-
-                {{-- Opening hours --}}
-                <h3 style="margin-top:28px">Godziny otwarcia</h3>
-                <ul class="footer-hours">
-                    <li><span style="display:inline-block;width:60px">Pon–Pt</span> <strong>9:00–18:00</strong></li>
-                    <li><span style="display:inline-block;width:60px">Sobota</span> <strong>10:00–14:00</strong></li>
-                    <li><span style="display:inline-block;width:60px">Niedziela</span> <em style="color:rgba(255,255,255,.25)">zamknięte</em></li>
-                </ul>
-            </div>
-
-            {{-- Col 3: Navigation + Newsletter --}}
-            <div>
-                <h3>Nawigacja</h3>
-                <ul class="footer-nav-list">
-                    <li><a href="{{ route('home') }}">Strona główna</a></li>
-                    <li><a href="{{ route('catalog') }}">Oferta samochodów</a></li>
-                    <li><a href="{{ route('about') }}">O nas</a></li>
-                    <li><a href="{{ route('contact') }}">Kontakt</a></li>
-                    <li><a href="{{ route('favorites') }}">Obserwowane</a></li>
-                </ul>
-
-                <h3>Informacje</h3>
-                <ul class="footer-nav-list">
-                    <li><a href="#">Polityka prywatności</a></li>
-                    <li><a href="#">Regulamin</a></li>
-                    <li><a href="#">Jak kupić auto?</a></li>
-                    <li><a href="#">Finansowanie</a></li>
-                </ul>
-            </div>
-
         </div>
         <div class="footer-btm">
-            <span>© {{ date('Y') }} CertiCars. Wszelkie prawa zastrzeżone.</span>
-            <div class="footer-btm-links">
-                <a href="#">Polityka prywatności</a>
-                <span>·</span>
-                <a href="#">Regulamin</a>
-                <span>·</span>
-                <a href="#">Cookies</a>
-            </div>
+            © {{ date('Y') }} CertiCars. Wszelkie prawa zastrzeżone.
         </div>
     </footer>
 

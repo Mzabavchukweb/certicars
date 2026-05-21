@@ -38,7 +38,11 @@
       "Bash(dig TXT _spf.home.pl +short)",
       "Bash(dig A mail00.home.net.pl +short)",
       "Bash(dig A mail01.home.net.pl +short)",
-      "Bash(dig A mail02.home.net.pl +short)"
+      "Bash(dig A mail02.home.net.pl +short)",
+      "Bash(RAILWAY_TOKEN=e77982a7-7ca0-4f42-aaf3-4a20b1a7620b railway logs --tail 200)",
+      "Bash(awk -F'rt=' '{print $2}')",
+      "Bash(RAILWAY_TOKEN=e77982a7-7ca0-4f42-aaf3-4a20b1a7620b railway logs --tail 300)",
+      "Bash(grep -v \"^$\")"
     ],
     "additionalDirectories": [
       "/Users/maksymzabavchuk/Desktop/certicars/storage/app/public/cars/*"

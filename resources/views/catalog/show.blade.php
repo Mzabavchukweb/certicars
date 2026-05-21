@@ -293,6 +293,9 @@
 .cs-data-header h2 i,.cs-data-header h2 svg{display:none}
 .cs-data-header .chev{display:none}
 .cs-data-body{display:block;padding:20px 24px 24px}
+/* Mobile accordion for data-col */
+.cs-data-col-toggle{display:none}
+.cs-data-col-body{display:block}
 .cs-data-2col{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
 .cs-data-block{background:#fff;border:1px solid #eeeef0;border-radius:12px;padding:22px 22px 14px}
 .cs-data-block-title{font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:14px;letter-spacing:-.2px;line-height:1.3;padding-bottom:12px;border-bottom:1px solid #eeeef0}
@@ -327,12 +330,13 @@
 /* FLOATING WIDGETS — handled by global layout */
 
 @media(max-width:1024px){
-    .cs-grid{grid-template-columns:1fr;gap:20px}
+    .cs-grid{grid-template-columns:1fr;gap:12px}
     .cs-grid > div{min-width:0;max-width:100%}
-    .cs-sidebar{position:static}
+    .cs-sidebar{position:static;order:-1}
     .cs-calc-inline{display:none}
     .cs-tire-table{grid-template-columns:180px repeat(4,1fr)}
     .cs-equipment-grid{grid-template-columns:1fr}
+    .cs-sidebar .cs-info-tiles-wrap{display:none}
 }
 /* RELATED CARS */
 .cs-related-grid{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px}
@@ -347,42 +351,60 @@
     .cs-nav-bar-right{margin-left:auto;display:flex;gap:6px}
     .cs-nav-btn{padding:7px 10px;font-size:11.5px;gap:4px}
     .cs-nav-btn svg{width:12px;height:12px}
-    .cs-head{flex-direction:column;gap:6px}
-    .cs-head h1{font-size:22px;letter-spacing:-.4px}
+    .cs-head{flex-direction:row;gap:8px;align-items:center}
+    .cs-head h1{font-size:22px;letter-spacing:-.4px;flex:1}
     .cs-meta{font-size:11px;gap:4px}
     .cs-keyfacts{gap:6px;padding:10px 0 12px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
     .cs-keyfacts::-webkit-scrollbar{display:none}
     .cs-keyfact{padding:7px 10px;font-size:11.5px;flex-shrink:0}
-    .cs-gallery{border-radius:10px}
+    .cs-gallery{border-radius:0;margin-left:-14px;margin-right:-14px;width:calc(100% + 28px)}
+    .cs-gallery-tabs-wrap{margin-left:-14px;margin-right:-14px;width:calc(100% + 28px);padding:0 14px}
     .cs-gallery-tabs{gap:5px;padding:10px 0 8px}
     .cs-gallery-tab{font-size:11px;gap:4px;padding:5px 10px}
     .cs-gallery-tab svg,.cs-gallery-tab i{width:12px;height:12px}
-    .cs-gallery-thumbs{padding:8px}
-    .cs-thumb{width:72px;height:48px}
-    .cs-thumb-360{width:72px;height:48px;font-size:9px}
-    .cs-thumb-360 svg{width:16px;height:16px}
-    .cs-thumb-more{width:72px;height:48px;font-size:14px}
-    .cs-thumb-more span{font-size:8px}
+    .cs-gallery-thumbs{padding:8px;display:none}
     .cs-gallery-nav{width:34px;height:34px}
     .cs-gallery-nav svg{width:16px;height:16px}
     .cs-gallery-nav.prev{left:8px}
     .cs-gallery-nav.next{right:8px}
-    .cs-sidebar-card{border-radius:14px}
-    .cs-price-section{padding:18px 16px 12px}
-    .cs-price-actions{padding:14px 16px 16px}
-    .cs-price-actions .btn{padding:12px 16px;font-size:14px}
+    /* Sidebar mobile: clean, no shadow */
+    .cs-sidebar-card{border-radius:0;border:none;box-shadow:none;margin-left:-14px;margin-right:-14px;width:calc(100% + 28px)}
+    .cs-price-section{padding:16px 16px 8px}
+    .cs-price-value{font-size:28px}
+    .cs-price-actions{padding:12px 16px 16px}
+    /* Green phone CTA */
+    .cs-btn-phone{background:#10b981!important;border-color:#10b981!important;color:#fff!important;font-size:15px!important;padding:14px 20px!important;justify-content:center}
+    .cs-btn-phone svg{stroke:#fff!important}
+    .cs-btn-message{font-size:14px!important;padding:12px 16px!important;justify-content:center}
     .cs-sidebar-summary{padding:0 16px}
     .cs-sidebar-summary-row{font-size:12.5px;padding:10px 0}
     .cs-calc-trigger{padding:12px 14px;font-size:12px}
-    .cs-data-header{padding:14px 16px}
+    /* Data sections mobile */
+    .cs-data-section{border-radius:0;margin-left:-14px;margin-right:-14px;box-shadow:none;border-bottom:1px solid #eeeef0;margin-bottom:0}
+    .cs-data-header{padding:14px 16px;cursor:pointer}
     .cs-data-header h2{font-size:15px}
-    .cs-data-body{padding:14px 16px 16px}
-    .cs-data-row{font-size:12.5px;padding:8px 0}
+    .cs-data-header .chev{display:block;width:18px;height:18px;stroke:#9ca3af;stroke-width:2.2;fill:none;transition:transform .25s;flex-shrink:0}
+    .cs-data-header.open .chev{transform:rotate(180deg)}
+    .cs-data-body{padding:0 16px 16px;overflow:hidden;transition:max-height .3s ease,padding .3s ease}
+    .cs-data-body:not(.open){max-height:0!important;padding-top:0;padding-bottom:0}
+    /* Data columns → stacked accordions */
+    .cs-data-columns{display:block}
+    .cs-data-col{padding:0;border-right:none;border-bottom:none}
+    .cs-data-col-toggle{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;border-top:1px solid #eeeef0;user-select:none}
+    .cs-data-col-toggle .col-title{font-size:14px;font-weight:700;color:#1a1a1a;display:flex;align-items:center;gap:6px}
+    .cs-data-col-toggle .col-chev{width:18px;height:18px;stroke:#9ca3af;stroke-width:2.2;fill:none;transition:transform .25s}
+    .cs-data-col-toggle.open .col-chev{transform:rotate(180deg)}
+    .cs-data-col-body{overflow:hidden;transition:max-height .3s ease;padding:0 16px}
+    .cs-data-col-body:not(.open){max-height:0!important;padding-top:0;padding-bottom:0}
+    .cs-data-col-body.open{padding-bottom:12px}
+    .cs-data-col-title{display:none}
+    .cs-data-row{font-size:12.5px;padding:8px 0;flex-direction:row}
     .cs-data-row .lbl{flex-shrink:1;min-width:0}
     .cs-data-row .val{max-width:55%;font-size:12.5px}
-    .cs-sections-2col{padding:0 14px;gap:12px}
+    .cs-sections-2col{padding:0;gap:0}
+    .cs-sections-2col .cs-data-section{margin-bottom:0}
     .cs-damage-grid{grid-template-columns:1fr;min-height:auto;border:none;border-radius:0}
-    .cs-damage-diagram{border-radius:12px;border:1px solid #eeeef0}
+    .cs-damage-diagram{border-radius:12px;border:1px solid #eeeef0;margin:0 16px}
     .cs-damage-diagram-inner{min-height:300px}
     .cs-damage-marker-dot{width:24px;height:24px}
     .cs-damage-marker-dot i{width:11px;height:11px}
@@ -401,10 +423,11 @@
     .cs-tire-icon{width:56px;height:56px}
     .cs-tire-data-row{flex:1;min-width:50%;border-right:1px solid var(--border-l);padding:8px 10px;font-size:12px}
     .cs-tire-data-row:last-child{border-right:none}
+    /* Equipment: truncated with show-more */
     .cs-equipment-grid{grid-template-columns:1fr}
     .cs-equipment-item{padding:10px 0;font-size:12.5px}
+    .cs-equipment-grid:not(.expanded) .cs-equipment-item:nth-child(n+9){display:none}
     .cs-feat-eq{flex-direction:column}
-    .cs-price-value{font-size:28px}
     .cs-fuel-grid{grid-template-columns:1fr 1fr}
     .cs-pano360-embed{aspect-ratio:4/3}
     .cs-pano360-grid{grid-template-columns:1fr!important}
@@ -422,14 +445,15 @@
     .cs-head h1{font-size:19px}
     .cs-keyfact{padding:6px 8px;font-size:10.5px}
     .cs-keyfact svg{width:13px;height:13px}
-    .cs-gallery{border-radius:8px}
-    .cs-sidebar-card{border-radius:12px}
-    .cs-data-section{border-radius:12px}
+    .cs-gallery{margin-left:-12px;margin-right:-12px;width:calc(100% + 24px)}
+    .cs-gallery-tabs-wrap{margin-left:-12px;margin-right:-12px;width:calc(100% + 24px);padding:0 12px}
+    .cs-sidebar-card{margin-left:-12px;margin-right:-12px;width:calc(100% + 24px)}
+    .cs-data-section{margin-left:-12px;margin-right:-12px}
     .cs-sidebar-summary-row{flex-direction:column;align-items:flex-start;gap:2px}
     .cs-sidebar-summary-row .val{text-align:left}
     .cs-data-row .val{max-width:50%}
     .cs-price-value{font-size:26px}
-    .cs-sections-2col{padding:0 12px}
+    .cs-sections-2col{padding:0}
     .cs-nav-btn{padding:6px 8px;font-size:11px}
     .cs-damage-diagram-inner{min-height:260px}
     .cs-damage-marker-dot{width:22px;height:22px;border-width:2px}
@@ -439,8 +463,9 @@
     .cs-paint-value{font-size:15px}
     .cs-paint-label{font-size:9.5px}
     .cs-tire-icon{width:48px;height:48px}
-    .cs-data-body{padding:12px 14px 14px}
+    .cs-data-body:not(.open){max-height:0!important}
     .cs-data-header{padding:12px 14px}
+    .cs-data-col-toggle{padding:12px 14px}
     .cs-gallery-tabs{gap:4px;padding:8px 0 6px}
     .cs-gallery-tab{font-size:10px;padding:4px 8px;gap:3px}
     .cs-gallery-tab svg,.cs-gallery-tab i{width:11px;height:11px}
@@ -832,7 +857,7 @@
             </div>{{-- /cs-sidebar-card --}}
 
             {{-- INFO TILES — separate from main card --}}
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+            <div class="cs-info-tiles-wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
                 <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 16px;text-align:center">
                     <div style="width:44px;height:44px;border-radius:12px;background:#e8f1ff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px">
                         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0066ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
@@ -860,37 +885,67 @@
         <div class="cs-data-columns">
             <!-- Col 1: Pochodzenie -->
             <div class="cs-data-col">
+                <div class="cs-data-col-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+                    <span class="col-title"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Pochodzenie</span>
+                    <svg class="col-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
+                <div class="cs-data-col-body">
                 <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Pochodzenie</div>
                 @if($car->country_registration)<div class="cs-data-row"><span class="lbl">Kraj pochodzenia</span><span class="val">{{ $car->country_registration }}</span></div>@endif
                 @if($car->first_registration)<div class="cs-data-row"><span class="lbl">Pierwsza rejestracja</span><span class="val">{{ $car->first_registration }}</span></div>@endif
+                </div>
             </div>
             <!-- Col 2: Historia pojazdu -->
             <div class="cs-data-col">
+                <div class="cs-data-col-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+                    <span class="col-title"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="m2 14 6-6 6 6 6-6"/></svg>Historia pojazdu</span>
+                    <svg class="col-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
+                <div class="cs-data-col-body">
                 <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="m2 14 6-6 6 6 6-6"/></svg>Historia pojazdu</div>
-                @if($car->previous_owners !== null)<div class="cs-data-row"><span class="lbl">Właściciele</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->previous_owners == 0 ? 'Bezwypadkowy' : $car->previous_owners }}</span></div>@endif
-                @if($car->service_book)<div class="cs-data-row"><span class="lbl">Sprawdzony w bazach</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->service_book }}</span></div>@endif
+                @if($car->previous_owners !== null)<div class="cs-data-row"><span class="lbl">Właściciele</span><span class="val">{{ $car->previous_owners == 0 ? 'Bezwypadkowy' : $car->previous_owners }}</span></div>@endif
+                @if($car->service_book)<div class="cs-data-row"><span class="lbl">Sprawdzony w bazach</span><span class="val">{{ $car->service_book }}</span></div>@endif
                 @if($car->vin)<div class="cs-data-row"><span class="lbl">VIN</span><span class="val" style="font-size:10.5px;letter-spacing:.3px">{{ $car->vin }}</span></div>@endif
+                </div>
             </div>
             <!-- Col 3: Serwisowanie i inspekcja -->
             <div class="cs-data-col">
+                <div class="cs-data-col-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+                    <span class="col-title"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Serwisowanie</span>
+                    <svg class="col-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
+                <div class="cs-data-col-body">
                 <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Serwisowanie</div>
-                @if($car->service_documentation)<div class="cs-data-row"><span class="lbl">Serwisowany w ASO</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->service_documentation }}</span></div>@endif
+                @if($car->service_documentation)<div class="cs-data-row"><span class="lbl">Serwisowany w ASO</span><span class="val">{{ $car->service_documentation }}</span></div>@endif
                 @if($car->last_service)<div class="cs-data-row"><span class="lbl">Ostatni przegląd</span><span class="val">{{ $car->last_service }}</span></div>@endif
                 @if($car->next_inspection)<div class="cs-data-row"><span class="lbl">Następny przegląd</span><span class="val">{{ $car->next_inspection }}</span></div>@endif
+                </div>
             </div>
             <!-- Col 4: Dokumenty pojazdu -->
             <div class="cs-data-col">
+                <div class="cs-data-col-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+                    <span class="col-title"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>Dokumenty</span>
+                    <svg class="col-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
+                <div class="cs-data-col-body">
                 <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>Dokumenty</div>
-                @if($car->coc_documents)<div class="cs-data-row"><span class="lbl">Komplet dokumentów</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->coc_documents }}</span></div>@endif
-                @if($car->vehicle_folder)<div class="cs-data-row"><span class="lbl">Dowód rejestracyjny</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->vehicle_folder }}</span></div>@endif
-                @if($car->hu_au_report)<div class="cs-data-row"><span class="lbl">Polisa OC</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->hu_au_report }}</span></div>@endif
+                @if($car->coc_documents)<div class="cs-data-row"><span class="lbl">Komplet dokumentów</span><span class="val">{{ $car->coc_documents }}</span></div>@endif
+                @if($car->vehicle_folder)<div class="cs-data-row"><span class="lbl">Dowód rejestracyjny</span><span class="val">{{ $car->vehicle_folder }}</span></div>@endif
+                @if($car->hu_au_report)<div class="cs-data-row"><span class="lbl">Polisa OC</span><span class="val">{{ $car->hu_au_report }}</span></div>@endif
+                </div>
             </div>
             <!-- Col 5: Zużycie paliwa -->
             <div class="cs-data-col">
+                <div class="cs-data-col-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+                    <span class="col-title"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>Zużycie paliwa</span>
+                    <svg class="col-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
+                <div class="cs-data-col-body">
                 <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>Zużycie paliwa</div>
                 @if($car->fuel_consumption)<div class="cs-data-row"><span class="lbl">Miasto</span><span class="val">{{ $car->fuel_consumption }} l/100km</span></div>@endif
                 @if($car->co2_emission)<div class="cs-data-row"><span class="lbl">Emisja CO₂</span><span class="val">{{ $car->co2_emission }} g/km</span></div>@endif
                 @if($car->emission_class)<div class="cs-data-row"><span class="lbl">Norma emisji</span><span class="val">{{ $car->emission_class }}</span></div>@endif
+                </div>
             </div>
         </div>
     </div>
@@ -1214,11 +1269,17 @@
             <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
         </div>
         <div class="cs-data-body open">
-            <div class="cs-equipment-grid">
+            <div class="cs-equipment-grid" id="eqGrid">
                 @foreach($allEquipmentItems as $item)
                 <div class="cs-equipment-item"><i data-lucide="check" aria-hidden="true"></i> {{ $item }}</div>
                 @endforeach
             </div>
+            @if($totalCount > 8)
+            <button type="button" id="eqShowMore" onclick="document.getElementById('eqGrid').classList.add('expanded');this.style.display='none'" style="display:none;margin-top:12px;width:100%;padding:12px;background:#f5f5f7;border:1px solid #e5e5e7;border-radius:10px;font-size:13px;font-weight:600;color:#374151;cursor:pointer;text-align:center">
+                <i data-lucide="chevron-down" style="width:14px;height:14px;display:inline-block;vertical-align:-2px;margin-right:4px"></i> Pokaż pełne wyposażenie ({{ $totalCount }})
+            </button>
+            <script>if(window.innerWidth<=768)document.getElementById('eqShowMore').style.display='block';</script>
+            @endif
         </div>
     </div>
     @endif
