@@ -243,10 +243,10 @@
 
 /* DAMAGE / VISUAL CONDITION SECTION */
 .cs-dmg-gallery{border-radius:12px;overflow:hidden}
-.cs-dmg-gallery-stage{position:relative;background:#1a1a1a;overflow:hidden;border-radius:12px}
+.cs-dmg-gallery-stage{position:relative;background:#f5f5f7;overflow:hidden;border-radius:12px}
 .cs-dmg-gallery-slide{display:none}
 .cs-dmg-gallery-slide.active{display:block}
-.cs-dmg-gallery-slide img{width:100%;height:auto;max-height:480px;object-fit:contain;display:block;margin:0 auto;cursor:pointer}
+.cs-dmg-gallery-slide img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;cursor:pointer}
 .cs-dmg-gallery-label{position:absolute;bottom:14px;left:14px;background:rgba(0,0,0,.65);color:#fff;padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:2}
 .cs-dmg-gallery-meta{position:absolute;bottom:14px;right:14px;display:flex;align-items:center;gap:6px;z-index:2}
 .cs-dmg-gallery-counter{background:rgba(0,0,0,.65);color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
@@ -1094,16 +1094,6 @@
                         foreach ($d->photos ?? [] as $dp) {
                             $url = $dp->path ? asset('storage/'.$dp->path) : null;
                             if ($url && !in_array($url, $dmgPhotos)) $dmgPhotos[] = $url;
-                        }
-                        // First entry: also include orphaned photos (uploaded without per-damage attribution)
-                        if ($loop->first) {
-                            $placeholder = asset('images/placeholder-car.svg');
-                            foreach ($car->damageImages->whereNull('damage_id') as $op) {
-                                $url = $op->url;
-                                if ($url && $url !== $placeholder && !in_array($url, $dmgPhotos)) {
-                                    $dmgPhotos[] = $url;
-                                }
-                            }
                         }
                     @endphp
                     <div class="cs-damage-item{{ $loop->first ? ' active' : '' }}" id="csDamage-{{ $d->id }}">
