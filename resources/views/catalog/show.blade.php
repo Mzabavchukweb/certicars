@@ -241,6 +241,32 @@
 .cs-fuel-item .cs-fuel-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-3);margin-bottom:6px}
 .cs-fuel-item .cs-fuel-value{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.4px}
 
+/* DAMAGE / VISUAL CONDITION SECTION */
+.cs-dmg-gallery{border-radius:12px;overflow:hidden}
+.cs-dmg-gallery-stage{position:relative;background:#1a1a1a;overflow:hidden;border-radius:12px}
+.cs-dmg-gallery-slide{display:none}
+.cs-dmg-gallery-slide.active{display:block}
+.cs-dmg-gallery-slide img{width:100%;height:auto;max-height:480px;object-fit:contain;display:block;margin:0 auto;cursor:pointer}
+.cs-dmg-gallery-label{position:absolute;bottom:14px;left:14px;background:rgba(0,0,0,.65);color:#fff;padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:2}
+.cs-dmg-gallery-meta{position:absolute;bottom:14px;right:14px;display:flex;align-items:center;gap:6px;z-index:2}
+.cs-dmg-gallery-counter{background:rgba(0,0,0,.65);color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.cs-dmg-gallery-fs{width:36px;height:36px;border:none;background:rgba(0,0,0,.65);color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:.15s}
+.cs-dmg-gallery-fs:hover{background:rgba(0,0,0,.85)}
+.cs-dmg-gallery-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border:none;background:rgba(0,0,0,.5);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;transition:.15s;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.cs-dmg-gallery-arrow:hover{background:rgba(0,0,0,.75)}
+.cs-dmg-gallery-arrow.left{left:12px}
+.cs-dmg-gallery-arrow.right{right:12px}
+.cs-dmg-gallery-thumbs-wrap{display:flex;align-items:center;gap:4px;margin-top:8px}
+.cs-dmg-gallery-thumbs{display:flex;gap:6px;overflow-x:auto;scroll-behavior:smooth;flex:1;-ms-overflow-style:none;scrollbar-width:none}
+.cs-dmg-gallery-thumbs::-webkit-scrollbar{display:none}
+.cs-dmg-gallery-thumb{width:100px;height:70px;flex-shrink:0;border-radius:8px;overflow:hidden;cursor:pointer;border:3px solid transparent;transition:.15s;opacity:.6}
+.cs-dmg-gallery-thumb:hover{opacity:.9}
+.cs-dmg-gallery-thumb.active{border-color:#f59e0b;opacity:1}
+.cs-dmg-gallery-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.cs-dmg-thumb-arrow{width:28px;height:28px;border:none;background:#f0f0f2;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:#374151;transition:.15s}
+.cs-dmg-thumb-arrow:hover{background:#e0e0e2}
+
+
 /* TIRES - reference layout */
 .cs-tire-set{margin-bottom:32px}
 .cs-tire-set:last-child{margin-bottom:0}
@@ -962,66 +988,7 @@
         </div>
     </div>
 
-        <!-- USZKODZENIA (CarOnSale style) -->
-    @if($car->damages->count())
-    <div class="cs-data-section">
-        <div class="cs-data-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-            <h2><i data-lucide="map-pin" aria-hidden="true" style="color:var(--yellow)"></i> Uszkodzenia pojazdu</h2>
-            <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
-        </div>
-        <div class="cs-data-body open">
-            <p style="font-size:12.5px;color:var(--text-3);margin-bottom:14px">Kliknij oznaczenie, aby zobaczyć informacje</p>
-            <div class="cs-damages-tabs">
-                @foreach($car->damages as $d)
-                    <button type="button" class="cs-damage-tab" data-damage-tab="{{ $d->id }}" onclick="csSelDamage({{ $d->id }})"><i data-lucide="alert-triangle" aria-hidden="true"></i> {{ $d->area }}</button>
-                @endforeach
-            </div>
-            <div class="cs-damage-grid">
-                <div class="cs-damage-diagram">
-                    <div class="cs-damage-diagram-inner">
-                        @php
-                            $bodyTypeMap = [
-                                'sedan' => 'sedan', 'suv' => 'suv', 'coupé' => 'coupe', 'coupe' => 'coupe',
-                                'bus' => 'van', 'van' => 'van', 'kombi' => 'kombi', 'hatchback' => 'hatchback',
-                                'kabriolet' => 'sedan', 'cabriolet' => 'sedan', 'pickup' => 'suv',
-                            ];
-                            $btKey = strtolower($car->body_type ?? $car->category ?? 'sedan');
-                            $topImg = $bodyTypeMap[$btKey] ?? 'sedan';
-                        @endphp
-                        <img src="/img/body-types-top/{{ $topImg }}.png" alt="" aria-hidden="true" draggable="false">
-                        @foreach($car->damages as $d)
-                        <button type="button" class="cs-damage-marker" data-damage-marker="{{ $d->id }}" onclick="csSelDamage({{ $d->id }})" aria-label="Uszkodzenie: {{ $d->area }}" style="left:{{ $d->position_x ?? 50 }}%;top:{{ $d->position_y ?? 50 }}%">
-                            <span class="cs-damage-marker-dot"><i data-lucide="alert-triangle" aria-hidden="true"></i></span>
-                        </button>
-                        @endforeach
-                    </div>
-                </div>
-                <div class="cs-damage-detail" id="csDamageDetail">
-                    <div class="cs-damage-empty" id="csDamageEmpty">
-                        <i data-lucide="mouse-pointer-click" aria-hidden="true"></i>
-                        Wybierz uszkodzenie z mapy
-                    </div>
-                    @foreach($car->damages as $d)
-                    <div class="cs-damage-item" id="csDamage-{{ $d->id }}">
-                        <h3><i data-lucide="alert-triangle" aria-hidden="true"></i> {{ $d->area }}</h3>
-                        @if($d->tags && count($d->tags))
-                        <div class="cs-damage-tags">
-                            @foreach($d->tags as $t)<span>{{ $t }}</span>@endforeach
-                        </div>
-                        @endif
-                        @if($d->description)<p>{{ $d->description }}</p>@endif
-                        @if($d->image_path)
-                        <a href="{{ $d->image_url }}" data-lightbox="{{ $d->image_url }}" data-gallery="damage-{{ $d->id }}" data-caption="{{ $d->area }}" style="display:block;margin-top:14px;border-radius:10px;overflow:hidden;background:var(--bg);cursor:zoom-in">
-                            <img src="{{ $d->image_url }}" alt="{{ $d->area }}" loading="lazy" style="width:100%;max-height:260px;object-fit:cover;display:block">
-                        </a>
-                        @endif
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
+
 
         <!-- POMIARY GRUBOŚCI LAKIERU (przeniesione z CertiCheck) -->
     @if($car->paint_measurements && count($car->paint_measurements))
@@ -1066,6 +1033,116 @@
                 <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#10b981"></span> Lakier fabryczny (90–150 µm)</span>
                 <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#f59e0b"></span> Ponownie lakierowany (150–300 µm)</span>
                 <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#ef4444"></span> Naprawa / szpachla (powyżej 300 µm)</span>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- STAN WIZUALNY I ŚLADY UŻYTKOWANIA --}}
+    @if($car->damages->count())
+    <div class="cs-data-section">
+        <div class="cs-data-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+            <h2><i data-lucide="map-pin" aria-hidden="true" style="color:var(--yellow)"></i> Stan wizualny i ślady użytkowania</h2>
+            <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
+        </div>
+        <div class="cs-data-body open">
+            <p style="font-size:12.5px;color:var(--text-3);margin-bottom:14px">Kliknij oznaczenie, aby zobaczyć informacje</p>
+            <div class="cs-damages-tabs">
+                @foreach($car->damages as $d)
+                @php
+                    $tabColor = match($d->type) { 'accident' => '#dc2626', 'repaired' => '#9ca3af', default => '#f59e0b' };
+                @endphp
+                    <button type="button" class="cs-damage-tab{{ $loop->first ? ' active' : '' }}" data-damage-tab="{{ $d->id }}" onclick="csSelDamage({{ $d->id }})">{{ $d->area }} <span style="display:inline-flex;width:18px;height:18px;border-radius:50%;background:{{ $tabColor }};align-items:center;justify-content:center;margin-left:4px;flex-shrink:0"><svg width="9" height="9" viewBox="0 0 24 24" fill="{{ $d->type==='damage' ? '#000' : '#fff' }}" stroke="none"><path d="M12 2L2 22h20L12 2z{{ $d->type==='damage' ? 'M12 8v6M12 17h.01' : '' }}"/></svg></span></button>
+                @endforeach
+            </div>
+            <div class="cs-damage-grid">
+                <div class="cs-damage-diagram">
+                    <div class="cs-damage-diagram-inner">
+                        @php
+                            $bodyTypeMap = [
+                                'sedan' => 'sedan', 'suv' => 'suv', 'coupé' => 'coupe', 'coupe' => 'coupe',
+                                'bus' => 'van', 'van' => 'van', 'kombi' => 'kombi', 'hatchback' => 'hatchback',
+                                'kabriolet' => 'sedan', 'cabriolet' => 'sedan', 'pickup' => 'suv',
+                            ];
+                            $btKey = strtolower($car->body_type ?? $car->category ?? 'sedan');
+                            $topImg = $bodyTypeMap[$btKey] ?? 'sedan';
+                        @endphp
+                        <img src="/img/body-types-top/{{ $topImg }}.png" alt="" aria-hidden="true" draggable="false">
+                        @foreach($car->damages as $d)
+                        @php
+                            $mColor = match($d->type) { 'accident' => '#dc2626', 'repaired' => '#9ca3af', default => '#f59e0b' };
+                            $mGlow = match($d->type) { 'accident' => 'rgba(220,38,38,.22)', 'repaired' => 'rgba(156,163,175,.22)', default => 'rgba(245,158,11,.22)' };
+                        @endphp
+                        <button type="button" class="cs-damage-marker{{ $loop->first ? ' active' : '' }}" data-damage-marker="{{ $d->id }}" onclick="csSelDamage({{ $d->id }})" aria-label="{{ $d->area }}" style="left:{{ $d->position_x ?? 50 }}%;top:{{ $d->position_y ?? 50 }}%">
+                            <span class="cs-damage-marker-dot" style="background:{{ $mGlow }}"><span style="width:22px;height:22px;border-radius:50%;background:{{ $mColor }};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.25)"><svg width="10" height="10" viewBox="0 0 24 24" fill="{{ $d->type==='damage' ? '#000' : '#fff' }}" stroke="none"><path d="M12 2L2 22h20L12 2z{{ $d->type==='damage' ? 'M12 8v6M12 17h.01' : '' }}"/></svg></span></span>
+                        </button>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="cs-damage-detail" id="csDamageDetail">
+                    <div class="cs-damage-empty" id="csDamageEmpty" style="display:none">
+                        <i data-lucide="mouse-pointer-click" aria-hidden="true"></i>
+                        Wybierz element z mapy
+                    </div>
+                    @foreach($car->damages as $d)
+                    @php
+                        // Build image array: damage's own image first, then per-damage gallery photos
+                        $dmgPhotos = [];
+                        if ($d->image_path) {
+                            $dmgPhotos[] = asset('storage/'.$d->image_path);
+                        }
+                        foreach ($d->photos ?? [] as $dp) {
+                            $url = $dp->path ? asset('storage/'.$dp->path) : null;
+                            if ($url && !in_array($url, $dmgPhotos)) $dmgPhotos[] = $url;
+                        }
+                    @endphp
+                    <div class="cs-damage-item{{ $loop->first ? ' active' : '' }}" id="csDamage-{{ $d->id }}">
+                        @if(count($dmgPhotos))
+                        <div class="cs-dmg-gallery" data-dmg-id="{{ $d->id }}">
+                            {{-- Main image --}}
+                            <div class="cs-dmg-gallery-stage">
+                                @foreach($dmgPhotos as $pi => $pUrl)
+                                <div class="cs-dmg-gallery-slide{{ $pi === 0 ? ' active' : '' }}" data-slide="{{ $pi }}">
+                                    <img src="{{ $pUrl }}" alt="{{ $d->area }}" loading="lazy" onclick="csDmgLightbox(this)">
+                                </div>
+                                @endforeach
+                                {{-- Label --}}
+                                <div class="cs-dmg-gallery-label">{{ $d->area }}</div>
+                                {{-- Counter + fullscreen --}}
+                                <div class="cs-dmg-gallery-meta">
+                                    <span class="cs-dmg-gallery-counter"><span class="cs-dmg-gallery-cur">1</span>/{{ count($dmgPhotos) }}</span>
+                                    <button type="button" class="cs-dmg-gallery-fs" onclick="csDmgLightbox(this.closest('.cs-dmg-gallery-stage').querySelector('.cs-dmg-gallery-slide.active img'))" title="Pełny ekran"><i data-lucide="maximize-2" style="width:16px;height:16px"></i></button>
+                                </div>
+                                @if(count($dmgPhotos) > 1)
+                                {{-- Arrows --}}
+                                <button type="button" class="cs-dmg-gallery-arrow left" onclick="csDmgSlide(this,-1)"><i data-lucide="chevron-left" style="width:22px;height:22px"></i></button>
+                                <button type="button" class="cs-dmg-gallery-arrow right" onclick="csDmgSlide(this,1)"><i data-lucide="chevron-right" style="width:22px;height:22px"></i></button>
+                                @endif
+                            </div>
+                            @if(count($dmgPhotos) > 1)
+                            {{-- Thumbnails --}}
+                            <div class="cs-dmg-gallery-thumbs-wrap">
+                                <button type="button" class="cs-dmg-thumb-arrow left" onclick="csDmgScrollThumbs(this,-1)"><i data-lucide="chevron-left" style="width:14px;height:14px"></i></button>
+                                <div class="cs-dmg-gallery-thumbs">
+                                    @foreach($dmgPhotos as $pi => $pUrl)
+                                    <div class="cs-dmg-gallery-thumb{{ $pi === 0 ? ' active' : '' }}" data-slide="{{ $pi }}" onclick="csDmgGoSlide(this,{{ $pi }})">
+                                        <img src="{{ $pUrl }}" alt="" loading="lazy">
+                                    </div>
+                                    @endforeach
+                                </div>
+                                <button type="button" class="cs-dmg-thumb-arrow right" onclick="csDmgScrollThumbs(this,1)"><i data-lucide="chevron-right" style="width:14px;height:14px"></i></button>
+                            </div>
+                            @endif
+                        </div>
+                        @else
+                        <div style="padding:40px;text-align:center;color:var(--text-3)">
+                            <i data-lucide="image-off" style="width:32px;height:32px;margin-bottom:8px"></i>
+                            <div style="font-size:13px">Brak zdjęć dla tego elementu</div>
+                        </div>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>
@@ -1535,6 +1612,7 @@ function cs360InitPano(){
         if(!container || container.dataset.panoReady) return;
         container.dataset.panoReady = '1';
         const src = container.dataset.panoSrc;
+        if(!src) return; // no image — do not init (prevents pannellum loading its own demo images)
         // Lazy-load Pannellum
         if(!document.querySelector('link[data-pannellum]')){
             const css = document.createElement('link');
@@ -1730,6 +1808,7 @@ window.csPano360ExtInit = (function(){
 })();
 @endif
 
+// Damage section — select damage by ID
 function csSelDamage(id){
     document.getElementById('csDamageEmpty').style.display='none';
     document.querySelectorAll('.cs-damage-item').forEach(d=>d.classList.remove('active'));
@@ -1739,10 +1818,68 @@ function csSelDamage(id){
         const dot=m.querySelector('.cs-damage-marker-dot');
         if(!dot)return;
         const a=m.dataset.damageMarker==id;
-        dot.style.background=a?'#0a0a0a':'';
         dot.style.transform=a?'scale(1.15)':'';
+        dot.style.boxShadow=a?'0 0 0 3px rgba(0,102,255,.4)':'';
     });
+    // Reset gallery to first slide
+    if(it){
+        const g=it.querySelector('.cs-dmg-gallery');
+        if(g) _csDmgSetSlide(g,0);
+    }
 }
+
+// Damage gallery — slide prev/next
+function csDmgSlide(btn,dir){
+    const g=btn.closest('.cs-dmg-gallery');
+    const slides=g.querySelectorAll('.cs-dmg-gallery-slide');
+    let cur=0;
+    slides.forEach((s,i)=>{if(s.classList.contains('active'))cur=i;});
+    let next=cur+dir;
+    if(next<0)next=slides.length-1;
+    if(next>=slides.length)next=0;
+    _csDmgSetSlide(g,next);
+}
+
+// Damage gallery — go to specific slide
+function csDmgGoSlide(thumb,idx){
+    const g=thumb.closest('.cs-dmg-gallery');
+    _csDmgSetSlide(g,idx);
+}
+
+// Internal — set active slide
+function _csDmgSetSlide(g,idx){
+    g.querySelectorAll('.cs-dmg-gallery-slide').forEach((s,i)=>s.classList.toggle('active',i===idx));
+    g.querySelectorAll('.cs-dmg-gallery-thumb').forEach((t,i)=>t.classList.toggle('active',i===idx));
+    const cur=g.querySelector('.cs-dmg-gallery-cur');
+    if(cur)cur.textContent=idx+1;
+    // Scroll active thumb into view
+    const activeThumb=g.querySelector('.cs-dmg-gallery-thumb.active');
+    if(activeThumb)activeThumb.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+
+// Damage gallery — scroll thumbnails
+function csDmgScrollThumbs(btn,dir){
+    const wrap=btn.closest('.cs-dmg-gallery-thumbs-wrap');
+    const strip=wrap.querySelector('.cs-dmg-gallery-thumbs');
+    strip.scrollBy({left:dir*220,behavior:'smooth'});
+}
+
+// Damage gallery — open lightbox
+function csDmgLightbox(imgEl){
+    if(!imgEl)return;
+    var src=imgEl.src;
+    // Find in CAR_ALL_GALLERY first
+    var idx=CAR_ALL_GALLERY.findIndex(function(g){return g.src===src;});
+    if(idx>=0){
+        csOpenLb(idx);
+    } else {
+        // Temporarily add to gallery, open, then remove
+        var tmpIdx=CAR_ALL_GALLERY.length;
+        CAR_ALL_GALLERY.push({src:src,caption:imgEl.alt||''});
+        csOpenLb(tmpIdx);
+    }
+}
+
 // Inline calculator
 function csCalcInlineUpdate() {
     var price = {{ $car->price ?? 0 }};
@@ -1844,6 +1981,7 @@ function csSidebarFavUpdate(){
         mobBtn.style.background = isActive ? '#fef2f2' : '#fff';
     }
 }
+
 
 </script>
 @endpush

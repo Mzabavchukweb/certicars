@@ -44,7 +44,7 @@ class SecurityHeaders
                 "font-src 'self' data: https://fonts.gstatic.com",
                 "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
                 "script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net",
-                "connect-src 'self' https://cdn.jsdelivr.net",
+                "connect-src 'self' https://cdn.jsdelivr.net https://unpkg.com",
                 "frame-src 'self' https://www.youtube.com https://player.vimeo.com https://www.google.com",
                 "upgrade-insecure-requests",
             ];

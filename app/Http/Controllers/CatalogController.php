@@ -68,7 +68,7 @@ class CatalogController extends Controller
 
         $this->trackCarView($request, $car);
 
-        $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages', 'tireSets.tires', 'pano360Image', 'exteriorPano360Image');
+        $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages.photos', 'tireSets.tires', 'pano360Image', 'exteriorPano360Image');
 
         $prevCar = Car::available()
             ->where('created_at', '>', $car->created_at)
@@ -113,7 +113,7 @@ class CatalogController extends Controller
             abort(404);
         }
 
-        $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages', 'tireSets.tires', 'pano360Image', 'exteriorPano360Image');
+        $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages.photos', 'tireSets.tires', 'pano360Image', 'exteriorPano360Image');
 
         return view('catalog.certicheck', compact('car'));
     }

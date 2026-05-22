@@ -1,8 +1,19 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.wizard')
 @section('title','Nowy samochód')
-@section('content')
-<form method="POST" action="{{ route('admin.cars.store') }}" enctype="multipart/form-data">
+
+@section('wizard-form-open')
+<form method="POST" action="{{ route('admin.cars.store') }}" enctype="multipart/form-data" id="wizardForm" style="display:contents">
     @csrf
-    @include('admin.cars.form', ['car' => null])
+@endsection
+
+@section('wizard-content')
+    @include('admin.cars.wizard-form', ['car' => null])
+@endsection
+
+@section('wizard-form-close')
 </form>
+@endsection
+
+@section('wizard-preview')
+    @include('admin.cars.wizard-preview', ['car' => null])
 @endsection

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class CarImage extends Model
 {
-    protected $fillable = ['car_id', 'path', 'type', 'alt_text', 'is_primary', 'sort_order'];
+    protected $fillable = ['car_id', 'damage_id', 'path', 'type', 'alt_text', 'is_primary', 'sort_order'];
 
     protected $casts = [
         'is_primary' => 'boolean',

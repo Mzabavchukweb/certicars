@@ -31,10 +31,9 @@ class CarDamage extends Model
         return $this->belongsTo(Car::class);
     }
 
-    public function images(): HasMany
+    public function photos(): HasMany
     {
-        return $this->hasMany(CarImage::class, 'car_id', 'car_id')
-            ->where('type', 'damage')
+        return $this->hasMany(CarImage::class, 'damage_id')
             ->orderBy('sort_order');
     }
 }

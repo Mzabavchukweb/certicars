@@ -140,7 +140,7 @@ class CarController extends Controller
 
     public function edit(Car $car)
     {
-        $car->load('damages', 'tireSets.tires', 'images', 'galleryImages', 'damageImages', 'pano360Image', 'exteriorPano360Image');
+        $car->load('damages.photos', 'tireSets.tires', 'images', 'galleryImages', 'damageImages', 'pano360Image', 'exteriorPano360Image');
         $brands = Brand::orderBy('name')->get();
 
         $viewStats = [
@@ -331,9 +331,9 @@ class CarController extends Controller
             'body_type' => 'nullable|string|max:50',
             'first_registration' => 'nullable|string|max:20',
             'mileage' => 'nullable|integer|min:0',
-            'previous_owners' => 'nullable|integer|min:0',
+            'previous_owners' => 'nullable|string|max:50',
             'business_use' => 'nullable|string|max:100',
-            'number_of_keys' => 'nullable|integer|min:0',
+            'number_of_keys' => 'nullable|string|max:10',
             'fuel_type' => 'nullable|string|max:50',
             'power_hp' => 'nullable|integer|min:0',
             'power_kw' => 'nullable|integer|min:0',
@@ -345,6 +345,8 @@ class CarController extends Controller
             'source' => 'nullable|string|max:255',
             'is_imported' => 'nullable|boolean',
             'country_registration' => 'nullable|string|max:100',
+            'imported_from' => 'nullable|string|max:100',
+            'vehicle_history' => 'nullable|string|max:100',
             'last_service' => 'nullable|string|max:100',
             'last_service_mileage' => 'nullable|string|max:100',
             'next_inspection' => 'nullable|string|max:100',
@@ -357,6 +359,11 @@ class CarController extends Controller
             'coc_documents' => 'nullable|string|max:100',
             'vehicle_folder' => 'nullable|string|max:100',
             'hu_au_report' => 'nullable|string|max:100',
+            'service_book_status' => 'nullable|string|max:100',
+            'registration_cert' => 'nullable|string|max:100',
+            'owners_manual' => 'nullable|string|max:100',
+            'aso_serviced' => 'nullable|string|max:100',
+            'service_history' => 'nullable|string|max:100',
             'engine_video_url' => 'nullable|url|max:500',
             'engine_video_file' => 'nullable|file|mimetypes:video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska|max:102400',
             'remove_engine_video' => 'nullable|boolean',
@@ -383,6 +390,8 @@ class CarController extends Controller
             'pano360ext_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:25600',
             'remove_pano360ext' => 'nullable|boolean',
             'damages.*.image' => 'nullable|image|mimes:jpg,jpeg,png,webp,avif|max:20480',
+            'damages.*.images' => 'nullable|array|max:20',
+            'damages.*.images.*' => 'nullable|image|mimes:jpg,jpeg,png,webp,avif|max:20480',
             'primary_image_id' => 'nullable|integer|exists:car_images,id',
             'delete_images' => 'nullable|array',
             'delete_images.*' => 'integer|exists:car_images,id',
@@ -420,11 +429,13 @@ class CarController extends Controller
                     'image_path'    => $existing?->image_path,
                 ];
 
+                // Remove main image
                 if (!empty($damage['remove_image']) && $existing?->image_path && !str_starts_with($existing->image_path, 'http')) {
                     Storage::disk('public')->delete($existing->image_path);
                     $attrs['image_path'] = null;
                 }
 
+                // Single image upload (backward compat)
                 if (isset($uploads[$index]['image']) && $uploads[$index]['image']) {
                     if ($existing?->image_path && !str_starts_with($existing->image_path, 'http')) {
                         Storage::disk('public')->delete($existing->image_path);
@@ -435,10 +446,40 @@ class CarController extends Controller
 
                 if ($existing) {
                     $existing->update($attrs);
+                    $dmgRecord = $existing;
                     $keptIds[] = $existing->id;
                 } else {
-                    $new = $car->damages()->create($attrs);
-                    $keptIds[] = $new->id;
+                    $dmgRecord = $car->damages()->create($attrs);
+                    $keptIds[] = $dmgRecord->id;
+                }
+
+                // Remove selected photos
+                if (!empty($damage['remove_photos'])) {
+                    $photosToRemove = \App\Models\CarImage::whereIn('id', $damage['remove_photos'])->where('damage_id', $dmgRecord->id)->get();
+                    foreach ($photosToRemove as $p) {
+                        if ($p->path && !str_starts_with($p->path, 'http')) {
+                            Storage::disk('public')->delete($p->path);
+                        }
+                        $p->delete();
+                    }
+                }
+
+                // Multi-image uploads
+                if (isset($uploads[$index]['images']) && is_array($uploads[$index]['images'])) {
+                    Storage::disk('public')->makeDirectory('cars/' . $car->id . '/damages');
+                    $sortOrder = $dmgRecord->photos()->max('sort_order') ?? 0;
+                    foreach ($uploads[$index]['images'] as $imgFile) {
+                        if ($imgFile && $imgFile->isValid()) {
+                            $path = $imgFile->store('cars/' . $car->id . '/damages', 'public');
+                            \App\Models\CarImage::create([
+                                'car_id'     => $car->id,
+                                'damage_id'  => $dmgRecord->id,
+                                'path'       => $path,
+                                'type'       => 'damage',
+                                'sort_order' => ++$sortOrder,
+                            ]);
+                        }
+                    }
                 }
             }
 
@@ -446,6 +487,13 @@ class CarController extends Controller
             foreach ($toDelete as $d) {
                 if ($d->image_path && !str_starts_with($d->image_path, 'http')) {
                     Storage::disk('public')->delete($d->image_path);
+                }
+                // Delete associated photos
+                foreach ($d->photos as $p) {
+                    if ($p->path && !str_starts_with($p->path, 'http')) {
+                        Storage::disk('public')->delete($p->path);
+                    }
+                    $p->delete();
                 }
                 $d->delete();
             }
