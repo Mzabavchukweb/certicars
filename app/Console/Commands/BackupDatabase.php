@@ -12,10 +12,17 @@ class BackupDatabase extends Command
 
     public function handle(): int
     {
+        $connection = config('database.default');
+
+        if ($connection !== 'sqlite') {
+            $this->warn("backup:database only supports SQLite. Active connection: {$connection}. Skipping — use an external backup tool (e.g. mysqldump) for production MySQL.");
+            return self::SUCCESS;
+        }
+
         $dbPath = config('database.connections.sqlite.database');
 
         if (! is_string($dbPath) || ! file_exists($dbPath)) {
-            $this->error("Database file not found at: {$dbPath}");
+            $this->error("SQLite database file not found at: {$dbPath}");
             return self::FAILURE;
         }
 

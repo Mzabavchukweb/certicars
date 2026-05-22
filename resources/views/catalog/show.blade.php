@@ -20,6 +20,7 @@
             'brand' => ['@type' => 'Brand', 'name' => $car->brand?->name],
             'model' => $car->model,
             'vehicleIdentificationNumber' => $car->vin,
+            'productionDate' => $car->first_registration ?: null,
             'bodyType' => $car->body_type ?? $car->category,
             'color' => $car->color,
             'fuelType' => $car->fuel_type,
@@ -35,6 +36,7 @@
                 'engineDisplacement' => $car->engine_capacity ? ['@type' => 'QuantitativeValue', 'value' => $car->engine_capacity, 'unitCode' => 'CMQ'] : null,
                 'fuelType' => $car->fuel_type,
             ] : null,
+            'dateModified' => $car->updated_at?->toAtomString(),
             'image' => $car->galleryImages->pluck('url')->values()->all() ?: ($car->primaryImage ? [$car->primaryImage->url] : []),
             'offers' => $car->price ? [
                 '@type' => 'Offer',
@@ -49,6 +51,15 @@
         $schema = array_filter($schema, fn($v) => $v !== null && $v !== '');
     @endphp
     <script type="application/ld+json">{!! json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}</script>
+    <script type="application/ld+json">{!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Strona główna', 'item' => url('/')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Oferta samochodów', 'item' => url('/samochody')],
+            ['@type' => 'ListItem', 'position' => 3, 'name' => $car->title, 'item' => url('/samochody/'.$car->slug)],
+        ],
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
 @endsection
 
 @section('styles')
@@ -781,7 +792,7 @@
                 </div>
                 <div class="cs-calc-field" style="flex:0 0 auto;min-width:auto">
                     <label>&nbsp;</label>
-                    <button type="button" class="cs-calc-cta" onclick="csOpenInquiry('financing')">
+                    <button type="button" class="cs-calc-cta" onclick="csOpenInquiry('financing','financing_form')">
                         Zapytaj o finansowanie
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </button>
@@ -806,7 +817,10 @@
                         <strong>Sprawdzony CertiCheck</strong>
                         <small>Inspekcja 150-punktowa · Pełna historia</small>
                     </div>
-                    <a href="{{ route('car.pdf', $car->slug) }}" class="cs-trust-dl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</a>
+                    <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+                        <a href="{{ route('catalog.certicheck', $car->slug) }}" class="cs-trust-dl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>Raport</a>
+                        <a href="{{ route('car.pdf', $car->slug) }}" class="cs-trust-dl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</a>
+                    </div>
                 </div>
                 @endif
                 <!-- MOBILE-ONLY: Title + Heart + Pills -->
@@ -822,6 +836,7 @@
                         @if($car->first_registration)<span style="display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:#1f2937"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>{{ $car->first_registration }}</span>@endif
                         @if($car->fuel_type)<span style="display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:#1f2937"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/></svg>{{ $car->fuel_type }}</span>@endif
                         @if($car->power_hp)<span style="display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:#1f2937"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>{{ $car->power_hp }} KM</span>@endif
+                        @if($car->has_certicheck)<a href="{{ route('catalog.certicheck', $car->slug) }}" style="display:inline-flex;align-items:center;gap:5px;background:#dcfce7;border:1px solid #bbf7d0;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700;color:#166534;text-decoration:none"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>CertiCheck</a>@endif
                     </div>
                 </div>
                 <!-- PRICE -->
@@ -881,7 +896,7 @@
                         Zadzwoń
                         <span style="font-weight:400;opacity:.85">+48 58 558 60 90</span>
                     </a>
-                    <button type="button" class="cs-btn-message" onclick="csOpenInquiry('general')">
+                    <button type="button" class="cs-btn-message" onclick="csOpenInquiry('general','main_car_cta')">
                         <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                         <span class="cs-msg-text">
                             <strong>Napisz wiadomość</strong>
@@ -894,7 +909,7 @@
                             <span id="csFavLabel" style="visibility:hidden">Dodaj do ulubionych</span>
                         </button>
                         @if($car->has_certicheck)
-                        <a href="{{ route('car.pdf', $car->slug) }}" class="cs-sidebar-certi" title="Pobierz raport CertiCheck PDF">
+                        <a href="{{ route('catalog.certicheck', $car->slug) }}" class="cs-sidebar-certi" title="Sprawdź raport CertiCheck">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
                             CertiCheck
                         </a>
@@ -904,7 +919,7 @@
                 <!-- CTA BUTTONS (mobile) -->
                 <div class="cs-mob-cta" style="display:none;grid-template-columns:1fr 1fr;gap:10px;padding:0 22px 16px">
                     <a href="tel:+48585586090" style="display:flex;align-items:center;justify-content:center;gap:6px;background:#0066ff;color:#fff;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:700;text-decoration:none;border:none">Zadzwoń</a>
-                    <button type="button" onclick="csOpenInquiry('general')" style="display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#1a1a1a;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:700;border:1.5px solid #e5e7eb;cursor:pointer">Napisz wiadomość</button>
+                    <button type="button" onclick="csOpenInquiry('general','trust_banner_cta')" style="display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#1a1a1a;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:700;border:1.5px solid #e5e7eb;cursor:pointer">Napisz wiadomość</button>
                 </div>
 
 
@@ -1358,7 +1373,7 @@
     @endif
 
         <!-- WYPOSAŻENIE (CarOnSale style) -->
-    @if($car->equipment)
+    @if($totalCount > 0)
 
     {{-- PEŁNE WYPOSAŻENIE --}}
     <div class="cs-data-section">
@@ -1444,6 +1459,14 @@
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
             <input type="hidden" name="car_id" value="{{ $car->id }}">
             <input type="hidden" id="csInquiryType" name="type" value="general">
+            <input type="hidden" id="csInquiryFormSource" name="form_source" value="">
+            <input type="hidden" id="csInquirySourcePage" name="source_page" value="">
+            <input type="hidden" id="csInquiryReferrer" name="referrer" value="">
+            <input type="hidden" id="csInquiryUtmSource" name="utm_source" value="">
+            <input type="hidden" id="csInquiryUtmMedium" name="utm_medium" value="">
+            <input type="hidden" id="csInquiryUtmCampaign" name="utm_campaign" value="">
+            <input type="hidden" id="csInquiryUtmContent" name="utm_content" value="">
+            <input type="hidden" id="csInquiryUtmTerm" name="utm_term" value="">
             <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off">
             <div class="cs-inquiry-field">
                 <label>Imię i nazwisko *</label>
@@ -1491,7 +1514,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         Zadzwoń
     </a>
-    <button type="button" class="cs-sticky-msg" onclick="csOpenInquiry('general')">
+    <button type="button" class="cs-sticky-msg" onclick="csOpenInquiry('general','sticky_mobile_cta')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
         Napisz
     </button>
@@ -1927,8 +1950,21 @@ document.getElementById('csCalcDp').addEventListener('input', csCalcInlineUpdate
 document.getElementById('csCalcTerm').addEventListener('change', csCalcInlineUpdate);
 csCalcInlineUpdate();
 
+// Inquiry attribution — populated once on page load
+(function() {
+    var p = new URLSearchParams(window.location.search);
+    var set = function(id, val) { var el = document.getElementById(id); if (el && val) el.value = val; };
+    set('csInquirySourcePage', window.location.href.substring(0, 500));
+    set('csInquiryReferrer',   document.referrer.substring(0, 500));
+    set('csInquiryUtmSource',   p.get('utm_source')   || '');
+    set('csInquiryUtmMedium',   p.get('utm_medium')   || '');
+    set('csInquiryUtmCampaign', p.get('utm_campaign') || '');
+    set('csInquiryUtmContent',  p.get('utm_content')  || '');
+    set('csInquiryUtmTerm',     p.get('utm_term')     || '');
+})();
+
 // Inquiry modal
-function csOpenInquiry(type) {
+function csOpenInquiry(type, source) {
     var overlay = document.getElementById('csInquiryOverlay');
     var title = document.getElementById('csInquiryTitle');
     var typeInput = document.getElementById('csInquiryType');
@@ -1942,9 +1978,14 @@ function csOpenInquiry(type) {
         msgLabel.textContent = 'Wiadomość';
     }
     document.getElementById('csInquirySuccess').style.display = 'none';
-    document.getElementById('csInquiryForm').style.display = 'block';
-    document.getElementById('csInquiryForm').reset();
+    var form = document.getElementById('csInquiryForm');
+    form.style.display = 'block';
+    form.reset();
     typeInput.value = type; // reset clears it
+    document.getElementById('csInquiryFormSource').value = source || '';
+    // clear any previous field errors
+    form.querySelectorAll('.cs-field-error').forEach(function(el){ el.remove(); });
+    form.querySelectorAll('input, textarea').forEach(function(el){ el.style.borderColor = ''; });
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
 }
@@ -1955,6 +1996,9 @@ function csCloseInquiry() {
 function csSubmitInquiry(e) {
     e.preventDefault();
     var form = document.getElementById('csInquiryForm');
+    // clear previous errors
+    form.querySelectorAll('.cs-field-error').forEach(function(el){ el.remove(); });
+    form.querySelectorAll('input, textarea').forEach(function(el){ el.style.borderColor = ''; });
     var btn = document.getElementById('csInquirySubmitBtn');
     btn.disabled = true;
     document.getElementById('csInquirySubmitText').style.display = 'none';
@@ -1967,11 +2011,40 @@ function csSubmitInquiry(e) {
         if (data.success) {
             form.style.display = 'none';
             document.getElementById('csInquirySuccess').style.display = 'block';
+        } else if (data.errors) {
+            Object.entries(data.errors).forEach(function([field, messages]) {
+                var input = form.querySelector('[name="' + field + '"]');
+                if (input && messages[0]) {
+                    input.style.borderColor = '#ef4444';
+                    var err = document.createElement('span');
+                    err.className = 'cs-field-error';
+                    err.style.cssText = 'display:block;color:#ef4444;font-size:11.5px;margin-top:4px;font-weight:500';
+                    err.textContent = messages[0];
+                    input.parentNode.appendChild(err);
+                }
+            });
+            // scroll first error into view
+            var first = form.querySelector('.cs-field-error');
+            if (first) first.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         } else {
-            alert(data.message || 'Wystąpił błąd. Spróbuj ponownie.');
+            var errDiv = document.getElementById('csInquiryFormError');
+            if (!errDiv) {
+                errDiv = document.createElement('div');
+                errDiv.id = 'csInquiryFormError';
+                errDiv.style.cssText = 'background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;font-size:13px;color:#b91c1c;margin-bottom:12px';
+                form.insertBefore(errDiv, form.firstChild);
+            }
+            errDiv.textContent = data.message || 'Wystąpił błąd. Spróbuj ponownie.';
         }
     }).catch(function() {
-        alert('Wystąpił błąd połączenia. Spróbuj ponownie.');
+        var errDiv = document.getElementById('csInquiryFormError');
+        if (!errDiv) {
+            errDiv = document.createElement('div');
+            errDiv.id = 'csInquiryFormError';
+            errDiv.style.cssText = 'background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;font-size:13px;color:#b91c1c;margin-bottom:12px';
+            form.insertBefore(errDiv, form.firstChild);
+        }
+        errDiv.textContent = 'Wystąpił błąd połączenia. Spróbuj ponownie.';
     }).finally(function() {
         btn.disabled = false;
         document.getElementById('csInquirySubmitText').style.display = 'inline';

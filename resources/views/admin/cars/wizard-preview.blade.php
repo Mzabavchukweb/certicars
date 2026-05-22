@@ -58,7 +58,7 @@
     <div class="wz-section" style="padding:18px">
         <div class="wz-field" style="margin-bottom:14px">
             <label>Status</label>
-            <select name="status">
+            <select name="status" form="wizardForm">
                 <option value="draft" {{ old('status',$car?->status ?? 'draft')=='draft'?'selected':'' }}>Szkic</option>
                 <option value="active" {{ old('status',$car?->status)=='active'?'selected':'' }}>Aktywne</option>
                 <option value="reserved" {{ old('status',$car?->status)=='reserved'?'selected':'' }}>Zarezerwowane</option>
@@ -67,17 +67,17 @@
         </div>
         <div style="margin-bottom:12px">
             <label class="wz-inline-label">
-                <input type="hidden" name="is_featured" value="0">
-                <input type="checkbox" name="is_featured" value="1" {{ old('is_featured',$car?->is_featured)?'checked':'' }}> Wyróżnione
+                <input type="hidden" name="is_featured" value="0" form="wizardForm">
+                <input type="checkbox" name="is_featured" value="1" form="wizardForm" {{ old('is_featured',$car?->is_featured)?'checked':'' }}> Wyróżnione
             </label>
         </div>
         <div style="margin-bottom:14px">
             <label class="wz-inline-label">
-                <input type="hidden" name="is_sold" value="0">
-                <input type="checkbox" name="is_sold" value="1" {{ old('is_sold',$car?->is_sold)?'checked':'' }}> Oznacz jako sprzedane
+                <input type="hidden" name="is_sold" value="0" form="wizardForm">
+                <input type="checkbox" name="is_sold" value="1" form="wizardForm" {{ old('is_sold',$car?->is_sold)?'checked':'' }}> Oznacz jako sprzedane
             </label>
         </div>
-        <button type="submit" class="btn btn-blue" id="wzFormSubmit" style="width:100%;justify-content:center;padding:13px"><i data-lucide="save"></i> {{ $car ? 'Zapisz zmiany' : 'Zapisz' }}</button>
+        <button type="submit" form="wizardForm" class="btn btn-blue" id="wzFormSubmit" style="width:100%;justify-content:center;padding:13px"><i data-lucide="save"></i> {{ $car ? 'Zapisz zmiany' : 'Zapisz' }}</button>
         <a href="{{ route('admin.cars.index') }}" class="btn btn-outline" style="width:100%;justify-content:center;margin-top:8px">Anuluj</a>
     </div>
 </div>

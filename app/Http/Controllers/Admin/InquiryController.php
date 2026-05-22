@@ -22,10 +22,14 @@ class InquiryController extends Controller
         }
 
         if ($request->filled('filter')) {
-            if ($request->filter === 'unread')          $query->whereNull('read_at');
-            if ($request->filter === 'read')            $query->whereNotNull('read_at');
-            if ($request->filter === 'type:general')    $query->where('type', 'general');
-            if ($request->filter === 'type:financing')  $query->where('type', 'financing');
+            $filter = $request->filter;
+            if ($filter === 'unread')         $query->whereNull('read_at');
+            if ($filter === 'read')           $query->whereNotNull('read_at');
+            if ($filter === 'type:general')   $query->where('type', 'general');
+            if ($filter === 'type:financing') $query->where('type', 'financing');
+            if (str_starts_with($filter, 'source:')) {
+                $query->where('form_source', substr($filter, 7));
+            }
         }
 
         $inquiries = $query->latest()->paginate(20)->withQueryString();

@@ -23,10 +23,8 @@ class CarImage extends Model
     {
         if (!empty($this->alt_text)) return $this->alt_text;
         $title = $this->car?->title ?? 'Samochód';
-        $siblings = $this->car?->images()->where('type', $this->type)->orderBy('sort_order')->pluck('id')->values() ?? collect();
-        $idx = $siblings->search($this->id);
         $typeLabel = ['gallery' => 'zdjęcie', 'damage' => 'zdjęcie uszkodzenia', 'exterior' => 'zdjęcie', 'interior' => 'wnętrze'][$this->type] ?? 'zdjęcie';
-        return trim($title . ' — ' . $typeLabel . ($idx !== false ? ' ' . ($idx + 1) : ''));
+        return trim($title . ' — ' . $typeLabel);
     }
 
     public function getUrlAttribute(): string
@@ -40,6 +38,6 @@ class CarImage extends Model
         if (!Storage::disk('public')->exists($this->path)) {
             return asset('images/placeholder-car.svg');
         }
-        return asset('storage/' . $this->path);
+        return Storage::disk('public')->url($this->path);
     }
 }

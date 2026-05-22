@@ -1,6 +1,27 @@
 @extends('layouts.public')
 
 @section('title', 'CertiCheck — ' . $car->title)
+@section('description', 'Pełny raport inspekcji CertiCheck dla ' . $car->title . '. Historia lakieru, stan techniczny, wyposażenie i dokumentacja pojazdu.')
+@section('og_title', 'Raport CertiCheck — ' . $car->title)
+@section('og_description', 'Pełny raport inspekcji CertiCheck dla ' . $car->title . '. Historia lakieru, stan techniczny, wyposażenie i dokumentacja pojazdu.')
+@section('og_type', 'article')
+@if($car->primaryImage)
+@section('og_image', $car->primaryImage->url)
+@endif
+
+@section('extra_head')
+    @if($car->noindex || $car->is_sold)<meta name="robots" content="noindex,nofollow">@endif
+    <script type="application/ld+json">{!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Strona główna', 'item' => url('/')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Oferta samochodów', 'item' => url('/samochody')],
+            ['@type' => 'ListItem', 'position' => 3, 'name' => $car->title, 'item' => url('/samochody/'.$car->slug)],
+            ['@type' => 'ListItem', 'position' => 4, 'name' => 'CertiCheck', 'item' => url('/samochody/'.$car->slug.'/certicheck')],
+        ],
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+@endsection
 
 @section('styles')
 @media print{.no-print{display:none!important}.cc-page{box-shadow:none!important;margin:0!important;padding:20px!important}}
@@ -125,7 +146,7 @@
         </div>
 
         {{-- SERWIS I DOKUMENTACJA --}}
-        @if($car->service_book || $car->last_service || $car->next_inspection || $car->coc_documents)
+        @if($car->service_book || $car->last_service || $car->next_inspection || $car->coc_documents || $car->service_documentation || $car->vehicle_folder || $car->hu_au_report || $car->service_book_status || $car->registration_cert || $car->owners_manual || $car->aso_serviced || $car->service_history)
         <div class="cc-section">
             <div class="cc-section-title">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
@@ -181,11 +202,27 @@
                 Pomiary grubości lakieru
             </div>
             <p style="font-size:12px;color:#9ca3af;margin:-8px 0 14px">Norma fabryczna: 80–150 µm. Wartości powyżej 200 µm mogą wskazywać na naprawę lakierniczą.</p>
+            @php
+                $paintPanelNames = [
+                    0 => 'Dach', 1 => 'Maska', 2 => 'Błotnik P-L', 3 => 'Błotnik P-P',
+                    4 => 'Drzwi P-L', 5 => 'Drzwi P-P', 6 => 'Błotnik T-L', 7 => 'Błotnik T-P',
+                    8 => 'Drzwi T-L', 9 => 'Drzwi T-P', 10 => 'Klapa bagażnika',
+                    11 => 'Zderzak przód', 12 => 'Zderzak tył', 13 => 'Próg lewy', 14 => 'Próg prawy',
+                ];
+            @endphp
             <div class="cc-paint-grid">
                 @foreach($car->paint_measurements as $panel => $value)
+                @php
+                    $val = is_array($value) ? ($value['value'] ?? $value[0] ?? '') : $value;
+                    $numVal = (int) preg_replace('/[^0-9]/', '', (string) $val);
+                    if ($numVal <= 0) continue;
+                    $panelLabel = is_array($value) && isset($value['area'])
+                        ? $value['area']
+                        : (is_numeric($panel) ? ($paintPanelNames[$panel] ?? 'Panel '.($panel + 1)) : $panel);
+                @endphp
                 <div class="cc-paint-item">
-                    <span class="panel">{{ $panel }}</span>
-                    <span class="um {{ $value > 200 ? 'danger' : ($value > 160 ? 'warn' : '') }}">{{ $value }} µm</span>
+                    <span class="panel">{{ $panelLabel }}</span>
+                    <span class="um {{ $numVal > 200 ? 'danger' : ($numVal > 160 ? 'warn' : '') }}">{{ $val }} µm</span>
                 </div>
                 @endforeach
             </div>
@@ -199,11 +236,26 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
                 Ocena stanu technicznego
             </div>
+            @php
+                $techLabels = [
+                    'engine' => 'Silnik', 'transmission' => 'Skrzynia biegów',
+                    'suspension' => 'Zawieszenie', 'electronics' => 'Elektronika',
+                    'body' => 'Nadwozie', 'brakes' => 'Hamulce',
+                    'steering' => 'Układ kierowniczy', 'exhaust' => 'Układ wydechowy',
+                    'ac' => 'Klimatyzacja', 'air_conditioning' => 'Klimatyzacja',
+                    'braking' => 'Układ hamulcowy', 'tires' => 'Opony', 'lights' => 'Oświetlenie',
+                    'interior' => 'Wnętrze', 'underbody' => 'Podwozie',
+                ];
+            @endphp
             <div class="cc-tech-grid">
                 @foreach($car->technical_conditions as $comp => $status)
+                @php
+                    $st = is_array($status) ? ($status['status'] ?? $status[0] ?? 'OK') : $status;
+                    $compLabel = $techLabels[strtolower($comp)] ?? ucfirst($comp);
+                @endphp
                 <div class="cc-tech-row">
-                    <span class="comp">{{ $comp }}</span>
-                    <span class="status {{ str_contains(strtolower($status), 'sprawn') ? 'ok' : '' }}">{{ $status }}</span>
+                    <span class="comp">{{ $compLabel }}</span>
+                    <span class="status {{ str_contains(strtolower($st), 'sprawn') ? 'ok' : '' }}">{{ $st }}</span>
                 </div>
                 @endforeach
             </div>
@@ -234,11 +286,18 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                 Wyposażenie pojazdu
             </div>
+            @php
+                $equipLabels = [
+                    'safety' => 'Bezpieczeństwo', 'comfort' => 'Komfort',
+                    'multimedia' => 'Multimedia', 'exterior' => 'Wygląd zewnętrzny',
+                    'interior' => 'Wnętrze', 'driving' => 'Jazda', 'other' => 'Inne',
+                ];
+            @endphp
             <div class="cc-eq-grid">
                 @foreach($car->equipment as $cat => $items)
                 @if(is_array($items) && count($items))
                 <div class="cc-eq-cat">
-                    <div class="cc-eq-cat-title">{{ $cat }}</div>
+                    <div class="cc-eq-cat-title">{{ $equipLabels[$cat] ?? ucfirst($cat) }}</div>
                     @foreach($items as $item)
                     <div class="cc-eq-item">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>

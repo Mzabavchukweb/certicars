@@ -568,12 +568,14 @@
     // Map each form field to the wizard step it lives on
     var wzFieldStep = {
         brand_id:1, model:1, category:1, price:1, currency:1, price_type:1,
-        taxation:1, color:1, color_code:1, doors:1, seats:1, weight:1,
-        upholstery:1, vin:1, body_type:1, first_registration:1, mileage:1,
+        taxation:1, color:1, doors:1, seats:1,
+        vin:1, body_type:1, first_registration:1, mileage:1,
         fuel_type:1, power_hp:1, power_kw:1, engine_capacity:1,
         transmission:1, transmission_detail:1,
         previous_owners:3, country_registration:3, is_imported:3,
-        business_use:3, number_of_keys:3, imported_from:3, vehicle_history:3,
+        business_use:3, imported_from:3, vehicle_history:3,
+        color_code:3, weight:3, upholstery:3,
+        number_of_keys:5,
         last_service:4, last_service_mileage:4, next_inspection:4,
         service_documentation:4, fuel_consumption:4, fuel_procedure:4,
         co2_emission:4, emission_class:4, aso_serviced:4, service_history:4,
@@ -2149,7 +2151,7 @@
     //  DIRTY CHECK + STICKY SAVE BAR
     // ===================================================================
     (function(){
-        const form = document.getElementById('wzFormSubmit')?.closest('form');
+        const form = document.getElementById('wizardForm');
         const bar  = document.getElementById('stickySave');
         if (!form || !bar) return;
 
@@ -2554,7 +2556,14 @@
 
             // ═══════ STEP 1: Dane podstawowe ═══════
             // Brand
-            if (d.brand && fillSelect('brand_id', d.brand)) filled++;
+            let brandWarning = '';
+            if (d.brand) {
+                if (fillSelect('brand_id', d.brand)) {
+                    filled++;
+                } else {
+                    brandWarning = `Marka "${d.brand}" nie istnieje w systemie — dodaj ją ręcznie lub wybierz z listy.`;
+                }
+            }
 
             // Text/number fields
             const step1Fields = {
@@ -2584,10 +2593,8 @@
 
             // ═══════ STEP 3: Historia pojazdu ═══════
             if (fillField('country_registration', d.country_registration)) filled++;
-            if (fillField('imported_from', d.seller_location)) filled++;
             if (d.imported !== undefined) {
-                // imported is a text field in wizard
-                if (fillField('imported_from', d.imported ? 'Tak' : 'Nie')) filled++;
+                if (fillSelect('business_use', d.imported ? 'Tak' : 'Nie')) filled++;
             }
             if (fillSelect('previous_owners', d.previous_owners)) filled++;
             if (fillField('weight', d.weight)) filled++;
@@ -2595,7 +2602,6 @@
             if (fillField('color_code', d.color_type)) filled++;
 
             // ═══════ STEP 4: Serwisowanie ═══════
-            if (fillField('co2_emission', d.co2_emission)) filled++;
             if (fillField('fuel_consumption', d.fuel_consumption)) filled++;
             if (fillField('emission_class', d.emission_class)) filled++;
 
@@ -2635,7 +2641,7 @@
                         keywords.some(kw => eq.toLowerCase().includes(kw.toLowerCase()))
                     );
                     if (matches.length) {
-                        textarea.value = matches.join(', ');
+                        textarea.value = matches.join('\n');
                         textarea.dispatchEvent(new Event('input', {bubbles:true}));
                         filled++;
                     }
@@ -2663,7 +2669,11 @@
             // Re-init icons
             if (window.lucide) lucide.createIcons();
 
-            wzShowImportStatus(`✓ Zaimportowano ${filled} pól z Otomoto. Sprawdź dane we wszystkich krokach i uzupełnij brakujące.`, 'success');
+            if (brandWarning) {
+                wzShowImportStatus(`✓ Zaimportowano ${filled} pól z Otomoto. ⚠ ${brandWarning}`, 'error');
+            } else {
+                wzShowImportStatus(`✓ Zaimportowano ${filled} pól z Otomoto. Sprawdź dane we wszystkich krokach i uzupełnij brakujące.`, 'success');
+            }
 
         } catch (err) {
             wzShowImportStatus('Błąd sieci — spróbuj ponownie. ' + err.message, 'error');

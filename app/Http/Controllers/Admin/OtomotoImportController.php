@@ -26,9 +26,16 @@ class OtomotoImportController extends Controller
             ])->timeout(15)->get($request->url);
 
             if (!$response->successful()) {
+                $status = $response->status();
+                $msg = match(true) {
+                    $status === 404 => 'Ogłoszenie nie istnieje lub zostało usunięte (404)',
+                    $status === 403 => 'Otomoto zablokował zapytanie — spróbuj ponownie za chwilę (403)',
+                    $status >= 500 => 'Serwer Otomoto tymczasowo niedostępny (' . $status . ')',
+                    default => 'Nie udało się pobrać strony Otomoto (HTTP ' . $status . ')',
+                };
                 return response()->json([
                     'success' => false,
-                    'message' => 'Nie udało się pobrać strony Otomoto (HTTP ' . $response->status() . ')',
+                    'message' => $msg,
                 ], 422);
             }
 
@@ -56,10 +63,14 @@ class OtomotoImportController extends Controller
             ]);
 
         } catch (\Throwable $e) {
-            Log::error('Otomoto import error: ' . $e->getMessage());
+            Log::error('Otomoto import error', [
+                'url'     => $request->url,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
             return response()->json([
                 'success' => false,
-                'message' => 'Błąd importu: ' . $e->getMessage(),
+                'message' => 'Błąd techniczny podczas importu. Spróbuj ponownie.',
             ], 500);
         }
     }
@@ -68,7 +79,7 @@ class OtomotoImportController extends Controller
     {
         $data = [];
 
-        if (!preg_match('/<script id="__NEXT_DATA__" type="application\/json">(.*?)<\/script>/s', $html, $m)) {
+        if (!preg_match('/id="__NEXT_DATA__"[^>]*>(.*?)<\/script>/s', $html, $m)) {
             return $data;
         }
 
@@ -110,13 +121,25 @@ class OtomotoImportController extends Controller
             }
         }
 
-        // Parameters - the main data source
+        // Parameters — try parametersDict (new format), then parameters/params (old)
+        $paramsDict = $advert['parametersDict'] ?? null;
         $params = $advert['parameters'] ?? $advert['params'] ?? [];
 
-        // Can be an array of objects [{key, value}] or flat map {key: value}
-        if (is_array($params)) {
-            $paramMap = [];
-            // Handle [{key: 'make', value: 'Audi'}, ...] format
+        $paramMap = [];
+
+        if ($paramsDict && is_array($paramsDict)) {
+            // New format: {make: {label: "make", values: [{value: "renault", label: "Renault"}]}}
+            foreach ($paramsDict as $key => $entry) {
+                if (!is_array($entry)) continue;
+                $values = $entry['values'] ?? [];
+                if (!empty($values) && is_array($values)) {
+                    // Take label if available (human-readable), else value
+                    $first = $values[0] ?? [];
+                    $paramMap[strtolower($key)] = $first['label'] ?? $first['value'] ?? '';
+                }
+            }
+        } elseif (is_array($params) && !empty($params)) {
+            // Old format: [{key, value}] or flat map
             if (isset($params[0]) && is_array($params[0])) {
                 foreach ($params as $p) {
                     $key = $p['key'] ?? $p['name'] ?? $p['label'] ?? '';
@@ -126,22 +149,34 @@ class OtomotoImportController extends Controller
                     }
                 }
             } else {
-                // Handle {make: 'Audi', model: 'A4', ...} format
                 $paramMap = array_change_key_case($params, CASE_LOWER);
             }
+        }
 
+        if (!empty($paramMap)) {
             $this->mapParams($paramMap, $data);
         }
 
-        // Equipment/features
-        $features = $advert['features'] ?? $advert['equipment'] ?? [];
+        // Equipment/features — new format: [{key, label, values: [{key, label}]}]
+        $features = $advert['equipment'] ?? $advert['features'] ?? [];
         if (is_array($features) && !empty($features)) {
             $equipment = [];
             foreach ($features as $f) {
                 if (is_string($f)) {
                     $equipment[] = $f;
                 } elseif (is_array($f)) {
-                    $equipment[] = $f['name'] ?? $f['label'] ?? $f['value'] ?? '';
+                    // New grouped format: {key, label, values: [{key, label}]}
+                    if (isset($f['values']) && is_array($f['values'])) {
+                        foreach ($f['values'] as $v) {
+                            if (is_array($v) && isset($v['label'])) {
+                                $equipment[] = $v['label'];
+                            } elseif (is_string($v)) {
+                                $equipment[] = $v;
+                            }
+                        }
+                    } else {
+                        $equipment[] = $f['name'] ?? $f['label'] ?? $f['value'] ?? '';
+                    }
                 }
             }
             $data['equipment'] = array_filter($equipment);
@@ -154,6 +189,37 @@ class OtomotoImportController extends Controller
                 : '';
         }
 
+        // Step 3 — History: imported, country_origin
+        $isImported = $paramMap['is_imported_car'] ?? null;
+        if ($isImported) {
+            $data['imported'] = (strtolower($isImported) === 'tak' || $isImported === '1') ? 1 : 0;
+        }
+
+        // Country from seller location
+        $sellerLocation = $advert['seller']['location'] ?? [];
+        if (!empty($sellerLocation['address'])) {
+            // "Przecław, brzeziński, Łódzkie" — just note it as context
+            $data['seller_location'] = $sellerLocation['address'];
+        }
+
+        // Use production_year as first_registration fallback
+        if (!isset($data['first_registration']) && isset($data['production_year'])) {
+            $data['first_registration'] = $data['production_year'];
+        }
+
+        // SEO auto-generate
+        $brand = $data['brand'] ?? '';
+        $model = $data['model'] ?? '';
+        $version = $data['version'] ?? '';
+        $year = $data['production_year'] ?? '';
+        $powerHp = $data['power_hp'] ?? '';
+        $fuelType = $data['fuel_type'] ?? '';
+        if ($brand && $model) {
+            $data['meta_title'] = trim("$brand $model $version $year — $powerHp KM | CertiCars");
+            $data['meta_description'] = trim("Sprawdzone $brand $model $version z $year roku. $powerHp KM, $fuelType. Pełna historia serwisowa, raport CertiCheck.");
+            $data['focus_keyword'] = trim("$brand $model $version");
+        }
+
         return $data;
     }
 
@@ -163,12 +229,13 @@ class OtomotoImportController extends Controller
         $directMap = [
             'make' => 'brand', 'marka' => 'brand', 'marka_pojazdu' => 'brand',
             'model' => 'model', 'model_pojazdu' => 'model',
-            'year' => 'first_registration', 'rok' => 'first_registration', 'rok_produkcji' => 'first_registration',
+            'year' => 'production_year', 'rok' => 'production_year', 'rok_produkcji' => 'production_year',
             'mileage' => 'mileage', 'przebieg' => 'mileage',
             'engine_capacity' => 'engine_capacity', 'pojemnosc_skokowa' => 'engine_capacity', 'pojemność_skokowa' => 'engine_capacity',
             'engine_power' => 'power_hp', 'moc' => 'power_hp',
             'fuel_type' => 'fuel_type', 'rodzaj_paliwa' => 'fuel_type', 'paliwo' => 'fuel_type',
-            'gearbox' => 'transmission', 'transmission' => 'transmission', 'skrzynia_biegow' => 'transmission', 'skrzynia_biegów' => 'transmission',
+            'gearbox' => 'transmission', 'skrzynia_biegow' => 'transmission', 'skrzynia_biegów' => 'transmission',
+            'transmission' => 'drive_type', 'drive' => 'drive_type', 'napęd' => 'drive_type', 'naped' => 'drive_type',
             'body_type' => 'body_type', 'typ_nadwozia' => 'body_type', 'nadwozie' => 'body_type',
             'color' => 'color', 'kolor' => 'color',
             'door_count' => 'doors', 'doors' => 'doors', 'liczba_drzwi' => 'doors',
@@ -176,14 +243,23 @@ class OtomotoImportController extends Controller
             'vin' => 'vin',
             'country_origin' => 'country_registration', 'kraj_pochodzenia' => 'country_registration',
             'nr_owner' => 'previous_owners', 'liczba_wlascicieli' => 'previous_owners',
-            'drive' => 'drive_type', 'napęd' => 'drive_type', 'naped' => 'drive_type',
             'co2_emissions' => 'co2_emission', 'emisja_co2' => 'co2_emission',
+            'version' => 'version', 'version_label' => 'version',
+            'generation' => 'generation',
+            'colour_type' => 'color_type', 'color_type' => 'color_type',
+            'date_registration' => 'first_registration',
         ];
 
         foreach ($directMap as $otomotoKey => $certiKey) {
             if (isset($params[$otomotoKey]) && !empty($params[$otomotoKey])) {
                 $val = $params[$otomotoKey];
-                $data[$certiKey] = $this->cleanValue($val, $certiKey);
+                $cleaned = $this->cleanValue($val, $certiKey);
+                // Skip encrypted/hashed values (Otomoto masks VIN, registration dates etc)
+                $strVal = (string)$cleaned;
+                if (preg_match('/[\/=]{2,}|\.1\./', $strVal) || (strlen($strVal) > 30 && preg_match('/[A-Za-z0-9+\/=]{20,}/', $strVal))) {
+                    continue;
+                }
+                $data[$certiKey] = $cleaned;
             }
         }
     }
@@ -245,11 +321,14 @@ class OtomotoImportController extends Controller
 
         switch ($field) {
             case 'mileage':
-            case 'engine_capacity':
             case 'doors':
             case 'seats':
             case 'previous_owners':
                 return (int)preg_replace('/\D/', '', $value);
+            case 'engine_capacity':
+                // "1968 cm3" or "1 968 cm3" — capture leading digits+spaces, strip spaces
+                preg_match('/^([\d\s]+)/', $value, $m);
+                return isset($m[1]) ? (int)preg_replace('/\s+/', '', $m[1]) : 0;
             case 'power_hp':
                 preg_match('/(\d+)/', $value, $m);
                 return isset($m[1]) ? (int)$m[1] : $value;

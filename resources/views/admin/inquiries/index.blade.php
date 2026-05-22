@@ -1,11 +1,19 @@
 @extends('admin.layouts.app')
 @section('title','Zapytania')
 @php
+$sourceLabels = [
+    'main_car_cta'     => 'Przycisk oferty',
+    'sticky_mobile_cta'=> 'Pasek mobilny',
+    'financing_form'   => 'Kalkulator',
+    'trust_banner_cta' => 'Banner zaufania',
+];
 $activeFilters = array_filter([
     'q'      => request('q') ? ['label' => 'Szukaj', 'val' => request('q')] : null,
     'filter' => request('filter') ? ['label' => 'Filtr', 'val' => [
         'unread'=>'Nieprzeczytane','read'=>'Przeczytane',
-        'type:general'=>'Wiadomości','type:financing'=>'Finansowanie'
+        'type:general'=>'Wiadomości','type:financing'=>'Finansowanie',
+        'source:main_car_cta'=>'Przycisk oferty','source:sticky_mobile_cta'=>'Pasek mobilny',
+        'source:financing_form'=>'Kalkulator','source:trust_banner_cta'=>'Banner zaufania',
     ][request('filter')] ?? request('filter')] : null,
 ]);
 $chipUrl = fn($remove) => route('admin.inquiries.index', request()->except($remove));
@@ -19,6 +27,9 @@ $currentFilter = request('filter');
         <a href="{{ route('admin.inquiries.index', array_merge(request()->except('filter'), ['filter'=>'unread'])) }}" class="btn btn-sm {{ $currentFilter==='unread' ? 'btn-dark' : 'btn-outline' }}">Nieprzeczytane @if($unreadCount > 0)<span style="background:var(--blue);color:#fff;font-size:10px;padding:1px 6px;border-radius:9px;margin-left:4px">{{ $unreadCount }}</span>@endif</a>
         <a href="{{ route('admin.inquiries.index', array_merge(request()->except('filter'), ['filter'=>'type:general'])) }}" class="btn btn-sm {{ $currentFilter==='type:general' ? 'btn-dark' : 'btn-outline' }}">Wiadomości</a>
         <a href="{{ route('admin.inquiries.index', array_merge(request()->except('filter'), ['filter'=>'type:financing'])) }}" class="btn btn-sm {{ $currentFilter==='type:financing' ? 'btn-dark' : 'btn-outline' }}">Finansowanie</a>
+        @foreach($sourceLabels as $key => $label)
+        <a href="{{ route('admin.inquiries.index', array_merge(request()->except('filter'), ['filter'=>'source:'.$key])) }}" class="btn btn-sm {{ $currentFilter==='source:'.$key ? 'btn-dark' : 'btn-outline' }}">{{ $label }}</a>
+        @endforeach
     </div>
 
     <form method="GET" style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
@@ -74,6 +85,7 @@ $currentFilter = request('filter');
                 @else
                     <span class="badge-pill pill-gray">Wiadomość</span>
                 @endif
+                @if($inq->form_source)<span class="badge-pill pill-gray" style="font-size:10px;opacity:.7" title="Źródło">{{ $sourceLabels[$inq->form_source] ?? $inq->form_source }}</span>@endif
             </td>
             <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><a href="{{ route('admin.inquiries.show',$inq) }}" style="color:var(--text-2)">{{ $inq->car_title ?: '—' }}</a></td>
             <td><a href="{{ route('admin.inquiries.show',$inq) }}"><strong>{{ $inq->name }}</strong></a></td>

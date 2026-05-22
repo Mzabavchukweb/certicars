@@ -90,6 +90,7 @@ class CarController extends Controller
         };
 
         Cache::forget('catalog.filters');
+        Cache::forget('sitemap.xml');
         return back()->with('success', 'Akcja wykonana na ' . count($request->ids) . ' samochodach.');
     }
 
@@ -100,6 +101,14 @@ class CarController extends Controller
                 if (!str_starts_with($image->path, 'http')) {
                     Storage::disk('public')->delete($image->path);
                 }
+            }
+            foreach ($car->damages as $d) {
+                if ($d->image_path && !str_starts_with($d->image_path, 'http')) {
+                    Storage::disk('public')->delete($d->image_path);
+                }
+            }
+            if ($car->engine_video_path && !str_starts_with($car->engine_video_path, 'http')) {
+                Storage::disk('public')->delete($car->engine_video_path);
             }
             $car->delete();
         }
@@ -125,6 +134,7 @@ class CarController extends Controller
             $this->handleImages($car, $request);
 
             Cache::forget('catalog.filters');
+        Cache::forget('sitemap.xml');
 
             return redirect($this->editUrlWithTab($car, $request))
                 ->with('success', 'Samochód został dodany.');
@@ -177,6 +187,7 @@ class CarController extends Controller
             $this->handleImages($car, $request);
 
             Cache::forget('catalog.filters');
+        Cache::forget('sitemap.xml');
 
             return redirect($this->editUrlWithTab($car, $request))
                 ->with('success', 'Samochód został zaktualizowany.');
@@ -233,6 +244,7 @@ class CarController extends Controller
         $car->delete();
 
         Cache::forget('catalog.filters');
+        Cache::forget('sitemap.xml');
 
         return redirect()->route('admin.cars.index')
             ->with('success', 'Samochód został usunięty.');
@@ -275,6 +287,7 @@ class CarController extends Controller
         ]);
 
         Cache::forget('catalog.filters');
+        Cache::forget('sitemap.xml');
 
         return response()->json([
             'success' => true,
@@ -654,33 +667,53 @@ class CarController extends Controller
     {
         if (!function_exists('imagecreatefromjpeg')) return;
 
-        $fullPath = Storage::disk('public')->path($storedPath);
-        if (!file_exists($fullPath)) return;
+        $disk   = Storage::disk('public');
+        $isS3   = config('filesystems.disks.public.driver') === 's3';
+
+        if ($isS3) {
+            if (!$disk->exists($storedPath)) return;
+            $fullPath = tempnam(sys_get_temp_dir(), 'certicars_opt_');
+            file_put_contents($fullPath, $disk->get($storedPath));
+        } else {
+            $fullPath = $disk->path($storedPath);
+            if (!file_exists($fullPath)) return;
+        }
 
         $info = @getimagesize($fullPath);
-        if (!$info || $info[0] <= $maxWidth) return;
+        if (!$info || $info[0] <= $maxWidth) {
+            if ($isS3) @unlink($fullPath);
+            return;
+        }
 
         [$width, $height, $type] = $info;
 
-        try {
-            $src = match ($type) {
-                IMAGETYPE_JPEG => imagecreatefromjpeg($fullPath),
-                IMAGETYPE_PNG  => imagecreatefrompng($fullPath),
-                IMAGETYPE_WEBP => function_exists('imagecreatefromwebp') ? imagecreatefromwebp($fullPath) : null,
-                default        => null,
-            };
+        // Only recompress JPEG — PNG/WebP would be silently reformatted to JPEG
+        // while keeping the original extension, causing browser decode errors.
+        if ($type !== IMAGETYPE_JPEG) {
+            if ($isS3) @unlink($fullPath);
+            return;
+        }
 
-            if (!$src) return;
+        try {
+            $src = imagecreatefromjpeg($fullPath);
+            if (!$src) {
+                if ($isS3) @unlink($fullPath);
+                return;
+            }
 
             $newHeight = (int) round($height * $maxWidth / $width);
             $dst = imagescale($src, $maxWidth, $newHeight, IMG_BICUBIC);
-
             imagejpeg($dst, $fullPath, 85);
-
             imagedestroy($src);
             imagedestroy($dst);
+
+            if ($isS3) {
+                $disk->put($storedPath, file_get_contents($fullPath), 'public');
+                @unlink($fullPath);
+            }
         } catch (\Throwable) {
             // Optimization failed — original file kept as-is.
+            if ($isS3) @unlink($fullPath);
         }
     }
 }

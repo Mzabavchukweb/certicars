@@ -5,8 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Brand;
 use App\Models\Car;
-use App\Models\CarImage;
-use App\Models\Damage;
 
 class AudiA4Seeder extends Seeder
 {
@@ -27,7 +25,9 @@ class AudiA4Seeder extends Seeder
         // Remove timestamps to let Eloquent handle them
         unset($carData['created_at'], $carData['updated_at']);
 
-        $car = Car::updateOrCreate(
+        // firstOrCreate — never overwrite existing dealer data on subsequent deploys.
+        // updateOrCreate here would reset all admin edits (price, status, SEO…) on every restart.
+        $car = Car::firstOrCreate(
             ['slug' => $carData['slug']],
             $carData
         );

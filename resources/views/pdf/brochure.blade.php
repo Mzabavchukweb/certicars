@@ -176,7 +176,7 @@
 </div>
 
 {{-- SERVICE & DOCUMENTATION --}}
-@if($car->service_book || $car->last_service || $car->next_inspection || $car->service_documentation)
+@if($car->service_book || $car->last_service || $car->next_inspection || $car->service_documentation || $car->coc_documents || $car->vehicle_folder || $car->hu_au_report || $car->service_book_status || $car->registration_cert || $car->owners_manual || $car->aso_serviced || $car->service_history || $car->vehicle_history || $car->imported_from)
 <div class="sh">Serwis i dokumentacja</div>
 <table>
     @if($car->service_book)<tr><td class="lbl">Książka serwisowa</td><td class="val">{{ $car->service_book }}</td></tr>@endif
@@ -213,10 +213,25 @@
 <p style="font-size:8px;color:#9ca3af;margin:0 0 6px">Norma fabryczna: 80–150 µm · powyżej 200 µm — możliwa naprawa lakiernicza</p>
 <table class="paint-tbl">
     <tr><th>Element</th><th>Grubość (µm)</th><th>Ocena</th></tr>
+    @php
+        $paintPanelNames = [
+            0 => 'Dach', 1 => 'Maska', 2 => 'Błotnik P-L', 3 => 'Błotnik P-P',
+            4 => 'Drzwi P-L', 5 => 'Drzwi P-P', 6 => 'Błotnik T-L', 7 => 'Błotnik T-P',
+            8 => 'Drzwi T-L', 9 => 'Drzwi T-P', 10 => 'Klapa bagażnika',
+            11 => 'Zderzak przód', 12 => 'Zderzak tył', 13 => 'Próg lewy', 14 => 'Próg prawy',
+        ];
+    @endphp
     @foreach($car->paint_measurements as $panel => $value)
-    @php $val = is_array($value) ? ($value['value'] ?? $value[0] ?? 0) : $value; @endphp
+    @php
+        $val = is_array($value) ? ($value['value'] ?? $value[0] ?? 0) : $value;
+        $numVal = (int) preg_replace('/[^0-9]/', '', (string) $val);
+        if ($numVal <= 0) continue;
+        $panelLabel = is_array($value) && isset($value['area'])
+            ? $value['area']
+            : (is_numeric($panel) ? ($paintPanelNames[$panel] ?? 'Panel '.($panel + 1)) : $panel);
+    @endphp
     <tr>
-        <td class="lbl">{{ $panel }}</td>
+        <td class="lbl">{{ $panelLabel }}</td>
         <td class="{{ $val > 200 ? 'paint-danger' : ($val > 160 ? 'paint-warn' : 'paint-ok') }}">{{ $val }} µm</td>
         <td class="{{ $val > 200 ? 'paint-danger' : ($val > 160 ? 'paint-warn' : 'paint-ok') }}">{{ $val > 200 ? 'Naprawa' : ($val > 160 ? 'Uwaga' : 'OK') }}</td>
     </tr>
@@ -229,10 +244,24 @@
 <div class="sh">Ocena stanu technicznego</div>
 <table>
     <tr><th>Komponent</th><th>Stan</th></tr>
+    @php
+        $techLabels = [
+            'engine' => 'Silnik', 'transmission' => 'Skrzynia biegów',
+            'suspension' => 'Zawieszenie', 'electronics' => 'Elektronika',
+            'body' => 'Nadwozie', 'brakes' => 'Hamulce',
+            'steering' => 'Układ kierowniczy', 'exhaust' => 'Układ wydechowy',
+            'ac' => 'Klimatyzacja', 'air_conditioning' => 'Klimatyzacja',
+            'braking' => 'Układ hamulcowy', 'tires' => 'Opony', 'lights' => 'Oświetlenie',
+            'interior' => 'Wnętrze', 'underbody' => 'Podwozie',
+        ];
+    @endphp
     @foreach($car->technical_conditions as $comp => $status)
-    @php $st = is_array($status) ? ($status['status'] ?? $status[0] ?? 'OK') : $status; @endphp
+    @php
+        $st = is_array($status) ? ($status['status'] ?? $status[0] ?? 'OK') : $status;
+        $compLabel = $techLabels[strtolower($comp)] ?? ucfirst($comp);
+    @endphp
     <tr>
-        <td class="lbl">{{ $comp }}</td>
+        <td class="lbl">{{ $compLabel }}</td>
         <td class="val {{ str_contains(strtolower($st),'ok') || str_contains(strtolower($st),'dobr') || str_contains(strtolower($st),'brak') ? 'cond-ok' : (str_contains(strtolower($st),'uwag') ? 'cond-warn' : '') }}">{{ $st }}</td>
     </tr>
     @endforeach

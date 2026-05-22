@@ -18,6 +18,9 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:image" content="@yield('og_image', asset('img/og-default.jpg'))">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('og_title','CertiCars — certyfikowane samochody używane')">
+    <meta name="twitter:description" content="@yield('og_description','Platforma komisowa certyfikowanych samochodów używanych z pełną inspekcją techniczną.')">
+    <meta name="twitter:image" content="@yield('og_image', asset('img/og-default.jpg'))">
     <link rel="canonical" href="{{ url()->current() }}">
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">

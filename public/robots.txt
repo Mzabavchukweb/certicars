@@ -1,7 +1,9 @@
 User-agent: *
 Allow: /
-Disallow: /admin
 Disallow: /admin/
+Disallow: /login
+Disallow: /logout
+Disallow: /password/
 Disallow: /storage/
 Disallow: /obserwowane
 Disallow: /*?sort=

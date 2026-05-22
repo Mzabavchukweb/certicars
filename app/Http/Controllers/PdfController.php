@@ -23,19 +23,41 @@ class PdfController extends Controller
 
         $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages', 'tireSets.tires');
 
-        // Convert all image URLs to local disk paths to prevent SSRF via dompdf
-        $car->images->each(function (CarImage $img) {
-            if (!str_starts_with($img->path, 'http') && Storage::disk('public')->exists($img->path)) {
+        // Convert image paths to local filesystem paths for dompdf (isRemoteEnabled=false prevents SSRF).
+        // For S3/R2, download each image to a temp file; clean up after the PDF is built.
+        $tmpFiles = [];
+        $isS3 = config('filesystems.disks.public.driver') === 's3';
+
+        $car->images->each(function (CarImage $img) use ($isS3, &$tmpFiles) {
+            if (str_starts_with($img->path, 'http') || !Storage::disk('public')->exists($img->path)) {
+                return;
+            }
+            if ($isS3) {
+                $tmp = tempnam(sys_get_temp_dir(), 'certicars_pdf_');
+                file_put_contents($tmp, Storage::disk('public')->get($img->path));
+                $img->setAttribute('pdf_src', $tmp);
+                $tmpFiles[] = $tmp;
+            } else {
                 $img->setAttribute('pdf_src', Storage::disk('public')->path($img->path));
             }
         });
 
-        $pdf = Pdf::loadView('pdf.brochure', compact('car'))
+        $filename = 'CertiCars-' . $car->identifier . '-' . $car->slug . '.pdf';
+
+        $pdfContent = Pdf::loadView('pdf.brochure', compact('car'))
             ->setPaper('a4')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isRemoteEnabled', false)
-            ->setOption('defaultFont', 'DejaVu Sans');
+            ->setOption('defaultFont', 'DejaVu Sans')
+            ->output();
 
-        return $pdf->download('CertiCars-' . $car->identifier . '-' . $car->slug . '.pdf');
+        foreach ($tmpFiles as $tmp) {
+            @unlink($tmp);
+        }
+
+        return response($pdfContent, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
     }
 }

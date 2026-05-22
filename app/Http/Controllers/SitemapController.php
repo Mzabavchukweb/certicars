@@ -27,7 +27,7 @@ class SitemapController extends Controller
             ->where('is_sold', false)
             ->where('noindex', false)
             ->orderByDesc('updated_at')
-            ->get(['id', 'slug', 'updated_at']);
+            ->get(['id', 'slug', 'updated_at', 'has_certicheck']);
 
         $urls = [
             ['loc' => url('/'),          'priority' => '1.0', 'changefreq' => 'daily'],
@@ -42,11 +42,24 @@ class SitemapController extends Controller
                 'lastmod'    => optional($car->updated_at)->toAtomString(),
                 'priority'   => '0.8',
                 'changefreq' => 'weekly',
+                'images'     => $car->images
+                    ->where('type', 'gallery')
+                    ->filter(fn($i) => $i->path)
+                    ->map(fn($i) => $i->url)
+                    ->filter(fn($u) => !str_ends_with($u, 'placeholder-car.svg'))
+                    ->values()
+                    ->all(),
             ];
-            if ($car->primaryImage) {
-                $entry['image'] = $car->primaryImage->url;
-            }
             $urls[] = $entry;
+
+            if ($car->has_certicheck) {
+                $urls[] = [
+                    'loc'        => url('/samochody/'.$car->slug.'/certicheck'),
+                    'lastmod'    => optional($car->updated_at)->toAtomString(),
+                    'priority'   => '0.6',
+                    'changefreq' => 'monthly',
+                ];
+            }
         }
 
         $xml  = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
@@ -57,9 +70,9 @@ class SitemapController extends Controller
             if (!empty($u['lastmod'])) $xml .= '    <lastmod>'.$u['lastmod'].'</lastmod>'."\n";
             $xml .= '    <changefreq>'.$u['changefreq'].'</changefreq>'."\n";
             $xml .= '    <priority>'.$u['priority'].'</priority>'."\n";
-            if (!empty($u['image'])) {
+            foreach ($u['images'] ?? [] as $imgUrl) {
                 $xml .= "    <image:image>\n";
-                $xml .= '      <image:loc>'.e($u['image']).'</image:loc>'."\n";
+                $xml .= '      <image:loc>'.e($imgUrl).'</image:loc>'."\n";
                 $xml .= "    </image:image>\n";
             }
             $xml .= "  </url>\n";

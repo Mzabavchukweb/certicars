@@ -207,4 +207,221 @@ class AdminCarCrudTest extends TestCase
 
         $this->assertDatabaseCount('car_tire_sets', 1);
     }
+
+    // ── Persistence invariants ────────────────────────────────────────────────
+
+    public function test_create_car_persists_all_main_fields(): void
+    {
+        $this->actingAs($this->admin)->post(route('admin.cars.store'), [
+            'brand_id'            => $this->brand->id,
+            'model'               => 'A6 Persistence',
+            'price'               => 85000,
+            'currency'            => 'PLN',
+            'mileage'             => 45000,
+            'first_registration'  => '2022',
+            'fuel_type'           => 'Benzyna',
+            'transmission'        => 'Automatyczna',
+            'engine_capacity'     => 1984,
+            'power_hp'            => 204,
+            'status'              => 'active',
+            'has_certicheck'      => true,
+            'noindex'             => false,
+            'imported_from'       => 'Niemcy',
+            'aso_serviced'        => 'Tak',
+            'service_book_status' => 'Oryginalna',
+            'registration_cert'   => 'Oryginał',
+        ])->assertRedirect();
+
+        $car = Car::where('model', 'A6 Persistence')->firstOrFail();
+        $this->assertEquals(85000.00, (float) $car->price);
+        $this->assertEquals(45000, $car->mileage);
+        $this->assertEquals('Benzyna', $car->fuel_type);
+        $this->assertEquals('Automatyczna', $car->transmission);
+        $this->assertEquals(1984, $car->engine_capacity);
+        $this->assertEquals(204, $car->power_hp);
+        $this->assertEquals('active', $car->status);
+        $this->assertTrue($car->has_certicheck);
+        $this->assertFalse($car->noindex);
+        $this->assertEquals('Niemcy', $car->imported_from);
+        $this->assertEquals('Tak', $car->aso_serviced);
+        $this->assertEquals('Oryginalna', $car->service_book_status);
+        $this->assertEquals('Oryginał', $car->registration_cert);
+        $this->assertNotNull($car->identifier);
+        $this->assertNotNull($car->slug);
+    }
+
+    public function test_update_one_field_does_not_wipe_other_fields(): void
+    {
+        $car = Car::create([
+            'brand_id'            => $this->brand->id,
+            'model'               => 'A5',
+            'price'               => 75000,
+            'mileage'             => 30000,
+            'fuel_type'           => 'Diesel',
+            'transmission'        => 'Automatyczna',
+            'status'              => 'active',
+            'imported_from'       => 'Niemcy',
+            'has_certicheck'      => true,
+            'aso_serviced'        => 'Tak',
+            'service_book_status' => 'Oryginalna',
+        ]);
+
+        $this->actingAs($this->admin)->put(route('admin.cars.update', $car), [
+            'brand_id' => $this->brand->id,
+            'model'    => 'A5 Updated',
+            'status'   => 'reserved',
+        ])->assertRedirect();
+
+        $f = $car->fresh();
+        $this->assertEquals('A5 Updated', $f->model);
+        $this->assertEquals('reserved', $f->status);
+        $this->assertEquals(75000.00, (float) $f->price);
+        $this->assertEquals(30000, $f->mileage);
+        $this->assertEquals('Diesel', $f->fuel_type);
+        $this->assertEquals('Automatyczna', $f->transmission);
+        $this->assertEquals('Niemcy', $f->imported_from);
+        $this->assertTrue($f->has_certicheck);
+        $this->assertEquals('Tak', $f->aso_serviced);
+        $this->assertEquals('Oryginalna', $f->service_book_status);
+    }
+
+    public function test_equipment_json_persists_as_array(): void
+    {
+        $car = Car::create(['brand_id' => $this->brand->id, 'model' => 'Q5', 'status' => 'draft']);
+
+        $this->actingAs($this->admin)->put(route('admin.cars.update', $car), [
+            'brand_id'  => $this->brand->id,
+            'model'     => 'Q5',
+            'status'    => 'active',
+            'equipment' => [
+                'safety'  => "ABS\nESP\nPoduszki powietrzne",
+                'comfort' => "Klimatyzacja\nNawigacja",
+            ],
+        ])->assertRedirect();
+
+        $f = $car->fresh();
+        $this->assertIsArray($f->equipment);
+        $this->assertContains('ABS', $f->equipment['safety']);
+        $this->assertContains('ESP', $f->equipment['safety']);
+        $this->assertContains('Klimatyzacja', $f->equipment['comfort']);
+    }
+
+    public function test_technical_conditions_json_persists(): void
+    {
+        $car = Car::create(['brand_id' => $this->brand->id, 'model' => 'Q3', 'status' => 'draft']);
+
+        $this->actingAs($this->admin)->put(route('admin.cars.update', $car), [
+            'brand_id'             => $this->brand->id,
+            'model'                => 'Q3',
+            'status'               => 'active',
+            'technical_conditions' => ['engine' => 'Sprawny', 'transmission' => 'Bez uwag'],
+        ])->assertRedirect();
+
+        $f = $car->fresh();
+        $this->assertIsArray($f->technical_conditions);
+        $this->assertEquals('Sprawny', $f->technical_conditions['engine']);
+        $this->assertEquals('Bez uwag', $f->technical_conditions['transmission']);
+    }
+
+    public function test_paint_measurements_json_persists(): void
+    {
+        $car = Car::create(['brand_id' => $this->brand->id, 'model' => 'Q7', 'status' => 'draft']);
+
+        $this->actingAs($this->admin)->put(route('admin.cars.update', $car), [
+            'brand_id'           => $this->brand->id,
+            'model'              => 'Q7',
+            'status'             => 'active',
+            'paint_measurements' => [
+                0 => ['area' => 'Maska', 'value' => 120],
+                1 => ['area' => 'Zderzak przedni', 'value' => 145],
+            ],
+        ])->assertRedirect();
+
+        $f = $car->fresh();
+        $this->assertIsArray($f->paint_measurements);
+        $this->assertEquals(120, $f->paint_measurements[0]['value']);
+        $this->assertEquals('Maska', $f->paint_measurements[0]['area']);
+    }
+
+    public function test_damages_survive_unrelated_field_update(): void
+    {
+        $car = Car::create(['brand_id' => $this->brand->id, 'model' => 'S4', 'status' => 'active']);
+        $car->damages()->create([
+            'area' => 'Rysa na masce', 'type' => 'damage',
+            'position_x' => 50, 'position_y' => 30, 'position_view' => 'top',
+        ]);
+        $this->assertDatabaseCount('car_damages', 1);
+
+        // Update basic fields only — no 'damages' key in payload
+        $this->actingAs($this->admin)->put(route('admin.cars.update', $car), [
+            'brand_id' => $this->brand->id,
+            'model'    => 'S4 Updated',
+            'status'   => 'active',
+        ])->assertRedirect();
+
+        $this->assertDatabaseCount('car_damages', 1);
+        $this->assertEquals('Rysa na masce', $car->damages()->first()->area);
+    }
+
+    public function test_tire_sets_survive_unrelated_field_update(): void
+    {
+        $car = Car::create(['brand_id' => $this->brand->id, 'model' => 'S5', 'status' => 'active']);
+        $car->tireSets()->create(['set_number' => 1, 'tire_type' => 'Letnie', 'is_mounted' => true]);
+        $this->assertDatabaseCount('car_tire_sets', 1);
+
+        // Update basic fields only — no 'tire_sets' key in payload
+        $this->actingAs($this->admin)->put(route('admin.cars.update', $car), [
+            'brand_id' => $this->brand->id,
+            'model'    => 'S5 Updated',
+            'status'   => 'active',
+        ])->assertRedirect();
+
+        $this->assertDatabaseCount('car_tire_sets', 1);
+    }
+
+    public function test_gallery_images_survive_unrelated_update(): void
+    {
+        Storage::fake('public');
+        $car = Car::create(['brand_id' => $this->brand->id, 'model' => 'RS6', 'status' => 'active']);
+        $car->images()->create(['path' => 'cars/1/gallery/photo.jpg', 'type' => 'gallery', 'is_primary' => true, 'sort_order' => 0]);
+        $this->assertDatabaseCount('car_images', 1);
+
+        // Update basic fields only — no gallery_images/delete_images in payload
+        $this->actingAs($this->admin)->put(route('admin.cars.update', $car), [
+            'brand_id' => $this->brand->id,
+            'model'    => 'RS6 Updated',
+            'status'   => 'active',
+        ])->assertRedirect();
+
+        $this->assertDatabaseCount('car_images', 1);
+    }
+
+    public function test_seeder_does_not_overwrite_existing_car_data(): void
+    {
+        // Run seeder once to create the demo car
+        $this->artisan('db:seed', ['--class' => 'AudiA4Seeder', '--force' => true]);
+        $car = Car::first();
+        $this->assertNotNull($car);
+
+        // Simulate admin editing the car (change price and status)
+        $originalSlug = $car->slug;
+        $car->update(['price' => 999999, 'status' => 'sold']);
+
+        // Run seeder again (as happens on every redeploy)
+        $this->artisan('db:seed', ['--class' => 'AudiA4Seeder', '--force' => true]);
+
+        // Admin edits must NOT be overwritten
+        $fresh = Car::where('slug', $originalSlug)->first();
+        $this->assertEquals(999999, (float) $fresh->price);
+        $this->assertEquals('sold', $fresh->status);
+    }
+
+    public function test_deploy_script_contains_no_destructive_db_commands(): void
+    {
+        $script = file_get_contents(base_path('docker-start.sh'));
+        $this->assertStringNotContainsString('migrate:fresh', $script);
+        $this->assertStringNotContainsString('migrate:refresh', $script);
+        $this->assertStringNotContainsString('migrate:reset', $script);
+        $this->assertStringNotContainsString('db:wipe', $script);
+    }
 }

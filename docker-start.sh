@@ -14,6 +14,13 @@ mkdir -p \
   /var/www/html/storage/framework/views \
   /var/www/html/storage/logs
 
+# STORAGE PERSISTENCE — choose one option before going live:
+#   Option A (recommended): Set FILESYSTEM_DISK=s3 with AWS_* env vars pointing at Cloudflare R2.
+#                           All uploads go directly to R2 and survive redeploys automatically.
+#   Option B: Mount a Railway Volume at /var/www/html/storage/app/public.
+#             Uploads stay on the volume across redeploys.
+# Without either option, uploaded images/videos are lost on every redeploy.
+
 # Compiled views and file cache live in tmpfs (fast RAM disk), not NAS
 mkdir -p /tmp/laravel-views /tmp/laravel-cache/data
 chown -R www-data:www-data /tmp/laravel-views /tmp/laravel-cache
@@ -60,6 +67,7 @@ php artisan config:clear
 php artisan cache:clear 2>/dev/null || true
 
 php artisan migrate --force
+# AudiA4Seeder uses firstOrCreate — safe to run on every restart; existing dealer data is never overwritten.
 php artisan db:seed --class=AudiA4Seeder --force 2>/dev/null || true
 
 # Cache for performance

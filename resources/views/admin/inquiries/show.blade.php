@@ -73,13 +73,77 @@
             <a href="mailto:{{ $inquiry->email }}?subject=Re: Zapytanie — {{ $inquiry->car_title ?? 'CertiCars' }}" class="btn btn-outline" style="width:100%;justify-content:center"><i data-lucide="reply"></i> Odpowiedz e-mailem</a>
             @endif
         </div>
+        @php
+            $hasAttribution = $inquiry->form_source || $inquiry->source_page || $inquiry->referrer
+                || $inquiry->utm_source || $inquiry->utm_campaign;
+            $hasEmailData   = $inquiry->admin_email_sent_at || $inquiry->admin_email_failed_at
+                || $inquiry->buyer_confirmation_sent_at || $inquiry->buyer_confirmation_failed_at;
+        @endphp
+
+        @if($hasAttribution)
+        <div class="card">
+            <h2>Źródło zapytania</h2>
+            <dl style="font-size:12.5px">
+                @if($inquiry->form_source)
+                    <dt style="color:var(--text-3);margin-bottom:2px">Formularz</dt>
+                    <dd style="margin-bottom:10px"><code style="background:var(--bg);padding:2px 6px;border-radius:4px">{{ $inquiry->form_source }}</code></dd>
+                @endif
+                @if($inquiry->source_page)
+                    <dt style="color:var(--text-3);margin-bottom:2px">Strona źródłowa</dt>
+                    <dd style="margin-bottom:10px;font-size:11.5px;word-break:break-all;color:var(--text-2)">{{ $inquiry->source_page }}</dd>
+                @endif
+                @if($inquiry->referrer)
+                    <dt style="color:var(--text-3);margin-bottom:2px">Referrer</dt>
+                    <dd style="margin-bottom:10px;font-size:11.5px;word-break:break-all;color:var(--text-2)">{{ $inquiry->referrer }}</dd>
+                @endif
+                @if($inquiry->utm_source)
+                    <dt style="color:var(--text-3);margin-bottom:2px">UTM Source</dt>
+                    <dd style="margin-bottom:6px">{{ $inquiry->utm_source }}
+                        @if($inquiry->utm_medium) / {{ $inquiry->utm_medium }}@endif
+                        @if($inquiry->utm_campaign) / {{ $inquiry->utm_campaign }}@endif
+                    </dd>
+                @endif
+                @if($inquiry->utm_content || $inquiry->utm_term)
+                    @if($inquiry->utm_content)<dt style="color:var(--text-3);margin-bottom:2px">UTM Content</dt><dd style="margin-bottom:6px">{{ $inquiry->utm_content }}</dd>@endif
+                    @if($inquiry->utm_term)<dt style="color:var(--text-3);margin-bottom:2px">UTM Term</dt><dd style="margin-bottom:6px">{{ $inquiry->utm_term }}</dd>@endif
+                @endif
+            </dl>
+        </div>
+        @endif
+
         <div class="card">
             <h2>Metadane</h2>
             <dl style="font-size:12.5px">
                 @if($inquiry->ip)<dt style="color:var(--text-3);margin-bottom:2px">IP</dt><dd style="margin-bottom:10px;font-family:monospace">{{ $inquiry->ip }}</dd>@endif
                 @if($inquiry->user_agent)<dt style="color:var(--text-3);margin-bottom:2px">User-Agent</dt><dd style="margin-bottom:10px;font-size:11.5px;word-break:break-all;color:var(--text-2)">{{ $inquiry->user_agent }}</dd>@endif
-                <dt style="color:var(--text-3);margin-bottom:2px">Status</dt>
-                <dd>@if($inquiry->read_at)<span class="badge-pill pill-gray">Przeczytane {{ $inquiry->read_at->diffForHumans() }}</span>@else<span class="badge-pill pill-blue">Nieprzeczytane</span>@endif</dd>
+                <dt style="color:var(--text-3);margin-bottom:2px">Status odczytu</dt>
+                <dd style="margin-bottom:10px">@if($inquiry->read_at)<span class="badge-pill pill-gray">Przeczytane {{ $inquiry->read_at->diffForHumans() }}</span>@else<span class="badge-pill pill-blue">Nieprzeczytane</span>@endif</dd>
+
+                @if($hasEmailData)
+                <dt style="color:var(--text-3);margin-bottom:6px;margin-top:4px;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px">Powiadomienia e-mail</dt>
+                <dt style="color:var(--text-3);margin-bottom:2px">Admin</dt>
+                <dd style="margin-bottom:8px">
+                    @if($inquiry->admin_email_sent_at)
+                        <span class="badge-pill pill-green">Wysłane {{ $inquiry->admin_email_sent_at->format('d.m H:i') }}</span>
+                    @elseif($inquiry->admin_email_failed_at)
+                        <span class="badge-pill pill-red" title="{{ $inquiry->admin_email_error }}">Błąd {{ $inquiry->admin_email_failed_at->format('d.m H:i') }}</span>
+                    @else
+                        <span style="color:var(--text-3);font-size:12px">—</span>
+                    @endif
+                </dd>
+                @if($inquiry->email)
+                <dt style="color:var(--text-3);margin-bottom:2px">Potwierdzenie klienta</dt>
+                <dd>
+                    @if($inquiry->buyer_confirmation_sent_at)
+                        <span class="badge-pill pill-green">Wysłane {{ $inquiry->buyer_confirmation_sent_at->format('d.m H:i') }}</span>
+                    @elseif($inquiry->buyer_confirmation_failed_at)
+                        <span class="badge-pill pill-red" title="{{ $inquiry->buyer_confirmation_error }}">Błąd {{ $inquiry->buyer_confirmation_failed_at->format('d.m H:i') }}</span>
+                    @else
+                        <span style="color:var(--text-3);font-size:12px">—</span>
+                    @endif
+                </dd>
+                @endif
+                @endif
             </dl>
         </div>
     </div>
