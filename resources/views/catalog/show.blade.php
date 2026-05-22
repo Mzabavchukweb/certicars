@@ -1095,6 +1095,16 @@
                             $url = $dp->path ? asset('storage/'.$dp->path) : null;
                             if ($url && !in_array($url, $dmgPhotos)) $dmgPhotos[] = $url;
                         }
+                        // First entry: also include orphaned photos (uploaded without per-damage attribution)
+                        if ($loop->first) {
+                            $placeholder = asset('images/placeholder-car.svg');
+                            foreach ($car->damageImages->whereNull('damage_id') as $op) {
+                                $url = $op->url;
+                                if ($url && $url !== $placeholder && !in_array($url, $dmgPhotos)) {
+                                    $dmgPhotos[] = $url;
+                                }
+                            }
+                        }
                     @endphp
                     <div class="cs-damage-item{{ $loop->first ? ' active' : '' }}" id="csDamage-{{ $d->id }}">
                         @if(count($dmgPhotos))
