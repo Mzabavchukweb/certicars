@@ -2,7 +2,7 @@
 @section('title','Nowy samochód')
 
 @section('wizard-form-open')
-<form method="POST" action="{{ route('admin.cars.store') }}" enctype="multipart/form-data" id="wizardForm" style="display:contents">
+<form method="POST" action="{{ route('admin.cars.store') }}" enctype="multipart/form-data" id="wizardForm">
     @csrf
 @endsection
 

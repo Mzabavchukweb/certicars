@@ -554,7 +554,7 @@
 @if($errors->any())
 <div style="margin-bottom:18px;padding:14px 18px;background:#fef2f2;border:1px solid #fecaca;border-radius:12px">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        <i data-lucide="alert-circle" style="width:18px;height:18px;color:#dc2626"></i>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         <strong style="font-size:14px;color:#991b1b">Formularz zawiera błędy:</strong>
     </div>
     <ul style="margin:0;padding-left:20px;font-size:12.5px;color:#991b1b;line-height:1.8">
@@ -563,6 +563,48 @@
         @endforeach
     </ul>
 </div>
+<script>
+(function(){
+    // Map each form field to the wizard step it lives on
+    var wzFieldStep = {
+        brand_id:1, model:1, category:1, price:1, currency:1, price_type:1,
+        taxation:1, color:1, color_code:1, doors:1, seats:1, weight:1,
+        upholstery:1, vin:1, body_type:1, first_registration:1, mileage:1,
+        fuel_type:1, power_hp:1, power_kw:1, engine_capacity:1,
+        transmission:1, transmission_detail:1,
+        previous_owners:3, country_registration:3, is_imported:3,
+        business_use:3, number_of_keys:3, imported_from:3, vehicle_history:3,
+        last_service:4, last_service_mileage:4, next_inspection:4,
+        service_documentation:4, fuel_consumption:4, fuel_procedure:4,
+        co2_emission:4, emission_class:4, aso_serviced:4, service_history:4,
+        service_book:5, coc_documents:5, vehicle_folder:5, hu_au_report:5,
+        service_book_status:5, registration_cert:5, owners_manual:5,
+        seller_name:5, seller_phone:5, seller_email:5, commission_note:5,
+        reception_date:5,
+        location:1, location_distance:1, source:1,
+        meta_title:11, meta_description:11, focus_keyword:11, noindex:11,
+    };
+    var errorFields = @json($errors->keys());
+    var firstStep = null;
+    var errorSteps = new Set();
+    errorFields.forEach(function(f){
+        var step = wzFieldStep[f];
+        if (step) {
+            errorSteps.add(step);
+            if (firstStep === null || step < firstStep) firstStep = step;
+        }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+        // Mark sidebar steps with errors
+        errorSteps.forEach(function(step){
+            var el = document.querySelector('.wiz-step[data-step="'+step+'"]');
+            if (el) el.classList.add('has-error');
+        });
+        // Navigate to first step with errors
+        if (firstStep && typeof goToStep === 'function') goToStep(firstStep);
+    });
+})();
+</script>
 @endif
 
 {{-- ============================================================
@@ -617,12 +659,18 @@
         <div class="wz-grid-2" style="margin-bottom:14px">
             <div class="wz-field">
                 <label>Marka * <a href="#" id="wzBrandAddToggle" style="float:right;font-size:11px;font-weight:600;color:var(--blue);text-decoration:none;display:inline-flex;align-items:center;gap:4px;text-transform:none;letter-spacing:0"><i data-lucide="plus" style="width:12px;height:12px"></i> Dodaj nową</a></label>
-                <select name="brand_id" id="wzBrandSelect" required>
+                <select name="brand_id" id="wzBrandSelect" required @error('brand_id') style="border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.12)" @enderror>
                     <option value="">— wybierz —</option>
                     @foreach($brands as $b)
                         <option value="{{ $b->id }}" {{ old('brand_id',$car?->brand_id)==$b->id?'selected':'' }}>{{ $b->name }}</option>
                     @endforeach
                 </select>
+                @error('brand_id')
+                <div style="color:#dc2626;font-size:12px;margin-top:4px;display:flex;align-items:center;gap:4px">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    {{ $message }}
+                </div>
+                @enderror
                 <div id="wzBrandAddRow" style="display:none;margin-top:8px;gap:6px;align-items:stretch">
                     <input type="text" id="wzBrandAddName" placeholder="Nazwa nowej marki" maxlength="255" style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px">
                     <button type="button" id="wzBrandAddSubmit" class="btn btn-blue btn-sm" style="white-space:nowrap"><i data-lucide="check" style="width:14px;height:14px"></i> Dodaj</button>
@@ -632,7 +680,13 @@
             </div>
             <div class="wz-field">
                 <label>Model *</label>
-                <input type="text" name="model" value="{{ old('model',$car?->model) }}" required>
+                <input type="text" name="model" value="{{ old('model',$car?->model) }}" required @error('model') style="border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.12)" @enderror>
+                @error('model')
+                <div style="color:#dc2626;font-size:12px;margin-top:4px;display:flex;align-items:center;gap:4px">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    {{ $message }}
+                </div>
+                @enderror
             </div>
         </div>
 
@@ -2433,7 +2487,6 @@
     window.wzImportOtomoto = async function() {
         const urlInput = document.getElementById('wzOtomotoUrl');
         const btn = document.getElementById('wzOtomotoBtn');
-        const status = document.getElementById('wzOtomotoStatus');
         if (!urlInput || !btn) return;
 
         const url = urlInput.value.trim();
@@ -2470,109 +2523,147 @@
             const d = result.data;
             let filled = 0;
 
-            // Brand — match by name
-            if (d.brand) {
-                const brandSelect = document.getElementById('wzBrandSelect');
-                if (brandSelect) {
-                    const brandLower = d.brand.toLowerCase();
-                    for (const opt of brandSelect.options) {
-                        if (opt.textContent.toLowerCase().trim() === brandLower) {
-                            brandSelect.value = opt.value;
-                            brandSelect.dispatchEvent(new Event('change'));
-                            filled++;
-                            break;
-                        }
-                    }
-                }
+            // Helper: fill text/number/textarea field
+            function fillField(name, val) {
+                if (val === undefined || val === null || val === '') return false;
+                const el = document.querySelector(`[name="${name}"]`);
+                if (!el) return false;
+                el.value = val;
+                el.dispatchEvent(new Event('input', {bubbles:true}));
+                el.dispatchEvent(new Event('change', {bubbles:true}));
+                return true;
             }
 
+            // Helper: match select option by label or value
+            function fillSelect(name, val) {
+                if (!val) return false;
+                const el = document.querySelector(`select[name="${name}"]`);
+                if (!el) return false;
+                const valLower = val.toString().toLowerCase();
+                for (const opt of el.options) {
+                    const optText = opt.textContent.toLowerCase().trim();
+                    const optVal = opt.value.toLowerCase();
+                    if (optText === valLower || optVal === valLower || optText.includes(valLower) || valLower.includes(optText)) {
+                        el.value = opt.value;
+                        el.dispatchEvent(new Event('change', {bubbles:true}));
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            // ═══════ STEP 1: Dane podstawowe ═══════
+            // Brand
+            if (d.brand && fillSelect('brand_id', d.brand)) filled++;
+
             // Text/number fields
-            const fieldMap = {
+            const step1Fields = {
                 'model': d.model,
-                'version': d.version,
-                'generation': d.generation,
                 'price': d.price,
                 'currency': d.currency || 'PLN',
                 'first_registration': d.first_registration,
-                'production_year': d.production_year,
                 'mileage': d.mileage,
                 'engine_capacity': d.engine_capacity,
                 'power_hp': d.power_hp,
                 'power_kw': d.power_kw,
                 'color': d.color,
-                'color_type': d.color_type,
                 'doors': d.doors,
                 'seats': d.seats,
                 'vin': d.vin,
                 'co2_emission': d.co2_emission,
-                'country_registration': d.country_registration,
-                'previous_owners': d.previous_owners,
-                'category': d.body_type,
-                'price_type': d.price_type,
                 'description': d.description,
             };
-
-            for (const [name, val] of Object.entries(fieldMap)) {
-                if (val === undefined || val === null || val === '') continue;
-                const el = document.querySelector(`[name="${name}"]`);
-                if (!el) continue;
-                if (el.tagName === 'TEXTAREA') {
-                    el.value = val;
-                } else {
-                    el.value = val;
-                }
-                el.dispatchEvent(new Event('input'));
-                filled++;
+            for (const [name, val] of Object.entries(step1Fields)) {
+                if (fillField(name, val)) filled++;
             }
 
-            // Select dropdowns
-            const selectMap = {
-                'fuel_type': d.fuel_type,
-                'transmission': d.transmission,
-                'body_type': d.body_type,
-                'drive_type': d.drive_type,
-            };
-            for (const [name, val] of Object.entries(selectMap)) {
-                if (!val) continue;
-                const el = document.querySelector(`select[name="${name}"], [name="${name}"]`);
-                if (!el) continue;
-                if (el.tagName === 'SELECT') {
-                    const valLower = val.toLowerCase();
-                    for (const opt of el.options) {
-                        if (opt.textContent.toLowerCase().trim() === valLower || opt.value.toLowerCase() === valLower) {
-                            el.value = opt.value;
-                            el.dispatchEvent(new Event('change'));
-                            filled++;
-                            break;
-                        }
-                    }
-                } else {
-                    el.value = val;
-                    filled++;
-                }
-            }
+            // Select fields
+            if (fillSelect('fuel_type', d.fuel_type)) filled++;
+            if (fillSelect('transmission', d.transmission)) filled++;
+            if (fillSelect('body_type', d.body_type)) filled++;
 
-            // Equipment — check matching checkboxes
-            if (d.equipment && Array.isArray(d.equipment)) {
+            // ═══════ STEP 3: Historia pojazdu ═══════
+            if (fillField('country_registration', d.country_registration)) filled++;
+            if (fillField('imported_from', d.seller_location)) filled++;
+            if (d.imported !== undefined) {
+                // imported is a text field in wizard
+                if (fillField('imported_from', d.imported ? 'Tak' : 'Nie')) filled++;
+            }
+            if (fillSelect('previous_owners', d.previous_owners)) filled++;
+            if (fillField('weight', d.weight)) filled++;
+            if (fillField('upholstery', d.upholstery)) filled++;
+            if (fillField('color_code', d.color_type)) filled++;
+
+            // ═══════ STEP 4: Serwisowanie ═══════
+            if (fillField('co2_emission', d.co2_emission)) filled++;
+            if (fillField('fuel_consumption', d.fuel_consumption)) filled++;
+            if (fillField('emission_class', d.emission_class)) filled++;
+
+            // ═══════ STEP 5: Dokumenty i sprzedawca ═══════
+            // No direct mapping from Otomoto
+
+            // ═══════ STEP 6: Wyposażenie ═══════
+            // Equipment comes as flat array of labels from Otomoto
+            // The wizard has textareas: equipment[safety], equipment[comfort], etc.
+            if (d.equipment && Array.isArray(d.equipment) && d.equipment.length) {
+                // First try checkbox-style equipment
                 const checkboxes = document.querySelectorAll('input[name="equipment[]"]');
-                let eqFilled = 0;
-                checkboxes.forEach(cb => {
-                    const label = cb.parentElement?.textContent?.trim().toLowerCase();
-                    if (d.equipment.some(e => e.toLowerCase() === label)) {
-                        cb.checked = true;
-                        eqFilled++;
+                if (checkboxes.length) {
+                    let eqFilled = 0;
+                    checkboxes.forEach(cb => {
+                        const label = cb.parentElement?.textContent?.trim().toLowerCase();
+                        if (d.equipment.some(e => e.toLowerCase() === label)) {
+                            cb.checked = true;
+                            eqFilled++;
+                        }
+                    });
+                    if (eqFilled > 0) filled += eqFilled;
+                }
+
+                // Also fill textarea-style equipment (categories)
+                const eqCategories = {
+                    'safety': ['ABS','ESP','ASR','Poduszka','Kurtyny','ISOFIX','Kontrola trakcji','Wspomaganie hamowania','System akustyczny','Poduszki boczne'],
+                    'comfort': ['Klimatyzacja','Kierownica','Tapicerka','Czujnik deszczu','Elektryczne szyby','Start-Stop','Wspomaganie kierownicy','Ekran dotykowy','Ogranicznik prędkości','Wielofunkcyjna'],
+                    'exterior': ['Alufelgi','LED','Światła','Czujnik'],
+                    'interior': ['Apple CarPlay','Android Auto','Bluetooth','Radio','USB','Zestaw głośnomówiący','Nawigacja'],
+                    'extra': ['Kabel do ładowania']
+                };
+                for (const [cat, keywords] of Object.entries(eqCategories)) {
+                    const textarea = document.querySelector(`textarea[name="equipment[${cat}]"]`);
+                    if (!textarea) continue;
+                    const matches = d.equipment.filter(eq =>
+                        keywords.some(kw => eq.toLowerCase().includes(kw.toLowerCase()))
+                    );
+                    if (matches.length) {
+                        textarea.value = matches.join(', ');
+                        textarea.dispatchEvent(new Event('input', {bubbles:true}));
+                        filled++;
                     }
-                });
-                if (eqFilled > 0) filled += eqFilled;
+                }
             }
 
-            // Rebuild title
+            // ═══════ STEP 11: SEO ═══════
+            if (d.meta_title) {
+                const mtEl = document.getElementById('wzMetaTitle');
+                if (mtEl) { mtEl.value = d.meta_title; mtEl.dispatchEvent(new Event('input')); filled++; }
+            }
+            if (d.meta_description) {
+                const mdEl = document.getElementById('wzMetaDesc');
+                if (mdEl) { mdEl.value = d.meta_description; mdEl.dispatchEvent(new Event('input')); filled++; }
+            }
+            if (d.focus_keyword) {
+                const fkEl = document.getElementById('wzFocusKw');
+                if (fkEl) { fkEl.value = d.focus_keyword; fkEl.dispatchEvent(new Event('input')); filled++; }
+            }
+
+            // Rebuild title & SEO
             if (typeof wzRebuildTitle === 'function') wzRebuildTitle();
+            if (typeof wzSeoAnalyze === 'function') setTimeout(wzSeoAnalyze, 200);
 
             // Re-init icons
             if (window.lucide) lucide.createIcons();
 
-            wzShowImportStatus(`✓ Zaimportowano ${filled} pól z Otomoto. Sprawdź dane i uzupełnij brakujące.`, 'success');
+            wzShowImportStatus(`✓ Zaimportowano ${filled} pól z Otomoto. Sprawdź dane we wszystkich krokach i uzupełnij brakujące.`, 'success');
 
         } catch (err) {
             wzShowImportStatus('Błąd sieci — spróbuj ponownie. ' + err.message, 'error');

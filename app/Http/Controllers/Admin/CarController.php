@@ -402,6 +402,11 @@ class CarController extends Controller
             'paint_measurements' => 'nullable|array',
             'technical_conditions' => 'nullable|array',
             'equipment' => 'nullable|array',
+        ], [
+            'brand_id.required' => 'Wybierz markę pojazdu.',
+            'brand_id.exists'   => 'Wybrana marka nie istnieje w systemie.',
+            'model.required'    => 'Podaj model pojazdu.',
+            'model.max'         => 'Model pojazdu może mieć maksymalnie 255 znaków.',
         ]);
     }
 

@@ -67,6 +67,10 @@
         .wiz-step.completed .check i{width:14px;height:14px}
         .wiz-step.completed .name{color:var(--text-2)}
 
+        /* Step with validation errors */
+        .wiz-step.has-error{border-left-color:var(--red)}
+        .wiz-step.has-error .num{background:var(--red);color:#fff;border-color:var(--red)}
+
         /* Help card */
         .wiz-help{margin:0 16px;padding:16px;background:var(--bg);border-radius:12px;border:1px solid var(--border-l)}
         .wiz-help .title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px}
@@ -298,9 +302,10 @@
     </aside>
 
     {{-- ==================== CENTER CONTENT ==================== --}}
-    @yield('wizard-form-open')
     <main class="wiz-center" id="wizCenter">
+        @yield('wizard-form-open')
         @yield('wizard-content')
+        @yield('wizard-form-close')
     </main>
 
     {{-- ==================== RIGHT SIDEBAR — PREVIEW ==================== --}}
@@ -311,7 +316,6 @@
         </div>
         @yield('wizard-preview')
     </aside>
-    @yield('wizard-form-close')
 
     {{-- ==================== BOTTOM BAR ==================== --}}
     <footer class="wiz-bottombar">
@@ -522,6 +526,12 @@ window.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('wizardForm');
     document.getElementById('wizSave')?.addEventListener('click', () => { if (form) form.submit(); });
     document.getElementById('wizSaveExit')?.addEventListener('click', () => { if (form) form.submit(); });
+});
+
+// On the last step "Dalej" dispatches wizard:publish — submit the form
+window.addEventListener('wizard:publish', () => {
+    const form = document.getElementById('wizardForm');
+    if (form) form.submit();
 });
 </script>
 @yield('wizard-scripts')

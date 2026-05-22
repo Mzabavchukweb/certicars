@@ -40,6 +40,47 @@ class AdminCarCrudTest extends TestCase
         $this->assertDatabaseHas('cars', ['model' => 'A4 Quattro']);
     }
 
+    public function test_store_fails_without_brand_id(): void
+    {
+        $this->actingAs($this->admin)->post(route('admin.cars.store'), [
+            'model' => 'A4 Missing Brand',
+        ])->assertSessionHasErrors('brand_id');
+
+        $this->assertDatabaseMissing('cars', ['model' => 'A4 Missing Brand']);
+    }
+
+    public function test_store_fails_without_model(): void
+    {
+        $this->actingAs($this->admin)->post(route('admin.cars.store'), [
+            'brand_id' => $this->brand->id,
+        ])->assertSessionHasErrors('model');
+    }
+
+    public function test_store_validation_messages_are_polish(): void
+    {
+        $response = $this->actingAs($this->admin)->post(route('admin.cars.store'), []);
+        $response->assertSessionHasErrors('brand_id');
+        $errors = session('errors');
+        $this->assertStringContainsString('Wybierz markę', $errors->first('brand_id'));
+        $this->assertStringContainsString('Podaj model', $errors->first('model'));
+    }
+
+    public function test_update_preserves_brand_id_and_model(): void
+    {
+        $car = Car::create(['brand_id' => $this->brand->id, 'model' => 'Original', 'status' => 'draft']);
+        $brand2 = Brand::create(['name' => 'BMW', 'slug' => 'bmw']);
+
+        $this->actingAs($this->admin)->put(route('admin.cars.update', $car), [
+            'brand_id' => $brand2->id,
+            'model'    => 'Updated Model',
+            'status'   => 'active',
+        ])->assertRedirect();
+
+        $fresh = $car->fresh();
+        $this->assertEquals($brand2->id, $fresh->brand_id);
+        $this->assertEquals('Updated Model', $fresh->model);
+    }
+
     public function test_admin_can_update_car(): void
     {
         $car = Car::create(['brand_id' => $this->brand->id, 'model' => 'A4', 'status' => 'draft']);
