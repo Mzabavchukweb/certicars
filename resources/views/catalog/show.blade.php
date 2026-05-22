@@ -1866,20 +1866,21 @@ function csDmgScrollThumbs(btn,dir){
     strip.scrollBy({left:dir*220,behavior:'smooth'});
 }
 
-// Damage gallery — open lightbox
+// Damage gallery — open lightbox scoped to this damage only
 function csDmgLightbox(imgEl){
     if(!imgEl)return;
-    var src=imgEl.src;
-    // Find in CAR_ALL_GALLERY first
-    var idx=CAR_ALL_GALLERY.findIndex(function(g){return g.src===src;});
-    if(idx>=0){
-        csOpenLb(idx);
-    } else {
-        // Temporarily add to gallery, open, then remove
-        var tmpIdx=CAR_ALL_GALLERY.length;
-        CAR_ALL_GALLERY.push({src:src,caption:imgEl.alt||''});
-        csOpenLb(tmpIdx);
-    }
+    var gallery=imgEl.closest('.cs-dmg-gallery');
+    if(!gallery)return;
+    var slides=Array.from(gallery.querySelectorAll('.cs-dmg-gallery-slide img'));
+    var dmgPhotos=slides.map(function(img){return{src:img.src,caption:img.alt||''};});
+    var idx=slides.indexOf(imgEl);
+    if(!dmgPhotos.length)return;
+    // Temporarily swap global gallery so lightbox nav stays within this damage's photos
+    var _saved=CAR_ALL_GALLERY;
+    CAR_ALL_GALLERY=dmgPhotos;
+    csOpenLb(idx>=0?idx:0);
+    var _origClose=window.csCloseLb;
+    window.csCloseLb=function(){_origClose();CAR_ALL_GALLERY=_saved;window.csCloseLb=_origClose;};
 }
 
 // Inline calculator
