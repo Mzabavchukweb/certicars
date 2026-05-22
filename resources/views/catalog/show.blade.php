@@ -1119,10 +1119,11 @@
                                 <button type="button" class="cs-dmg-gallery-arrow right" onclick="csDmgSlide(this,1)"><i data-lucide="chevron-right" style="width:22px;height:22px"></i></button>
                                 @endif
                             </div>
-                            @if(count($dmgPhotos) > 1)
-                            {{-- Thumbnails --}}
+                            {{-- Thumbnails — always shown --}}
                             <div class="cs-dmg-gallery-thumbs-wrap">
+                                @if(count($dmgPhotos) > 1)
                                 <button type="button" class="cs-dmg-thumb-arrow left" onclick="csDmgScrollThumbs(this,-1)"><i data-lucide="chevron-left" style="width:14px;height:14px"></i></button>
+                                @endif
                                 <div class="cs-dmg-gallery-thumbs">
                                     @foreach($dmgPhotos as $pi => $pUrl)
                                     <div class="cs-dmg-gallery-thumb{{ $pi === 0 ? ' active' : '' }}" data-slide="{{ $pi }}" onclick="csDmgGoSlide(this,{{ $pi }})">
@@ -1130,9 +1131,10 @@
                                     </div>
                                     @endforeach
                                 </div>
+                                @if(count($dmgPhotos) > 1)
                                 <button type="button" class="cs-dmg-thumb-arrow right" onclick="csDmgScrollThumbs(this,1)"><i data-lucide="chevron-right" style="width:14px;height:14px"></i></button>
+                                @endif
                             </div>
-                            @endif
                         </div>
                         @else
                         <div style="padding:40px;text-align:center;color:var(--text-3)">
