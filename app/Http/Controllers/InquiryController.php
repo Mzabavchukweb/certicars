@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\InquiryConfirmation;
 use App\Mail\InquiryReceived;
 use App\Models\Car;
 use App\Models\Inquiry;
@@ -39,6 +40,10 @@ class InquiryController extends Controller
         // Send email notification
         try {
             Mail::to('kontakt@certicars.pl')->send(new InquiryReceived($inquiry));
+
+            if (!empty($inquiry->email)) {
+                Mail::to($inquiry->email)->send(new InquiryConfirmation($inquiry));
+            }
         } catch (\Exception $e) {
             // Log but don't fail the request
             \Log::warning('Inquiry email failed: ' . $e->getMessage());

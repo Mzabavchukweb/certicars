@@ -106,4 +106,24 @@ class PublicPagesTest extends TestCase
             ->assertNotFound()
             ->assertSee('Nie znaleziono strony');
     }
+
+    public function test_new_fields_displayed_on_car_page(): void
+    {
+        $car = $this->activeCar();
+        $car->update([
+            'imported_from'       => 'Niemcy',
+            'vehicle_history'     => 'Bezwypadkowy',
+            'aso_serviced'        => 'Tak',
+            'service_history'     => 'Pełna historia',
+            'service_book_status' => 'Oryginalna',
+            'registration_cert'   => 'Oryginał',
+            'owners_manual'       => 'Tak',
+        ]);
+
+        $this->get('/samochody/'.$car->slug)
+            ->assertOk()
+            ->assertSee('Niemcy')
+            ->assertSee('Bezwypadkowy')
+            ->assertSee('Pełna historia');
+    }
 }

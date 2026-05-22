@@ -186,6 +186,13 @@
     @if($car->coc_documents)<tr><td class="lbl">Dokumenty CoC</td><td class="val">{{ $car->coc_documents }}</td></tr>@endif
     @if($car->vehicle_folder)<tr><td class="lbl">Teczka pojazdu</td><td class="val">{{ $car->vehicle_folder }}</td></tr>@endif
     @if($car->hu_au_report)<tr><td class="lbl">Raport HU/AU</td><td class="val">{{ $car->hu_au_report }}</td></tr>@endif
+    @if($car->service_book_status)<tr><td class="lbl">Status książki serwisowej</td><td class="val">{{ $car->service_book_status }}</td></tr>@endif
+    @if($car->registration_cert)<tr><td class="lbl">Dowód rejestracyjny</td><td class="val">{{ $car->registration_cert }}</td></tr>@endif
+    @if($car->owners_manual)<tr><td class="lbl">Instrukcja obsługi</td><td class="val">{{ $car->owners_manual }}</td></tr>@endif
+    @if($car->aso_serviced)<tr><td class="lbl">Serwis ASO</td><td class="val">{{ $car->aso_serviced }}</td></tr>@endif
+    @if($car->service_history)<tr><td class="lbl">Historia serwisowa</td><td class="val">{{ $car->service_history }}</td></tr>@endif
+    @if($car->vehicle_history)<tr><td class="lbl">Historia pojazdu</td><td class="val">{{ $car->vehicle_history }}</td></tr>@endif
+    @if($car->imported_from)<tr><td class="lbl">Importowany z</td><td class="val">{{ $car->imported_from }}</td></tr>@endif
 </table>
 @endif
 

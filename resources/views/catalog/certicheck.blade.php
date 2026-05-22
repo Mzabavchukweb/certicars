@@ -118,6 +118,8 @@
                     @if($car->weight)<div class="cc-row"><span class="lbl">Masa własna</span><span class="val">{{ number_format($car->weight,0,'',' ') }} kg</span></div>@endif
                     @if($car->previous_owners !== null)<div class="cc-row"><span class="lbl">Poprzedni właściciele</span><span class="val">{{ $car->previous_owners }}</span></div>@endif
                     @if($car->number_of_keys)<div class="cc-row"><span class="lbl">Liczba kluczyków</span><span class="val">{{ $car->number_of_keys }}</span></div>@endif
+                    @if($car->imported_from)<div class="cc-row"><span class="lbl">Importowany z</span><span class="val">{{ $car->imported_from }}</span></div>@endif
+                    @if($car->vehicle_history)<div class="cc-row"><span class="lbl">Historia pojazdu</span><span class="val">{{ $car->vehicle_history }}</span></div>@endif
                 </div>
             </div>
         </div>
@@ -141,6 +143,11 @@
                     @if($car->vehicle_folder)<div class="cc-row"><span class="lbl">Teczka pojazdu</span><span class="val">{{ $car->vehicle_folder }}</span></div>@endif
                     @if($car->hu_au_report)<div class="cc-row"><span class="lbl">Raport HU/AU</span><span class="val">{{ $car->hu_au_report }}</span></div>@endif
                     @if($car->country_registration)<div class="cc-row"><span class="lbl">Kraj rejestracji</span><span class="val">{{ $car->country_registration }}</span></div>@endif
+                    @if($car->service_book_status)<div class="cc-row"><span class="lbl">Status książki serwisowej</span><span class="val">{{ $car->service_book_status }}</span></div>@endif
+                    @if($car->registration_cert)<div class="cc-row"><span class="lbl">Dowód rejestracyjny</span><span class="val">{{ $car->registration_cert }}</span></div>@endif
+                    @if($car->owners_manual)<div class="cc-row"><span class="lbl">Instrukcja obsługi</span><span class="val">{{ $car->owners_manual }}</span></div>@endif
+                    @if($car->aso_serviced)<div class="cc-row"><span class="lbl">Serwis ASO</span><span class="val">{{ $car->aso_serviced }}</span></div>@endif
+                    @if($car->service_history)<div class="cc-row"><span class="lbl">Historia serwisowa</span><span class="val">{{ $car->service_history }}</span></div>@endif
                 </div>
             </div>
         </div>

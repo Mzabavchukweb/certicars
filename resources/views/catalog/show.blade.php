@@ -955,12 +955,14 @@
             <div class="cs-data-col">
                 <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Pochodzenie</div>
                 @if($car->country_registration)<div class="cs-data-row"><span class="lbl">Kraj pochodzenia</span><span class="val">{{ $car->country_registration }}</span></div>@endif
+                @if($car->imported_from)<div class="cs-data-row"><span class="lbl">Importowany z</span><span class="val">{{ $car->imported_from }}</span></div>@endif
                 @if($car->first_registration)<div class="cs-data-row"><span class="lbl">Pierwsza rejestracja</span><span class="val">{{ $car->first_registration }}</span></div>@endif
             </div>
             <!-- Col 2: Historia pojazdu -->
             <div class="cs-data-col">
                 <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="m2 14 6-6 6 6 6-6"/></svg>Historia pojazdu</div>
                 @if($car->previous_owners !== null)<div class="cs-data-row"><span class="lbl">Właściciele</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->previous_owners == 0 ? 'Bezwypadkowy' : $car->previous_owners }}</span></div>@endif
+                @if($car->vehicle_history)<div class="cs-data-row"><span class="lbl">Historia pojazdu</span><span class="val">{{ $car->vehicle_history }}</span></div>@endif
                 @if($car->service_book)<div class="cs-data-row"><span class="lbl">Sprawdzony w bazach</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->service_book }}</span></div>@endif
                 @if($car->vin)<div class="cs-data-row"><span class="lbl">VIN</span><span class="val" style="font-size:10.5px;letter-spacing:.3px">{{ $car->vin }}</span></div>@endif
             </div>
@@ -968,6 +970,8 @@
             <div class="cs-data-col">
                 <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Serwisowanie</div>
                 @if($car->service_documentation)<div class="cs-data-row"><span class="lbl">Serwisowany w ASO</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->service_documentation }}</span></div>@endif
+                @if($car->aso_serviced)<div class="cs-data-row"><span class="lbl">Serwis ASO</span><span class="val">{{ $car->aso_serviced }}</span></div>@endif
+                @if($car->service_history)<div class="cs-data-row"><span class="lbl">Historia serwisowa</span><span class="val">{{ $car->service_history }}</span></div>@endif
                 @if($car->last_service)<div class="cs-data-row"><span class="lbl">Ostatni przegląd</span><span class="val">{{ $car->last_service }}</span></div>@endif
                 @if($car->next_inspection)<div class="cs-data-row"><span class="lbl">Następny przegląd</span><span class="val">{{ $car->next_inspection }}</span></div>@endif
             </div>
@@ -975,7 +979,10 @@
             <div class="cs-data-col">
                 <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>Dokumenty</div>
                 @if($car->coc_documents)<div class="cs-data-row"><span class="lbl">Komplet dokumentów</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->coc_documents }}</span></div>@endif
-                @if($car->vehicle_folder)<div class="cs-data-row"><span class="lbl">Dowód rejestracyjny</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->vehicle_folder }}</span></div>@endif
+                @if($car->service_book_status)<div class="cs-data-row"><span class="lbl">Książka serwisowa</span><span class="val">{{ $car->service_book_status }}</span></div>@endif
+                @if($car->registration_cert)<div class="cs-data-row"><span class="lbl">Dowód rejestracyjny</span><span class="val">{{ $car->registration_cert }}</span></div>@endif
+                @if($car->owners_manual)<div class="cs-data-row"><span class="lbl">Instrukcja obsługi</span><span class="val">{{ $car->owners_manual }}</span></div>@endif
+                @if($car->vehicle_folder)<div class="cs-data-row"><span class="lbl">Teczka pojazdu</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->vehicle_folder }}</span></div>@endif
                 @if($car->hu_au_report)<div class="cs-data-row"><span class="lbl">Polisa OC</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->hu_au_report }}</span></div>@endif
             </div>
             <!-- Col 5: Zużycie paliwa -->
@@ -1867,21 +1874,43 @@ function csDmgScrollThumbs(btn,dir){
 }
 
 // Damage gallery — open lightbox scoped to this damage only
+var _dmgLbPhotos=null, _dmgLbIdx=0;
 function csDmgLightbox(imgEl){
     if(!imgEl)return;
     var gallery=imgEl.closest('.cs-dmg-gallery');
     if(!gallery)return;
     var slides=Array.from(gallery.querySelectorAll('.cs-dmg-gallery-slide img'));
-    var dmgPhotos=slides.map(function(img){return{src:img.src,caption:img.alt||''};});
-    var idx=slides.indexOf(imgEl);
-    if(!dmgPhotos.length)return;
-    // Temporarily swap global gallery so lightbox nav stays within this damage's photos
-    var _saved=CAR_ALL_GALLERY;
-    CAR_ALL_GALLERY=dmgPhotos;
-    csOpenLb(idx>=0?idx:0);
-    var _origClose=window.csCloseLb;
-    window.csCloseLb=function(){_origClose();CAR_ALL_GALLERY=_saved;window.csCloseLb=_origClose;};
+    _dmgLbPhotos=slides.map(function(img){return{src:img.src,caption:img.alt||''};});
+    _dmgLbIdx=Math.max(0,slides.indexOf(imgEl));
+    if(!_dmgLbPhotos.length)return;
+    _dmgLbShow();
 }
+function _dmgLbShow(){
+    var lb=document.getElementById('csLightbox');
+    var img=document.getElementById('csLbImg');
+    if(!lb||!_dmgLbPhotos||!_dmgLbPhotos.length)return;
+    img.src=_dmgLbPhotos[_dmgLbIdx].src;
+    img.alt=_dmgLbPhotos[_dmgLbIdx].caption||'';
+    document.getElementById('csLbCounter').textContent=(_dmgLbIdx+1)+' / '+_dmgLbPhotos.length;
+    lb.classList.add('open');
+    document.body.style.overflow='hidden';
+}
+// Override nav/close when damage lightbox is open
+(function(){
+    var origNav=window.csLbNav, origClose=window.csCloseLb;
+    window.csLbNav=function(dir){
+        if(_dmgLbPhotos){
+            _dmgLbIdx=(_dmgLbIdx+dir+_dmgLbPhotos.length)%_dmgLbPhotos.length;
+            _dmgLbShow();
+        } else {
+            origNav(dir);
+        }
+    };
+    window.csCloseLb=function(){
+        _dmgLbPhotos=null;
+        origClose();
+    };
+})();
 
 // Inline calculator
 function csCalcInlineUpdate() {

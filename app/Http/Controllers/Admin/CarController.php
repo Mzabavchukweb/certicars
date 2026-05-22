@@ -7,6 +7,7 @@ use App\Models\Brand;
 use App\Models\Car;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class CarController extends Controller
@@ -500,32 +501,34 @@ class CarController extends Controller
         }
 
         if ($request->has('tire_sets')) {
-            $car->tireSets()->delete();
-            foreach ($request->tire_sets as $setData) {
-                if (!empty($setData['tire_type'])) {
-                    $set = $car->tireSets()->create([
-                        'set_number' => $setData['set_number'] ?? 1,
-                        'is_mounted' => !empty($setData['is_mounted']),
-                        'tire_type' => $setData['tire_type'],
-                        'rim' => $setData['rim'] ?? null,
-                        'notes' => $setData['notes'] ?? null,
-                    ]);
+            DB::transaction(function () use ($car, $request) {
+                $car->tireSets()->delete();
+                foreach ($request->tire_sets as $setData) {
+                    if (!empty($setData['tire_type'])) {
+                        $set = $car->tireSets()->create([
+                            'set_number' => $setData['set_number'] ?? 1,
+                            'is_mounted' => !empty($setData['is_mounted']),
+                            'tire_type' => $setData['tire_type'],
+                            'rim' => $setData['rim'] ?? null,
+                            'notes' => $setData['notes'] ?? null,
+                        ]);
 
-                    if (!empty($setData['tires'])) {
-                        foreach ($setData['tires'] as $tireData) {
-                            if (!empty($tireData['position'])) {
-                                $set->tires()->create([
-                                    'position' => $tireData['position'],
-                                    'tread_depth' => $tireData['tread_depth'] ?? null,
-                                    'condition' => !empty($tireData['condition'])
-                                        ? array_filter(array_map('trim', explode(',', $tireData['condition'])))
-                                        : [],
-                                ]);
+                        if (!empty($setData['tires'])) {
+                            foreach ($setData['tires'] as $tireData) {
+                                if (!empty($tireData['position'])) {
+                                    $set->tires()->create([
+                                        'position' => $tireData['position'],
+                                        'tread_depth' => $tireData['tread_depth'] ?? null,
+                                        'condition' => !empty($tireData['condition'])
+                                            ? array_filter(array_map('trim', explode(',', $tireData['condition'])))
+                                            : [],
+                                    ]);
+                                }
                             }
                         }
                     }
                 }
-            }
+            });
         }
     }
 

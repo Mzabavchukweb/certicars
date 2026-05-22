@@ -119,4 +119,51 @@ class AdminCarCrudTest extends TestCase
         $this->assertTrue($c1->fresh()->is_sold);
         $this->assertTrue($c2->fresh()->is_sold);
     }
+
+    public function test_new_fields_saved_correctly(): void
+    {
+        $car = Car::create(['brand_id' => $this->brand->id, 'model' => 'X5', 'status' => 'draft']);
+
+        $this->actingAs($this->admin)->put(route('admin.cars.update', $car), [
+            'brand_id'           => $this->brand->id,
+            'model'              => 'X5',
+            'status'             => 'active',
+            'imported_from'      => 'Niemcy',
+            'vehicle_history'    => 'Bezwypadkowy',
+            'aso_serviced'       => 'Tak',
+            'service_history'    => 'Pełna historia',
+            'service_book_status'=> 'Oryginalna',
+            'registration_cert'  => 'Oryginał',
+            'owners_manual'      => 'Tak',
+        ])->assertRedirect();
+
+        $fresh = $car->fresh();
+        $this->assertEquals('Niemcy', $fresh->imported_from);
+        $this->assertEquals('Bezwypadkowy', $fresh->vehicle_history);
+        $this->assertEquals('Tak', $fresh->aso_serviced);
+        $this->assertEquals('Pełna historia', $fresh->service_history);
+        $this->assertEquals('Oryginalna', $fresh->service_book_status);
+        $this->assertEquals('Oryginał', $fresh->registration_cert);
+        $this->assertEquals('Tak', $fresh->owners_manual);
+    }
+
+    public function test_tire_sync_rolls_back_on_failure(): void
+    {
+        $car = Car::create(['brand_id' => $this->brand->id, 'model' => 'T', 'status' => 'active']);
+
+        // Save a valid tire set first
+        $this->actingAs($this->admin)->put(route('admin.cars.update', $car), [
+            'brand_id'  => $this->brand->id,
+            'model'     => 'T',
+            'status'    => 'active',
+            'tire_sets' => [[
+                'set_number' => 1,
+                'is_mounted' => true,
+                'tire_type'  => 'Letnie',
+                'tires'      => [['position' => 'FL', 'tread_depth' => '7']],
+            ]],
+        ])->assertRedirect();
+
+        $this->assertDatabaseCount('car_tire_sets', 1);
+    }
 }
