@@ -52,11 +52,33 @@ Route::get('/_dbg', function (\Illuminate\Http\Request $request) {
     try {
         $out['cache'] = \Illuminate\Support\Facades\Cache::remember('_dbg_test', 10, fn() => 'hit');
     } catch (\Throwable $e) { $out['cache_err'] = $e->getMessage(); }
+    // Try to render the catalog view to capture the actual view error
     try {
-        $log = file_exists(storage_path('logs/laravel.log'))
-            ? implode('', array_slice(file(storage_path('logs/laravel.log')), -30))
-            : 'no log file';
-        $out['log_tail'] = $log;
+        $cars2 = \App\Models\Car::with(['brand', 'images'])->available()->paginate(12);
+        [$brands2, $cats2, $fuels2] = \Illuminate\Support\Facades\Cache::remember('_dbg_filters', 10, fn() => [
+            \App\Models\Brand::orderBy('name')->get(),
+            \App\Models\Car::available()->whereNotNull('category')->distinct()->pluck('category'),
+            \App\Models\Car::available()->whereNotNull('fuel_type')->distinct()->pluck('fuel_type'),
+        ]);
+        ob_start();
+        echo view('catalog.index', ['cars' => $cars2, 'brands' => $brands2, 'categories' => $cats2, 'fuelTypes' => $fuels2])->render();
+        ob_end_clean();
+        $out['view_render'] = 'ok';
+    } catch (\Throwable $e) {
+        $out['view_err'] = get_class($e) . ': ' . $e->getMessage() . ' @ ' . $e->getFile() . ':' . $e->getLine();
+    }
+    // Get last error from log
+    try {
+        if (file_exists(storage_path('logs/laravel.log'))) {
+            $lines = file(storage_path('logs/laravel.log'));
+            // Find last [datetime] line (start of log entry)
+            $lastEntry = '';
+            for ($i = count($lines) - 1; $i >= 0; $i--) {
+                $lastEntry = $lines[$i] . $lastEntry;
+                if (preg_match('/^\[\d{4}-\d{2}-\d{2}/', $lines[$i]) && strlen($lastEntry) > 50) break;
+            }
+            $out['last_log'] = substr($lastEntry, 0, 2000);
+        }
     } catch (\Throwable $e) { $out['log_err'] = $e->getMessage(); }
     return response()->json($out);
 });
