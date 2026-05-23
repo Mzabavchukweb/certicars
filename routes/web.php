@@ -33,6 +33,34 @@ Route::post('/zapytanie', [InquiryController::class, 'store'])->middleware('thro
 Route::get('/obserwowane', [FavoritesController::class, 'index'])->name('favorites');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
+// TEMP diagnostic — remove after incident resolved
+Route::get('/_dbg', function (\Illuminate\Http\Request $request) {
+    if ($request->header('X-Debug') !== hash('sha256', 'certicars-dbg-2026')) {
+        abort(404);
+    }
+    $out = [];
+    try {
+        $out['db'] = \Illuminate\Support\Facades\DB::select('SELECT 1 as ok')[0]->ok ?? 'fail';
+    } catch (\Throwable $e) { $out['db_err'] = $e->getMessage(); }
+    try {
+        $out['cars_count'] = \App\Models\Car::count();
+    } catch (\Throwable $e) { $out['cars_err'] = $e->getMessage(); }
+    try {
+        $cars = \App\Models\Car::with(['brand', 'images'])->available()->paginate(12);
+        $out['cars_paginate'] = 'ok (' . $cars->total() . ' total)';
+    } catch (\Throwable $e) { $out['paginate_err'] = $e->getMessage(); }
+    try {
+        $out['cache'] = \Illuminate\Support\Facades\Cache::remember('_dbg_test', 10, fn() => 'hit');
+    } catch (\Throwable $e) { $out['cache_err'] = $e->getMessage(); }
+    try {
+        $log = file_exists(storage_path('logs/laravel.log'))
+            ? implode('', array_slice(file(storage_path('logs/laravel.log')), -30))
+            : 'no log file';
+        $out['log_tail'] = $log;
+    } catch (\Throwable $e) { $out['log_err'] = $e->getMessage(); }
+    return response()->json($out);
+});
+
 // Auth
 Route::get('/admin/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/admin/login', [LoginController::class, 'login'])->middleware('throttle:10,1')->name('login.attempt');
