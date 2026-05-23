@@ -35,7 +35,14 @@ class CarImage extends Model
         if (str_starts_with($this->path, 'http')) {
             return $this->path;
         }
-        if (!Storage::disk('public')->exists($this->path)) {
+        // FilesystemAdapter::exists() bypasses Flysystem's throw:false guard — wrap so an
+        // unreachable S3/R2 endpoint never propagates UnableToCheckExistence into views.
+        try {
+            $exists = Storage::disk('public')->exists($this->path);
+        } catch (\Throwable) {
+            $exists = false;
+        }
+        if (!$exists) {
             return asset('images/placeholder-car.svg');
         }
         return Storage::disk('public')->url($this->path);
