@@ -35,16 +35,20 @@ class CarImage extends Model
         if (str_starts_with($this->path, 'http')) {
             return $this->path;
         }
-        // FilesystemAdapter::exists() bypasses Flysystem's throw:false guard — wrap so an
-        // unreachable S3/R2 endpoint never propagates UnableToCheckExistence into views.
-        try {
-            $exists = Storage::disk('public')->exists($this->path);
-        } catch (\Throwable) {
-            $exists = false;
+        // For S3/R2, skip the existence check entirely — files are durable and each HeadObject
+        // call adds latency plus R2 may return auth errors that cause 504 on heavy pages.
+        // For local disk, check existence to detect files lost after a redeploy.
+        if (config('filesystems.disks.public.driver') !== 's3') {
+            try {
+                if (!Storage::disk('public')->exists($this->path)) {
+                    return asset('images/placeholder-car.svg');
+                }
+            } catch (\Throwable) {
+                return asset('images/placeholder-car.svg');
+            }
         }
-        if (!$exists) {
-            return asset('images/placeholder-car.svg');
-        }
-        return Storage::disk('public')->url($this->path);
+        /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
+        $disk = Storage::disk('public');
+        return $disk->url($this->path);
     }
 }
