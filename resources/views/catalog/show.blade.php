@@ -718,7 +718,7 @@
                 {{-- ===== 360° PANORAMA VIEWER (interior) ===== --}}
                 @if($car->pano360Image)
                 <div class="cs-gallery-main cs-pano360" id="csPano360" style="background:#000">
-                    <div id="csPanoramaContainer" style="width:100%;height:100%;background:#000" data-pano-src="{{ $car->pano360Image->url }}"></div>
+                    <div id="csPanoramaContainer" style="width:100%;height:100%;background:#000" data-pano-src="{{ route('panorama.stream', $car->pano360Image) }}"></div>
                     <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(10,10,10,.78);color:#fff;font-size:12px;padding:7px 14px;border-radius:50px;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px);font-weight:600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg>
                         Przeciągnij, aby rozejrzeć się we wnętrzu
@@ -729,7 +729,7 @@
                 {{-- ===== 360° PANORAMA VIEWER (exterior) ===== --}}
                 @if($car->exteriorPano360Image)
                 <div class="cs-gallery-main cs-pano360ext" id="csPano360ext" style="background:#000">
-                    <div id="csPanoramaExtContainer" style="width:100%;height:100%;background:#000" data-pano-src="{{ $car->exteriorPano360Image->url }}"></div>
+                    <div id="csPanoramaExtContainer" style="width:100%;height:100%;background:#000" data-pano-src="{{ route('panorama.stream', $car->exteriorPano360Image) }}"></div>
                     <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(10,10,10,.78);color:#fff;font-size:12px;padding:7px 14px;border-radius:50px;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px);font-weight:600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                         Przeciągnij, aby obejrzeć auto z zewnątrz
@@ -1262,7 +1262,7 @@
                         Wnętrze
                     </div>
                     <div class="cs-pano360-embed" style="position:relative;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden">
-                        <div id="csPano360Section" data-pano-src="{{ $car->pano360Image->url }}" style="width:100%;height:100%"></div>
+                        <div id="csPano360Section" data-pano-src="{{ route('panorama.stream', $car->pano360Image) }}" style="width:100%;height:100%"></div>
                     </div>
                 </div>
                 @endif
@@ -1273,7 +1273,7 @@
                         Zewnętrze
                     </div>
                     <div class="cs-pano360-embed" style="position:relative;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden">
-                        <div id="csPano360ExtSection" data-pano-src="{{ $car->exteriorPano360Image->url }}" style="width:100%;height:100%"></div>
+                        <div id="csPano360ExtSection" data-pano-src="{{ route('panorama.stream', $car->exteriorPano360Image) }}" style="width:100%;height:100%"></div>
                     </div>
                 </div>
                 @endif

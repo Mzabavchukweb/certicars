@@ -14,6 +14,7 @@ use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PanoramaController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,7 @@ Route::get('/o-nas', [PageController::class, 'about'])->name('about');
 Route::get('/kontakt', [PageController::class, 'contact'])->name('contact');
 Route::post('/kontakt', [PageController::class, 'contactSubmit'])->middleware('throttle:5,1')->name('contact.submit');
 Route::post('/zapytanie', [InquiryController::class, 'store'])->middleware('throttle:10,1')->name('inquiry.store');
+Route::get('/pano/{carImage}', [PanoramaController::class, 'stream'])->name('panorama.stream');
 Route::get('/obserwowane', [FavoritesController::class, 'index'])->name('favorites');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
