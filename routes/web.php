@@ -32,9 +32,10 @@ Route::get('/_img_audit', function (\Illuminate\Http\Request $req) {
 
         $cfg = config('filesystems.disks.public');
         $cfg['throw'] = true;
+        /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
         $disk = \Illuminate\Support\Facades\Storage::build($cfg);
 
-        $rows = \App\Models\CarImage::with(['car' => fn($q) => $q->select('id', 'title', 'slug')])
+        $rows = \App\Models\CarImage::with(['car' => fn($q) => $q->select('id', 'slug', 'model')])
             ->orderBy('car_id')->get();
         $results = [];
 

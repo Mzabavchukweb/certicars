@@ -23,9 +23,10 @@ class AuditR2Images extends Command
         // Use throw-enabled disk so we can distinguish "missing" from "auth error"
         $cfg          = config('filesystems.disks.public');
         $cfg['throw'] = true;
+        /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
         $disk         = Storage::build($cfg);
 
-        $images  = CarImage::with('car:id,title,slug')->orderBy('car_id')->get();
+        $images  = CarImage::with(['car' => fn($q) => $q->select('id', 'slug', 'model')])->orderBy('car_id')->get();
         $missing = [];
         $present = [];
         $skipped = [];
