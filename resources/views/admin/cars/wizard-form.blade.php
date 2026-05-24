@@ -893,9 +893,9 @@
         </div>
 
         @if(!$car)
-        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:#1e40af;display:flex;gap:8px;align-items:center">
-            <i data-lucide="info" style="width:16px;height:16px;flex-shrink:0"></i>
-            <span>Wybierz zdjęcia poniżej. Zostaną zapisane razem z autem po kliknięciu <strong>"Zapisz"</strong>.</span>
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:#1e40af;display:flex;gap:8px;align-items:flex-start">
+            <i data-lucide="info" style="width:16px;height:16px;flex-shrink:0;margin-top:1px"></i>
+            <span>Zdjęcia zostaną zapisane razem z autem po kliknięciu <strong>"Zapisz"</strong>. Przy pierwszym zapisie zalecamy max <strong>10–15 zdjęć naraz</strong> (łącznie do ~250 MB). Więcej zdjęć można dodać po zapisaniu auta — każde wgra się osobno bez limitu rozmiaru.</span>
         </div>
         @endif
 
@@ -924,7 +924,7 @@
         <label class="wz-file-drop" id="wzGalleryDrop" data-upload-type="gallery">
             <i data-lucide="image-plus"></i>
             <div class="drop-title">Kliknij lub przeciągnij pliki, aby dodać zdjęcia galerii</div>
-            <div class="drop-hint">JPEG, PNG, WebP — max 10 MB na zdjęcie</div>
+            <div class="drop-hint">JPEG, PNG, WebP, AVIF — max 20 MB na zdjęcie</div>
             <input type="file" name="gallery_images[]" multiple accept="image/*">
         </label>
         <div class="wz-upload-progress" id="wzGalleryUploadProgress">
@@ -968,7 +968,7 @@
         <label class="wz-file-drop" id="wzDamageDrop" data-upload-type="damage">
             <i data-lucide="image-plus"></i>
             <div class="drop-title">Kliknij lub przeciągnij pliki, aby dodać zdjęcia stanu wizualnego</div>
-            <div class="drop-hint">JPEG, PNG, WebP — max 10 MB na zdjęcie</div>
+            <div class="drop-hint">JPEG, PNG, WebP, AVIF — max 20 MB na zdjęcie</div>
             <input type="file" name="damage_images[]" multiple accept="image/*">
         </label>
         <div class="wz-upload-progress" id="wzDamageUploadProgress">
@@ -2167,6 +2167,20 @@
         form.addEventListener('input', check);
         form.addEventListener('change', check);
         form.addEventListener('submit', () => { dirty = false; window.removeEventListener('beforeunload', beforeUnload); });
+
+        // Guard: warn if total file payload would exceed server limit (250 MB soft cap)
+        form.addEventListener('submit', function(e) {
+            const MAX_BYTES = 250 * 1024 * 1024;
+            let total = 0;
+            form.querySelectorAll('input[type="file"]').forEach(input => {
+                Array.from(input.files || []).forEach(f => { total += f.size; });
+            });
+            if (total > MAX_BYTES) {
+                e.preventDefault();
+                const mb = Math.round(total / 1024 / 1024);
+                alert(`Całkowity rozmiar wybranych plików (${mb} MB) przekracza limit 250 MB.\n\nPodziel zdjęcia na mniejsze partie — zapisz auto z pierwszą częścią zdjęć, a pozostałe dodaj po zapisaniu (każde zdjęcie wgra się osobno bez limitu).`);
+            }
+        });
     })();
 
     // ===================================================================
