@@ -20,6 +20,21 @@ use Illuminate\Support\Facades\Route;
 
 // ─── Temporary maintenance routes — remove after image re-upload is complete ───
 
+// GET /_phpinfo  X-Debug: <token>  — confirm effective PHP ini values after .user.ini fix
+Route::get('/_phpinfo', function (\Illuminate\Http\Request $req) {
+    if ($req->header('X-Debug') !== hash('sha256', 'certicars-phpinfo-2026')) abort(404);
+    return response()->json([
+        'post_max_size'       => ini_get('post_max_size'),
+        'upload_max_filesize' => ini_get('upload_max_filesize'),
+        'memory_limit'        => ini_get('memory_limit'),
+        'max_file_uploads'    => ini_get('max_file_uploads'),
+        'max_input_time'      => ini_get('max_input_time'),
+        'max_execution_time'  => ini_get('max_execution_time'),
+        'user_ini_file'       => php_ini_loaded_file(),
+        'user_ini_scanned'    => php_ini_scanned_files(),
+    ]);
+});
+
 // GET /_img_audit  X-Debug: <token>  — read-only R2 image audit, no data changed
 Route::get('/_img_audit', function (\Illuminate\Http\Request $req) {
     if ($req->header('X-Debug') !== hash('sha256', 'certicars-img-2026')) abort(404);
