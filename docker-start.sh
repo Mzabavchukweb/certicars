@@ -67,8 +67,6 @@ php artisan config:clear
 php artisan cache:clear 2>/dev/null || true
 
 php artisan migrate --force
-# AudiA4Seeder uses firstOrCreate — safe to run on every restart; existing dealer data is never overwritten.
-php artisan db:seed --class=AudiA4Seeder --force 2>/dev/null || true
 
 # Cache for performance
 php artisan config:cache

@@ -1,2 +1,2 @@
 [deploy]
-releaseCommand = "php artisan migrate --force && php artisan db:seed --class=AudiA4Seeder --force"
+releaseCommand = "php artisan migrate --force"
