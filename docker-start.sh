@@ -75,6 +75,9 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
+# Ensure R2 bucket allows cross-origin GET so Pannellum can load panoramas via XHR
+php artisan r2:set-cors 2>&1 || true
+
 # Storage symlink
 rm -f /var/www/html/public/storage
 php artisan storage:link 2>/dev/null || true
