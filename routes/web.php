@@ -18,6 +18,76 @@ use App\Http\Controllers\PdfController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
+// ─── Temporary maintenance routes — remove after image re-upload is complete ───
+
+// GET /_img_audit  X-Debug: <token>  — read-only R2 image audit, no data changed
+Route::get('/_img_audit', function (\Illuminate\Http\Request $req) {
+    if ($req->header('X-Debug') !== hash('sha256', 'certicars-img-2026')) abort(404);
+
+    $driver = config('filesystems.disks.public.driver', 'local');
+    if ($driver !== 's3') {
+        return response()->json(['error' => "driver=$driver; FILESYSTEM_DISK must be s3"], 200);
+    }
+
+    $cfg = config('filesystems.disks.public');
+    $cfg['throw'] = true;
+    $disk = \Illuminate\Support\Facades\Storage::build($cfg);
+
+    $rows = \App\Models\CarImage::with('car:id,title,slug')->orderBy('car_id')->get();
+    $results = [];
+
+    foreach ($rows as $img) {
+        if (!$img->path || str_starts_with($img->path, 'http')) {
+            $results[] = ['id' => $img->id, 'car_id' => $img->car_id,
+                'slug' => $img->car?->slug, 'type' => $img->type,
+                'path' => $img->path, 'r2' => 'skip-http-or-empty'];
+            continue;
+        }
+        try {
+            $exists = $disk->fileExists($img->path);
+            $results[] = ['id' => $img->id, 'car_id' => $img->car_id,
+                'slug' => $img->car?->slug, 'type' => $img->type,
+                'path' => $img->path, 'r2' => $exists ? 'present' : 'missing'];
+        } catch (\Throwable $e) {
+            $results[] = ['id' => $img->id, 'car_id' => $img->car_id,
+                'slug' => $img->car?->slug, 'type' => $img->type,
+                'path' => $img->path, 'r2' => 'error: ' . $e->getMessage()];
+        }
+    }
+
+    $summary = array_count_values(array_column($results, 'r2'));
+    return response()->json(['summary' => $summary, 'images' => $results], 200);
+});
+
+// POST /_adm_pw  X-Debug: <token>  body: email=...&password=...
+// Resets one admin user's password. Remove this route after admin access is restored.
+Route::post('/_adm_pw', function (\Illuminate\Http\Request $req) {
+    if ($req->header('X-Debug') !== hash('sha256', 'certicars-adm-2026')) abort(404);
+
+    $email    = $req->input('email');
+    $password = $req->input('password');
+
+    if (!$email || !$password || strlen($password) < 12) {
+        return response()->json(['error' => 'email and password (min 12 chars) required'], 422);
+    }
+
+    $user = \App\Models\User::where('email', $email)->first();
+    if (!$user) {
+        return response()->json(['error' => "No user found with email: $email"], 404);
+    }
+    if (!$user->is_admin) {
+        return response()->json(['error' => "User $email is not an admin"], 403);
+    }
+
+    $user->password = \Illuminate\Support\Facades\Hash::make($password);
+    $user->save();
+
+    \Illuminate\Support\Facades\Log::warning("/_adm_pw: password reset for $email via maintenance route");
+    return response()->json(['ok' => true, 'email' => $email, 'updated_at' => now()->toIso8601String()]);
+});
+
+// ─── End temporary maintenance routes ────────────────────────────────────────
+
 // Public
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/samochody', [CatalogController::class, 'index'])->name('catalog');
