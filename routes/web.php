@@ -24,39 +24,44 @@ use Illuminate\Support\Facades\Route;
 Route::get('/_img_audit', function (\Illuminate\Http\Request $req) {
     if ($req->header('X-Debug') !== hash('sha256', 'certicars-img-2026')) abort(404);
 
-    $driver = config('filesystems.disks.public.driver', 'local');
-    if ($driver !== 's3') {
-        return response()->json(['error' => "driver=$driver; FILESYSTEM_DISK must be s3"], 200);
-    }
-
-    $cfg = config('filesystems.disks.public');
-    $cfg['throw'] = true;
-    $disk = \Illuminate\Support\Facades\Storage::build($cfg);
-
-    $rows = \App\Models\CarImage::with('car:id,title,slug')->orderBy('car_id')->get();
-    $results = [];
-
-    foreach ($rows as $img) {
-        if (!$img->path || str_starts_with($img->path, 'http')) {
-            $results[] = ['id' => $img->id, 'car_id' => $img->car_id,
-                'slug' => $img->car?->slug, 'type' => $img->type,
-                'path' => $img->path, 'r2' => 'skip-http-or-empty'];
-            continue;
+    try {
+        $driver = config('filesystems.disks.public.driver', 'local');
+        if ($driver !== 's3') {
+            return response()->json(['error' => "driver=$driver; FILESYSTEM_DISK must be s3"], 200);
         }
-        try {
-            $exists = $disk->fileExists($img->path);
-            $results[] = ['id' => $img->id, 'car_id' => $img->car_id,
-                'slug' => $img->car?->slug, 'type' => $img->type,
-                'path' => $img->path, 'r2' => $exists ? 'present' : 'missing'];
-        } catch (\Throwable $e) {
-            $results[] = ['id' => $img->id, 'car_id' => $img->car_id,
-                'slug' => $img->car?->slug, 'type' => $img->type,
-                'path' => $img->path, 'r2' => 'error: ' . $e->getMessage()];
-        }
-    }
 
-    $summary = array_count_values(array_column($results, 'r2'));
-    return response()->json(['summary' => $summary, 'images' => $results], 200);
+        $cfg = config('filesystems.disks.public');
+        $cfg['throw'] = true;
+        $disk = \Illuminate\Support\Facades\Storage::build($cfg);
+
+        $rows = \App\Models\CarImage::with(['car' => fn($q) => $q->select('id', 'title', 'slug')])
+            ->orderBy('car_id')->get();
+        $results = [];
+
+        foreach ($rows as $img) {
+            if (!$img->path || str_starts_with($img->path, 'http')) {
+                $results[] = ['id' => $img->id, 'car_id' => $img->car_id,
+                    'slug' => $img->car?->slug, 'type' => $img->type,
+                    'path' => $img->path, 'r2' => 'skip-http-or-empty'];
+                continue;
+            }
+            try {
+                $exists = $disk->fileExists($img->path);
+                $results[] = ['id' => $img->id, 'car_id' => $img->car_id,
+                    'slug' => $img->car?->slug, 'type' => $img->type,
+                    'path' => $img->path, 'r2' => $exists ? 'present' : 'missing'];
+            } catch (\Throwable $e) {
+                $results[] = ['id' => $img->id, 'car_id' => $img->car_id,
+                    'slug' => $img->car?->slug, 'type' => $img->type,
+                    'path' => $img->path, 'r2' => 'error: ' . $e->getMessage()];
+            }
+        }
+
+        $summary = array_count_values(array_column($results, 'r2'));
+        return response()->json(['summary' => $summary, 'images' => $results], 200);
+    } catch (\Throwable $top) {
+        return response()->json(['fatal' => get_class($top) . ': ' . $top->getMessage()], 200);
+    }
 });
 
 // POST /_adm_pw  X-Debug: <token>  body: email=...&password=...
