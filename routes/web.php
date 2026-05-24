@@ -50,14 +50,17 @@ Route::get('/_r2dbg', function (\Illuminate\Http\Request $req) {
         return response()->json($result, 200);
     }
 
-    // Upload test
+    // Upload test — use a throw-enabled disk clone to surface the actual error
     $path    = '_r2_check/diag-' . now()->format('YmdHis') . '.txt';
     $content = 'certicars-r2-diag ' . now()->toIso8601String();
     try {
-        $ok = \Illuminate\Support\Facades\Storage::disk('public')->put($path, $content, 'public');
-        $result['upload'] = $ok ? 'OK' : 'FAIL — put() returned false';
+        $cfg = config('filesystems.disks.public');
+        $cfg['throw'] = true;
+        $throwDisk = \Illuminate\Support\Facades\Storage::build($cfg);
+        $throwDisk->put($path, $content, 'public');
+        $result['upload'] = 'OK';
     } catch (\Throwable $e) {
-        $result['upload'] = 'EXCEPTION — ' . $e->getMessage();
+        $result['upload'] = 'EXCEPTION — ' . get_class($e) . ': ' . $e->getMessage();
         return response()->json($result, 200);
     }
 
