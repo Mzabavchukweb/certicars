@@ -34,6 +34,15 @@ class SecurityHeaders
         }
 
         if (! $response->headers->has('Content-Security-Policy')) {
+            // Pannellum fetches panorama tiles via XHR — needs the CDN host in connect-src.
+            $cdnUrl    = rtrim((string) config('filesystems.disks.public.url', ''), '/');
+            $cdnOrigin = $cdnUrl ? parse_url($cdnUrl, PHP_URL_SCHEME) . '://' . parse_url($cdnUrl, PHP_URL_HOST) : '';
+
+            $connectSrc = "'self' https://cdn.jsdelivr.net https://unpkg.com";
+            if ($cdnOrigin) {
+                $connectSrc .= ' ' . $cdnOrigin;
+            }
+
             $csp = [
                 "default-src 'self'",
                 "base-uri 'self'",
@@ -44,7 +53,7 @@ class SecurityHeaders
                 "font-src 'self' data: https://fonts.gstatic.com",
                 "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
                 "script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net",
-                "connect-src 'self' https://cdn.jsdelivr.net https://unpkg.com",
+                "connect-src $connectSrc",
                 "frame-src 'self' https://www.youtube.com https://player.vimeo.com https://www.google.com",
                 "upgrade-insecure-requests",
             ];
