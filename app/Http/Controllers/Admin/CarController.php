@@ -594,6 +594,19 @@ class CarController extends Controller
                 $existingId = $damage['id'] ?? null;
                 $existing = $existingId ? $oldDamages->get((string) $existingId) : null;
 
+                // P1 ROOT-CAUSE FIX: the prior ternary read $damage['position_view']
+                // in its true-branch without `??` protection. When position_view was
+                // missing from the payload (any damage row added by the wizard before
+                // the user clicked the body diagram, or older imported damage data),
+                // `in_array('top', [...])` returned true → true-branch evaluated the
+                // missing key → ErrorException → DB::transaction rolled back → user
+                // saw the generic "Nie udało się zapisać samochodu" error and
+                // believed nothing saved. Resolve by reading into a local first.
+                $positionView = $damage['position_view'] ?? 'top';
+                if (!in_array($positionView, ['top', 'front', 'rear', 'left', 'right'], true)) {
+                    $positionView = 'top';
+                }
+
                 $attrs = [
                     'area'          => $damage['area'],
                     'severity'      => $damage['severity'] ?? 'warning',
@@ -602,7 +615,7 @@ class CarController extends Controller
                     'description'   => $damage['description'] ?? null,
                     'position_x'    => $damage['position_x'] ?? null,
                     'position_y'    => $damage['position_y'] ?? null,
-                    'position_view' => in_array($damage['position_view'] ?? 'top', ['top', 'front', 'rear', 'left', 'right'], true) ? $damage['position_view'] : 'top',
+                    'position_view' => $positionView,
                     'image_path'    => $existing?->image_path,
                 ];
 

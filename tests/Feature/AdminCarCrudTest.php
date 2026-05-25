@@ -625,4 +625,75 @@ class AdminCarCrudTest extends TestCase
         $response = $this->actingAs($this->admin)->get(route('admin.cars.edit', $car));
         $response->assertOk(); // must not 500
     }
+
+    // =========================================================================
+    // P1 ACTUAL ROOT CAUSE (the prior hotfix MISSED this).
+    //
+    // Production log (after PR #2 deploy):
+    //   car.save.db_failed { exception: "ErrorException",
+    //                        message: "Undefined array key \"position_view\"",
+    //                        trace: CarController.php:605 (syncRelations) }
+    //
+    // The ternary on line 605 read $damage['position_view'] in its true branch
+    // without ?? protection. When `position_view` was missing from the payload
+    // (any damage row not yet placed on the body diagram, or imported damage
+    // data), in_array('top', [...]) returned true → true-branch evaluated the
+    // missing key → ErrorException → DB::transaction rolled back → user saw
+    // "Nie udało się zapisać samochodu" → client's "całe wyjebało, nic nie
+    // zapisało" symptom.
+    // =========================================================================
+
+    public function test_save_with_damage_missing_position_view_does_not_crash(): void
+    {
+        // This is the EXACT minimal repro of the production bug.
+        $response = $this->actingAs($this->admin)->post(route('admin.cars.store'), [
+            'brand_id' => $this->brand->id,
+            'model'    => 'DamageNoPositionView',
+            'status'   => 'active',
+            'damages' => [
+                // Submitted by the wizard before the user clicks the body diagram —
+                // area + severity + type + description filled, but no position info.
+                [
+                    'area'        => 'Maska',
+                    'severity'    => 'warning',
+                    'type'        => 'damage',
+                    'description' => 'Niewielka rysa',
+                    // NO position_view, NO position_x, NO position_y
+                ],
+            ],
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+        $response->assertSessionMissing('error');
+
+        $car = Car::where('model', 'DamageNoPositionView')->first();
+        $this->assertNotNull($car, 'Car must exist after save with damage that has no position_view');
+        $this->assertSame(1, $car->damages()->count());
+        $this->assertSame('top', $car->damages()->first()->position_view, 'position_view must fall back to "top"');
+    }
+
+    public function test_save_with_damage_having_invalid_position_view_falls_back(): void
+    {
+        // Robustness: an unrecognized position_view value must NOT crash; it
+        // must fall back to 'top' (the historical default).
+        $response = $this->actingAs($this->admin)->post(route('admin.cars.store'), [
+            'brand_id' => $this->brand->id,
+            'model'    => 'DamageBadView',
+            'status'   => 'active',
+            'damages' => [
+                ['area' => 'Drzwi', 'position_view' => 'underside'], // not in allow-list
+                ['area' => 'Dach',  'position_view' => ''],            // empty
+                ['area' => 'Klapa', 'position_view' => null],          // null
+            ],
+        ]);
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $car = Car::where('model', 'DamageBadView')->firstOrFail();
+        $this->assertSame(3, $car->damages()->count());
+        foreach ($car->damages as $d) {
+            $this->assertSame('top', $d->position_view, "invalid/empty position_view must fall back to 'top'");
+        }
+    }
 }
