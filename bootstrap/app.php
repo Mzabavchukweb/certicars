@@ -21,5 +21,17 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        // CSRF / session-expired (419) — return a friendly Polish message
+        // instead of the generic Page Expired screen. Critical for the
+        // long-lived admin car wizard where a user may leave the form open
+        // past session lifetime and lose work.
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, \Illuminate\Http\Request $request) {
+            $msg = 'Sesja wygasła. Odśwież stronę i spróbuj ponownie.';
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $msg], 419);
+            }
+            return redirect()->back()
+                ->withInput($request->except(['_token', 'password', 'password_confirmation']))
+                ->with('error', $msg);
+        });
     })->create();

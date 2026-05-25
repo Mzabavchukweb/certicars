@@ -564,6 +564,7 @@ document.addEventListener('submit',async e=>{
 
 // ==== Flash messages to toasts ====
 @if(session('success'))toast(@json(session('success')),'success');@endif
+@if(session('warning'))toast(@json(session('warning')),'error','Częściowe zapisanie');@endif
 @if(session('error'))toast(@json(session('error')),'error');@endif
 @if($errors->any())toast(@json($errors->first()),'error','Błąd walidacji');@endif
 
