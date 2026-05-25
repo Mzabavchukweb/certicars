@@ -161,26 +161,46 @@
 
 @push('scripts')
 <script>
-// Na starcie — redirect do tej samej strony z ids z localStorage
 (function () {
-    const stored = JSON.parse(localStorage.getItem('certicars_favs') || '[]');
+    // IDs confirmed valid by the server (public, active, not sold)
+    const serverIds = @json($validIds);
     const url = new URL(window.location.href);
+    const stored = JSON.parse(localStorage.getItem('certicars_favs') || '[]');
     const urlIds = url.searchParams.getAll('ids[]').map(Number);
 
-    // Jeśli URL nie ma ids ale localStorage ma → redirect
+    // No URL IDs but localStorage has some → redirect so server can validate them
     if (stored.length && !urlIds.length) {
         const params = stored.map(id => `ids[]=${id}`).join('&');
         window.location.replace('/obserwowane?' + params);
         return;
     }
 
-    // Jeśli URL ma ids → zsynchronizuj localStorage (gdyby był wyczyszczony)
-    if (urlIds.length) {
-        localStorage.setItem('certicars_favs', JSON.stringify(urlIds));
+    // Determine if any requested IDs were stale (not returned by server)
+    const requestedIds = urlIds.length ? urlIds : stored;
+    const staleRemoved = requestedIds.length > 0 && serverIds.length < requestedIds.length;
+
+    // Write only server-validated IDs back to localStorage
+    localStorage.setItem('certicars_favs', JSON.stringify(serverIds));
+
+    // Badge must reflect only valid cars, not raw stored IDs
+    updateNavBadge(serverIds.length);
+
+    // Clean stale IDs out of the URL without triggering a reload
+    if (staleRemoved && urlIds.length) {
+        const cleanUrl = serverIds.length
+            ? '/obserwowane?' + serverIds.map(id => `ids[]=${id}`).join('&')
+            : '/obserwowane';
+        window.history.replaceState(null, '', cleanUrl);
     }
 
-    // Aktualizuj badge NavBar
-    updateNavBadge(stored.length);
+    // Neutral notice when stale IDs were removed
+    if (staleRemoved) {
+        const notice = document.createElement('div');
+        notice.style.cssText = 'background:#f8f9fb;border:1px solid #e5e7eb;border-radius:10px;padding:10px 16px;font-size:12px;color:#6b7280;margin-bottom:16px;display:flex;align-items:center;gap:8px';
+        notice.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg> Niektóre obserwowane auta nie są już dostępne i zostały usunięte z listy.';
+        const wrap = document.querySelector('.fav-wrap');
+        if (wrap) wrap.insertAdjacentElement('afterbegin', notice);
+    }
 })();
 
 function removeFav(e, id) {

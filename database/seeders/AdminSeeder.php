@@ -9,6 +9,22 @@ use Illuminate\Support\Str;
 
 class AdminSeeder extends Seeder
 {
+    // ADMIN_PASSWORD is SEED-ONLY. It is read exactly once — when the admin
+    // user row does not yet exist in the database. After that, Auth::attempt()
+    // checks the bcrypt hash stored in users.password; ADMIN_PASSWORD is never
+    // read again by the application at runtime.
+    //
+    // Consequence: changing ADMIN_PASSWORD in Railway env does NOT change the
+    // login password of an existing admin. The env var becomes a stale label.
+    //
+    // Safe ways to change the production admin password:
+    //   Option A (preferred): Log in to /admin, go to Profile → Change password.
+    //   Option B (env-driven reset): Set ADMIN_FORCE_PASSWORD_RESET=true and
+    //     ADMIN_PASSWORD=<new_password> in Railway, then run:
+    //       php artisan db:seed --class=AdminSeeder --force
+    //     Remove ADMIN_FORCE_PASSWORD_RESET afterwards to prevent re-reset on
+    //     every seeder run.
+
     public function run(): void
     {
         $email = env('ADMIN_EMAIL');

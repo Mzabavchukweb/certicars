@@ -9,8 +9,10 @@ class FavoritesController extends Controller
 {
     public function index(Request $request)
     {
-        $ids = $request->input('ids', []);
-        $ids = array_filter(array_map('intval', (array) $ids));
+        $ids = array_values(array_unique(
+            array_filter(array_map('intval', (array) $request->input('ids', [])))
+        ));
+        $ids = array_slice($ids, 0, 100);
 
         $cars = collect();
         if (!empty($ids)) {
@@ -22,6 +24,8 @@ class FavoritesController extends Controller
                 ->values();
         }
 
-        return view('catalog.favorites', compact('cars'));
+        $validIds = $cars->pluck('id')->all();
+
+        return view('catalog.favorites', compact('cars', 'validIds'));
     }
 }
