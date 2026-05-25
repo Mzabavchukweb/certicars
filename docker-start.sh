@@ -82,5 +82,21 @@ php artisan storage:link 2>/dev/null || true
 
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
 
+# Emergency admin password recovery.
+# Set ADMIN_RECOVERY_HASH in Railway to a bcrypt hash of the desired password.
+# This runs LAST — after migrations, seeders, and config cache — so it always wins.
+# Remove ADMIN_RECOVERY_HASH after successful login to disable this hook.
+if [ -n "$ADMIN_RECOVERY_HASH" ] && [ -n "$ADMIN_EMAIL" ]; then
+    php -r "
+        require '/var/www/html/vendor/autoload.php';
+        \$app = require_once '/var/www/html/bootstrap/app.php';
+        \$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+        \$updated = Illuminate\Support\Facades\DB::table('users')
+            ->where('email', getenv('ADMIN_EMAIL'))
+            ->update(['password' => getenv('ADMIN_RECOVERY_HASH'), 'is_admin' => 1, 'updated_at' => now()]);
+        echo 'ADMIN_RECOVERY_HASH applied, rows updated: ' . \$updated . PHP_EOL;
+    " 2>&1 || echo "ADMIN_RECOVERY_HASH apply failed"
+fi
+
 echo "Starting nginx + php-fpm on port ${PORT}..."
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
