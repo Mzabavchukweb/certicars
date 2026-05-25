@@ -30,6 +30,30 @@
     $technicalConditions = old('technical_conditions', $car?->technical_conditions ?? []);
     $paintMeasurements  = old('paint_measurements', $car?->paint_measurements ?? []);
     $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? '');
+    // P1 bugfix: historical data has nested array shapes (e.g. {"engine":{"status":"OK"}})
+    // — the public view tolerates them but the wizard echoed them directly into
+    // <textarea> via {{ }}, crashing with htmlspecialchars(array given).
+    // Reduce any shape to a single scalar string for safe echoing.
+    $techToString = function ($v) {
+        if (is_array($v)) {
+            foreach (['status', 'notes', 'value', 'text', 'description', 0] as $k) {
+                if (array_key_exists($k, $v) && is_scalar($v[$k])) return (string) $v[$k];
+            }
+            // Last-resort fallback: flatten scalar leaves into a single line.
+            $flat = array_filter($v, 'is_scalar');
+            return $flat ? implode(' · ', array_map('strval', $flat)) : '';
+        }
+        return $v === null ? '' : (string) $v;
+    };
+    // Paint measurements have two historical shapes: {area, value} OR a plain scalar µm.
+    $pmValue = function ($v) {
+        if (is_array($v)) return is_scalar($v['value'] ?? null) ? (string) $v['value'] : '';
+        return $v === null ? '' : (string) $v;
+    };
+    $pmArea = function ($v, $fallback) {
+        if (is_array($v) && isset($v['area']) && is_scalar($v['area'])) return (string) $v['area'];
+        return $fallback;
+    };
 @endphp
 
 {{-- ============================================================
@@ -1436,7 +1460,7 @@
         @foreach($techCategories as $key => $label)
         <div class="wz-field" style="margin-bottom:16px">
             <label>{{ $label }}</label>
-            <textarea name="technical_conditions[{{ $key }}]" rows="3" style="min-height:60px" placeholder="Nie stwierdzono nieprawidłowości">{{ $technicalConditions[$key] ?? '' }}</textarea>
+            <textarea name="technical_conditions[{{ $key }}]" rows="3" style="min-height:60px" placeholder="Nie stwierdzono nieprawidłowości">{{ $techToString($technicalConditions[$key] ?? '') }}</textarea>
         </div>
         @endforeach
     </div>
@@ -1461,13 +1485,17 @@
         @endphp
         <div class="wz-grid-3">
             @foreach($paintPanels as $pi => $panel)
-            @php $pmVal = $paintMeasurements[$pi]['value'] ?? ''; @endphp
+            @php
+                $pmRaw = $paintMeasurements[$pi] ?? null;
+                $pmVal = $pmValue($pmRaw);                  // safe for nested array OR plain scalar
+                $pmAreaVal = $pmArea($pmRaw, $panel);      // prefer stored area label, fall back to panel name
+            @endphp
             <div class="wz-field" style="margin-bottom:10px">
                 <label style="display:flex;align-items:center;gap:6px">
-                    <span style="width:8px;height:8px;border-radius:50%;background:{{ $pmVal ? ($pmVal <= 150 ? '#10b981' : ($pmVal <= 300 ? '#f59e0b' : '#ef4444')) : '#d1d5db' }}"></span>
+                    <span style="width:8px;height:8px;border-radius:50%;background:{{ is_numeric($pmVal) ? ((int)$pmVal <= 150 ? '#10b981' : ((int)$pmVal <= 300 ? '#f59e0b' : '#ef4444')) : '#d1d5db' }}"></span>
                     {{ $panel }}
                 </label>
-                <input type="hidden" name="paint_measurements[{{ $pi }}][area]" value="{{ $panel }}">
+                <input type="hidden" name="paint_measurements[{{ $pi }}][area]" value="{{ $pmAreaVal }}">
                 <input type="number" name="paint_measurements[{{ $pi }}][value]" value="{{ $pmVal }}" min="0" max="2000" step="1" placeholder="µm" oninput="wzPaintColor(this)">
             </div>
             @endforeach

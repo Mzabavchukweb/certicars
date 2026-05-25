@@ -369,6 +369,7 @@ window.toast=(msg,type='success',title=null)=>{
 
 // ==== Flash messages to toasts ====
 @if(session('success'))toast(@json(session('success')),'success');@endif
+@if(session('warning'))toast(@json(session('warning')),'error','Częściowe zapisanie');@endif
 @if(session('error'))toast(@json(session('error')),'error');@endif
 @if($errors->any())toast(@json($errors->first()),'error','Błąd walidacji');@endif
 
@@ -517,22 +518,52 @@ function isStepComplete(n) {
 }
 
 // ==== Init ====
+// Single shared "submitting" guard — prevents double-submit from any save trigger
+// (Save button, Save+Exit button, wizard:publish event, keyboard Enter, etc.)
+var wizSubmitting = false;
+function wizSafeSubmit() {
+    var form = document.getElementById('wizardForm');
+    if (!form) return;
+    if (wizSubmitting) return; // already in-flight → ignore further clicks/events
+    wizSubmitting = true;
+    var saveBtn = document.getElementById('wizSave');
+    var saveExitBtn = document.getElementById('wizSaveExit');
+    [saveBtn, saveExitBtn].forEach(function(b) {
+        if (!b) return;
+        b.dataset.origText = b.textContent;
+        b.disabled = true;
+        b.setAttribute('aria-busy', 'true');
+        b.style.opacity = '0.7';
+        b.style.cursor = 'wait';
+        b.textContent = 'Zapisywanie…';
+    });
+    form.submit();
+}
+function wizResetSubmitState() {
+    wizSubmitting = false;
+    [document.getElementById('wizSave'), document.getElementById('wizSaveExit')].forEach(function(b) {
+        if (!b) return;
+        b.disabled = false;
+        b.removeAttribute('aria-busy');
+        b.style.opacity = '';
+        b.style.cursor = '';
+        if (b.dataset.origText) b.textContent = b.dataset.origText;
+    });
+}
+// If the page is restored from bfcache (user hits Back after save), re-enable buttons
+window.addEventListener('pageshow', function(e) { if (e.persisted) wizResetSubmitState(); });
+
 window.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) lucide.createIcons();
     updateProgress();
     initLightbox();
 
-    // Wire save buttons to the form
-    const form = document.getElementById('wizardForm');
-    document.getElementById('wizSave')?.addEventListener('click', () => { if (form) form.submit(); });
-    document.getElementById('wizSaveExit')?.addEventListener('click', () => { if (form) form.submit(); });
+    document.getElementById('wizSave')?.addEventListener('click', wizSafeSubmit);
+    document.getElementById('wizSaveExit')?.addEventListener('click', wizSafeSubmit);
 });
 
-// On the last step "Dalej" dispatches wizard:publish — submit the form
-window.addEventListener('wizard:publish', () => {
-    const form = document.getElementById('wizardForm');
-    if (form) form.submit();
-});
+// On the last step "Dalej" dispatches wizard:publish — submit the form (guarded)
+window.addEventListener('wizard:publish', wizSafeSubmit);
 </script>
 @yield('wizard-scripts')
 @stack('scripts')

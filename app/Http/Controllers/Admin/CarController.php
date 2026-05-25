@@ -122,26 +122,62 @@ class CarController extends Controller
 
     public function store(Request $request)
     {
+        $reqId   = (string) \Illuminate\Support\Str::uuid();
+        $userId  = optional($request->user())->id;
+        $fileCounts = $this->safeFileCounts($request);
+        \Log::info('car.save.start', [
+            'rid' => $reqId, 'op' => 'store', 'user_id' => $userId, 'files' => $fileCounts,
+        ]);
+
         $validated = $this->validateCar($request);
         $validated = $this->processEquipment($validated);
         unset($validated['engine_video_file'], $validated['remove_engine_video'], $validated['image_alt'], $validated['active_tab']);
 
         try {
-            $car = Car::create($validated);
+            // Phase 1: DB writes inside a transaction. If anything here throws,
+            // NO partial car/relations remain in DB.
+            $car = DB::transaction(function () use ($validated, $request) {
+                $newCar = Car::create($validated);
+                $this->handleEngineVideo($newCar, $request);
+                $this->syncRelations($newCar, $request);
+                return $newCar;
+            });
+        } catch (\Throwable $e) {
+            \Log::error('car.save.db_failed', [
+                'rid' => $reqId, 'op' => 'store', 'user_id' => $userId,
+                'exception' => get_class($e), 'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return back()->withInput()->with('error', 'Nie udało się zapisać samochodu. Spróbuj ponownie, a jeśli problem się powtórzy — skontaktuj się z administratorem.');
+        }
 
-            $this->handleEngineVideo($car, $request);
-            $this->syncRelations($car, $request);
-            $this->handleImages($car, $request);
+        // Phase 2: Image uploads — outside transaction (filesystem ops can't roll back).
+        $imageFailures = [];
+        try {
+            $imageFailures = $this->handleImages($car, $request);
+        } catch (\Throwable $e) {
+            \Log::error('car.save.image_phase_failed', [
+                'rid' => $reqId, 'op' => 'store', 'user_id' => $userId, 'car_id' => $car->id,
+                'exception' => get_class($e), 'message' => $e->getMessage(),
+            ]);
+            $imageFailures[] = '(błąd przesyłania)';
+        }
 
-            Cache::forget('catalog.filters');
+        Cache::forget('catalog.filters');
         Cache::forget('sitemap.xml');
 
-            return redirect($this->editUrlWithTab($car, $request))
-                ->with('success', 'Samochód został dodany.');
-        } catch (\Throwable $e) {
-            \Log::error('Car store failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return back()->withInput()->with('error', 'Błąd zapisu: ' . $e->getMessage());
+        \Log::info('car.save.success', [
+            'rid' => $reqId, 'op' => 'store', 'user_id' => $userId, 'car_id' => $car->id,
+            'image_failures' => count($imageFailures),
+        ]);
+
+        $redirect = redirect($this->editUrlWithTab($car, $request));
+        if (!empty($imageFailures)) {
+            return $redirect
+                ->with('success', 'Samochód został dodany.')
+                ->with('warning', $this->formatImageFailureMessage($imageFailures));
         }
+        return $redirect->with('success', 'Samochód został dodany.');
     }
 
     public function show(Car $car)
@@ -175,25 +211,121 @@ class CarController extends Controller
 
     public function update(Request $request, Car $car)
     {
+        $reqId   = (string) \Illuminate\Support\Str::uuid();
+        $userId  = optional($request->user())->id;
+        $fileCounts = $this->safeFileCounts($request);
+        \Log::info('car.save.start', [
+            'rid' => $reqId, 'op' => 'update', 'user_id' => $userId, 'car_id' => $car->id, 'files' => $fileCounts,
+        ]);
+
         $validated = $this->validateCar($request);
         $validated = $this->processEquipment($validated);
         unset($validated['engine_video_file'], $validated['remove_engine_video'], $validated['image_alt'], $validated['active_tab']);
 
         try {
-            $car->update($validated);
+            // DB writes wrapped — if relations sync fails, the car update + relations roll back.
+            DB::transaction(function () use ($car, $validated, $request) {
+                $car->update($validated);
+                $this->handleEngineVideo($car, $request);
+                $this->syncRelations($car, $request);
+            });
+        } catch (\Throwable $e) {
+            \Log::error('car.save.db_failed', [
+                'rid' => $reqId, 'op' => 'update', 'user_id' => $userId, 'car_id' => $car->id,
+                'exception' => get_class($e), 'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return back()->withInput()->with('error', 'Nie udało się zaktualizować samochodu. Twoje zmiany nie zostały zapisane — spróbuj ponownie.');
+        }
 
-            $this->handleEngineVideo($car, $request);
-            $this->syncRelations($car, $request);
-            $this->handleImages($car, $request);
+        $imageFailures = [];
+        try {
+            $imageFailures = $this->handleImages($car, $request);
+        } catch (\Throwable $e) {
+            \Log::error('car.save.image_phase_failed', [
+                'rid' => $reqId, 'op' => 'update', 'user_id' => $userId, 'car_id' => $car->id,
+                'exception' => get_class($e), 'message' => $e->getMessage(),
+            ]);
+            $imageFailures[] = '(błąd przesyłania)';
+        }
 
-            Cache::forget('catalog.filters');
+        Cache::forget('catalog.filters');
         Cache::forget('sitemap.xml');
 
-            return redirect($this->editUrlWithTab($car, $request))
-                ->with('success', 'Samochód został zaktualizowany.');
+        \Log::info('car.save.success', [
+            'rid' => $reqId, 'op' => 'update', 'user_id' => $userId, 'car_id' => $car->id,
+            'image_failures' => count($imageFailures),
+        ]);
+
+        $redirect = redirect($this->editUrlWithTab($car, $request));
+        if (!empty($imageFailures)) {
+            return $redirect
+                ->with('success', 'Samochód został zaktualizowany.')
+                ->with('warning', $this->formatImageFailureMessage($imageFailures));
+        }
+        return $redirect->with('success', 'Samochód został zaktualizowany.');
+    }
+
+    /**
+     * Count uploaded files per field — safe to log (no contents, no PII).
+     */
+    private function safeFileCounts(Request $request): array
+    {
+        $out = [];
+        foreach (['gallery_images', 'damage_images', 'pano360_image', 'pano360ext_image', 'engine_video_file'] as $field) {
+            if ($request->hasFile($field)) {
+                $val = $request->file($field);
+                $out[$field] = is_array($val) ? count($val) : 1;
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * Build a Polish flash message listing image upload failures.
+     * Caps the listed names at 5 and adds an "and N more" suffix.
+     */
+    private function formatImageFailureMessage(array $failures): string
+    {
+        $unique = array_values(array_unique(array_filter($failures, fn($n) => $n !== '')));
+        $count  = count($unique);
+        if ($count === 0) return '';
+        $listed = array_slice($unique, 0, 5);
+        $msg    = 'Niektóre zdjęcia nie zostały wgrane: ' . implode(', ', $listed);
+        if ($count > 5) {
+            $msg .= ' (i ' . ($count - 5) . ' więcej)';
+        }
+        $msg .= '. Spróbuj wgrać je ponownie w zakładce „Zdjęcia".';
+        return $msg;
+    }
+
+    /**
+     * Wraps $file->store() with explicit return-value validation. The S3/R2 disk
+     * has 'throw' => false, so a failed PUT returns false instead of throwing —
+     * which would otherwise create CarImage rows pointing at `false`.
+     *
+     * Returns the stored path on success, or null on any failure (with logged context).
+     */
+    private function safeStore($file, string $directory): ?string
+    {
+        try {
+            $path = $file->store($directory, 'public');
+            if (!is_string($path) || $path === '') {
+                \Log::warning('Image store returned non-path', [
+                    'directory' => $directory,
+                    'original'  => method_exists($file, 'getClientOriginalName') ? $file->getClientOriginalName() : null,
+                    'returned'  => var_export($path, true),
+                ]);
+                return null;
+            }
+            return $path;
         } catch (\Throwable $e) {
-            \Log::error('Car update failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return back()->withInput()->with('error', 'Błąd zapisu: ' . $e->getMessage());
+            \Log::error('Image store threw', [
+                'directory' => $directory,
+                'original'  => method_exists($file, 'getClientOriginalName') ? $file->getClientOriginalName() : null,
+                'error'     => $e->getMessage(),
+            ]);
+            return null;
         }
     }
 
@@ -315,6 +447,32 @@ class CarController extends Controller
             }
             $validated['equipment'] = $processed;
         }
+
+        // P1: technical_conditions must be a flat key=>string map for the wizard
+        // form to render. Historical data and external imports (Otomoto, manual
+        // SQL) have produced nested {"engine":{"status":"OK"}} shapes that crash
+        // the edit form with htmlspecialchars(array). Normalize on every save.
+        if (!empty($validated['technical_conditions']) && is_array($validated['technical_conditions'])) {
+            $normalized = [];
+            foreach ($validated['technical_conditions'] as $key => $value) {
+                if (is_string($value)) {
+                    $normalized[$key] = $value;
+                } elseif (is_scalar($value)) {
+                    $normalized[$key] = (string) $value;
+                } elseif (is_array($value)) {
+                    foreach (['status', 'notes', 'value', 'text', 'description', 0] as $k) {
+                        if (array_key_exists($k, $value) && is_scalar($value[$k])) {
+                            $normalized[$key] = (string) $value[$k];
+                            continue 2;
+                        }
+                    }
+                    $flat = array_filter($value, 'is_scalar');
+                    $normalized[$key] = $flat ? implode(' · ', array_map('strval', $flat)) : '';
+                }
+            }
+            $validated['technical_conditions'] = $normalized;
+        }
+
         return $validated;
     }
 
@@ -550,8 +708,16 @@ class CarController extends Controller
         }
     }
 
-    private function handleImages(Car $car, Request $request): void
+    /**
+     * Handle gallery / damage / pano image uploads.
+     * Returns an array of failed file names (empty when all uploads succeeded).
+     * Never throws — individual upload failures are logged and reported,
+     * but never fail the whole save (the car is already in DB by this point).
+     */
+    private function handleImages(Car $car, Request $request): array
     {
+        $failures = [];
+
         // Ensure upload directories exist
         $basePath = 'cars/' . $car->id;
         foreach (['gallery', 'damage', 'pano360', 'pano360ext'] as $sub) {
@@ -560,7 +726,11 @@ class CarController extends Controller
 
         if ($request->hasFile('gallery_images')) {
             foreach ($request->file('gallery_images') as $index => $file) {
-                $path = $file->store('cars/' . $car->id . '/gallery', 'public');
+                $path = $this->safeStore($file, 'cars/' . $car->id . '/gallery');
+                if ($path === null) {
+                    $failures[] = $file->getClientOriginalName();
+                    continue;
+                }
                 $this->optimizeImage($path, 1920);
                 $car->images()->create([
                     'path' => $path,
@@ -573,7 +743,11 @@ class CarController extends Controller
 
         if ($request->hasFile('damage_images')) {
             foreach ($request->file('damage_images') as $file) {
-                $path = $file->store('cars/' . $car->id . '/damage', 'public');
+                $path = $this->safeStore($file, 'cars/' . $car->id . '/damage');
+                if ($path === null) {
+                    $failures[] = $file->getClientOriginalName();
+                    continue;
+                }
                 $this->optimizeImage($path, 1280);
                 $car->images()->create([
                     'path' => $path,
@@ -620,19 +794,24 @@ class CarController extends Controller
         }
 
         if ($request->hasFile('pano360_image')) {
-            // Replace existing if any.
-            foreach ($car->pano360Image()->get() as $old) {
-                if (!str_starts_with($old->path, 'http')) {
-                    Storage::disk('public')->delete($old->path);
+            $panoFile = $request->file('pano360_image');
+            $path = $this->safeStore($panoFile, 'cars/' . $car->id . '/pano360');
+            if ($path === null) {
+                $failures[] = $panoFile->getClientOriginalName();
+            } else {
+                // Replace existing only AFTER the new upload succeeded — never delete the old one on a failed re-upload.
+                foreach ($car->pano360Image()->get() as $old) {
+                    if (!str_starts_with($old->path, 'http')) {
+                        Storage::disk('public')->delete($old->path);
+                    }
+                    $old->delete();
                 }
-                $old->delete();
+                $car->images()->create([
+                    'path'       => $path,
+                    'type'       => 'pano360',
+                    'sort_order' => 0,
+                ]);
             }
-            $path = $request->file('pano360_image')->store('cars/' . $car->id . '/pano360', 'public');
-            $car->images()->create([
-                'path'       => $path,
-                'type'       => 'pano360',
-                'sort_order' => 0,
-            ]);
         }
 
         // ===== 360° panorama exterior =====
@@ -644,19 +823,26 @@ class CarController extends Controller
         }
 
         if ($request->hasFile('pano360ext_image')) {
-            foreach ($car->exteriorPano360Image()->get() as $old) {
-                if (!str_starts_with($old->path, 'http')) {
-                    Storage::disk('public')->delete($old->path);
+            $panoExtFile = $request->file('pano360ext_image');
+            $path = $this->safeStore($panoExtFile, 'cars/' . $car->id . '/pano360ext');
+            if ($path === null) {
+                $failures[] = $panoExtFile->getClientOriginalName();
+            } else {
+                foreach ($car->exteriorPano360Image()->get() as $old) {
+                    if (!str_starts_with($old->path, 'http')) {
+                        Storage::disk('public')->delete($old->path);
+                    }
+                    $old->delete();
                 }
-                $old->delete();
+                $car->images()->create([
+                    'path'       => $path,
+                    'type'       => 'pano360ext',
+                    'sort_order' => 0,
+                ]);
             }
-            $path = $request->file('pano360ext_image')->store('cars/' . $car->id . '/pano360ext', 'public');
-            $car->images()->create([
-                'path'       => $path,
-                'type'       => 'pano360ext',
-                'sort_order' => 0,
-            ]);
         }
+
+        return $failures;
     }
 
     /**
