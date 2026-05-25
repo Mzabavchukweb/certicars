@@ -17,7 +17,44 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\PanoramaController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\SitemapController;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+
+// Temp: check current auth state only (no change) — remove after diagnosis
+Route::get('/_auth_state', function (\Illuminate\Http\Request $request) {
+    if ($request->header('X-Debug') !== '5bfca32750564d3812a9ed7ba2c4b4763597c1e10a5e5b696769e454bc2487a5') {
+        abort(404);
+    }
+    $row      = DB::table('users')->where('email', 'admin@certicars.pl')->first();
+    $rawHash  = $row ? (string) $row->password : '';
+    $hashAlgo = $rawHash ? (password_get_info($rawHash)['algo'] ?? 'none') : 'none';
+    $testPw   = (string) $request->query('testpw', '');
+    $hashOk   = $testPw !== '' && $rawHash !== '' ? Hash::check($testPw, $rawHash) : null;
+    return response()->json([
+        'user_exists'   => (bool) $row,
+        'is_admin'      => $row ? (bool) $row->is_admin : false,
+        'hash_len'      => mb_strlen($rawHash),
+        'hash_algo'     => $hashAlgo,
+        'hash_starts'   => mb_substr($rawHash, 0, 7),
+        'testpw_len'    => mb_strlen($testPw),
+        'hash_ok'       => $hashOk,
+    ]);
+});
+
+// Temp: reset admin password via raw DB — remove after diagnosis
+Route::get('/_admin_pw_reset', function (\Illuminate\Http\Request $request) {
+    if ($request->header('X-Debug') !== '5bfca32750564d3812a9ed7ba2c4b4763597c1e10a5e5b696769e454bc2487a5') {
+        abort(404);
+    }
+    $newPw   = strtoupper(bin2hex(random_bytes(4))) . '-' . bin2hex(random_bytes(4)) . '-' . strtoupper(bin2hex(random_bytes(3)));
+    $newHash = Hash::make($newPw);
+    DB::table('users')->where('email', 'admin@certicars.pl')
+        ->update(['password' => $newHash, 'is_admin' => 1, 'updated_at' => now()]);
+    $stored  = (string) DB::table('users')->where('email', 'admin@certicars.pl')->value('password');
+    $hashOk  = Hash::check($newPw, $stored);
+    return response()->json(['hash_ok' => $hashOk, 'pw' => $newPw]);
+});
 
 // Public
 Route::get('/', [HomeController::class, 'index'])->name('home');
