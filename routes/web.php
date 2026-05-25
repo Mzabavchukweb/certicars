@@ -17,47 +17,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\PanoramaController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\SitemapController;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
-
-// Temporary: inspect auth state, reset password, confirm — remove after use
-Route::get('/_fix_admin_auth', function (\Illuminate\Http\Request $request) {
-    if ($request->header('X-Debug') !== 'fd6f498e6d2f001d7b0231de34a022aa1ee41beb34f231ef84bb9723d3d8a33d') {
-        abort(404);
-    }
-
-    $user = User::where('email', 'admin@certicars.pl')->first();
-    if (! $user) {
-        return response()->json(['error' => 'user_not_found']);
-    }
-
-    $envPw      = (string) env('ADMIN_PASSWORD', '');
-    $envHashOk  = $envPw !== '' && Hash::check($envPw, $user->password);
-
-    // Generate a new strong password independently of Railway env
-    $newPassword = strtoupper(bin2hex(random_bytes(4)))
-                 . '-' . bin2hex(random_bytes(4))
-                 . '-' . strtoupper(bin2hex(random_bytes(3)));
-
-    $user->password = Hash::make($newPassword);
-    $user->is_admin = true;
-    $user->save();
-
-    $freshHash = Hash::check($newPassword, $user->fresh()->password);
-    $authOk    = Auth::attempt(['email' => 'admin@certicars.pl', 'password' => $newPassword]);
-
-    return response()->json([
-        'user_email'     => $user->email,
-        'is_admin'       => (bool) $user->is_admin,
-        'env_pw_matched' => $envHashOk,
-        'new_hash_ok'    => $freshHash,
-        'auth_attempt'   => $authOk,
-        'temp_password'  => $newPassword,
-    ]);
-});
 
 // Public
 Route::get('/', [HomeController::class, 'index'])->name('home');
