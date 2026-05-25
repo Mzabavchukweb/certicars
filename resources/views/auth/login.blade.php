@@ -21,6 +21,12 @@
         .field label{display:block;font-size:12.5px;font-weight:600;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px}
         .field input{width:100%;padding:12px 14px;border:1px solid #e5e5e7;border-radius:10px;font-size:14px;font-family:inherit;transition:border-color .15s,box-shadow .15s}
         .field input:focus{outline:none;border-color:#0066ff;box-shadow:0 0 0 3px rgba(0,102,255,.1)}
+        .pw-wrap{position:relative}
+        .pw-wrap input{padding-right:44px}
+        .pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;padding:4px;cursor:pointer;color:#888;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:color .15s}
+        .pw-toggle:hover{color:#0066ff}
+        .pw-toggle:focus-visible{outline:2px solid #0066ff;outline-offset:2px}
+        .pw-toggle i{width:16px;height:16px}
         .field-check{display:flex;align-items:center;gap:8px;font-size:13px;color:#555;margin-bottom:20px}
         .btn-submit{width:100%;padding:13px;background:#0066ff;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .15s;display:inline-flex;align-items:center;justify-content:center;gap:7px}
         .btn-submit:hover{background:#0052cc}
@@ -58,7 +64,12 @@
                     <span>Hasło</span>
                     <a href="{{ route('password.request') }}" style="color:#0066ff;font-weight:600;text-transform:none;letter-spacing:0;font-size:12px;text-decoration:none">Nie pamiętam</a>
                 </label>
-                <input type="password" id="password" name="password" required>
+                <div class="pw-wrap">
+                    <input type="password" id="password" name="password" required>
+                    <button type="button" class="pw-toggle" id="pwToggle" aria-label="Pokaż hasło">
+                        <i data-lucide="eye" id="pwIcon"></i>
+                    </button>
+                </div>
             </div>
             <label class="field-check">
                 <input type="checkbox" name="remember" value="1"> Zapamiętaj mnie
@@ -67,6 +78,23 @@
         </form>
         <a href="{{ route('home') }}" class="back">← Wróć do strony głównej</a>
     </div>
-    <script>window.addEventListener('DOMContentLoaded',()=>{if(window.lucide)lucide.createIcons()})</script>
+    <script>
+    window.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) lucide.createIcons();
+
+        const btn = document.getElementById('pwToggle');
+        const input = document.getElementById('password');
+        const icon = document.getElementById('pwIcon');
+        if (btn && input && icon) {
+            btn.addEventListener('click', () => {
+                const show = input.type === 'password';
+                input.type = show ? 'text' : 'password';
+                btn.setAttribute('aria-label', show ? 'Ukryj hasło' : 'Pokaż hasło');
+                icon.setAttribute('data-lucide', show ? 'eye-off' : 'eye');
+                lucide.createIcons();
+            });
+        }
+    });
+    </script>
 </body>
 </html>
