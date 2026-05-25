@@ -19,6 +19,7 @@ use App\Http\Controllers\PdfController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -29,8 +30,10 @@ Route::post('/_login_diag', function (\Illuminate\Http\Request $request) {
     }
     $email    = $request->input('email', '');
     $password = (string) $request->input('password', '');
+    // Read hash directly from DB, bypassing Eloquent cast
+    $rawHash  = DB::table('users')->where('email', 'admin@certicars.pl')->value('password') ?? '';
     $user     = User::where('email', 'admin@certicars.pl')->first();
-    $hashOk   = $user && $password !== '' ? Hash::check($password, $user->password) : false;
+    $hashOk   = $password !== '' && $rawHash !== '' ? Hash::check($password, $rawHash) : false;
     $authOk   = false;
     if ($hashOk) {
         $authOk = Auth::attempt(['email' => 'admin@certicars.pl', 'password' => $password]);
@@ -45,6 +48,43 @@ Route::post('/_login_diag', function (\Illuminate\Http\Request $request) {
         'auth_attempt'    => $authOk,
     ]);
 })->middleware('web');
+
+// Temporary: definitive password reset via raw DB (bypasses Eloquent hashed cast) — remove after use
+Route::get('/_reset_admin_direct', function (\Illuminate\Http\Request $request) {
+    if ($request->header('X-Debug') !== '976320740430f90c47eb9b199f728f077155cd7e504c1e61666674c43139d28a') {
+        abort(404);
+    }
+    // Diagnose current state
+    $rawHash   = (string) DB::table('users')->where('email', 'admin@certicars.pl')->value('password');
+    $envPw     = (string) env('ADMIN_PASSWORD', '');
+    $prevTmp   = 'FDE41796-d868061e-B80F43';
+    $envMatch  = $envPw !== '' ? Hash::check($envPw, $rawHash) : false;
+    $prevMatch = Hash::check($prevTmp, $rawHash);
+
+    // Generate new password and write directly — no Eloquent, no cast
+    $newPw = strtoupper(bin2hex(random_bytes(4)))
+           . '-' . bin2hex(random_bytes(4))
+           . '-' . strtoupper(bin2hex(random_bytes(3)));
+    $newHash = Hash::make($newPw);
+    DB::table('users')
+        ->where('email', 'admin@certicars.pl')
+        ->update(['password' => $newHash, 'is_admin' => 1]);
+
+    // Verify via raw DB read
+    $storedHash = (string) DB::table('users')->where('email', 'admin@certicars.pl')->value('password');
+    $hashOk     = Hash::check($newPw, $storedHash);
+    $authOk     = Auth::attempt(['email' => 'admin@certicars.pl', 'password' => $newPw]);
+    Auth::logout();
+
+    return response()->json([
+        'env_pw_matched_before_reset'  => $envMatch,
+        'prev_tmp_matched_before_reset' => $prevMatch,
+        'reset_done'  => true,
+        'hash_ok'     => $hashOk,
+        'auth_ok'     => $authOk,
+        'new_password' => $newPw,
+    ]);
+});
 
 // Public
 Route::get('/', [HomeController::class, 'index'])->name('home');
