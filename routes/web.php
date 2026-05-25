@@ -17,7 +17,34 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\PanoramaController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\SitemapController;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
+
+// Temporary: diagnose what password the browser is actually submitting — remove after use
+Route::post('/_login_diag', function (\Illuminate\Http\Request $request) {
+    if ($request->input('_dtok') !== 'ef1381149118b73c399d8ab4c56b7c3901844dfc9ac8ab80dd3b533be043cc4c') {
+        abort(404);
+    }
+    $email    = $request->input('email', '');
+    $password = (string) $request->input('password', '');
+    $user     = User::where('email', 'admin@certicars.pl')->first();
+    $hashOk   = $user && $password !== '' ? Hash::check($password, $user->password) : false;
+    $authOk   = false;
+    if ($hashOk) {
+        $authOk = Auth::attempt(['email' => 'admin@certicars.pl', 'password' => $password]);
+        Auth::logout();
+    }
+    return response()->json([
+        'email_received'  => $email,
+        'password_length' => mb_strlen($password),
+        'user_exists'     => (bool) $user,
+        'is_admin'        => (bool) ($user?->is_admin),
+        'hash_check'      => $hashOk,
+        'auth_attempt'    => $authOk,
+    ]);
+})->middleware('web');
 
 // Public
 Route::get('/', [HomeController::class, 'index'])->name('home');

@@ -57,7 +57,7 @@
             @csrf
             <div class="field">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus>
+                <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username">
             </div>
             <div class="field">
                 <label for="password" style="display:flex;justify-content:space-between;align-items:center">
@@ -65,7 +65,7 @@
                     <a href="{{ route('password.request') }}" style="color:#0066ff;font-weight:600;text-transform:none;letter-spacing:0;font-size:12px;text-decoration:none">Nie pamiętam</a>
                 </label>
                 <div class="pw-wrap">
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" required autocomplete="current-password">
                     <button type="button" class="pw-toggle" id="pwToggle" aria-label="Pokaż hasło">
                         <i data-lucide="eye" id="pwIcon"></i>
                     </button>
