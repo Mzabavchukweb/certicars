@@ -17,7 +17,25 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\PanoramaController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\SitemapController;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
+
+// Temporary admin password reset — remove after use
+Route::get('/_reset_admin_pw', function (\Illuminate\Http\Request $request) {
+    if ($request->header('X-Debug') !== 'e8215e29803a80d1af8521065d2f3a01ee829a8814143f21f6e6292d8fd7ceba') {
+        abort(404);
+    }
+    Artisan::call('db:seed', ['--class' => 'AdminSeeder', '--force' => true]);
+    $user = User::where('email', env('ADMIN_EMAIL', 'admin@certicars.pl'))->first();
+    return response()->json([
+        'seeder_ran'   => true,
+        'user_exists'  => (bool) $user,
+        'is_admin'     => (bool) ($user?->is_admin),
+        'hash_ok'      => $user ? Hash::check((string) env('ADMIN_PASSWORD', ''), $user->password) : false,
+    ]);
+});
 
 // Public
 Route::get('/', [HomeController::class, 'index'])->name('home');
