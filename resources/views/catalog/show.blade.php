@@ -466,22 +466,27 @@
     .cs-data-block .cs-data-row .val{font-size:14px;font-weight:700;color:#1a1a1a}
     /* DAMAGE */
     .cs-sections-2col{padding:0 14px;gap:12px}
-    .cs-damage-grid{grid-template-columns:1fr;min-height:auto;border:none;border-radius:0;background:transparent;row-gap:14px}
-    /* Square 1:1 diagram, capped height, object-fit:contain — whole car silhouette visible, no zoom-crop. */
-    .cs-damage-diagram{border-radius:14px;border:1px solid #eeeef0;background:#f7f8fa;min-height:0;width:100%;max-width:340px;margin-left:auto;margin-right:auto;aspect-ratio:1/1;max-height:300px}
+    .cs-damages-tabs{gap:6px;padding-bottom:4px;margin-bottom:14px}
+    .cs-damage-grid{grid-template-columns:1fr;min-height:auto;border:none;border-radius:0;background:transparent;row-gap:16px}
+    /* Compact 1:1 diagram, contain, height capped — whole silhouette visible, no zoom-crop. */
+    .cs-damage-diagram{border-radius:14px;border:1px solid #eeeef0;background:#f7f8fa;min-height:0;width:100%;max-width:300px;margin-left:auto;margin-right:auto;aspect-ratio:1/1;max-height:260px}
     .cs-damage-diagram-inner{min-height:0;inset:0}
     .cs-damage-diagram-inner>img{top:0;left:0;transform:none;width:100%;height:100%;object-fit:contain;object-position:center}
     .cs-damage-marker{width:44px;height:44px}
     .cs-damage-marker-dot{width:22px;height:22px;border-width:2px}
     .cs-damage-marker-dot svg{width:11px;height:11px}
     .cs-damage-detail{padding:0;border-left:none;border-top:none}
-    .cs-damage-item h3{font-size:14px}
+    .cs-damage-item h3{font-size:14px;margin-bottom:8px}
     .cs-damage-item p{font-size:12.5px}
+    .cs-damage-tags{margin-bottom:10px}
     .cs-damage-tags span{font-size:10px;padding:4px 9px}
     .cs-damage-tab{font-size:12px;padding:7px 12px}
     .cs-damage-tab-ico,.cs-damage-tab-ico svg{width:14px;height:14px}
-    .cs-dmg-gallery-slide img{aspect-ratio:4/3}
-    .cs-dmg-gallery-thumb{width:78px;height:54px;border-width:2px}
+    .cs-dmg-gallery{border-radius:14px;background:#fff;border:1px solid #eeeef0;padding:8px}
+    .cs-dmg-gallery-stage{border-radius:10px}
+    .cs-dmg-gallery-slide img{aspect-ratio:4/3;border-radius:10px}
+    .cs-dmg-gallery-thumbs-wrap{margin-top:8px}
+    .cs-dmg-gallery-thumb{width:64px;height:48px;border-width:2px;border-radius:6px}
     .cs-dmg-gallery-arrow{width:36px;height:36px}
     .cs-dmg-gallery-label{font-size:12px;padding:6px 12px;bottom:10px;left:10px}
     .cs-dmg-gallery-meta{bottom:10px;right:10px}
@@ -592,11 +597,41 @@
 .cs-inquiry-submit:hover{background:#0052cc}
 .cs-inquiry-submit:disabled{opacity:.6;cursor:not-allowed}
 .cs-inquiry-legal{font-size:10px;color:#9ca3af;text-align:center;margin-top:12px;line-height:1.4}
+.cs-inquiry-consent{display:flex;align-items:flex-start;gap:10px;background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:10px;padding:11px 13px;margin:6px 0 4px;transition:border-color .15s,background .15s}
+.cs-inquiry-consent:focus-within{border-color:#0066ff;background:#f5f8ff}
+.cs-inquiry-consent.has-error{border-color:#ef4444;background:#fef2f2}
+.cs-inquiry-consent input[type=checkbox]{flex-shrink:0;width:18px;height:18px;margin:1px 0 0;accent-color:#0066ff;cursor:pointer}
+.cs-inquiry-consent label{font-size:12px;line-height:1.45;color:#374151;cursor:pointer;font-weight:500}
+.cs-inquiry-consent label .req{color:#ef4444;margin-left:2px}
 .cs-inquiry-success{text-align:center;padding:20px 0}
 .cs-inquiry-success h4{font-size:20px;font-weight:800;color:#1a1a1a;margin:16px 0 6px}
 .cs-inquiry-success p{font-size:14px;color:#6b7280;margin:0 0 20px}
 .cs-inquiry-success button{padding:10px 28px;background:#f5f5f7;border:none;border-radius:10px;font-size:14px;font-weight:600;color:#374151;cursor:pointer}
 .cs-inquiry-success button:hover{background:#e8e8ea}
+/* Inquiry modal — tighten on mobile so it doesn't fill the whole screen */
+@media(max-width:768px){
+    .cs-inquiry-overlay{padding:18px;align-items:flex-end}
+    .cs-inquiry-panel{max-width:none;padding:22px 20px;border-radius:18px;max-height:88vh;animation:csSlideUp .22s ease}
+    .cs-inquiry-panel h3{font-size:18px}
+    .cs-inquiry-car{font-size:12.5px;margin:0 0 16px;padding-bottom:12px}
+    .cs-inquiry-field{margin-bottom:12px}
+    .cs-inquiry-field label{font-size:11.5px;margin-bottom:4px}
+    .cs-inquiry-field input,.cs-inquiry-field textarea{padding:10px 12px;font-size:14px;border-radius:9px}
+    .cs-inquiry-consent{padding:10px 12px;gap:9px}
+    .cs-inquiry-consent label{font-size:11.5px;line-height:1.4}
+    .cs-inquiry-submit{padding:13px;font-size:14px;border-radius:11px}
+    .cs-inquiry-legal{font-size:9.5px;margin-top:10px}
+    .cs-inquiry-close{top:10px;right:10px;width:34px;height:34px;font-size:22px}
+}
+@media(max-width:500px){
+    .cs-inquiry-overlay{padding:14px}
+    .cs-inquiry-panel{padding:20px 16px}
+}
+/* Hide the floating phone widget on this single-car page only (mobile)
+   so it doesn't double up with the sticky Zadzwoń / Napisz bar below. */
+@media(max-width:1024px){
+    body .float-call{display:none!important}
+}
 
 /* STICKY MOBILE CTA BAR */
 .cs-sticky-cta{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e7eb;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));z-index:999;box-shadow:0 -4px 20px rgba(0,0,0,.08);gap:8px;grid-template-columns:1fr 1fr;transform:translateY(100%);transition:transform .25s ease}
@@ -1696,11 +1731,15 @@
                 <label id="csInquiryMsgLabel">Wiadomość</label>
                 <textarea name="message" rows="3" placeholder="Twoje pytanie..." maxlength="2000"></textarea>
             </div>
+            <div class="cs-inquiry-consent" id="csInquiryConsentBox">
+                <input type="checkbox" id="csInquiryConsent" name="consent" value="1" required>
+                <label for="csInquiryConsent">Wyrażam zgodę na przetwarzanie moich danych osobowych w celu obsługi zapytania.<span class="req">*</span></label>
+            </div>
             <button type="submit" class="cs-inquiry-submit" id="csInquirySubmitBtn">
                 <span id="csInquirySubmitText">Wyślij zapytanie</span>
                 <span id="csInquirySubmitLoader" style="display:none">Wysyłanie...</span>
             </button>
-            <p class="cs-inquiry-legal">Wysyłając formularz, wyrażasz zgodę na przetwarzanie danych osobowych w celu obsługi zapytania.</p>
+            <p class="cs-inquiry-legal">Administratorem danych jest CertiCars. Dane będą wykorzystywane wyłącznie w celu obsługi tego zapytania.</p>
         </form>
         <div id="csInquirySuccess" style="display:none" class="cs-inquiry-success">
             <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#10b981" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
@@ -2220,6 +2259,23 @@ function csSubmitInquiry(e) {
     // clear previous errors
     form.querySelectorAll('.cs-field-error').forEach(function(el){ el.remove(); });
     form.querySelectorAll('input, textarea').forEach(function(el){ el.style.borderColor = ''; });
+    var consentBox = document.getElementById('csInquiryConsentBox');
+    if (consentBox) consentBox.classList.remove('has-error');
+    // Client-side consent guard — abort before any network hit if unchecked.
+    var consent = document.getElementById('csInquiryConsent');
+    if (consent && !consent.checked) {
+        if (consentBox) consentBox.classList.add('has-error');
+        var prev = consentBox && consentBox.querySelector('.cs-field-error');
+        if (prev) prev.remove();
+        var err = document.createElement('span');
+        err.className = 'cs-field-error';
+        err.style.cssText = 'display:block;color:#ef4444;font-size:11.5px;margin-top:6px;font-weight:500';
+        err.textContent = 'Aby wysłać zapytanie, musisz wyrazić zgodę na przetwarzanie danych osobowych.';
+        consentBox.appendChild(err);
+        consentBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        consent.focus();
+        return false;
+    }
     var btn = document.getElementById('csInquirySubmitBtn');
     btn.disabled = true;
     document.getElementById('csInquirySubmitText').style.display = 'none';
@@ -2236,7 +2292,12 @@ function csSubmitInquiry(e) {
             Object.entries(data.errors).forEach(function([field, messages]) {
                 var input = form.querySelector('[name="' + field + '"]');
                 if (input && messages[0]) {
-                    input.style.borderColor = '#ef4444';
+                    if (field === 'consent') {
+                        var box = document.getElementById('csInquiryConsentBox');
+                        if (box) box.classList.add('has-error');
+                    } else {
+                        input.style.borderColor = '#ef4444';
+                    }
                     var err = document.createElement('span');
                     err.className = 'cs-field-error';
                     err.style.cssText = 'display:block;color:#ef4444;font-size:11.5px;margin-top:4px;font-weight:500';
