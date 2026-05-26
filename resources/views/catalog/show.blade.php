@@ -1108,13 +1108,18 @@
                     </div>
                     @foreach($car->damages as $d)
                     @php
-                        // Build image array: damage's own image first, then per-damage gallery photos
+                        // Build image array: damage's own image first, then per-damage gallery photos.
+                        // P1 fix: use R2-aware model accessors (CarDamage::image_url, CarImage::url)
+                        // instead of asset('storage/'.path) — the latter returns
+                        // https://certicars.pl/storage/... which 404s on production where
+                        // FILESYSTEM_DISK=s3 (R2). The accessors handle local vs s3 disk +
+                        // placeholder fallback for missing paths.
                         $dmgPhotos = [];
-                        if ($d->image_path) {
-                            $dmgPhotos[] = asset('storage/'.$d->image_path);
+                        if ($d->image_url) {
+                            $dmgPhotos[] = $d->image_url;
                         }
                         foreach ($d->photos ?? [] as $dp) {
-                            $url = $dp->path ? asset('storage/'.$dp->path) : null;
+                            $url = $dp->path ? $dp->url : null;
                             if ($url && !in_array($url, $dmgPhotos)) $dmgPhotos[] = $url;
                         }
                     @endphp

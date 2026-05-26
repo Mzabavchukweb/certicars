@@ -732,13 +732,24 @@ class CarController extends Controller
                     $attrs['image_path'] = null;
                 }
 
-                // Single image upload (backward compat)
+                // Single image upload (backward compat). safeStore() validates the
+                // ->store() return value so a failed R2 PUT can't leave the DB
+                // pointing at "false" — that would render as a 404 thumbnail
+                // forever.
                 if (isset($uploads[$index]['image']) && $uploads[$index]['image']) {
-                    if ($existing?->image_path && !str_starts_with($existing->image_path, 'http')) {
-                        Storage::disk('public')->delete($existing->image_path);
-                    }
                     Storage::disk('public')->makeDirectory('cars/' . $car->id . '/damages');
-                    $attrs['image_path'] = $uploads[$index]['image']->store('cars/' . $car->id . '/damages', 'public');
+                    $newImgPath = $this->safeStore($uploads[$index]['image'], 'cars/' . $car->id . '/damages');
+                    if ($newImgPath !== null) {
+                        // Upload-first, delete-old-after.
+                        $oldImgPath = $existing?->image_path;
+                        $attrs['image_path'] = $newImgPath;
+                        if ($oldImgPath && !str_starts_with($oldImgPath, 'http') && $oldImgPath !== $newImgPath) {
+                            Storage::disk('public')->delete($oldImgPath);
+                        }
+                    }
+                    // If safeStore returned null: keep $attrs['image_path'] as it
+                    // was set earlier (existing path preserved) and let the
+                    // operator retry. handleImages collects the failure flash.
                 }
 
                 if ($existing) {
@@ -761,13 +772,20 @@ class CarController extends Controller
                     }
                 }
 
-                // Multi-image uploads
+                // Multi-image uploads. safeStore() prevents CarImage rows with
+                // path=false on R2 PUT failure (would render as broken 404
+                // thumbnails on the public page forever).
                 if (isset($uploads[$index]['images']) && is_array($uploads[$index]['images'])) {
                     Storage::disk('public')->makeDirectory('cars/' . $car->id . '/damages');
                     $sortOrder = $dmgRecord->photos()->max('sort_order') ?? 0;
                     foreach ($uploads[$index]['images'] as $imgFile) {
                         if ($imgFile && $imgFile->isValid()) {
-                            $path = $imgFile->store('cars/' . $car->id . '/damages', 'public');
+                            $path = $this->safeStore($imgFile, 'cars/' . $car->id . '/damages');
+                            if ($path === null) {
+                                // Storage failed — DO NOT create CarImage row. Operator
+                                // will see the upload-failed flash via handleImages.
+                                continue;
+                            }
                             \App\Models\CarImage::create([
                                 'car_id'     => $car->id,
                                 'damage_id'  => $dmgRecord->id,
