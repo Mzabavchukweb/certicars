@@ -632,8 +632,10 @@ function wizSerializeForm() {
         if (SKIP_NAMES.has(el.name)) return;
         if (el.type === 'password') return;
         if (el.type === 'file') {
-            // can't restore <input type=file>, but record filenames for the hint
-            (el.files || []).forEach(function(f){
+            // can't restore <input type=file>, but record filenames for the hint.
+            // FileList does NOT implement .forEach — must convert via Array.from.
+            // Pre-fix bug crashed the autosave whenever any file input had files.
+            Array.from(el.files || []).forEach(function(f){
                 filenames.push({ name: f.name, size: f.size, field: el.name });
             });
             return;
@@ -782,7 +784,10 @@ function wizInitAutosave() {
         const lastBtn = window._wizLastSubmitButton || null;
         let fileCount = 0, fileTotal = 0;
         form.querySelectorAll('input[type="file"]').forEach(function(input){
-            (input.files || []).forEach(function(f){ fileCount++; fileTotal += f.size; });
+            // FileList does NOT implement .forEach — convert via Array.from first.
+            // Pre-fix bug threw TypeError here when any file input had files,
+            // breaking the _diag hidden input + crashing autosave persistence.
+            Array.from(input.files || []).forEach(function(f){ fileCount++; fileTotal += f.size; });
         });
         diagInput.value = JSON.stringify({
             opened_at: Math.floor(window.WizardAutosave.opened_at / 1000),

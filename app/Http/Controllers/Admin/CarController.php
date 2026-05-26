@@ -409,17 +409,42 @@ class CarController extends Controller
 
     private function handleEngineVideo(Car $car, Request $request): void
     {
+        // Explicit "remove" flag — keep deleting the old file here. Safe: this
+        // path only runs when the operator explicitly checked Usuń nagranie.
         if ($request->boolean('remove_engine_video') && $car->engine_video_path && !str_starts_with($car->engine_video_path, 'http')) {
             Storage::disk('public')->delete($car->engine_video_path);
             $car->update(['engine_video_path' => null]);
         }
 
         if ($request->hasFile('engine_video_file')) {
-            if ($car->engine_video_path && !str_starts_with($car->engine_video_path, 'http')) {
-                Storage::disk('public')->delete($car->engine_video_path);
+            $videoFile = $request->file('engine_video_file');
+            // Upload-first, delete-old-after. The pre-fix order deleted the
+            // existing video BEFORE storing the new one — a failed R2 upload
+            // then destroyed both the new and the old. safeStore() validates
+            // the Storage::put return value so a silent R2 false-return
+            // doesn't leave the DB pointing at a broken path.
+            $newPath = $this->safeStore($videoFile, 'cars/' . $car->id . '/videos');
+            if ($newPath === null) {
+                // Upload failed — preserve the existing engine_video_path
+                // (don't overwrite, don't delete) and surface a clear warning
+                // via the caller's image-failure flash.
+                \Log::warning('car.save.engine_video_upload_failed', [
+                    'car_id'   => $car->id,
+                    'original' => $videoFile->getClientOriginalName(),
+                    'size'     => $videoFile->getSize(),
+                    'mime'     => $videoFile->getMimeType(),
+                ]);
+                // Re-throw via the standard image-failure channel by adding
+                // to the request so handleImages() can include it.
+                $request->attributes->set('_engine_video_upload_failed', $videoFile->getClientOriginalName());
+                return;
             }
-            $path = $request->file('engine_video_file')->store('cars/' . $car->id . '/videos', 'public');
-            $car->update(['engine_video_path' => $path]);
+            // Upload succeeded — NOW it's safe to delete the previous local file.
+            $oldPath = $car->engine_video_path;
+            $car->update(['engine_video_path' => $newPath]);
+            if ($oldPath && !str_starts_with($oldPath, 'http') && $oldPath !== $newPath) {
+                Storage::disk('public')->delete($oldPath);
+            }
         }
     }
 
@@ -643,6 +668,23 @@ class CarController extends Controller
             'brand_id.exists'   => 'Wybrana marka nie istnieje w systemie.',
             'model.required'    => 'Podaj model pojazdu.',
             'model.max'         => 'Model pojazdu może mieć maksymalnie 255 znaków.',
+            // Engine video — clear Polish error instead of empty-form reset.
+            'engine_video_file.file'       => 'Nagranie pracy silnika musi być prawidłowym plikiem wideo.',
+            'engine_video_file.mimetypes'  => 'Nieobsługiwany format wideo. Dozwolone: MP4, WebM, MOV (QuickTime), AVI, MKV.',
+            'engine_video_file.max'        => 'Nagranie pracy silnika jest za duże. Maksymalny rozmiar to 100 MB.',
+            'engine_video_file.uploaded'   => 'Nagranie pracy silnika jest za duże lub przesyłanie zostało przerwane. Maksymalny rozmiar to 100 MB.',
+            'engine_video_url.url'         => 'Podaj prawidłowy adres URL nagrania pracy silnika.',
+            'engine_video_url.max'         => 'Adres nagrania pracy silnika jest za długi (maks. 500 znaków).',
+            // Image upload size hits — Laravel emits "uploaded" when file size is
+            // accepted by PHP but exceeds the rule's max:* (KB) value.
+            'gallery_images.*.max'          => 'Zdjęcie galerii jest za duże. Maksymalny rozmiar pojedynczego zdjęcia to 20 MB.',
+            'gallery_images.*.uploaded'     => 'Zdjęcie galerii jest za duże lub przesyłanie zostało przerwane. Maksymalny rozmiar to 20 MB.',
+            'gallery_images.*.mimes'        => 'Nieobsługiwany format zdjęcia. Dozwolone: JPG, PNG, WebP, AVIF.',
+            'damage_images.*.max'           => 'Zdjęcie uszkodzenia jest za duże. Maksymalny rozmiar to 20 MB.',
+            'damages.*.image.max'           => 'Zdjęcie uszkodzenia jest za duże. Maksymalny rozmiar to 20 MB.',
+            'damages.*.images.*.max'        => 'Zdjęcie uszkodzenia jest za duże. Maksymalny rozmiar to 20 MB.',
+            'pano360_image.max'             => 'Zdjęcie panoramy 360° wnętrza jest za duże. Maksymalny rozmiar to 25 MB.',
+            'pano360ext_image.max'          => 'Zdjęcie panoramy 360° zewnętrza jest za duże. Maksymalny rozmiar to 25 MB.',
         ]);
     }
 
@@ -795,6 +837,13 @@ class CarController extends Controller
     private function handleImages(Car $car, Request $request): array
     {
         $failures = [];
+
+        // Pick up an engine-video upload failure from handleEngineVideo() so the
+        // operator gets a single combined "these files didn't upload" toast
+        // instead of a silent partial save.
+        if ($videoFailure = $request->attributes->get('_engine_video_upload_failed')) {
+            $failures[] = $videoFailure . ' (nagranie pracy silnika)';
+        }
 
         // Ensure upload directories exist
         $basePath = 'cars/' . $car->id;
