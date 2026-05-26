@@ -32,7 +32,14 @@ return [
     |
     */
 
-    'lifetime' => (int) env('SESSION_LIFETIME', 120),
+    // P1 SESSION FLOOR: production Railway env intermittently reports
+    // SESSION_LIFETIME=60 even after operators set 720 in the dashboard,
+    // causing admin sessions to expire mid-wizard (Max-Age=3600 → 419 / lost
+    // form data after long manual car entry). Hard-floor the lifetime at 720
+    // minutes (12h) regardless of env so cookies always render Max-Age=43200.
+    // Revert by restoring `(int) env('SESSION_LIFETIME', 120)` once Railway
+    // env propagation is stable.
+    'lifetime' => max(720, (int) env('SESSION_LIFETIME', 720)),
 
     'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
 
