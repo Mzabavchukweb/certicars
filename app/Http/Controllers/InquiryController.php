@@ -21,7 +21,11 @@ class InquiryController extends Controller
             'phone'   => 'required|string|max:30',
             'email'   => 'nullable|email|max:200',
             'message' => 'nullable|string|max:2000',
+            'consent' => 'required|accepted',
             'website' => 'max:0', // honeypot
+        ], [
+            'consent.required' => 'Aby wysłać zapytanie, musisz wyrazić zgodę na przetwarzanie danych osobowych.',
+            'consent.accepted' => 'Aby wysłać zapytanie, musisz wyrazić zgodę na przetwarzanie danych osobowych.',
         ]);
 
         $car = Car::with('brand')->find($validated['car_id']);

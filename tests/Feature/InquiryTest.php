@@ -29,6 +29,7 @@ class InquiryTest extends TestCase
             'type'    => 'general',
             'name'    => 'Jan Kowalski',
             'phone'   => '+48 600 100 200',
+            'consent' => '1',
         ])->assertOk()->assertJson(['success' => true]);
 
         $this->assertDatabaseHas('inquiries', ['phone' => '+48 600 100 200']);
@@ -46,6 +47,7 @@ class InquiryTest extends TestCase
             'name'    => 'Jan Kowalski',
             'phone'   => '+48 600 100 200',
             'email'   => 'jan@example.pl',
+            'consent' => '1',
         ])->assertOk();
 
         Mail::assertSent(\App\Mail\InquiryConfirmation::class, fn ($m) => $m->hasTo('jan@example.pl'));
@@ -61,6 +63,7 @@ class InquiryTest extends TestCase
             'type'    => 'general',
             'name'    => 'Jan Kowalski',
             'phone'   => '+48 600 100 200',
+            'consent' => '1',
         ])->assertOk();
 
         Mail::assertNotSent(\App\Mail\InquiryConfirmation::class);
@@ -103,6 +106,7 @@ class InquiryTest extends TestCase
             'type'         => 'general',
             'name'         => 'Jan Kowalski',
             'phone'        => '+48 600 100 200',
+            'consent'      => '1',
             'utm_source'   => 'facebook',
             'utm_medium'   => 'cpc',
             'utm_campaign' => 'summer_sale',
@@ -125,6 +129,7 @@ class InquiryTest extends TestCase
             'type'        => 'general',
             'name'        => 'Anna Nowak',
             'phone'       => '+48 700 200 300',
+            'consent'     => '1',
             'form_source' => 'main_car_cta',
             'source_page' => 'https://certicars.pl/samochody/audi-a4',
             'referrer'    => 'https://www.google.com/',
@@ -142,10 +147,11 @@ class InquiryTest extends TestCase
         $car = $this->carWithBrand();
 
         $this->post('/zapytanie', [
-            'car_id' => $car->id,
-            'type'   => 'general',
-            'name'   => 'Jan Kowalski',
-            'phone'  => '+48 600 100 200',
+            'car_id'  => $car->id,
+            'type'    => 'general',
+            'name'    => 'Jan Kowalski',
+            'phone'   => '+48 600 100 200',
+            'consent' => '1',
         ])->assertOk();
 
         $inquiry = Inquiry::latest()->first();
@@ -159,11 +165,12 @@ class InquiryTest extends TestCase
         $car = $this->carWithBrand();
 
         $this->post('/zapytanie', [
-            'car_id' => $car->id,
-            'type'   => 'general',
-            'name'   => 'Jan Kowalski',
-            'phone'  => '+48 600 100 200',
-            'email'  => 'jan@example.pl',
+            'car_id'  => $car->id,
+            'type'    => 'general',
+            'name'    => 'Jan Kowalski',
+            'phone'   => '+48 600 100 200',
+            'email'   => 'jan@example.pl',
+            'consent' => '1',
         ])->assertOk();
 
         $inquiry = Inquiry::latest()->first();
@@ -183,11 +190,12 @@ class InquiryTest extends TestCase
         $car = $this->carWithBrand();
 
         $this->post('/zapytanie', [
-            'car_id' => $car->id,
-            'type'   => 'general',
-            'name'   => 'Jan Kowalski',
-            'phone'  => '+48 600 100 200',
-            'email'  => 'jan@example.pl',
+            'car_id'  => $car->id,
+            'type'    => 'general',
+            'name'    => 'Jan Kowalski',
+            'phone'   => '+48 600 100 200',
+            'email'   => 'jan@example.pl',
+            'consent' => '1',
         ])->assertOk()->assertJson(['success' => true]);
 
         $this->assertDatabaseHas('inquiries', ['phone' => '+48 600 100 200']);
@@ -200,14 +208,63 @@ class InquiryTest extends TestCase
         $car = $this->carWithBrand();
 
         $this->post('/zapytanie', [
-            'car_id' => $car->id,
-            'type'   => 'general',
-            'name'   => 'Jan Kowalski',
-            'phone'  => '+48 600 100 200',
+            'car_id'  => $car->id,
+            'type'    => 'general',
+            'name'    => 'Jan Kowalski',
+            'phone'   => '+48 600 100 200',
+            'consent' => '1',
         ])->assertOk()->assertJson(['success' => true]);
 
         $inquiry = Inquiry::latest()->first();
         $this->assertNotNull($inquiry->admin_email_failed_at);
         $this->assertStringContainsString('SMTP unavailable', $inquiry->admin_email_error);
+    }
+
+    public function test_inquiry_rejected_when_consent_missing(): void
+    {
+        Mail::fake();
+        $car = $this->carWithBrand();
+
+        $this->post('/zapytanie', [
+            'car_id' => $car->id,
+            'type'   => 'general',
+            'name'   => 'Jan Kowalski',
+            'phone'  => '+48 600 100 200',
+        ])->assertSessionHasErrors('consent');
+
+        $this->assertDatabaseCount('inquiries', 0);
+        Mail::assertNothingSent();
+    }
+
+    public function test_inquiry_rejected_when_consent_unchecked(): void
+    {
+        Mail::fake();
+        $car = $this->carWithBrand();
+
+        $this->post('/zapytanie', [
+            'car_id'  => $car->id,
+            'type'    => 'general',
+            'name'    => 'Jan Kowalski',
+            'phone'   => '+48 600 100 200',
+            'consent' => '0',
+        ])->assertSessionHasErrors('consent');
+
+        $this->assertDatabaseCount('inquiries', 0);
+        Mail::assertNothingSent();
+    }
+
+    public function test_inquiry_modal_contains_required_consent_checkbox(): void
+    {
+        $car = $this->carWithBrand();
+        $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages', 'tireSets.tires');
+
+        $response = $this->get('/samochody/' . $car->slug);
+        $response->assertOk();
+
+        // The required RODO consent checkbox must be present in the inquiry modal.
+        $response->assertSee('name="consent"', false);
+        $response->assertSee('id="csInquiryConsent"', false);
+        $response->assertSee('required', false);
+        $response->assertSee('Wyrażam zgodę na przetwarzanie moich danych osobowych', false);
     }
 }

@@ -303,6 +303,7 @@ class PublicPagesTest extends TestCase
             'type'    => 'general',
             'name'    => 'Jan Testowy',
             'phone'   => '+48 600 000 000',
+            'consent' => '1',
             'website' => '',
         ])
             ->assertOk()
