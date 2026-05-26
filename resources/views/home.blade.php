@@ -179,7 +179,7 @@
 .body-type-card:hover .bt-icon img{transform:translateY(-3px)}
 .body-type-card .bt-icon img.flip{transform:scaleX(-1)}
 .body-type-card:hover .bt-icon img.flip{transform:scaleX(-1) translateY(-3px)}
-.body-type-card .bt-label{font-size:13px;font-weight:700;color:#444;letter-spacing:-.1px}
+.body-type-card .bt-label{font-size:14.5px;font-weight:700;color:#1a1a1a;letter-spacing:-.15px}
 .body-type-card .bt-count{font-size:11.5px;font-weight:600;color:var(--blue);letter-spacing:.1px;margin-top:-4px}
 
 @media(max-width:1024px){
