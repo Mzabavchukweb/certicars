@@ -21,24 +21,53 @@ class PdfController extends Controller
             abort(404);
         }
 
-        $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages', 'tireSets.tires');
+        $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages.photos', 'tireSets.tires');
 
         // Convert image paths to local filesystem paths for dompdf (isRemoteEnabled=false prevents SSRF).
         // For S3/R2, download each image to a temp file; clean up after the PDF is built.
+        // Cache by path so the same physical file isn't fetched twice when it appears in
+        // multiple relations (images / galleryImages / damageImages / damages.photos).
         $tmpFiles = [];
         $isS3 = config('filesystems.disks.public.driver') === 's3';
+        $pathCache = [];
 
-        $car->images->each(function (CarImage $img) use ($isS3, &$tmpFiles) {
-            if (str_starts_with($img->path, 'http') || !Storage::disk('public')->exists($img->path)) {
+        $decorate = function (CarImage $img) use ($isS3, &$tmpFiles, &$pathCache) {
+            if (!$img->path || str_starts_with($img->path, 'http')) {
                 return;
             }
-            if ($isS3) {
-                $tmp = tempnam(sys_get_temp_dir(), 'certicars_pdf_');
-                file_put_contents($tmp, Storage::disk('public')->get($img->path));
-                $img->setAttribute('pdf_src', $tmp);
-                $tmpFiles[] = $tmp;
-            } else {
-                $img->setAttribute('pdf_src', Storage::disk('public')->path($img->path));
+            if (isset($pathCache[$img->path])) {
+                $img->setAttribute('pdf_src', $pathCache[$img->path]);
+                return;
+            }
+            try {
+                if (!Storage::disk('public')->exists($img->path)) {
+                    return;
+                }
+                if ($isS3) {
+                    $tmp = tempnam(sys_get_temp_dir(), 'certicars_pdf_');
+                    file_put_contents($tmp, Storage::disk('public')->get($img->path));
+                    $img->setAttribute('pdf_src', $tmp);
+                    $pathCache[$img->path] = $tmp;
+                    $tmpFiles[] = $tmp;
+                } else {
+                    $local = Storage::disk('public')->path($img->path);
+                    $img->setAttribute('pdf_src', $local);
+                    $pathCache[$img->path] = $local;
+                }
+            } catch (\Throwable) {
+                // Silently skip — the view falls back to $img->url then a placeholder.
+            }
+        };
+
+        // Eloquent relations are separate in-memory collections, so each one must be
+        // decorated individually for pdf_src to surface in every Blade loop.
+        $car->images->each($decorate);
+        $car->galleryImages->each($decorate);
+        $car->damageImages->each($decorate);
+        // Per-damage photos linked through CarDamage::photos() (PR #7).
+        $car->damages->each(function ($d) use ($decorate) {
+            if ($d->photos) {
+                $d->photos->each($decorate);
             }
         });
 

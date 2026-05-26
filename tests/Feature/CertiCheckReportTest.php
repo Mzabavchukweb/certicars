@@ -159,4 +159,35 @@ class CertiCheckReportTest extends TestCase
         $response->assertOk();
         $this->assertSame('application/pdf', $response->headers->get('content-type'));
     }
+
+    public function test_pdf_brochure_view_consumes_pdf_src_not_raw_url(): void
+    {
+        // Source-grep regression guard: DomPDF runs with isRemoteEnabled=false in
+        // PdfController, so R2 URLs silently fail. The view must consume the
+        // pdf_src attribute the controller decorates onto every CarImage.
+        $source = file_get_contents(base_path('resources/views/pdf/brochure.blade.php'));
+
+        $this->assertStringContainsString('pdf_src', $source,
+            'PDF brochure must reference $img->pdf_src — DomPDF cannot fetch raw R2 URLs.');
+
+        // The old broken patterns (raw $img->url without a pdf_src guard) must be gone.
+        $this->assertDoesNotMatchRegularExpression(
+            '/<img src="\{\{\s*\$img->url\s*\}\}"/',
+            $source,
+            'PDF photo loops must use $img->pdf_src, never $img->url directly.'
+        );
+    }
+
+    public function test_pdf_controller_decorates_all_image_collections(): void
+    {
+        // The three Eloquent relations (images, galleryImages, damageImages)
+        // are loaded with separate queries → separate in-memory collections.
+        // Decorating only one of them leaves photo-grid loops on the others
+        // empty in the PDF (the bug reported on PR #16).
+        $source = file_get_contents(base_path('app/Http/Controllers/PdfController.php'));
+
+        $this->assertStringContainsString('$car->images->each',         $source);
+        $this->assertStringContainsString('$car->galleryImages->each',  $source);
+        $this->assertStringContainsString('$car->damageImages->each',   $source);
+    }
 }
