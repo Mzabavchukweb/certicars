@@ -204,19 +204,22 @@
 .cs-status-body .badge{background:var(--yellow-bg);color:var(--yellow-dark);border:1px solid #fde68a;margin-top:4px}
 
 /* DAMAGES */
-.cs-damages-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px;-webkit-overflow-scrolling:touch;max-width:100%}
-.cs-damage-tab{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--yellow-bg);color:var(--yellow-dark);border:1px solid #fde68a;border-radius:50px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s}
-.cs-damage-tab.active{background:var(--yellow);color:#fff;border-color:var(--yellow)}
-.cs-damage-tab i{width:12px;height:12px}
+.cs-damages-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px;-webkit-overflow-scrolling:touch;max-width:100%;scrollbar-width:none}
+.cs-damages-tabs::-webkit-scrollbar{display:none}
+.cs-damage-tab{flex-shrink:0;display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:#fff7ed;color:#b45309;border:1px solid #fed7aa;border-radius:50px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,border-color .15s,transform .12s}
+.cs-damage-tab:hover{background:#ffedd5}
+.cs-damage-tab.active{background:#0a0a0a;color:#fff;border-color:#0a0a0a}
+.cs-damage-tab-ico{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0}
+.cs-damage-tab-ico svg{width:16px;height:16px;display:block}
 .cs-damage-grid{display:grid;grid-template-columns:300px 1fr;gap:0;border:1px solid #eeeef0;border-radius:14px;overflow:hidden;background:#fff}
 .cs-damage-diagram{background:#f5f5f7;position:relative;overflow:hidden;min-height:500px}
 .cs-damage-diagram-inner{position:absolute;inset:0;overflow:hidden}
 .cs-damage-diagram-inner>img{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(1.7);width:100%;height:auto;pointer-events:none}
-.cs-damage-marker{position:absolute;transform:translate(-50%,-50%);cursor:pointer;z-index:5;background:none;border:none;padding:0}
-.cs-damage-marker-dot{width:28px;height:28px;background:var(--yellow);border:2.5px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 2px 8px rgba(245,158,11,.4);transition:all .15s}
-.cs-damage-marker.active .cs-damage-marker-dot{transform:scale(1.2);box-shadow:0 0 0 4px rgba(245,158,11,.25),0 2px 8px rgba(245,158,11,.4)}
-.cs-damage-marker:hover .cs-damage-marker-dot{transform:scale(1.15)}
-.cs-damage-marker-dot i{width:13px;height:13px;stroke-width:2.6}
+.cs-damage-marker{position:absolute;transform:translate(-50%,-50%);width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;padding:0;margin:0;cursor:pointer;z-index:5;-webkit-tap-highlight-color:transparent}
+.cs-damage-marker-dot{width:26px;height:26px;border-radius:50%;background:#f59e0b;border:2px solid #fff;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 2px 8px rgba(245,158,11,.4);transition:transform .12s ease,box-shadow .12s ease}
+.cs-damage-marker-dot svg{width:14px;height:14px;display:block}
+.cs-damage-marker.active .cs-damage-marker-dot{transform:scale(1.15);box-shadow:0 0 0 6px rgba(245,158,11,.18),0 2px 10px rgba(245,158,11,.5)}
+.cs-damage-marker:hover .cs-damage-marker-dot{transform:scale(1.1)}
 .cs-damage-detail{padding:24px;display:flex;flex-direction:column;border-left:1px solid #eeeef0}
 .cs-damage-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;color:var(--text-4);font-size:13.5px;gap:10px}
 .cs-damage-empty i{width:36px;height:36px}
@@ -463,15 +466,26 @@
     .cs-data-block .cs-data-row .val{font-size:14px;font-weight:700;color:#1a1a1a}
     /* DAMAGE */
     .cs-sections-2col{padding:0 14px;gap:12px}
-    .cs-damage-grid{grid-template-columns:1fr;min-height:auto;border:none;border-radius:0}
-    .cs-damage-diagram{border-radius:14px;border:1px solid #eeeef0}
-    .cs-damage-diagram-inner{min-height:300px}
-    .cs-damage-marker-dot{width:24px;height:24px}
-    .cs-damage-marker-dot i{width:11px;height:11px}
-    .cs-damage-detail{padding:16px;border-left:none;border-top:1px solid #eeeef0}
+    .cs-damage-grid{grid-template-columns:1fr;min-height:auto;border:none;border-radius:0;background:transparent;row-gap:14px}
+    .cs-damage-diagram{border-radius:14px;border:1px solid #eeeef0;min-height:220px;background:#f7f8fa}
+    .cs-damage-diagram-inner{min-height:220px}
+    .cs-damage-diagram-inner>img{transform:translate(-50%,-50%) scale(1.4)}
+    .cs-damage-marker{width:44px;height:44px}
+    .cs-damage-marker-dot{width:22px;height:22px;border-width:2px}
+    .cs-damage-marker-dot svg{width:11px;height:11px}
+    .cs-damage-detail{padding:0;border-left:none;border-top:none}
     .cs-damage-item h3{font-size:14px}
     .cs-damage-item p{font-size:12.5px}
     .cs-damage-tags span{font-size:10px;padding:4px 9px}
+    .cs-damage-tab{font-size:12px;padding:7px 12px}
+    .cs-damage-tab-ico,.cs-damage-tab-ico svg{width:14px;height:14px}
+    .cs-dmg-gallery-slide img{aspect-ratio:4/3}
+    .cs-dmg-gallery-thumb{width:78px;height:54px;border-width:2px}
+    .cs-dmg-gallery-arrow{width:36px;height:36px}
+    .cs-dmg-gallery-label{font-size:12px;padding:6px 12px;bottom:10px;left:10px}
+    .cs-dmg-gallery-meta{bottom:10px;right:10px}
+    .cs-dmg-gallery-counter{font-size:11px;padding:5px 10px}
+    .cs-dmg-gallery-fs{width:32px;height:32px}
     .cs-status-grid{grid-template-columns:1fr}
     .cs-svc-grid{grid-template-columns:1fr}
     /* TIRES — 2×2 card grid */
@@ -520,9 +534,11 @@
     .cs-price-value{font-size:26px}
     .cs-sections-2col{padding:0 12px}
     .cs-nav-btn{padding:6px 8px;font-size:11px}
-    .cs-damage-diagram-inner{min-height:260px}
-    .cs-damage-marker-dot{width:22px;height:22px;border-width:2px}
-    .cs-damage-marker-dot i{width:10px;height:10px}
+    .cs-damage-diagram,.cs-damage-diagram-inner{min-height:200px}
+    .cs-damage-diagram-inner>img{transform:translate(-50%,-50%) scale(1.3)}
+    .cs-damage-marker{width:42px;height:42px}
+    .cs-damage-marker-dot{width:20px;height:20px;border-width:2px}
+    .cs-damage-marker-dot svg{width:10px;height:10px}
     .cs-paint-item{padding:14px 16px!important}
     .cs-paint-value{font-size:15px!important}
     .cs-paint-label{font-size:13px!important}
@@ -1232,7 +1248,7 @@
                 @php
                     $tabColor = match($d->type) { 'accident' => '#dc2626', 'repaired' => '#9ca3af', default => '#f59e0b' };
                 @endphp
-                    <button type="button" class="cs-damage-tab{{ $loop->first ? ' active' : '' }}" data-damage-tab="{{ $d->id }}" onclick="csSelDamage({{ $d->id }})">{{ $d->area }} <span style="display:inline-flex;width:18px;height:18px;border-radius:50%;background:{{ $tabColor }};align-items:center;justify-content:center;margin-left:4px;flex-shrink:0"><svg width="9" height="9" viewBox="0 0 24 24" fill="{{ $d->type==='damage' ? '#000' : '#fff' }}" stroke="none"><path d="M12 2L2 22h20L12 2z{{ $d->type==='damage' ? 'M12 8v6M12 17h.01' : '' }}"/></svg></span></button>
+                    <button type="button" class="cs-damage-tab{{ $loop->first ? ' active' : '' }}" data-damage-tab="{{ $d->id }}" onclick="csSelDamage({{ $d->id }})"><span class="cs-damage-tab-ico" style="color:{{ $tabColor }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>{{ $d->area }}</button>
                 @endforeach
             </div>
             <div class="cs-damage-grid">
@@ -1251,10 +1267,9 @@
                         @foreach($car->damages as $d)
                         @php
                             $mColor = match($d->type) { 'accident' => '#dc2626', 'repaired' => '#9ca3af', default => '#f59e0b' };
-                            $mGlow = match($d->type) { 'accident' => 'rgba(220,38,38,.22)', 'repaired' => 'rgba(156,163,175,.22)', default => 'rgba(245,158,11,.22)' };
                         @endphp
                         <button type="button" class="cs-damage-marker{{ $loop->first ? ' active' : '' }}" data-damage-marker="{{ $d->id }}" onclick="csSelDamage({{ $d->id }})" aria-label="{{ $d->area }}" style="left:{{ $d->position_x ?? 50 }}%;top:{{ $d->position_y ?? 50 }}%">
-                            <span class="cs-damage-marker-dot" style="background:{{ $mGlow }}"><span style="width:22px;height:22px;border-radius:50%;background:{{ $mColor }};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.25)"><svg width="10" height="10" viewBox="0 0 24 24" fill="{{ $d->type==='damage' ? '#000' : '#fff' }}" stroke="none"><path d="M12 2L2 22h20L12 2z{{ $d->type==='damage' ? 'M12 8v6M12 17h.01' : '' }}"/></svg></span></span>
+                            <span class="cs-damage-marker-dot" style="background:{{ $mColor }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
                         </button>
                         @endforeach
                     </div>
@@ -1288,7 +1303,7 @@
                             <div class="cs-dmg-gallery-stage">
                                 @foreach($dmgPhotos as $pi => $pUrl)
                                 <div class="cs-dmg-gallery-slide{{ $pi === 0 ? ' active' : '' }}" data-slide="{{ $pi }}">
-                                    <img src="{{ $pUrl }}" alt="{{ $d->area }}" loading="lazy" onclick="csDmgLightbox(this)">
+                                    <img src="{{ $pUrl }}" alt="{{ $d->area }}" {{ $pi === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"' }} decoding="async" onclick="csDmgLightbox(this)" onerror="this.onerror=null;this.src='/images/placeholder-car.svg'">
                                 </div>
                                 @endforeach
                                 {{-- Label --}}
@@ -1312,7 +1327,7 @@
                                 <div class="cs-dmg-gallery-thumbs">
                                     @foreach($dmgPhotos as $pi => $pUrl)
                                     <div class="cs-dmg-gallery-thumb{{ $pi === 0 ? ' active' : '' }}" data-slide="{{ $pi }}" onclick="csDmgGoSlide(this,{{ $pi }})">
-                                        <img src="{{ $pUrl }}" alt="" loading="lazy">
+                                        <img src="{{ $pUrl }}" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/placeholder-car.svg'">
                                     </div>
                                     @endforeach
                                 </div>
@@ -2041,23 +2056,30 @@ window.csPano360ExtInit = (function(){
 
 // Damage section — select damage by ID
 function csSelDamage(id){
-    document.getElementById('csDamageEmpty').style.display='none';
+    const empty=document.getElementById('csDamageEmpty');if(empty)empty.style.display='none';
     document.querySelectorAll('.cs-damage-item').forEach(d=>d.classList.remove('active'));
     const it=document.getElementById('csDamage-'+id);if(it)it.classList.add('active');
     document.querySelectorAll('[data-damage-tab]').forEach(t=>t.classList.toggle('active',t.dataset.damageTab==id));
-    document.querySelectorAll('[data-damage-marker]').forEach(m=>{
-        const dot=m.querySelector('.cs-damage-marker-dot');
-        if(!dot)return;
-        const a=m.dataset.damageMarker==id;
-        dot.style.transform=a?'scale(1.15)':'';
-        dot.style.boxShadow=a?'0 0 0 3px rgba(0,102,255,.4)':'';
-    });
-    // Reset gallery to first slide
+    document.querySelectorAll('[data-damage-marker]').forEach(m=>m.classList.toggle('active',m.dataset.damageMarker==id));
+    // Reset gallery to first slide; force-eager-load it on tap so first paint is instant
     if(it){
         const g=it.querySelector('.cs-dmg-gallery');
-        if(g) _csDmgSetSlide(g,0);
+        if(g){
+            _csDmgSetSlide(g,0);
+            const firstImg=g.querySelector('.cs-dmg-gallery-slide img');
+            if(firstImg&&firstImg.loading==='lazy')firstImg.loading='eager';
+        }
     }
 }
+
+// Preload every damage's primary photo as soon as the page is interactive so
+// switching markers/chips never blocks on a network round-trip.
+document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('.cs-dmg-gallery .cs-dmg-gallery-slide[data-slide="0"] img').forEach(function(img){
+        if(!img.src)return;
+        const pre=new Image();pre.decoding='async';pre.src=img.src;
+    });
+});
 
 // Damage gallery — slide prev/next
 function csDmgSlide(btn,dir){
