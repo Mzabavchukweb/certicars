@@ -467,9 +467,10 @@
     /* DAMAGE */
     .cs-sections-2col{padding:0 14px;gap:12px}
     .cs-damage-grid{grid-template-columns:1fr;min-height:auto;border:none;border-radius:0;background:transparent;row-gap:14px}
-    .cs-damage-diagram{border-radius:14px;border:1px solid #eeeef0;min-height:220px;background:#f7f8fa}
-    .cs-damage-diagram-inner{min-height:220px}
-    .cs-damage-diagram-inner>img{transform:translate(-50%,-50%) scale(1.4)}
+    /* Square 1:1 diagram, capped height, object-fit:contain — whole car silhouette visible, no zoom-crop. */
+    .cs-damage-diagram{border-radius:14px;border:1px solid #eeeef0;background:#f7f8fa;min-height:0;width:100%;max-width:340px;margin-left:auto;margin-right:auto;aspect-ratio:1/1;max-height:300px}
+    .cs-damage-diagram-inner{min-height:0;inset:0}
+    .cs-damage-diagram-inner>img{top:0;left:0;transform:none;width:100%;height:100%;object-fit:contain;object-position:center}
     .cs-damage-marker{width:44px;height:44px}
     .cs-damage-marker-dot{width:22px;height:22px;border-width:2px}
     .cs-damage-marker-dot svg{width:11px;height:11px}
@@ -534,8 +535,7 @@
     .cs-price-value{font-size:26px}
     .cs-sections-2col{padding:0 12px}
     .cs-nav-btn{padding:6px 8px;font-size:11px}
-    .cs-damage-diagram,.cs-damage-diagram-inner{min-height:200px}
-    .cs-damage-diagram-inner>img{transform:translate(-50%,-50%) scale(1.3)}
+    .cs-damage-diagram{max-height:260px;max-width:300px}
     .cs-damage-marker{width:42px;height:42px}
     .cs-damage-marker-dot{width:20px;height:20px;border-width:2px}
     .cs-damage-marker-dot svg{width:10px;height:10px}
