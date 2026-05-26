@@ -1420,7 +1420,8 @@
                 <div class="wz-dmg-photos" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start">
                     @if($dmg->image_path)
                     <div class="wz-dmg-thumb-item" style="position:relative">
-                        <img src="{{ asset('storage/'.$dmg->image_path) }}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border-l)">
+                        {{-- P1 FIX: R2-aware accessor (CarDamage image_url) — see commit log. --}}
+                        <img src="{{ $dmg->image_url ?? asset('images/placeholder-car.svg') }}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border-l)">
                         <label style="position:absolute;top:-4px;right:-4px;width:18px;height:18px;background:#ef4444;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;line-height:1;border:2px solid #fff" title="Usuń">
                             <input type="checkbox" name="damages[{{ $i }}][remove_image]" value="1" style="display:none" onchange="this.closest('.wz-dmg-thumb-item').style.opacity=this.checked?'.3':'1'">✕
                         </label>
@@ -1428,7 +1429,8 @@
                     @endif
                     @foreach($dmgPhotos as $dp)
                     <div class="wz-dmg-thumb-item" style="position:relative">
-                        <img src="{{ asset('storage/'.$dp->path) }}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border-l)">
+                        {{-- P1 FIX: R2-aware accessor (CarImage url) — see commit log. --}}
+                        <img src="{{ $dp->url }}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border-l)">
                         <label style="position:absolute;top:-4px;right:-4px;width:18px;height:18px;background:#ef4444;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;line-height:1;border:2px solid #fff" title="Usuń">
                             <input type="checkbox" name="damages[{{ $i }}][remove_photos][]" value="{{ $dp->id }}" style="display:none" onchange="this.closest('.wz-dmg-thumb-item').style.opacity=this.checked?'.3':'1'">✕
                         </label>
@@ -2196,6 +2198,26 @@
         form.addEventListener('change', check);
         form.addEventListener('submit', () => { dirty = false; window.removeEventListener('beforeunload', beforeUnload); });
 
+        // P1 GUARD: engine video size — must match Laravel validation max:102400 KB (=100 MB).
+        // Without this, PHP upload_max_filesize used to silently drop oversized
+        // uploads → empty form / no car / no error. Now PHP allows up to 120MB
+        // (so Laravel can return a clear Polish message) and this client-side
+        // check blocks the submit before payload even leaves the browser.
+        form.addEventListener('submit', function(e) {
+            const ENGINE_VIDEO_MAX_BYTES = 100 * 1024 * 1024;
+            const vid = form.querySelector('input[type="file"][name="engine_video_file"]');
+            const f = vid && vid.files && vid.files[0];
+            if (f && f.size > ENGINE_VIDEO_MAX_BYTES) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                const mb = Math.round(f.size / 1024 / 1024);
+                alert('Nagranie pracy silnika jest za duże (' + mb + ' MB). Maksymalny rozmiar to 100 MB.\n\nSkompresuj wideo lub wyślij krótszy fragment. Pozostałe dane formularza nie zostały utracone — pozostaną na tej stronie.');
+                // Re-enable Save buttons (wizSafeSubmit disabled them on first click)
+                if (typeof wizResetSubmitState === 'function') wizResetSubmitState();
+                return false;
+            }
+        }, true);
+
         // Guard: warn if total file payload would exceed server limit (250 MB soft cap)
         form.addEventListener('submit', function(e) {
             const MAX_BYTES = 250 * 1024 * 1024;
@@ -2205,10 +2227,12 @@
             });
             if (total > MAX_BYTES) {
                 e.preventDefault();
+                e.stopImmediatePropagation();
                 const mb = Math.round(total / 1024 / 1024);
-                alert(`Całkowity rozmiar wybranych plików (${mb} MB) przekracza limit 250 MB.\n\nPodziel zdjęcia na mniejsze partie — zapisz auto z pierwszą częścią zdjęć, a pozostałe dodaj po zapisaniu (każde zdjęcie wgra się osobno bez limitu).`);
+                alert('Całkowity rozmiar wybranych plików (' + mb + ' MB) przekracza limit 250 MB.\n\nPodziel zdjęcia na mniejsze partie — zapisz auto z pierwszą częścią zdjęć, a pozostałe dodaj po zapisaniu (każde zdjęcie wgra się osobno bez limitu).');
+                if (typeof wizResetSubmitState === 'function') wizResetSubmitState();
             }
-        });
+        }, true);
     })();
 
     // ===================================================================
