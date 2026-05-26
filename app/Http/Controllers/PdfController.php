@@ -65,9 +65,32 @@ class PdfController extends Controller
         $car->galleryImages->each($decorate);
         $car->damageImages->each($decorate);
         // Per-damage photos linked through CarDamage::photos() (PR #7).
-        $car->damages->each(function ($d) use ($decorate) {
+        $car->damages->each(function ($d) use ($decorate, $isS3, &$tmpFiles, &$pathCache) {
             if ($d->photos) {
                 $d->photos->each($decorate);
+            }
+            // CarDamage::image_path is a separate column from CarImage paths; replicate
+            // the same fetch-to-temp pattern so per-damage main photos embed in the PDF.
+            if (!$d->image_path || str_starts_with($d->image_path, 'http')) return;
+            if (isset($pathCache[$d->image_path])) {
+                $d->setAttribute('pdf_image_src', $pathCache[$d->image_path]);
+                return;
+            }
+            try {
+                if (!Storage::disk('public')->exists($d->image_path)) return;
+                if ($isS3) {
+                    $tmp = tempnam(sys_get_temp_dir(), 'certicars_pdf_');
+                    file_put_contents($tmp, Storage::disk('public')->get($d->image_path));
+                    $d->setAttribute('pdf_image_src', $tmp);
+                    $pathCache[$d->image_path] = $tmp;
+                    $tmpFiles[] = $tmp;
+                } else {
+                    $local = Storage::disk('public')->path($d->image_path);
+                    $d->setAttribute('pdf_image_src', $local);
+                    $pathCache[$d->image_path] = $local;
+                }
+            } catch (\Throwable) {
+                // Silently skip — Blade falls back to text-only damage card.
             }
         });
 
@@ -77,6 +100,10 @@ class PdfController extends Controller
             ->setPaper('a4')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isRemoteEnabled', false)
+            // Enable the in-template <script type="text/php"> callback that stamps
+            // "Strona X / Y" page numbers; the brochure view sources only trusted
+            // server-side strings so no user input crosses this boundary.
+            ->setOption('isPhpEnabled', true)
             ->setOption('defaultFont', 'DejaVu Sans')
             ->output();
 
