@@ -16,9 +16,9 @@
 .cat-bt-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:14px 0 16px}
 @media(max-width:700px){.cat-bt-grid{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:460px){.cat-bt-grid{display:flex;overflow-x:auto;gap:8px;padding:14px 0 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.cat-bt-grid::-webkit-scrollbar{display:none}.cat-bt-card{flex-shrink:0;min-width:72px}}
-.cat-bt-card{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px 8px;border-radius:10px;background:transparent;border:1.5px solid transparent;cursor:pointer;transition:all .18s;text-decoration:none}
-.cat-bt-card:hover{background:var(--blue-bg);border-color:rgba(0,102,255,.2);transform:translateY(-1px)}
-.cat-bt-card.active{background:var(--blue-bg);border-color:var(--blue)}
+.cat-bt-card{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 8px 10px;border-radius:10px;background:transparent;border:1.5px solid transparent;cursor:pointer;transition:all .18s;text-decoration:none}
+.cat-bt-card:hover{background:var(--blue-bg);border-color:transparent;transform:translateY(-1px)}
+.cat-bt-card.active{background:var(--blue-bg);border-color:transparent}
 .cat-bt-card.active .cat-bt-label{color:var(--blue);font-weight:700}
 .cat-bt-icon{height:38px;width:100%;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
 .cat-bt-icon img{height:34px;width:auto;object-fit:contain;mix-blend-mode:multiply;transition:transform .18s;display:block}

@@ -99,7 +99,7 @@
 /* SIDEBAR CERTICHECK BADGE (catalog card style) */
 .cs-sidebar-certi{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;padding:7px 14px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.3px;text-decoration:none;transition:all .18s;border:none;cursor:pointer}
 .cs-sidebar-certi:hover{background:rgba(0,0,0,.95);transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.2)}
-.cs-sidebar-certi svg{width:14px;height:14px;stroke:#4ea3ff;stroke-width:2.5;fill:none;flex-shrink:0}
+.cs-sidebar-certi svg{width:16px;height:16px;flex-shrink:0;display:block}
 
 /* GALLERY — edge-to-edge, no frame */
 .cs-gallery{background:#e8e8ea;border-radius:14px;overflow:hidden;border:1px solid #e5e5e7;width:100%;max-width:100%;box-sizing:border-box}
@@ -129,16 +129,15 @@
 .cs-gallery-tab .cs-tab-count{font-size:11px;font-weight:400;color:inherit}
 .cs-gallery-tab.disabled{opacity:.35;pointer-events:none}
 
-.cs-gallery-thumbs{display:flex;gap:6px;padding:10px 10px;overflow-x:auto;background:#fff}
+.cs-gallery-thumbs{display:flex;gap:6px;padding:10px 10px;overflow-x:auto;overflow-y:hidden;background:#fff;-webkit-overflow-scrolling:touch;scrollbar-width:thin;overscroll-behavior-x:contain;touch-action:pan-x}
+.cs-gallery-thumbs::-webkit-scrollbar{height:6px}
+.cs-gallery-thumbs::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px}
 .cs-thumb{width:96px;height:64px;object-fit:cover;cursor:pointer;border-radius:6px;flex-shrink:0;opacity:.55;border:2px solid transparent;transition:all .15s}
 .cs-thumb.active,.cs-thumb:hover{opacity:1;border-color:var(--blue)}
 .cs-thumb[data-hidden]{display:none}
 .cs-thumb-360{width:96px;height:64px;flex-shrink:0;border-radius:6px;border:2px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:linear-gradient(135deg,#e8f1ff,#d0e0ff);cursor:pointer;transition:all .15s;font-size:10px;font-weight:700;color:#0066ff}
 .cs-thumb-360:hover,.cs-thumb-360.active{border-color:#0066ff;background:linear-gradient(135deg,#d0e0ff,#b8d4ff)}
 .cs-thumb-360 svg{width:20px;height:20px;stroke:#0066ff;fill:none;stroke-width:1.8}
-.cs-thumb-more{width:96px;height:64px;flex-shrink:0;border-radius:6px;border:2px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;background:#e8e8ea;cursor:pointer;transition:all .15s;font-weight:800;color:#374151;font-size:16px}
-.cs-thumb-more span{font-size:9px;font-weight:600;color:#6b7280}
-.cs-thumb-more:hover{background:#ddd;border-color:#bbb}
 
 /* SIDEBAR CARD (COS style — white) */
 .cs-sidebar-card{background:#fff;border:1px solid #e5e5e7;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.06)}
@@ -326,10 +325,35 @@
 .cs-data-section{background:#fff;border:none;border-radius:16px;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.04);max-width:100%}
 .cs-wrap > .cs-data-section,.cs-wrap > div:not(.container) > .cs-data-section{max-width:calc(1200px - 48px);margin-left:auto;margin-right:auto}
 .cs-data-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;user-select:none;border-bottom:1px solid #eeeef0}
-.cs-data-header h2{font-size:17px;font-weight:700;color:#1a1a1a;letter-spacing:-.2px;display:flex;align-items:center;gap:0;margin:0;line-height:1.3;font-family:'Inter',sans-serif}
-.cs-data-header h2 i,.cs-data-header h2 svg{display:none}
+.cs-data-header h2{font-size:17px;font-weight:700;color:#1a1a1a;letter-spacing:-.2px;display:flex;align-items:center;gap:8px;margin:0;line-height:1.3;font-family:'Inter',sans-serif}
+.cs-data-header h2 i,.cs-data-header h2 svg{display:inline-flex;align-items:center;justify-content:center}
+.cs-data-header h2 svg{width:18px;height:18px;flex-shrink:0;color:#10b981}
 .cs-data-header .chev{display:none}
+/* Collapsible accordion behavior — applied only at mobile breakpoint */
+@media(max-width:1024px){
+    .cs-collapsible-mobile .cs-data-header{cursor:pointer}
+    .cs-collapsible-mobile .cs-data-header .chev{display:inline-flex;color:#9ca3af;transition:transform .22s ease}
+    .cs-collapsible-mobile .cs-data-header.open .chev{transform:rotate(180deg)}
+    .cs-collapsible-mobile .cs-data-body{display:none}
+    .cs-collapsible-mobile .cs-data-header.open + .cs-data-body{display:block}
+}
 .cs-data-body{display:block;padding:20px 24px 24px}
+.cs-data-grid-2col{display:grid;grid-template-columns:1fr 1fr;column-gap:32px;row-gap:0}
+@media(max-width:768px){.cs-data-grid-2col{grid-template-columns:1fr;column-gap:0}}
+
+/* TECH CONDITION LIST — fixed icon column, no text-icon collision */
+.cs-tech-list{display:flex;flex-direction:column}
+.cs-tech-row{display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f0f0f2;font-size:14px}
+.cs-tech-row:last-child{border-bottom:none}
+.cs-tech-icon{width:32px;height:32px;border-radius:50%;background:#dcfce7;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.cs-tech-icon i,.cs-tech-icon svg{width:18px;height:18px;color:#16a34a;stroke:#16a34a}
+.cs-tech-name{font-weight:600;color:#1a1a1a;line-height:1.4;min-width:0;overflow-wrap:break-word}
+.cs-tech-status{font-weight:600;color:#16a34a;font-size:13px;text-align:right;flex-shrink:0;padding-left:12px}
+@media(max-width:480px){
+    .cs-tech-row{grid-template-columns:28px 1fr auto;gap:10px;font-size:13.5px;padding:10px 0}
+    .cs-tech-icon{width:28px;height:28px}
+    .cs-tech-icon i,.cs-tech-icon svg{width:16px;height:16px}
+}
 .cs-data-2col{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
 .cs-data-block{background:#fff;border:1px solid #eeeef0;border-radius:12px;padding:22px 22px 14px}
 .cs-data-block-title{font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:14px;letter-spacing:-.2px;line-height:1.3;padding-bottom:12px;border-bottom:1px solid #eeeef0}
@@ -404,8 +428,6 @@
     .cs-thumb{width:72px;height:48px}
     .cs-thumb-360{width:72px;height:48px;font-size:9px}
     .cs-thumb-360 svg{width:16px;height:16px}
-    .cs-thumb-more{width:72px;height:48px;font-size:14px}
-    .cs-thumb-more span{font-size:8px}
     .cs-gallery-nav{width:34px;height:34px}
     .cs-gallery-nav svg{width:16px;height:16px}
     .cs-gallery-nav.prev{left:8px}
@@ -561,7 +583,43 @@
 .cs-sticky-cta.visible{transform:translateY(0)}
 .cs-sticky-cta a,.cs-sticky-cta button{display:flex;align-items:center;justify-content:center;gap:6px;padding:13px 16px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;border:none}
 .cs-sticky-cta .cs-sticky-call{background:#0066ff;color:#fff;box-shadow:0 2px 10px rgba(0,102,255,.3)}
-.cs-sticky-cta .cs-sticky-msg{background:#fff;color:#1a1a1a;border:1.5px solid #e5e7eb}
+.cs-sticky-cta .cs-sticky-msg{background:#f3f4f6;color:#1a1a1a;border:none}
+
+/* MOBILE TOP BAR (Wróć / Udostępnij) — above gallery on mobile only */
+.cs-mob-topbar{display:none}
+.cs-mob-topbar-btn{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:8px 12px;border-radius:10px;background:transparent;border:none;color:#0a0a0a;font-size:13px;font-weight:600;font-family:inherit;text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.cs-mob-topbar-btn:active{background:#f3f4f6}
+.cs-mob-topbar-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2;flex-shrink:0}
+@media(max-width:1024px){
+    .cs-mob-topbar{display:flex;align-items:center;justify-content:space-between;padding:4px 0 6px}
+    /* Mobile: hide the wider COS-style nav-bar (Wróć/Udostępnij replaces its left, prev/next not needed on phone) */
+    .cs-nav-bar{display:none!important}
+    /* Mobile: reorder gallery — image first, tabs below */
+    .cs-grid > div:first-child{display:flex;flex-direction:column}
+    .cs-grid > div:first-child > .cs-mob-topbar{order:0}
+    .cs-grid > div:first-child > .cs-gallery{order:1}
+    .cs-grid > div:first-child > .cs-gallery-tabs-wrap{order:2;margin-top:8px}
+    .cs-grid > div:first-child > .cs-calc-inline{order:3}
+    /* Connector-line fix: drop the bottom hairline under price (made buttons below look attached) */
+    .cs-price-section{border-bottom:none}
+}
+/* Share toast (fallback when navigator.share unavailable) */
+#csShareToast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%) translateY(8px);background:#1a1a1a;color:#fff;padding:10px 18px;border-radius:50px;font-size:13.5px;font-weight:600;z-index:99999;opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#csShareToast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* INFO BENEFIT TILES under sidebar card — equal height, aligned rows */
+.cs-info-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;align-items:stretch}
+.cs-info-tile{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;height:100%;min-height:0}
+.cs-info-tile-icon{width:44px;height:44px;border-radius:12px;background:#e8f1ff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;flex-shrink:0}
+.cs-info-tile-title{font-size:14px;font-weight:800;color:#1a1a1a;margin:0 0 6px;letter-spacing:-.1px;flex-shrink:0}
+.cs-info-tile-body{font-size:11.5px;color:#6b7280;line-height:1.5;flex:1 1 auto}
+.cs-info-tile-link{display:inline-flex;align-items:center;gap:4px;margin-top:10px;font-size:11.5px;font-weight:600;color:#0066ff;text-decoration:none;flex-shrink:0}
+.cs-info-tile-link:hover{color:#0052cc}
+.cs-info-tile-link svg{flex-shrink:0}
+@media(max-width:480px){
+    .cs-info-tile{padding:16px 12px}
+    .cs-info-tile-title{font-size:13.5px}
+}
 .cs-sticky-cta svg{width:16px;height:16px;flex-shrink:0}
 @media(max-width:1024px){.cs-sticky-cta{display:grid}}
 
@@ -603,6 +661,10 @@
             </a>
         </div>
         <div class="cs-nav-bar-right">
+            <button type="button" class="cs-nav-btn" onclick="csShare()" aria-label="Udostępnij ofertę">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                Udostępnij
+            </button>
             @if($prevCar)
                 <a href="{{ url('/samochody/'.$prevCar->slug) }}" class="cs-nav-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
@@ -662,6 +724,17 @@
 
     <div class="cs-grid">
         <div>
+        <!-- MOBILE-ONLY TOP BAR: Wróć + Udostępnij (hidden on desktop via CSS) -->
+        <div class="cs-mob-topbar">
+            <a href="{{ route('catalog') }}" class="cs-mob-topbar-btn" aria-label="Powrót do ofert">
+                <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+                Wróć
+            </a>
+            <button type="button" class="cs-mob-topbar-btn" onclick="csShare()" aria-label="Udostępnij ofertę">
+                <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                Udostępnij
+            </button>
+        </div>
         <!-- GALLERY MEDIA TABS (pill-style badges) -->
         <div class="cs-gallery-tabs-wrap" role="tablist">
         <div class="cs-gallery-tabs">
@@ -745,16 +818,9 @@
                     360°
                 </div>
                 @endif
-                @php $maxThumbs = 6; $showMore = $galleryList->count() > $maxThumbs; @endphp
-                @foreach($galleryList->take($showMore ? $maxThumbs - 1 : $maxThumbs) as $i => $img)
+                @foreach($galleryList as $i => $img)
                     <img src="{{ $img->url }}" loading="lazy" alt="{{ $img->alt }}" class="cs-thumb {{ $i===0 && !$car->exteriorPano360Image ? 'active' : '' }}" data-type="gallery" data-idx="{{ $i }}" onclick="csSelImg(this,{{ $i+1 }})" ondblclick="openCarGallery({{ $i }})" tabindex="0" onkeypress="if(event.key==='Enter')csSelImg(this,{{ $i+1 }})">
                 @endforeach
-                @if($showMore)
-                <div class="cs-thumb-more" onclick="openCarGallery({{ $maxThumbs - 1 }})" title="Zobacz wszystkie zdjęcia" tabindex="0" role="button" onkeypress="if(event.key==='Enter')this.click()">
-                    +{{ $galleryList->count() - $maxThumbs + 1 }}
-                    <span>Zobacz więcej</span>
-                </div>
-                @endif
                 @foreach($damageImgList as $j => $dimg)
                     <img src="{{ $dimg->url }}" loading="lazy" alt="{{ $dimg->alt }}" class="cs-thumb" data-type="damage" data-idx="{{ $galleryList->count() + $j }}" onclick="csSelImg(this,{{ $galleryList->count() + $j + 1 }})" tabindex="0" data-hidden>
                 @endforeach
@@ -810,19 +876,6 @@
         <!-- PRICE + SIDEBAR (sticky) -->
         <div class="cs-sidebar">
             <div class="cs-sidebar-card">
-                @if($car->has_certicheck)
-                <div class="cs-trust-banner">
-                    <div class="cs-trust-badge"><svg viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></div>
-                    <div class="cs-trust-text">
-                        <strong>Sprawdzony CertiCheck</strong>
-                        <small>Inspekcja 150-punktowa · Pełna historia</small>
-                    </div>
-                    <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
-                        <a href="{{ route('catalog.certicheck', $car->slug) }}" class="cs-trust-dl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>Raport</a>
-                        <a href="{{ route('car.pdf', $car->slug) }}" class="cs-trust-dl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</a>
-                    </div>
-                </div>
-                @endif
                 <!-- MOBILE-ONLY: Title + Heart + Pills -->
                 <div class="cs-mob-head" style="display:none;padding:20px 22px 0">
                     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
@@ -834,9 +887,9 @@
                     <div class="cs-mob-pills" style="display:none;flex-wrap:wrap;gap:6px;margin-top:12px">
                         @if($car->mileage)<span style="display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:#1f2937"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>{{ number_format((float) $car->mileage,0,'',' ') }} km</span>@endif
                         @if($car->first_registration)<span style="display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:#1f2937"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>{{ $car->first_registration }}</span>@endif
-                        @if($car->fuel_type)<span style="display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:#1f2937"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/></svg>{{ $car->fuel_type }}</span>@endif
+                        @if($car->fuel_type)<span style="display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:#1f2937"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/></svg>{{ \App\Helpers\CarLabels::fuelType($car->fuel_type) }}</span>@endif
                         @if($car->power_hp)<span style="display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:#1f2937"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>{{ $car->power_hp }} KM</span>@endif
-                        @if($car->has_certicheck)<a href="{{ route('catalog.certicheck', $car->slug) }}" style="display:inline-flex;align-items:center;gap:5px;background:#dcfce7;border:1px solid #bbf7d0;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700;color:#166534;text-decoration:none"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>CertiCheck</a>@endif
+                        @if($car->has_certicheck)<a href="{{ route('catalog.certicheck', $car->slug) }}" class="cs-sidebar-certi" title="Sprawdź raport CertiCheck"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" fill="#0066ff"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>CertiCheck</a>@endif
                     </div>
                 </div>
                 <!-- PRICE -->
@@ -864,14 +917,14 @@
                     <div class="cs-sidebar-summary-row">
                         <svg class="cs-row-icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>
                         <span class="lbl">Paliwo</span>
-                        <span class="val">{{ $car->fuel_type }}</span>
+                        <span class="val">{{ \App\Helpers\CarLabels::fuelType($car->fuel_type) }}</span>
                     </div>
                     @endif
                     @if($car->transmission)
                     <div class="cs-sidebar-summary-row">
                         <svg class="cs-row-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22V8"/><path d="m5 12-3 3 3 3"/><path d="m19 12 3 3-3 3"/><path d="M2 15h20"/></svg>
                         <span class="lbl">Skrzynia biegów</span>
-                        <span class="val">{{ $car->transmission }}</span>
+                        <span class="val">{{ \App\Helpers\CarLabels::transmission($car->transmission) }}</span>
                     </div>
                     @endif
                     @if($car->power_hp)
@@ -885,7 +938,7 @@
                     <div class="cs-sidebar-summary-row">
                         <svg class="cs-row-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
                         <span class="lbl">Nadwozie</span>
-                        <span class="val">{{ $car->body_type ?? $car->category }}</span>
+                        <span class="val">{{ \App\Helpers\CarLabels::bodyType($car->body_type ?? $car->category) }}</span>
                     </div>
                     @endif
                 </div>
@@ -910,7 +963,7 @@
                         </button>
                         @if($car->has_certicheck)
                         <a href="{{ route('catalog.certicheck', $car->slug) }}" class="cs-sidebar-certi" title="Sprawdź raport CertiCheck">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" fill="#0066ff"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             CertiCheck
                         </a>
                         @endif
@@ -919,7 +972,7 @@
                 <!-- CTA BUTTONS (mobile) -->
                 <div class="cs-mob-cta" style="display:none;grid-template-columns:1fr 1fr;gap:10px;padding:0 22px 16px">
                     <a href="tel:+48585586090" style="display:flex;align-items:center;justify-content:center;gap:6px;background:#0066ff;color:#fff;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:700;text-decoration:none;border:none">Zadzwoń</a>
-                    <button type="button" onclick="csOpenInquiry('general','trust_banner_cta')" style="display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#1a1a1a;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:700;border:1.5px solid #e5e7eb;cursor:pointer">Napisz wiadomość</button>
+                    <button type="button" onclick="csOpenInquiry('general','trust_banner_cta')" style="display:flex;align-items:center;justify-content:center;gap:6px;background:#f3f4f6;color:#1a1a1a;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:700;border:none;cursor:pointer">Napisz wiadomość</button>
                 </div>
 
 
@@ -939,22 +992,22 @@
 
             </div>{{-- /cs-sidebar-card --}}
 
-            {{-- INFO TILES — separate from main card, stretch to fill --}}
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;flex:1;align-content:stretch">
-                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 16px;text-align:center">
-                    <div style="width:44px;height:44px;border-radius:12px;background:#e8f1ff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px">
+            {{-- BENEFIT TILES — below the sidebar card --}}
+            <div class="cs-info-tiles">
+                <div class="cs-info-tile">
+                    <div class="cs-info-tile-icon">
                         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0066ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                     </div>
-                    <div style="font-size:14px;font-weight:800;color:#1a1a1a;margin-bottom:4px">Dostępny od ręki</div>
-                    <div style="font-size:11.5px;color:#6b7280;line-height:1.5">Auto gotowe do odbioru<br>Możliwa jazda próbna</div>
+                    <div class="cs-info-tile-title">Dostępny od ręki</div>
+                    <div class="cs-info-tile-body">Auto gotowe do odbioru<br>Możliwa jazda próbna</div>
                 </div>
-                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 16px;text-align:center">
-                    <div style="width:44px;height:44px;border-radius:12px;background:#e8f1ff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px">
+                <div class="cs-info-tile">
+                    <div class="cs-info-tile-icon">
                         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0066ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
                     </div>
-                    <div style="font-size:14px;font-weight:800;color:#1a1a1a;margin-bottom:4px">Dostawa pod dom</div>
-                    <div style="font-size:11.5px;color:#6b7280;line-height:1.5">Po wcześniejszych oględzinach<br>Cena do ustalenia</div>
-                    <a href="{{ route('contact') }}" style="font-size:11.5px;font-weight:600;color:#0066ff;text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-top:6px">Dowiedz się więcej <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                    <div class="cs-info-tile-title">Dostawa pod dom</div>
+                    <div class="cs-info-tile-body">Po wcześniejszych oględzinach<br>Cena do ustalenia</div>
+                    <a href="{{ route('contact') }}" class="cs-info-tile-link">Dowiedz się więcej <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
                 </div>
             </div>
         </div>
@@ -962,99 +1015,214 @@
 
     </div><!-- /cs-grid: gallery + sidebar only -->
 
-    <!-- DATA SECTIONS (5-column horizontal layout) -->
-    <div class="cs-data-section" style="max-width:calc(1200px - 48px);margin:16px auto 16px;padding:0 24px">
-        <div class="cs-data-header"><h2>Dane pojazdu</h2></div>
-        <div class="cs-data-columns">
-            <!-- Col 1: Pochodzenie -->
-            <div class="cs-data-col">
-                <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Pochodzenie</div>
-                @if($car->country_registration)<div class="cs-data-row"><span class="lbl">Kraj pochodzenia</span><span class="val">{{ $car->country_registration }}</span></div>@endif
-                @if($car->imported_from)<div class="cs-data-row"><span class="lbl">Importowany z</span><span class="val">{{ $car->imported_from }}</span></div>@endif
-                @if($car->first_registration)<div class="cs-data-row"><span class="lbl">Pierwsza rejestracja</span><span class="val">{{ $car->first_registration }}</span></div>@endif
-            </div>
-            <!-- Col 2: Historia pojazdu -->
-            <div class="cs-data-col">
-                <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="m2 14 6-6 6 6 6-6"/></svg>Historia pojazdu</div>
-                @if($car->previous_owners !== null)<div class="cs-data-row"><span class="lbl">Właściciele</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->previous_owners == 0 ? 'Bezwypadkowy' : $car->previous_owners }}</span></div>@endif
-                @if($car->vehicle_history)<div class="cs-data-row"><span class="lbl">Historia pojazdu</span><span class="val">{{ $car->vehicle_history }}</span></div>@endif
-                @if($car->service_book)<div class="cs-data-row"><span class="lbl">Sprawdzony w bazach</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->service_book }}</span></div>@endif
-                @if($car->vin)<div class="cs-data-row"><span class="lbl">VIN</span><span class="val" style="font-size:10.5px;letter-spacing:.3px">{{ $car->vin }}</span></div>@endif
-            </div>
-            <!-- Col 3: Serwisowanie i inspekcja -->
-            <div class="cs-data-col">
-                <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Serwisowanie</div>
-                @if($car->service_documentation)<div class="cs-data-row"><span class="lbl">Serwisowany w ASO</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->service_documentation }}</span></div>@endif
-                @if($car->aso_serviced)<div class="cs-data-row"><span class="lbl">Serwis ASO</span><span class="val">{{ $car->aso_serviced }}</span></div>@endif
-                @if($car->service_history)<div class="cs-data-row"><span class="lbl">Historia serwisowa</span><span class="val">{{ $car->service_history }}</span></div>@endif
-                @if($car->last_service)<div class="cs-data-row"><span class="lbl">Ostatni przegląd</span><span class="val">{{ $car->last_service }}</span></div>@endif
-                @if($car->next_inspection)<div class="cs-data-row"><span class="lbl">Następny przegląd</span><span class="val">{{ $car->next_inspection }}</span></div>@endif
-            </div>
-            <!-- Col 4: Dokumenty pojazdu -->
-            <div class="cs-data-col">
-                <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>Dokumenty</div>
-                @if($car->coc_documents)<div class="cs-data-row"><span class="lbl">Komplet dokumentów</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->coc_documents }}</span></div>@endif
-                @if($car->service_book_status)<div class="cs-data-row"><span class="lbl">Książka serwisowa</span><span class="val">{{ $car->service_book_status }}</span></div>@endif
-                @if($car->registration_cert)<div class="cs-data-row"><span class="lbl">Dowód rejestracyjny</span><span class="val">{{ $car->registration_cert }}</span></div>@endif
-                @if($car->owners_manual)<div class="cs-data-row"><span class="lbl">Instrukcja obsługi</span><span class="val">{{ $car->owners_manual }}</span></div>@endif
-                @if($car->vehicle_folder)<div class="cs-data-row"><span class="lbl">Teczka pojazdu</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->vehicle_folder }}</span></div>@endif
-                @if($car->hu_au_report)<div class="cs-data-row"><span class="lbl">Polisa OC</span><span class="val"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M20 6 9 17l-5-5"/></svg>{{ $car->hu_au_report }}</span></div>@endif
-            </div>
-            <!-- Col 5: Zużycie paliwa -->
-            <div class="cs-data-col">
-                <div class="cs-data-col-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>Zużycie paliwa</div>
-                @if($car->fuel_consumption)<div class="cs-data-row"><span class="lbl">Miasto</span><span class="val">{{ $car->fuel_consumption }} l/100km</span></div>@endif
-                @if($car->co2_emission)<div class="cs-data-row"><span class="lbl">Emisja CO₂</span><span class="val">{{ $car->co2_emission }} g/km</span></div>@endif
-                @if($car->emission_class)<div class="cs-data-row"><span class="lbl">Norma emisji</span><span class="val">{{ $car->emission_class }}</span></div>@endif
+    @php
+        use App\Helpers\CarLabels;
+        // Helper to render a row only when the value is meaningful (non-empty after translation).
+        $rowOk = fn($v) => $v !== null && $v !== '' && $v !== false;
+        // Pre-compute display values once.
+        $dispFuel = CarLabels::fuelType($car->fuel_type);
+        $dispTransmission = CarLabels::transmission($car->transmission);
+        $dispBody = CarLabels::bodyType($car->body_type ?? $car->category);
+        $dispCountry = CarLabels::country($car->country_registration);
+        $dispImportedFrom = CarLabels::country($car->imported_from);
+        $importStmt = CarLabels::importedFromStatement($car);
+        $exciseStmt = CarLabels::exciseStatement($car);
+    @endphp
+
+    {{-- A. DANE POJAZDU — expanded by default on both desktop and mobile --}}
+    <div class="cs-data-section cs-collapsible-mobile">
+        <div class="cs-data-header open" onclick="csToggleAccordion(this)">
+            <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>Dane pojazdu</h2>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <div class="cs-data-body">
+            <div class="cs-data-grid-2col">
+                @if($car->brand?->name || $car->model)
+                    <div class="cs-data-row"><span class="lbl">Marka i model</span><span class="val">{{ trim(($car->brand?->name ?? '') . ' ' . ($car->model ?? '')) }}</span></div>
+                @endif
+                @if($rowOk($car->first_registration))
+                    <div class="cs-data-row"><span class="lbl">Rok produkcji</span><span class="val">{{ $car->first_registration }}</span></div>
+                @endif
+                @if($rowOk($car->mileage))
+                    <div class="cs-data-row"><span class="lbl">Przebieg</span><span class="val">{{ number_format((float) $car->mileage, 0, '', ' ') }} km</span></div>
+                @endif
+                @if($rowOk($dispFuel))
+                    <div class="cs-data-row"><span class="lbl">Paliwo</span><span class="val">{{ $dispFuel }}</span></div>
+                @endif
+                @if($rowOk($dispTransmission))
+                    <div class="cs-data-row"><span class="lbl">Skrzynia biegów</span><span class="val">{{ $dispTransmission }}</span></div>
+                @endif
+                @if($rowOk($car->power_hp))
+                    <div class="cs-data-row"><span class="lbl">Moc</span><span class="val">{{ $car->power_hp }} KM @if($rowOk($car->power_kw))· {{ $car->power_kw }} kW @endif</span></div>
+                @endif
+                @if($rowOk($car->engine_capacity))
+                    <div class="cs-data-row"><span class="lbl">Pojemność</span><span class="val">{{ number_format((float) $car->engine_capacity, 0, '', ' ') }} cm³</span></div>
+                @endif
+                @if($rowOk($dispBody))
+                    <div class="cs-data-row"><span class="lbl">Nadwozie</span><span class="val">{{ $dispBody }}</span></div>
+                @endif
+                @if($rowOk($car->color))
+                    <div class="cs-data-row"><span class="lbl">Kolor</span><span class="val">{{ $car->color }}</span></div>
+                @endif
+                @if($rowOk($car->doors))
+                    <div class="cs-data-row"><span class="lbl">Liczba drzwi</span><span class="val">{{ $car->doors }}</span></div>
+                @endif
+                @if($rowOk($car->seats))
+                    <div class="cs-data-row"><span class="lbl">Liczba miejsc</span><span class="val">{{ $car->seats }}</span></div>
+                @endif
+                @if($rowOk($car->vin))
+                    <div class="cs-data-row"><span class="lbl">VIN</span><span class="val" style="font-family:'SF Mono',Menlo,monospace;font-size:12px;letter-spacing:.4px">{{ $car->vin }}</span></div>
+                @endif
             </div>
         </div>
     </div>
 
+    {{-- B. HISTORIA POJAZDU — collapsed on mobile by default --}}
+    @if($rowOk($dispCountry) || $rowOk($dispImportedFrom) || $rowOk($car->first_registration) || $car->previous_owners !== null || $rowOk($car->vehicle_history) || $rowOk(CarLabels::bool($car->service_book)) || $rowOk($exciseStmt))
+    <div class="cs-data-section cs-collapsible-mobile">
+        <div class="cs-data-header" onclick="csToggleAccordion(this)">
+            <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="m2 14 6-6 6 6 6-6"/></svg>Historia pojazdu</h2>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <div class="cs-data-body">
+            <div class="cs-data-grid-2col">
+                @if($rowOk($importStmt))
+                    <div class="cs-data-row"><span class="lbl">Pochodzenie</span><span class="val">{{ $importStmt }}</span></div>
+                @elseif($rowOk($dispCountry))
+                    <div class="cs-data-row"><span class="lbl">Kraj rejestracji</span><span class="val">{{ $dispCountry }}</span></div>
+                @endif
+                @if($rowOk($dispImportedFrom) && $car->imported_from !== $car->country_registration)
+                    <div class="cs-data-row"><span class="lbl">Importowany z</span><span class="val">{{ $dispImportedFrom }}</span></div>
+                @endif
+                @if($rowOk($car->first_registration))
+                    <div class="cs-data-row"><span class="lbl">Pierwsza rejestracja</span><span class="val">{{ $car->first_registration }}</span></div>
+                @endif
+                @if($car->previous_owners !== null)
+                    <div class="cs-data-row"><span class="lbl">Właściciele</span><span class="val">{{ $car->previous_owners == 0 ? 'Pierwszy właściciel' : $car->previous_owners }}</span></div>
+                @endif
+                @if($rowOk($car->vehicle_history))
+                    <div class="cs-data-row"><span class="lbl">Historia pojazdu</span><span class="val">{{ $car->vehicle_history }}</span></div>
+                @endif
+                @php $svcBook = CarLabels::bool($car->service_book); @endphp
+                @if($rowOk($svcBook))
+                    <div class="cs-data-row"><span class="lbl">Sprawdzony w bazach</span><span class="val">{{ $svcBook }}</span></div>
+                @endif
+                @if($rowOk($exciseStmt))
+                    <div class="cs-data-row"><span class="lbl">Akcyza</span><span class="val">{{ $exciseStmt }}</span></div>
+                @endif
+            </div>
+        </div>
+    </div>
+    @endif
 
+    {{-- C. SERWISOWANIE — collapsed on mobile by default --}}
+    @php
+        $svcDoc = CarLabels::bool($car->service_documentation);
+        $asoSvc = CarLabels::bool($car->aso_serviced);
+    @endphp
+    @if($rowOk($svcDoc) || $rowOk($asoSvc) || $rowOk($car->service_history) || $rowOk($car->last_service) || $rowOk($car->next_inspection))
+    <div class="cs-data-section cs-collapsible-mobile">
+        <div class="cs-data-header" onclick="csToggleAccordion(this)">
+            <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Serwisowanie</h2>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <div class="cs-data-body">
+            <div class="cs-data-grid-2col">
+                @if($rowOk($asoSvc))
+                    <div class="cs-data-row"><span class="lbl">Serwis ASO</span><span class="val">{{ $asoSvc }}</span></div>
+                @endif
+                @if($rowOk($svcDoc))
+                    <div class="cs-data-row"><span class="lbl">Dokumentacja serwisowa</span><span class="val">{{ $svcDoc }}</span></div>
+                @endif
+                @if($rowOk($car->service_history))
+                    <div class="cs-data-row"><span class="lbl">Historia serwisowa</span><span class="val">{{ $car->service_history }}</span></div>
+                @endif
+                @if($rowOk($car->last_service))
+                    <div class="cs-data-row"><span class="lbl">Ostatni przegląd</span><span class="val">{{ $car->last_service }}@if($rowOk($car->last_service_mileage)) · {{ number_format((float) $car->last_service_mileage, 0, '', ' ') }} km @endif</span></div>
+                @endif
+                @if($rowOk($car->next_inspection))
+                    <div class="cs-data-row"><span class="lbl">Następny przegląd</span><span class="val">{{ $car->next_inspection }}</span></div>
+                @endif
+            </div>
+        </div>
+    </div>
+    @endif
 
-        <!-- POMIARY GRUBOŚCI LAKIERU (przeniesione z CertiCheck) -->
-    @if($car->paint_measurements && count($car->paint_measurements))
+    {{-- D. DOKUMENTY — collapsed on mobile by default --}}
+    @php
+        $cocDocs = CarLabels::bool($car->coc_documents);
+        $svcBookStatus = CarLabels::status($car->service_book_status) ?? $car->service_book_status;
+        $regCert = CarLabels::bool($car->registration_cert);
+        $ownersManual = CarLabels::bool($car->owners_manual);
+        $vehicleFolder = CarLabels::bool($car->vehicle_folder);
+        $huAuReport = CarLabels::bool($car->hu_au_report);
+    @endphp
+    @if($rowOk($cocDocs) || $rowOk($svcBookStatus) || $rowOk($regCert) || $rowOk($ownersManual) || $rowOk($vehicleFolder) || $rowOk($huAuReport))
+    <div class="cs-data-section cs-collapsible-mobile">
+        <div class="cs-data-header" onclick="csToggleAccordion(this)">
+            <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>Dokumenty</h2>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <div class="cs-data-body">
+            <div class="cs-data-grid-2col">
+                @if($rowOk($cocDocs))
+                    <div class="cs-data-row"><span class="lbl">Komplet dokumentów</span><span class="val">{{ $cocDocs }}</span></div>
+                @endif
+                @if($rowOk($svcBookStatus))
+                    <div class="cs-data-row"><span class="lbl">Książka serwisowa</span><span class="val">{{ $svcBookStatus }}</span></div>
+                @endif
+                @if($rowOk($regCert))
+                    <div class="cs-data-row"><span class="lbl">Dowód rejestracyjny</span><span class="val">{{ $regCert }}</span></div>
+                @endif
+                @if($rowOk($ownersManual))
+                    <div class="cs-data-row"><span class="lbl">Instrukcja obsługi</span><span class="val">{{ $ownersManual }}</span></div>
+                @endif
+                @if($rowOk($vehicleFolder))
+                    <div class="cs-data-row"><span class="lbl">Teczka pojazdu</span><span class="val">{{ $vehicleFolder }}</span></div>
+                @endif
+                @if($rowOk($huAuReport))
+                    <div class="cs-data-row"><span class="lbl">Raport HU/AU</span><span class="val">{{ $huAuReport }}</span></div>
+                @endif
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- Zużycie paliwa — collapsed on mobile by default --}}
+    @if($rowOk($car->fuel_consumption) || $rowOk($car->co2_emission) || $rowOk($car->emission_class))
+    <div class="cs-data-section cs-collapsible-mobile">
+        <div class="cs-data-header" onclick="csToggleAccordion(this)">
+            <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>Zużycie paliwa</h2>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <div class="cs-data-body">
+            <div class="cs-data-grid-2col">
+                @if($rowOk($car->fuel_consumption))
+                    <div class="cs-data-row"><span class="lbl">Średnie zużycie</span><span class="val">{{ $car->fuel_consumption }} l/100km</span></div>
+                @endif
+                @if($rowOk($car->co2_emission))
+                    <div class="cs-data-row"><span class="lbl">Emisja CO₂</span><span class="val">{{ $car->co2_emission }} g/km</span></div>
+                @endif
+                @if($rowOk($car->emission_class))
+                    <div class="cs-data-row"><span class="lbl">Norma emisji</span><span class="val">{{ $car->emission_class }}</span></div>
+                @endif
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- E. WYPOSAŻENIE --}}
+    @if($totalCount > 0)
     <div class="cs-data-section">
         <div class="cs-data-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-            <h2><i data-lucide="paintbrush" aria-hidden="true"></i> Pomiary grubości lakieru</h2>
+            <h2><i data-lucide="list-checks" aria-hidden="true"></i> Wyposażenie <span style="font-size:13px;font-weight:500;color:var(--text-3);margin-left:8px">{{ $totalCount }} pozycji</span></h2>
             <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
         </div>
         <div class="cs-data-body open">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:8px">
-                <p style="font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:6px;margin:0">
-                    <i data-lucide="info" aria-hidden="true" style="width:14px;height:14px;flex-shrink:0"></i>
-                    Pomiary wykonane profesjonalnym czujnikiem lakieru. Normy fabryczne: 90–150 µm.
-                </p>
-                <a href="#" style="font-size:12px;font-weight:700;color:var(--blue);display:inline-flex;align-items:center;gap:4px;text-decoration:none;white-space:nowrap">Jak czytać pomiary? <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
-            </div>
-            <div class="cs-paint-grid">
-                @php
-                    $paintPanelNames = [
-                        0 => 'Dach', 1 => 'Maska', 2 => 'Błotnik P-L', 3 => 'Błotnik P-P',
-                        4 => 'Drzwi P-L', 5 => 'Drzwi P-P', 6 => 'Błotnik T-L', 7 => 'Błotnik T-P',
-                        8 => 'Drzwi T-L', 9 => 'Drzwi T-P', 10 => 'Klapa bagażnika',
-                        11 => 'Zderzak przód', 12 => 'Zderzak tył', 13 => 'Próg lewy', 14 => 'Próg prawy',
-                    ];
-                @endphp
-                @foreach($car->paint_measurements as $panel => $value)
-                @php
-                    $val = is_array($value) ? ($value['value'] ?? $value[0] ?? '') : $value;
-                    $numVal = (int) preg_replace('/[^0-9]/', '', $val);
-                    if($numVal <= 0) continue; // skip empty measurements
-                    $panelLabel = is_array($value) && isset($value['area']) ? $value['area'] : (is_numeric($panel) ? ($paintPanelNames[$panel] ?? 'Panel '.($panel + 1)) : $panel);
-                    $paintClass = $numVal > 300 ? 'paint-danger' : ($numVal > 150 ? 'paint-warn' : 'paint-ok');
-                    $dotColor = $numVal > 300 ? '#ef4444' : ($numVal > 150 ? '#f59e0b' : '#10b981');
-                @endphp
-                <div class="cs-paint-item {{ $paintClass }}">
-                    <div class="cs-paint-label">{{ $panelLabel }}</div>
-                    <div class="cs-paint-value"><span class="cs-paint-dot" style="background:{{ $dotColor }}"></span>{{ $val }} <span style="font-size:12px;font-weight:500;color:var(--text-3)">µm</span></div>
-                </div>
+            <div class="cs-equipment-grid">
+                @foreach($allEquipmentItems as $item)
+                <div class="cs-equipment-item"><i data-lucide="check" aria-hidden="true"></i> {{ $item }}</div>
                 @endforeach
-            </div>
-            <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid #eeeef0;font-size:11px;font-weight:600">
-                <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#10b981"></span> Lakier fabryczny (90–150 µm)</span>
-                <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#f59e0b"></span> Ponownie lakierowany (150–300 µm)</span>
-                <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#ef4444"></span> Naprawa / szpachla (powyżej 300 µm)</span>
             </div>
         </div>
     </div>
@@ -1177,74 +1345,79 @@
     </div>
     @endif
 
-    <!-- STAN TECHNICZNY + FILM SILNIKA (COS style — 2-kolumnowy grid) -->
+    {{-- G. STAN TECHNICZNY --}}
+    @if($car->technical_conditions && count($car->technical_conditions))
     <div class="cs-data-section">
         <div class="cs-data-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-            <h2><i data-lucide="shield-check" aria-hidden="true" style="color:#16a34a"></i> Stan techniczny i nagranie silnika</h2>
+            <h2><i data-lucide="shield-check" aria-hidden="true" style="color:#16a34a"></i> Stan techniczny</h2>
             <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
         </div>
         <div class="cs-data-body open">
-            <div class="cs-data-2col">
-                <div class="cs-data-block">
-                    <div class="cs-data-block-title">Ocena stanu technicznego</div>
-                    @php
-                        $techLabels = [
-                            'engine' => 'Silnik', 'transmission' => 'Skrzynia biegów',
-                            'suspension' => 'Zawieszenie', 'electronics' => 'Elektronika',
-                            'body' => 'Nadwozie', 'brakes' => 'Hamulce',
-                            'steering' => 'Układ kierowniczy', 'exhaust' => 'Układ wydechowy',
-                            'ac' => 'Klimatyzacja', 'air_conditioning' => 'Klimatyzacja',
-                            'braking' => 'Układ hamulcowy',
-                            'tires' => 'Opony', 'lights' => 'Oświetlenie',
-                            'interior' => 'Wnętrze', 'underbody' => 'Podwozie',
-                        ];
-                    @endphp
-                    @if($car->technical_conditions && count($car->technical_conditions))
-                        @foreach($car->technical_conditions as $comp => $status)
-                        @php
-                            $st = is_array($status) ? ($status['status'] ?? $status[0] ?? 'OK') : $status;
-                            $compLabel = $techLabels[strtolower($comp)] ?? ucfirst($comp);
-                        @endphp
-                        <div class="cs-data-row">
-                            <span class="lbl" style="font-weight:600;color:#1a1a1a;display:flex;align-items:center;gap:8px">
-                                <i data-lucide="check-circle" aria-hidden="true" style="width:16px;height:16px;color:#16a34a;flex-shrink:0"></i>
-                                {{ $compLabel }}
-                            </span>
-                            <span class="val" style="color:#374151;font-weight:500">{{ $st }}</span>
-                        </div>
-                        @endforeach
-                    @else
-                        <p style="font-size:13px;color:var(--text-3)">Brak danych</p>
-                    @endif
+            @php
+                $techLabels = [
+                    'engine' => 'Silnik', 'transmission' => 'Skrzynia biegów',
+                    'suspension' => 'Zawieszenie', 'electronics' => 'Elektronika',
+                    'body' => 'Nadwozie', 'brakes' => 'Układ hamulcowy', 'braking' => 'Układ hamulcowy',
+                    'steering' => 'Układ kierowniczy', 'exhaust' => 'Układ wydechowy',
+                    'ac' => 'Klimatyzacja', 'air_conditioning' => 'Klimatyzacja', 'aircon' => 'Klimatyzacja',
+                    'airbags' => 'Poduszki powietrzne', 'air_bags' => 'Poduszki powietrzne',
+                    'tires' => 'Opony', 'lights' => 'Oświetlenie',
+                    'interior' => 'Wnętrze', 'underbody' => 'Podwozie',
+                ];
+                $techStatusLabels = [
+                    'ok' => 'Sprawny', 'good' => 'Sprawny', 'sprawny' => 'Sprawny',
+                    'fair' => 'Dostateczny', 'warning' => 'Wymaga uwagi',
+                    'bad' => 'Niesprawny', 'broken' => 'Niesprawny',
+                    'true' => 'Sprawny', '1' => 'Sprawny',
+                ];
+            @endphp
+            <div class="cs-tech-list">
+                @foreach($car->technical_conditions as $comp => $status)
+                @php
+                    $raw = is_array($status) ? ($status['status'] ?? $status[0] ?? 'OK') : $status;
+                    $st = $techStatusLabels[mb_strtolower((string) $raw)] ?? $raw;
+                    $compLabel = $techLabels[strtolower((string) $comp)] ?? ucfirst((string) $comp);
+                @endphp
+                <div class="cs-tech-row">
+                    <span class="cs-tech-icon"><i data-lucide="check-circle" aria-hidden="true"></i></span>
+                    <span class="cs-tech-name">{{ $compLabel }}</span>
+                    <span class="cs-tech-status">{{ $st }}</span>
                 </div>
-                <div class="cs-data-block">
-                    <div class="cs-data-block-title">Nagranie pracy silnika</div>
-                    @if($car->engine_video_url || $car->engine_video_path)
-                        @php
-                            $yt=null;$vim=null;$vidUrl=$car->engine_video_url;
-                            if($vidUrl){
-                                if(preg_match('~(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|v/|shorts/))([\w-]{11})~', $vidUrl, $m)) $yt=$m[1];
-                                elseif(preg_match('~vimeo\.com/(\d+)~', $vidUrl, $m)) $vim=$m[1];
-                            }
-                        @endphp
-                        <div style="position:relative;border-radius:12px;overflow:hidden;background:#000;aspect-ratio:16/9">
-                            @if($yt)
-                                <iframe src="https://www.youtube.com/embed/{{ $yt }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe>
-                            @elseif($vim)
-                                <iframe src="https://player.vimeo.com/video/{{ $vim }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe>
-                            @elseif($car->engine_video_path)
-                                <video src="{{ $car->engine_video_file_url }}" controls preload="metadata" style="width:100%;height:100%;display:block"></video>
-                            @else
-                                <div style="padding:20px;color:#fff">Film: <a href="{{ $vidUrl }}" target="_blank" style="color:#fff;text-decoration:underline">link</a></div>
-                            @endif
-                        </div>
-                    @else
-                        <p style="font-size:13px;color:var(--text-3)">Nagranie niedostępne</p>
-                    @endif
-                </div>
+                @endforeach
             </div>
         </div>
     </div>
+    @endif
+
+    {{-- H. NAGRANIE PRACY SILNIKA --}}
+    @if($car->engine_video_url || $car->engine_video_path)
+    <div class="cs-data-section">
+        <div class="cs-data-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+            <h2><i data-lucide="play-circle" aria-hidden="true" style="color:#0066ff"></i> Nagranie pracy silnika</h2>
+            <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
+        </div>
+        <div class="cs-data-body open">
+            @php
+                $yt=null;$vim=null;$vidUrl=$car->engine_video_url;
+                if($vidUrl){
+                    if(preg_match('~(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|v/|shorts/))([\w-]{11})~', $vidUrl, $m)) $yt=$m[1];
+                    elseif(preg_match('~vimeo\.com/(\d+)~', $vidUrl, $m)) $vim=$m[1];
+                }
+            @endphp
+            <div style="position:relative;border-radius:12px;overflow:hidden;background:#000;aspect-ratio:16/9;max-width:820px;margin:0 auto">
+                @if($yt)
+                    <iframe src="https://www.youtube.com/embed/{{ $yt }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe>
+                @elseif($vim)
+                    <iframe src="https://player.vimeo.com/video/{{ $vim }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe>
+                @elseif($car->engine_video_path)
+                    <video src="{{ $car->engine_video_file_url }}" controls preload="metadata" style="width:100%;height:100%;display:block"></video>
+                @else
+                    <div style="padding:20px;color:#fff">Film: <a href="{{ $vidUrl }}" target="_blank" style="color:#fff;text-decoration:underline">link</a></div>
+                @endif
+            </div>
+        </div>
+    </div>
+    @endif
 
 
         <!-- WIDOK 360° (wnętrze + zewnętrze w jednej sekcji) -->
@@ -1288,6 +1461,54 @@
     @endif
 
 
+
+    {{-- J. POMIARY GRUBOŚCI LAKIERU --}}
+    @if($car->paint_measurements && count($car->paint_measurements))
+    <div class="cs-data-section">
+        <div class="cs-data-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+            <h2><i data-lucide="paintbrush" aria-hidden="true"></i> Pomiary grubości lakieru</h2>
+            <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
+        </div>
+        <div class="cs-data-body open">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+                <p style="font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:6px;margin:0">
+                    <i data-lucide="info" aria-hidden="true" style="width:14px;height:14px;flex-shrink:0"></i>
+                    Pomiary wykonane profesjonalnym czujnikiem lakieru. Normy fabryczne: 90–150 µm.
+                </p>
+                <a href="#" style="font-size:12px;font-weight:700;color:var(--blue);display:inline-flex;align-items:center;gap:4px;text-decoration:none;white-space:nowrap">Jak czytać pomiary? <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+            </div>
+            <div class="cs-paint-grid">
+                @php
+                    $paintPanelNames = [
+                        0 => 'Dach', 1 => 'Maska', 2 => 'Błotnik P-L', 3 => 'Błotnik P-P',
+                        4 => 'Drzwi P-L', 5 => 'Drzwi P-P', 6 => 'Błotnik T-L', 7 => 'Błotnik T-P',
+                        8 => 'Drzwi T-L', 9 => 'Drzwi T-P', 10 => 'Klapa bagażnika',
+                        11 => 'Zderzak przód', 12 => 'Zderzak tył', 13 => 'Próg lewy', 14 => 'Próg prawy',
+                    ];
+                @endphp
+                @foreach($car->paint_measurements as $panel => $value)
+                @php
+                    $val = is_array($value) ? ($value['value'] ?? $value[0] ?? '') : $value;
+                    $numVal = (int) preg_replace('/[^0-9]/', '', $val);
+                    if($numVal <= 0) continue; // skip empty measurements
+                    $panelLabel = is_array($value) && isset($value['area']) ? $value['area'] : (is_numeric($panel) ? ($paintPanelNames[$panel] ?? 'Panel '.($panel + 1)) : $panel);
+                    $paintClass = $numVal > 300 ? 'paint-danger' : ($numVal > 150 ? 'paint-warn' : 'paint-ok');
+                    $dotColor = $numVal > 300 ? '#ef4444' : ($numVal > 150 ? '#f59e0b' : '#10b981');
+                @endphp
+                <div class="cs-paint-item {{ $paintClass }}">
+                    <div class="cs-paint-label">{{ $panelLabel }}</div>
+                    <div class="cs-paint-value"><span class="cs-paint-dot" style="background:{{ $dotColor }}"></span>{{ $val }} <span style="font-size:12px;font-weight:500;color:var(--text-3)">µm</span></div>
+                </div>
+                @endforeach
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid #eeeef0;font-size:11px;font-weight:600">
+                <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#10b981"></span> Lakier fabryczny (90–150 µm)</span>
+                <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#f59e0b"></span> Ponownie lakierowany (150–300 µm)</span>
+                <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#ef4444"></span> Naprawa / szpachla (powyżej 300 µm)</span>
+            </div>
+        </div>
+    </div>
+    @endif
 
         <!-- KOŁA I OPONY (CarOnSale style) -->
     @if($car->tireSets->count())
@@ -1373,25 +1594,6 @@
             @endif
         </div>
         @endforeach
-        </div>
-    </div>
-    @endif
-
-        <!-- WYPOSAŻENIE (CarOnSale style) -->
-    @if($totalCount > 0)
-
-    {{-- PEŁNE WYPOSAŻENIE --}}
-    <div class="cs-data-section">
-        <div class="cs-data-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-            <h2><i data-lucide="list-checks" aria-hidden="true"></i> Wyposażenie <span style="font-size:13px;font-weight:500;color:var(--text-3);margin-left:8px">{{ $totalCount }} pozycji</span></h2>
-            <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
-        </div>
-        <div class="cs-data-body open">
-            <div class="cs-equipment-grid">
-                @foreach($allEquipmentItems as $item)
-                <div class="cs-equipment-item"><i data-lucide="check" aria-hidden="true"></i> {{ $item }}</div>
-                @endforeach
-            </div>
         </div>
     </div>
     @endif
@@ -1593,25 +1795,27 @@ document.addEventListener('DOMContentLoaded',function(){
         csOpenLb(active>=0?active:0);
     });
 });
-// Lightbox swipe
+// Lightbox swipe — horizontal only
 (function(){
-    var lb=document.getElementById('csLightbox'),sx=0;
+    var lb=document.getElementById('csLightbox'),sx=0,sy=0;
     if(!lb)return;
-    lb.addEventListener('touchstart',function(e){sx=e.touches[0].clientX},{passive:true});
+    lb.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
     lb.addEventListener('touchend',function(e){
         var dx=e.changedTouches[0].clientX-sx;
-        if(Math.abs(dx)>50){dx<0?csLbNav(1):csLbNav(-1);}
+        var dy=e.changedTouches[0].clientY-sy;
+        if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)*1.5){dx<0?csLbNav(1):csLbNav(-1);}
     });
 })();
 
-// ==== GALLERY SWIPE ====
+// ==== GALLERY SWIPE — horizontal only, ignore vertical scrolls ====
 (function(){
-    var stage=document.querySelector('.cs-gallery-stage'),sx=0;
+    var stage=document.querySelector('.cs-gallery-stage'),sx=0,sy=0;
     if(!stage)return;
-    stage.addEventListener('touchstart',function(e){sx=e.touches[0].clientX},{passive:true});
+    stage.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
     stage.addEventListener('touchend',function(e){
         var dx=e.changedTouches[0].clientX-sx;
-        if(Math.abs(dx)>50){dx<0?csGalleryNext():csGalleryPrev();}
+        var dy=e.changedTouches[0].clientY-sy;
+        if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)*1.5){dx<0?csGalleryNext():csGalleryPrev();}
     });
 })();
 
@@ -2077,19 +2281,61 @@ function csSidebarFavUpdate(){
         if(icon){ icon.style.fill = isActive ? 'var(--orange)' : 'none'; icon.style.stroke = isActive ? 'var(--orange)' : 'currentColor'; }
         if(label){ label.textContent = isActive ? 'Obserwujesz' : 'Obserwuj'; label.style.visibility = 'visible'; }
     }
-    // Mobile fav button
+    // (see csShare below)
+    // Mobile fav button — same color system as desktop + Oferta cards (orange)
     const mobBtn = document.getElementById('csMobFav');
     if(mobBtn){
         const id = +mobBtn.dataset.id;
         const isActive = favs.includes(id);
         const mobIcon = document.getElementById('csMobFavIcon');
         if(mobIcon){
-            mobIcon.style.fill = isActive ? '#ef4444' : 'none';
-            mobIcon.style.stroke = isActive ? '#ef4444' : '#9ca3af';
+            mobIcon.style.fill = isActive ? 'var(--orange)' : 'none';
+            mobIcon.style.stroke = isActive ? 'var(--orange)' : '#9ca3af';
         }
-        mobBtn.style.borderColor = isActive ? '#fca5a5' : '#e5e7eb';
-        mobBtn.style.background = isActive ? '#fef2f2' : '#fff';
+        mobBtn.style.borderColor = isActive ? 'var(--orange)' : '#e5e7eb';
+        mobBtn.style.background = '#fff';
     }
+}
+
+// Accordion toggle — used by the upper detail sections (Dane, Historia, Serwis, Dokumenty, Zużycie)
+window.csToggleAccordion = function(headerEl) {
+    if (!headerEl) return;
+    headerEl.classList.toggle('open');
+};
+
+// SHARE: native share with clipboard fallback + toast
+window.csShare = async function() {
+    var url = window.location.href;
+    var title = document.title;
+    if (navigator.share) {
+        try { await navigator.share({ title: title, url: url }); return; }
+        catch (e) { if (e && e.name === 'AbortError') return; /* fall through to clipboard */ }
+    }
+    var copied = false;
+    if (navigator.clipboard && window.isSecureContext) {
+        try { await navigator.clipboard.writeText(url); copied = true; } catch (e) {}
+    }
+    if (!copied) {
+        try {
+            var ta = document.createElement('textarea');
+            ta.value = url;
+            ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            copied = true;
+        } catch (e) {}
+    }
+    csShareToast(copied ? 'Link skopiowany' : 'Nie udało się skopiować');
+};
+function csShareToast(msg) {
+    var t = document.getElementById('csShareToast');
+    if (!t) { t = document.createElement('div'); t.id = 'csShareToast'; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add('visible');
+    clearTimeout(window._csShareToastT);
+    window._csShareToastT = setTimeout(function(){ t.classList.remove('visible'); }, 2200);
 }
 
 

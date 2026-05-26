@@ -160,7 +160,7 @@
 .home-listings-cta-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
 
 
-.body-types{background:#fff;border:none;padding:0;margin-top:16px}
+.body-types{background:#fff;border:none;padding:32px 0 48px;margin-top:0}
 .body-types-card{background:#fff;border-radius:22px;box-shadow:0 24px 64px rgba(0,0,0,.16),0 4px 16px rgba(0,0,0,.06);padding:32px 40px 36px;max-width:1200px;margin:0 auto}
 .body-types-inner{max-width:1200px;margin:0 auto;padding:0}
 .body-types-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;gap:20px}
@@ -172,10 +172,10 @@
 .body-type-card{display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px 8px 12px;border-radius:12px;background:transparent;border:none;cursor:pointer;transition:all .2s;text-decoration:none}
 .body-type-card:hover{background:rgba(0,0,0,.03)}
 .body-type-card:active{transform:scale(.96)}
-.body-type-card .bt-icon{width:100%;display:flex;align-items:flex-end;justify-content:center;position:relative;padding-bottom:6px}
+.body-type-card .bt-icon{width:100%;height:96px;display:flex;align-items:flex-end;justify-content:center;position:relative;padding-bottom:8px}
 .body-type-card .bt-icon::before{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%) scaleX(1);width:85%;height:10px;background:rgba(0,0,0,.06);border-radius:50%;filter:blur(4px);transition:all .2s;opacity:.7}
 .body-type-card:hover .bt-icon::before{width:95%;opacity:1;filter:blur(5px)}
-.body-type-card .bt-icon img{width:100%;height:auto;object-fit:contain;mix-blend-mode:multiply;transition:transform .2s;display:block}
+.body-type-card .bt-icon img{max-width:100%;max-height:84px;width:auto;height:auto;object-fit:contain;mix-blend-mode:multiply;transition:transform .2s;display:block}
 .body-type-card:hover .bt-icon img{transform:translateY(-3px)}
 .body-type-card .bt-icon img.flip{transform:scaleX(-1)}
 .body-type-card:hover .bt-icon img.flip{transform:scaleX(-1) translateY(-3px)}
@@ -223,6 +223,8 @@
     .feature-strip-in{grid-template-columns:1fr 1fr;gap:20px}
     .section{padding:56px 0}
     .section-head h2{font-size:24px}
+    .body-type-card .bt-icon{height:76px}
+    .body-type-card .bt-icon img{max-height:66px}
 }
 @media(max-width:600px){
     .lcard{flex-direction:column}
@@ -266,6 +268,8 @@
     .body-types h3{font-size:16px}
     .body-types-head h2{font-size:24px}
     .body-types-head p{font-size:13px}
+    .body-type-card .bt-icon{height:62px}
+    .body-type-card .bt-icon img{max-height:54px}
     /* CertiCheck section — COMPACT on mobile */
     .certicheck-section{padding:48px 0}
     .certicheck-inner{gap:28px}
