@@ -223,6 +223,8 @@
                 $emissionClass = $car->emission_class
                     ? preg_replace('/^(euro)\s*(\d.*)$/i', 'Euro $2', trim((string) $car->emission_class))
                     : null;
+                // Strip any embedded "g/km" so we never render "154 g/km g/km".
+                $co2Raw = $car->co2_emission ? trim(preg_replace('/\s*g\s*\/\s*km\.?/iu', '', (string) $car->co2_emission)) : null;
             @endphp
             <div class="cc-grid-2">
                 <div>
@@ -230,7 +232,7 @@
                     @if($car->fuel_procedure)<div class="cc-row"><span class="lbl">Procedura pomiaru</span><span class="val">{{ $car->fuel_procedure }}</span></div>@endif
                 </div>
                 <div>
-                    @if($car->co2_emission)<div class="cc-row"><span class="lbl">Emisja CO₂</span><span class="val">{{ $car->co2_emission }} g/km</span></div>@endif
+                    @if($co2Raw)<div class="cc-row"><span class="lbl">Emisja CO₂</span><span class="val">{{ $co2Raw }} g/km</span></div>@endif
                     @if($emissionClass)<div class="cc-row"><span class="lbl">Klasa emisji</span><span class="val">{{ $emissionClass }}</span></div>@endif
                 </div>
             </div>
