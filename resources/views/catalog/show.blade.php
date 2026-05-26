@@ -977,19 +977,6 @@
 
 
 
-                @if($car->is_imported || $car->country_registration)
-                <div style="padding:0 22px 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
-                    <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:12px">
-                        <span style="width:32px;height:32px;border-radius:8px;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#1e40af;flex-shrink:0">DE</span>
-                        <div style="font-size:13px;font-weight:700;color:#1a1a1a;line-height:1.3">Sprowadzony z {{ $car->country_registration ?? 'Niemiec' }}</div>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:12px">
-                        <span style="width:32px;height:32px;border-radius:8px;background:#dcfce7;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#166534;flex-shrink:0">OK</span>
-                        <div style="font-size:13px;font-weight:700;color:#1a1a1a;line-height:1.3">Opłacona akcyza</div>
-                    </div>
-                </div>
-                @endif
-
             </div>{{-- /cs-sidebar-card --}}
 
             {{-- BENEFIT TILES — below the sidebar card --}}
@@ -1025,8 +1012,6 @@
         $dispBody = CarLabels::bodyType($car->body_type ?? $car->category);
         $dispCountry = CarLabels::country($car->country_registration);
         $dispImportedFrom = CarLabels::country($car->imported_from);
-        $importStmt = CarLabels::importedFromStatement($car);
-        $exciseStmt = CarLabels::exciseStatement($car);
     @endphp
 
     {{-- A. DANE POJAZDU — expanded by default on both desktop and mobile --}}
@@ -1078,7 +1063,7 @@
     </div>
 
     {{-- B. HISTORIA POJAZDU — collapsed on mobile by default --}}
-    @if($rowOk($dispCountry) || $rowOk($dispImportedFrom) || $rowOk($car->first_registration) || $car->previous_owners !== null || $rowOk($car->vehicle_history) || $rowOk(CarLabels::bool($car->service_book)) || $rowOk($exciseStmt))
+    @if($rowOk($dispCountry) || $rowOk($dispImportedFrom) || $rowOk($car->first_registration) || $car->previous_owners !== null || $rowOk($car->vehicle_history) || $rowOk(CarLabels::bool($car->service_book)))
     <div class="cs-data-section cs-collapsible-mobile">
         <div class="cs-data-header" onclick="csToggleAccordion(this)">
             <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="m2 14 6-6 6 6 6-6"/></svg>Historia pojazdu</h2>
@@ -1086,9 +1071,7 @@
         </div>
         <div class="cs-data-body">
             <div class="cs-data-grid-2col">
-                @if($rowOk($importStmt))
-                    <div class="cs-data-row"><span class="lbl">Pochodzenie</span><span class="val">{{ $importStmt }}</span></div>
-                @elseif($rowOk($dispCountry))
+                @if($rowOk($dispCountry))
                     <div class="cs-data-row"><span class="lbl">Kraj rejestracji</span><span class="val">{{ $dispCountry }}</span></div>
                 @endif
                 @if($rowOk($dispImportedFrom) && $car->imported_from !== $car->country_registration)
@@ -1106,9 +1089,6 @@
                 @php $svcBook = CarLabels::bool($car->service_book); @endphp
                 @if($rowOk($svcBook))
                     <div class="cs-data-row"><span class="lbl">Sprawdzony w bazach</span><span class="val">{{ $svcBook }}</span></div>
-                @endif
-                @if($rowOk($exciseStmt))
-                    <div class="cs-data-row"><span class="lbl">Akcyza</span><span class="val">{{ $exciseStmt }}</span></div>
                 @endif
             </div>
         </div>
