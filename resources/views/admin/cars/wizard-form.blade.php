@@ -17,17 +17,32 @@
         'interior'     => 'Wyposażenie wewnętrzne',
         'extra'        => 'Dodatkowe',
     ];
+    // 8 canonical technical inspection items — same keys consumed by the public
+    // show.blade.php and PDF brochure. Order matches the inspection report layout.
     $techCategories = [
         'engine'       => 'Silnik',
-        'transmission' => 'Skrzynia / napęd',
-        'suspension'   => 'Zawieszenie / hamulce',
-        'air_conditioning' => 'Klimatyzacja',
-        'braking'      => 'Układ hamulcowy',
+        'transmission' => 'Skrzynia biegów',
+        'suspension'   => 'Zawieszenie',
+        'brakes'       => 'Hamulce',
+        'steering'     => 'Układ kierowniczy',
+        'ac'           => 'Klimatyzacja',
         'electronics'  => 'Elektronika',
-        'body'         => 'Nadwozie / lakier',
+        'lights'       => 'Oświetlenie',
+    ];
+    // Legacy key aliases so old saves (air_conditioning, braking, body) preload
+    // into the corresponding new canonical bucket when re-editing.
+    $techAliases = [
+        'air_conditioning' => 'ac',
+        'braking'          => 'brakes',
     ];
     $equipment          = old('equipment', $car?->equipment ?? []);
-    $technicalConditions = old('technical_conditions', $car?->technical_conditions ?? []);
+    $rawTechConditions  = old('technical_conditions', $car?->technical_conditions ?? []);
+    $technicalConditions = is_array($rawTechConditions) ? $rawTechConditions : [];
+    foreach ($techAliases as $oldKey => $newKey) {
+        if (isset($technicalConditions[$oldKey]) && !isset($technicalConditions[$newKey])) {
+            $technicalConditions[$newKey] = $technicalConditions[$oldKey];
+        }
+    }
     $paintMeasurements  = old('paint_measurements', $car?->paint_measurements ?? []);
     $eqToText = fn($items) => is_array($items) ? implode("\n", $items) : ($items ?? '');
     // P1 bugfix: historical data has nested array shapes (e.g. {"engine":{"status":"OK"}})
@@ -1453,16 +1468,60 @@
 {{-- ╔══════════════════════════════════════════════════════════════╗
      ║  STEP 8 — Stan techniczny                                  ║
      ╚══════════════════════════════════════════════════════════════╝ --}}
+<style>
+/* Status pill group — green / orange / red 3-state selector per item. */
+.wz-tech-status{display:inline-flex;gap:6px;flex-wrap:wrap}
+.wz-tech-status label{cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1.5px solid #e5e7eb;border-radius:8px;background:#fff;font-size:12.5px;font-weight:600;color:#6b7280;transition:all .15s;line-height:1.2}
+.wz-tech-status input[type=radio]{display:none}
+.wz-tech-status .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.wz-tech-status .dot.ok{background:#16a34a}
+.wz-tech-status .dot.attention{background:#f59e0b}
+.wz-tech-status .dot.bad{background:#dc2626}
+.wz-tech-status label:hover{border-color:#cbd5e1}
+.wz-tech-status input[type=radio]:checked + .pill.ok       {background:#dcfce7;border-color:#16a34a;color:#15803d}
+.wz-tech-status input[type=radio]:checked + .pill.attention{background:#fef3c7;border-color:#f59e0b;color:#b45309}
+.wz-tech-status input[type=radio]:checked + .pill.bad      {background:#fee2e2;border-color:#dc2626;color:#b91c1c}
+.wz-tech-row{padding:14px 16px;border:1px solid #eeeef0;border-radius:10px;background:#fff;margin-bottom:10px}
+.wz-tech-row-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.wz-tech-row-label{font-size:14px;font-weight:700;color:#1a1a1a}
+.wz-tech-row input.wz-tech-note{margin-top:10px;width:100%;padding:8px 10px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:12.5px;color:#1a1a1a;background:#fff}
+.wz-tech-row input.wz-tech-note:focus{outline:none;border-color:#0066ff;box-shadow:0 0 0 3px rgba(0,102,255,.1)}
+</style>
 <div class="wz-step" data-step="8">
     <div class="wz-section">
         <div class="wz-section-header">
             <div class="wz-section-badge"><i data-lucide="wrench" style="width:16px;height:16px"></i></div>
-            <div><div class="wz-section-title">Stan techniczny</div><div class="wz-section-subtitle">Opisz stan poszczególnych układów pojazdu</div></div>
+            <div><div class="wz-section-title">Stan techniczny</div><div class="wz-section-subtitle">Wybierz status każdego z elementów. Opcjonalna notatka pojawi się przy żółtym lub czerwonym statusie.</div></div>
         </div>
+        @php
+            // Pre-resolve every row through the same helper the public view uses
+            // so legacy free-text saves (e.g. "Sprawny") preload as the correct status.
+            $resolved = [];
+            foreach ($techCategories as $tcKey => $tcLabel) {
+                $resolved[$tcKey] = \App\Helpers\CarLabels::techStatus($technicalConditions[$tcKey] ?? null);
+            }
+        @endphp
         @foreach($techCategories as $key => $label)
-        <div class="wz-field" style="margin-bottom:16px">
-            <label>{{ $label }}</label>
-            <textarea name="technical_conditions[{{ $key }}]" rows="3" style="min-height:60px" placeholder="Nie stwierdzono nieprawidłowości">{{ $techToString($technicalConditions[$key] ?? '') }}</textarea>
+        @php $row = $resolved[$key]; @endphp
+        <div class="wz-tech-row">
+            <div class="wz-tech-row-head">
+                <span class="wz-tech-row-label">{{ $label }}</span>
+                <span class="wz-tech-status">
+                    <label>
+                        <input type="radio" name="technical_conditions[{{ $key }}][status]" value="ok" {{ $row['status'] === 'ok' ? 'checked' : '' }}>
+                        <span class="pill ok"><span class="dot ok"></span>Bez zarzutu</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="technical_conditions[{{ $key }}][status]" value="attention" {{ $row['status'] === 'attention' ? 'checked' : '' }}>
+                        <span class="pill attention"><span class="dot attention"></span>Wymaga uwagi</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="technical_conditions[{{ $key }}][status]" value="bad" {{ $row['status'] === 'bad' ? 'checked' : '' }}>
+                        <span class="pill bad"><span class="dot bad"></span>Nieprawidłowość</span>
+                    </label>
+                </span>
+            </div>
+            <input type="text" class="wz-tech-note" name="technical_conditions[{{ $key }}][note]" value="{{ $row['note'] ?? '' }}" maxlength="500" placeholder="Opcjonalna notatka (np. lekki stuk z lewej strony)">
         </div>
         @endforeach
     </div>

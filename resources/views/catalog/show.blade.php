@@ -1566,20 +1566,22 @@
             ['key' => 'electronics',   'label' => 'Elektronika',        'icon' => 'electronics'],
             ['key' => 'lights',        'label' => 'Oświetlenie',        'icon' => 'lights'],
         ];
-        $techStatusFor = function (string $key) use ($car): array {
+        // Legacy admin keys (air_conditioning, braking) map to the canonical bucket
+        // so old saves still surface against the right item without admin re-save.
+        $techLegacyAliases = ['ac' => 'air_conditioning', 'brakes' => 'braking'];
+        $techStatusFor = function (string $key) use ($car, $techLegacyAliases): array {
             $raw = $car->technical_conditions[$key] ?? null;
-            if (is_array($raw)) $raw = $raw['status'] ?? $raw[0] ?? null;
-            $lower = strtolower(trim((string) $raw));
-            if ($lower === '' || in_array($lower, ['ok','good','sprawny','sprawna','true','1','pracuje prawidłowo','dobry'], true)) {
-                return ['cls' => 'ok',   'label' => 'Pracuje prawidłowo'];
+            if ($raw === null && isset($techLegacyAliases[$key])) {
+                $raw = $car->technical_conditions[$techLegacyAliases[$key]] ?? null;
             }
-            if (str_contains($lower, 'uwag') || str_contains($lower, 'lekki') || str_contains($lower, 'fair') || str_contains($lower, 'warning')) {
-                return ['cls' => 'warn', 'label' => $raw];
-            }
-            if (str_contains($lower, 'usterk') || str_contains($lower, 'niespraw') || str_contains($lower, 'wymian') || str_contains($lower, 'bad') || str_contains($lower, 'broken')) {
-                return ['cls' => 'fail', 'label' => $raw];
-            }
-            return ['cls' => 'ok', 'label' => $raw];
+            // Single source of truth — same helper the admin form pre-resolves with.
+            $resolved = \App\Helpers\CarLabels::techStatus($raw);
+            $clsMap = ['ok' => 'ok', 'attention' => 'warn', 'bad' => 'fail'];
+            return [
+                'cls'   => $clsMap[$resolved['status']],
+                'label' => $resolved['label'],
+                'note'  => $resolved['note'],
+            ];
         };
 
         // Engine video — derive embed type once.
@@ -1637,7 +1639,15 @@
                     </span>
                     <span class="cs-tech-list-name">{{ $row['label'] }}</span>
                     <span class="cs-tech-list-status {{ $status['cls'] === 'ok' ? '' : $status['cls'] }}">
-                        <span class="check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
+                        <span class="check">
+                            @if($status['cls'] === 'ok')
+                                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                            @elseif($status['cls'] === 'warn')
+                                <svg viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            @else
+                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                            @endif
+                        </span>
                         {{ $status['label'] }}
                     </span>
                 </div>

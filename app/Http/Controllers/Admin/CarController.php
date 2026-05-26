@@ -538,27 +538,33 @@ class CarController extends Controller
             $validated['equipment'] = $processed;
         }
 
-        // P1: technical_conditions must be a flat key=>string map for the wizard
-        // form to render. Historical data and external imports (Otomoto, manual
-        // SQL) have produced nested {"engine":{"status":"OK"}} shapes that crash
-        // the edit form with htmlspecialchars(array). Normalize on every save.
+        // technical_conditions storage shape:
+        //   { key => { status: 'ok'|'attention'|'bad', note: string } }
+        // — preserved per item so the wizard's status pills + note input
+        // round-trip cleanly. Backward-compat with the legacy flat-string
+        // shape (PR #2): legacy strings are accepted as-is on read via
+        // CarLabels::techStatus(), and the form upgrades them to the
+        // nested shape on the next save. Unknown / empty status falls
+        // back to 'ok'.
         if (!empty($validated['technical_conditions']) && is_array($validated['technical_conditions'])) {
+            $allowedStatuses = ['ok', 'attention', 'bad'];
             $normalized = [];
             foreach ($validated['technical_conditions'] as $key => $value) {
-                if (is_string($value)) {
+                if (is_array($value)) {
+                    $rawStatus = isset($value['status']) ? strtolower(trim((string) $value['status'])) : '';
+                    $status = in_array($rawStatus, $allowedStatuses, true) ? $rawStatus : 'ok';
+                    $note   = isset($value['note']) ? trim((string) $value['note']) : '';
+                    if (mb_strlen($note) > 500) $note = mb_substr($note, 0, 500);
+                    $normalized[$key] = ['status' => $status, 'note' => $note];
+                } elseif (is_string($value) && trim($value) !== '') {
+                    // Legacy free-text from old wizards — keep the string for now;
+                    // CarLabels::techStatus() will derive a colour from it on render.
                     $normalized[$key] = $value;
                 } elseif (is_scalar($value)) {
                     $normalized[$key] = (string) $value;
-                } elseif (is_array($value)) {
-                    foreach (['status', 'notes', 'value', 'text', 'description', 0] as $k) {
-                        if (array_key_exists($k, $value) && is_scalar($value[$k])) {
-                            $normalized[$key] = (string) $value[$k];
-                            continue 2;
-                        }
-                    }
-                    $flat = array_filter($value, 'is_scalar');
-                    $normalized[$key] = $flat ? implode(' · ', array_map('strval', $flat)) : '';
                 }
+                // null / empty strings are dropped (no row written) so old data without
+                // status doesn't clutter the JSON.
             }
             $validated['technical_conditions'] = $normalized;
         }
@@ -661,7 +667,10 @@ class CarController extends Controller
             'image_order.*' => 'integer|exists:car_images,id',
             'active_tab' => 'nullable|string|max:32',
             'paint_measurements' => 'nullable|array',
-            'technical_conditions' => 'nullable|array',
+            'technical_conditions'          => 'nullable|array',
+            'technical_conditions.*'        => 'nullable',                       // accept legacy string OR new nested shape
+            'technical_conditions.*.status' => 'nullable|in:ok,attention,bad',   // explicit enum when nested
+            'technical_conditions.*.note'   => 'nullable|string|max:500',
             'equipment' => 'nullable|array',
         ], [
             'brand_id.required' => 'Wybierz markę pojazdu.',

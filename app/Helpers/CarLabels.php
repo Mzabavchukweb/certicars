@@ -178,4 +178,76 @@ class CarLabels
         }
         return null;
     }
+
+    /**
+     * Resolve a single technical_conditions entry into a normalised
+     *   ['status' => 'ok'|'attention'|'bad', 'label' => string, 'note' => ?string]
+     *
+     * Accepts three input shapes for backward compatibility:
+     *   1. Nested array — preferred:   ['status' => 'attention', 'note' => 'lekki stuk']
+     *   2. Legacy free-text string:    'Sprawny' / 'Wymaga uwagi' / 'usterka'
+     *   3. null / empty                — defaults to 'ok'
+     *
+     * Unknown / unrecognised strings default to 'ok' so we never falsely
+     * mark something red. The keyword detection mirrors the keyword logic
+     * the public + PDF views already use, just centralised here.
+     */
+    public static function techStatus($value): array
+    {
+        $allowed   = ['ok', 'attention', 'bad'];
+        $statusKey = 'ok';
+        $noteText  = null;
+
+        if (is_array($value)) {
+            // Explicit shape wins.
+            $raw = isset($value['status']) ? strtolower(trim((string) $value['status'])) : '';
+            if (in_array($raw, $allowed, true)) {
+                $statusKey = $raw;
+            } else {
+                // Fall back to keyword-derive from any text the array carries
+                // (e.g. legacy nested ['Sprawny'] from old admin saves).
+                $statusKey = self::deriveTechStatus((string) ($value[0] ?? ''));
+            }
+            $noteRaw = $value['note'] ?? null;
+            if (is_string($noteRaw) && trim($noteRaw) !== '') {
+                $noteText = trim($noteRaw);
+            }
+        } elseif (is_string($value)) {
+            $statusKey = self::deriveTechStatus($value);
+        }
+
+        $labelMap = [
+            'ok'        => 'Bez zarzutu',
+            'attention' => 'Wymaga uwagi',
+            'bad'       => 'Nieprawidłowość',
+        ];
+
+        return [
+            'status' => $statusKey,
+            'label'  => $labelMap[$statusKey],
+            'note'   => $noteText,
+        ];
+    }
+
+    /**
+     * Keyword-detect a status enum from a legacy free-text string.
+     * Empty / unknown → 'ok' (so old data never falsely flags red).
+     */
+    private static function deriveTechStatus(string $text): string
+    {
+        $t = mb_strtolower(trim($text));
+        if ($t === '') return 'ok';
+        if (str_contains($t, 'usterk') || str_contains($t, 'niespraw') || str_contains($t, 'wymian')
+            || str_contains($t, 'problem') || str_contains($t, 'nie działa') || str_contains($t, 'zle')
+            || str_contains($t, 'źle') || str_contains($t, 'bad') || str_contains($t, 'broken')) {
+            return 'bad';
+        }
+        if (str_contains($t, 'uwag') || str_contains($t, 'drobne') || str_contains($t, 'do sprawdzenia')
+            || str_contains($t, 'lekki') || str_contains($t, 'fair') || str_contains($t, 'warning')
+            || str_contains($t, 'attention')) {
+            return 'attention';
+        }
+        // Empty / 'ok' / 'sprawny' / 'good' / 'pracuje prawidłowo' / 'bez zarzutu' / anything else → ok.
+        return 'ok';
+    }
 }

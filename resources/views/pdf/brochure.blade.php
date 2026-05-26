@@ -343,16 +343,18 @@
     @endphp
     @foreach($car->technical_conditions as $comp => $status)
     @php
-        $st = is_array($status) ? ($status['status'] ?? $status[0] ?? 'OK') : $status;
+        $resolved = \App\Helpers\CarLabels::techStatus($status);
         $compLabel = $techLabels[strtolower($comp)] ?? ucfirst($comp);
-        $lower = strtolower((string) $st);
-        $cls = (str_contains($lower,'ok') || str_contains($lower,'dobr') || str_contains($lower,'brak') || str_contains($lower,'sprawn'))
-            ? 'cond-ok'
-            : (str_contains($lower,'uwag') || str_contains($lower,'lekk') ? 'cond-warn' : (str_contains($lower,'usterk') || str_contains($lower,'wymian') ? 'cond-fail' : ''));
+        $clsMap = ['ok' => 'cond-ok', 'attention' => 'cond-warn', 'bad' => 'cond-fail'];
+        $cls = $clsMap[$resolved['status']] ?? '';
+        $cellText = $resolved['label'];
+        if (!empty($resolved['note'])) {
+            $cellText .= ' — ' . $resolved['note'];
+        }
     @endphp
     <tr>
         <td class="lbl" style="text-align:left">{{ $compLabel }}</td>
-        <td class="val {{ $cls }}">{{ $st }}</td>
+        <td class="val {{ $cls }}">{{ $cellText }}</td>
     </tr>
     @endforeach
 </table>

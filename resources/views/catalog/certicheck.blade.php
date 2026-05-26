@@ -291,16 +291,18 @@
                     'braking' => 'Układ hamulcowy', 'tires' => 'Opony', 'lights' => 'Oświetlenie',
                     'interior' => 'Wnętrze', 'underbody' => 'Podwozie',
                 ];
+                $ccStatusClass = ['ok' => 'ok', 'attention' => 'warn', 'bad' => 'fail'];
             @endphp
             <div class="cc-tech-grid">
                 @foreach($car->technical_conditions as $comp => $status)
                 @php
-                    $st = is_array($status) ? ($status['status'] ?? $status[0] ?? 'OK') : $status;
+                    $resolved = \App\Helpers\CarLabels::techStatus($status);
                     $compLabel = $techLabels[strtolower($comp)] ?? ucfirst($comp);
+                    $cls = $ccStatusClass[$resolved['status']] ?? 'ok';
                 @endphp
                 <div class="cc-tech-row">
                     <span class="comp">{{ $compLabel }}</span>
-                    <span class="status {{ str_contains(strtolower($st), 'sprawn') ? 'ok' : '' }}">{{ $st }}</span>
+                    <span class="status {{ $cls }}">{{ $resolved['label'] }}@if($resolved['note']) <span style="color:#9ca3af;font-weight:400">· {{ $resolved['note'] }}</span>@endif</span>
                 </div>
                 @endforeach
             </div>

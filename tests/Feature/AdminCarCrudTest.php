@@ -556,9 +556,11 @@ class AdminCarCrudTest extends TestCase
 
     public function test_edit_page_renders_when_technical_conditions_has_nested_array_shape(): void
     {
-        // Historical / Otomoto-imported / manually-edited data shape that
-        // crashed the wizard. The public view tolerates it; the admin form
-        // must too (after fix).
+        // PR #2 invariant: the wizard edit page MUST NOT crash on legacy/imported
+        // nested shapes for technical_conditions. PR #23 replaced the textarea
+        // with a three-status radio pill group, but the no-crash invariant is
+        // preserved — CarLabels::techStatus() resolves any of these legacy shapes
+        // into one of {ok, attention, bad} before the form pre-selects a radio.
         $car = Car::create([
             'brand_id' => $this->brand->id,
             'model'    => 'Nested Tech Repro',
@@ -575,39 +577,45 @@ class AdminCarCrudTest extends TestCase
         $response = $this->actingAs($this->admin)->get(route('admin.cars.edit', $car));
         $response->assertOk();
 
-        // The textarea must render visible text extracted from the nested array
-        // (not literal "Array" and not crash).
-        $response->assertSee('name="technical_conditions[engine]"', false);
-        // The flattening function should pick the 'status' key as the visible value.
-        $response->assertSee('>OK</textarea>', false);
+        // The new radio-group markup must render for each canonical key.
+        $response->assertSee('name="technical_conditions[engine][status]"',       false);
+        $response->assertSee('name="technical_conditions[transmission][status]"', false);
+        // Legacy "OK" string status resolves to the OK radio being pre-checked.
+        $this->assertMatchesRegularExpression(
+            '/name="technical_conditions\[engine\]\[status\]" value="ok"\s+checked/',
+            $response->getContent()
+        );
     }
 
-    public function test_store_normalizes_nested_technical_conditions_so_edit_does_not_crash(): void
+    public function test_store_preserves_nested_technical_conditions_shape(): void
     {
-        // If somehow a payload with nested arrays reaches store(), it must be
-        // flattened on the way IN so re-opening the edit form is safe.
+        // PR #23 changed the storage shape from flat-string to nested
+        // {status, note}. The wizard form sends nested per-item arrays and
+        // the controller must persist that shape (not collapse it back to
+        // strings, which would lose the note + render text-as-status).
         $this->actingAs($this->admin)->post(route('admin.cars.store'), [
             'brand_id' => $this->brand->id,
             'model'    => 'Normalize On Save',
             'status'   => 'active',
             'technical_conditions' => [
-                'engine'      => ['status' => 'OK', 'notes' => 'whatever'],
-                'brakes'      => 'already a string',
-                'electronics' => ['notes' => 'just notes'],
+                'engine'      => ['status' => 'ok',        'note' => ''],
+                'brakes'      => ['status' => 'attention', 'note' => 'sprawdzić klocki'],
+                'electronics' => ['status' => 'bad',       'note' => 'wymiana sondy'],
             ],
         ])->assertRedirect();
 
         $car = Car::where('model', 'Normalize On Save')->firstOrFail();
         $stored = $car->technical_conditions;
 
-        // Every value must now be a plain string.
         $this->assertIsArray($stored);
-        foreach ($stored as $k => $v) {
-            $this->assertIsString($v, "technical_conditions[$k] must be string after save, got " . gettype($v));
-        }
-        $this->assertSame('OK', $stored['engine']);
-        $this->assertSame('already a string', $stored['brakes']);
-        $this->assertSame('just notes', $stored['electronics']);
+        $this->assertSame('ok',        $stored['engine']['status']);
+        $this->assertSame('attention', $stored['brakes']['status']);
+        $this->assertSame('sprawdzić klocki', $stored['brakes']['note']);
+        $this->assertSame('bad',       $stored['electronics']['status']);
+
+        // Re-opening the edit page must still work (no regression of PR #2's
+        // no-crash invariant).
+        $this->actingAs($this->admin)->get(route('admin.cars.edit', $car))->assertOk();
     }
 
     public function test_edit_page_renders_when_paint_measurements_has_plain_scalar_shape(): void
