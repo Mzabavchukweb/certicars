@@ -272,7 +272,7 @@
 .cs-damage-empty-cat{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13.5px;background:#fff;border:1px dashed #e5e7eb;border-radius:14px;grid-column:1 / -1}
 
 /* ============ TECH + ENGINE-VIDEO TWO-COLUMN ROW ============ */
-.cs-tech-engine-row{display:grid;grid-template-columns:1.15fr 1fr;gap:20px;margin-bottom:16px;align-items:start}
+.cs-tech-engine-row{display:grid;grid-template-columns:1.15fr 1fr;gap:20px;margin-bottom:16px;align-items:stretch;max-width:calc(1200px - 48px);margin-left:auto;margin-right:auto;width:100%;box-sizing:border-box}
 .cs-tech-engine-card{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;display:flex;flex-direction:column;min-width:0;height:100%}
 .cs-tech-engine-card-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
 .cs-tech-engine-card-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
@@ -509,6 +509,7 @@
     /* Unify ALL section side margins to match sidebar card */
     .cs-wrap > .cs-data-section,.cs-wrap > div:not(.container) > .cs-data-section{max-width:none!important;margin-left:14px!important;margin-right:14px!important;padding-left:0!important;padding-right:0!important}
     .cs-wrap > .cs-data-section[style],.cs-data-section[style]{margin-left:14px!important;margin-right:14px!important;padding-left:0!important;padding-right:0!important;max-width:none!important}
+    .cs-tech-engine-row{max-width:none!important;margin-left:14px!important;margin-right:14px!important}
     .cs-sections-2col{padding:0 14px!important;margin:0!important}
     .cs-nav-bar{flex-direction:row;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0}
     .cs-nav-bar-left{flex:0 0 auto}
@@ -630,6 +631,7 @@
 @media(max-width:500px){
     .cs-wrap .container{padding-left:12px;padding-right:12px}
     .cs-wrap > .cs-data-section,.cs-wrap > div:not(.container) > .cs-data-section,.cs-data-section[style]{margin-left:12px!important;margin-right:12px!important}
+    .cs-tech-engine-row{margin-left:12px!important;margin-right:12px!important}
     .cs-sections-2col{padding:0 12px!important}
     .cs-head h1{font-size:19px}
     .cs-gallery{border-radius:10px}
