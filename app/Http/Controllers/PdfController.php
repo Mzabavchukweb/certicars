@@ -37,8 +37,18 @@ class PdfController extends Controller
         $publicBase = $isS3 ? rtrim((string) config('filesystems.disks.public.url'), '/') : null;
         $pathCache = [];
 
-        $fetchToTmp = function (string $bytes) use (&$tmpFiles): string {
-            $tmp = tempnam(sys_get_temp_dir(), 'certicars_pdf_');
+        // DomPDF identifies image types by FILE EXTENSION (isRemoteEnabled=false reads
+        // straight from disk). tempnam() returns an extension-less path, which made
+        // every embedded photo silently fall back to DomPDF's broken-image X. So we
+        // preserve the source path's extension on the temp file. Falls back to .jpg
+        // for sources without an extension (rare; covers safety).
+        $fetchToTmp = function (string $bytes, string $sourcePath) use (&$tmpFiles): string {
+            $ext = strtolower(pathinfo($sourcePath, PATHINFO_EXTENSION) ?: 'jpg');
+            // Whitelist to formats DomPDF actually handles; default to jpg otherwise.
+            if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'], true)) {
+                $ext = 'jpg';
+            }
+            $tmp = sys_get_temp_dir() . '/certicars_pdf_' . bin2hex(random_bytes(8)) . '.' . $ext;
             file_put_contents($tmp, $bytes);
             $tmpFiles[] = $tmp;
             return $tmp;
@@ -71,12 +81,12 @@ class PdfController extends Controller
                         $url = $publicBase . '/' . ltrim($path, '/');
                         $bytes = $fetchHttp($url);
                         if ($bytes !== null) {
-                            return $pathCache[$path] = $fetchToTmp($bytes);
+                            return $pathCache[$path] = $fetchToTmp($bytes, $path);
                         }
                     }
                     // Fallback: SDK download (private buckets / no public URL).
                     if (!Storage::disk('public')->exists($path)) return null;
-                    return $pathCache[$path] = $fetchToTmp(Storage::disk('public')->get($path));
+                    return $pathCache[$path] = $fetchToTmp(Storage::disk('public')->get($path), $path);
                 }
                 // Local disk: use the on-disk path directly (DomPDF reads it as a file).
                 if (!Storage::disk('public')->exists($path)) return null;
