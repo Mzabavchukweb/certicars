@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Car;
 use App\Models\CarImage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class PdfController extends Controller
@@ -29,33 +30,67 @@ class PdfController extends Controller
         // multiple relations (images / galleryImages / damageImages / damages.photos).
         $tmpFiles = [];
         $isS3 = config('filesystems.disks.public.driver') === 's3';
+        // R2 objects are publicly readable via the configured public URL — HTTP fetch
+        // there is credential-free and bypasses any S3-SDK permission issues that have
+        // previously left photo placeholders in the PDF. Falls back to SDK if no URL
+        // is configured (e.g. private S3 buckets).
+        $publicBase = $isS3 ? rtrim((string) config('filesystems.disks.public.url'), '/') : null;
         $pathCache = [];
 
-        $decorate = function (CarImage $img) use ($isS3, &$tmpFiles, &$pathCache) {
-            if (!$img->path || str_starts_with($img->path, 'http')) {
-                return;
-            }
-            if (isset($pathCache[$img->path])) {
-                $img->setAttribute('pdf_src', $pathCache[$img->path]);
-                return;
-            }
+        $fetchToTmp = function (string $bytes) use (&$tmpFiles): string {
+            $tmp = tempnam(sys_get_temp_dir(), 'certicars_pdf_');
+            file_put_contents($tmp, $bytes);
+            $tmpFiles[] = $tmp;
+            return $tmp;
+        };
+
+        $fetchHttp = function (string $url): ?string {
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT        => 10,
+                CURLOPT_CONNECTTIMEOUT => 5,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_MAXREDIRS      => 3,
+                CURLOPT_USERAGENT      => 'CertiCarsPDF/1.0',
+            ]);
+            $body   = curl_exec($ch);
+            $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            return ($body !== false && $status === 200 && is_string($body) && strlen($body) > 0)
+                ? $body : null;
+        };
+
+        $decorateOne = function (string $path) use ($isS3, $publicBase, &$pathCache, $fetchToTmp, $fetchHttp): ?string {
+            if (!$path || str_starts_with($path, 'http')) return null;
+            if (isset($pathCache[$path])) return $pathCache[$path];
             try {
-                if (!Storage::disk('public')->exists($img->path)) {
-                    return;
-                }
                 if ($isS3) {
-                    $tmp = tempnam(sys_get_temp_dir(), 'certicars_pdf_');
-                    file_put_contents($tmp, Storage::disk('public')->get($img->path));
-                    $img->setAttribute('pdf_src', $tmp);
-                    $pathCache[$img->path] = $tmp;
-                    $tmpFiles[] = $tmp;
-                } else {
-                    $local = Storage::disk('public')->path($img->path);
-                    $img->setAttribute('pdf_src', $local);
-                    $pathCache[$img->path] = $local;
+                    // Preferred path: HTTP fetch from the public R2 URL — credential-free.
+                    if ($publicBase) {
+                        $url = $publicBase . '/' . ltrim($path, '/');
+                        $bytes = $fetchHttp($url);
+                        if ($bytes !== null) {
+                            return $pathCache[$path] = $fetchToTmp($bytes);
+                        }
+                    }
+                    // Fallback: SDK download (private buckets / no public URL).
+                    if (!Storage::disk('public')->exists($path)) return null;
+                    return $pathCache[$path] = $fetchToTmp(Storage::disk('public')->get($path));
                 }
-            } catch (\Throwable) {
-                // Silently skip — the view falls back to $img->url then a placeholder.
+                // Local disk: use the on-disk path directly (DomPDF reads it as a file).
+                if (!Storage::disk('public')->exists($path)) return null;
+                return $pathCache[$path] = Storage::disk('public')->path($path);
+            } catch (\Throwable $e) {
+                Log::warning('PDF image fetch failed for '.$path.': '.$e->getMessage());
+                return null;
+            }
+        };
+
+        $decorate = function (CarImage $img) use ($decorateOne) {
+            $local = $decorateOne((string) $img->path);
+            if ($local !== null) {
+                $img->setAttribute('pdf_src', $local);
             }
         };
 
@@ -64,33 +99,16 @@ class PdfController extends Controller
         $car->images->each($decorate);
         $car->galleryImages->each($decorate);
         $car->damageImages->each($decorate);
-        // Per-damage photos linked through CarDamage::photos() (PR #7).
-        $car->damages->each(function ($d) use ($decorate, $isS3, &$tmpFiles, &$pathCache) {
+        // Per-damage photos linked through CarDamage::photos() (PR #7) plus the
+        // CarDamage::image_path main photo (which lives on the damage row, not in
+        // CarImage). Same fetch-to-temp pattern via the shared $decorateOne helper.
+        $car->damages->each(function ($d) use ($decorate, $decorateOne) {
             if ($d->photos) {
                 $d->photos->each($decorate);
             }
-            // CarDamage::image_path is a separate column from CarImage paths; replicate
-            // the same fetch-to-temp pattern so per-damage main photos embed in the PDF.
-            if (!$d->image_path || str_starts_with($d->image_path, 'http')) return;
-            if (isset($pathCache[$d->image_path])) {
-                $d->setAttribute('pdf_image_src', $pathCache[$d->image_path]);
-                return;
-            }
-            try {
-                if (!Storage::disk('public')->exists($d->image_path)) return;
-                if ($isS3) {
-                    $tmp = tempnam(sys_get_temp_dir(), 'certicars_pdf_');
-                    file_put_contents($tmp, Storage::disk('public')->get($d->image_path));
-                    $d->setAttribute('pdf_image_src', $tmp);
-                    $pathCache[$d->image_path] = $tmp;
-                    $tmpFiles[] = $tmp;
-                } else {
-                    $local = Storage::disk('public')->path($d->image_path);
-                    $d->setAttribute('pdf_image_src', $local);
-                    $pathCache[$d->image_path] = $local;
-                }
-            } catch (\Throwable) {
-                // Silently skip — Blade falls back to text-only damage card.
+            $local = $decorateOne((string) $d->image_path);
+            if ($local !== null) {
+                $d->setAttribute('pdf_image_src', $local);
             }
         });
 
