@@ -271,6 +271,59 @@
 /* Empty placeholder when a chip's category has no damages */
 .cs-damage-empty-cat{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13.5px;background:#fff;border:1px dashed #e5e7eb;border-radius:14px;grid-column:1 / -1}
 
+/* ============ TECH + ENGINE-VIDEO TWO-COLUMN ROW ============ */
+.cs-tech-engine-row{display:grid;grid-template-columns:1.15fr 1fr;gap:20px;margin-bottom:16px;align-items:start}
+.cs-tech-engine-card{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;display:flex;flex-direction:column;min-width:0;height:100%}
+.cs-tech-engine-card-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
+.cs-tech-engine-card-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-tech-engine-card-ico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cs-tech-engine-card-titlewrap{min-width:0}
+.cs-tech-engine-card-title{font-size:17px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:0 0 6px;line-height:1.25}
+.cs-tech-engine-card-sub{font-size:12.5px;color:#6b7280;line-height:1.55;margin:0}
+.cs-tech-engine-card-sub + .cs-tech-engine-card-sub{margin-top:2px}
+
+/* Tech list panel (inside left card) */
+.cs-tech-list-panel{background:#f9fafb;border:1px solid #f0f0f2;border-radius:14px;padding:6px 14px;flex:1}
+.cs-tech-list-row{display:flex;align-items:center;gap:12px;padding:13px 4px;border-bottom:1px solid #eef0f3}
+.cs-tech-list-row:last-child{border-bottom:none}
+.cs-tech-list-ico{flex-shrink:0;width:34px;height:34px;border-radius:10px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-tech-list-ico svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cs-tech-list-name{flex:1;font-size:14px;font-weight:600;color:#0a0a0a;letter-spacing:-.1px}
+.cs-tech-list-status{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:#16a34a;flex-shrink:0;white-space:nowrap}
+.cs-tech-list-status.warn{color:#d97706}
+.cs-tech-list-status.fail{color:#dc2626}
+.cs-tech-list-status .check{width:18px;height:18px;border-radius:50%;background:#dcfce7;color:#16a34a;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cs-tech-list-status.warn .check{background:#fef3c7;color:#d97706}
+.cs-tech-list-status.fail .check{background:#fee2e2;color:#dc2626}
+.cs-tech-list-status .check svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+
+/* Engine video panel (inside right card) */
+.cs-engine-video-panel{position:relative;border-radius:14px;overflow:hidden;background:#0a0a0a;aspect-ratio:16/10;flex:1;min-height:280px}
+.cs-engine-video-panel iframe,.cs-engine-video-panel video{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000}
+.cs-engine-video-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);font-size:13px;letter-spacing:.3px;text-align:center;padding:30px}
+
+/* Tablet/mobile — stack the two cards vertically */
+@media(max-width:1024px){
+    .cs-tech-engine-row{grid-template-columns:1fr;gap:14px}
+    .cs-tech-engine-card{padding:20px}
+    .cs-tech-engine-card-title{font-size:16px}
+    .cs-tech-engine-card-sub{font-size:12px}
+    .cs-tech-list-row{padding:12px 4px}
+    .cs-tech-list-ico{width:32px;height:32px}
+    .cs-tech-list-ico svg{width:16px;height:16px}
+    .cs-tech-list-name{font-size:13.5px}
+    .cs-tech-list-status{font-size:12px}
+    .cs-engine-video-panel{aspect-ratio:16/9;min-height:0}
+}
+@media(max-width:500px){
+    .cs-tech-engine-card{padding:18px 16px;border-radius:14px}
+    .cs-tech-engine-card-ico{width:38px;height:38px}
+    .cs-tech-engine-card-ico svg{width:18px;height:18px}
+    .cs-tech-engine-card-title{font-size:15px}
+    .cs-tech-list-panel{padding:4px 12px}
+    .cs-tech-list-row{padding:11px 2px;gap:10px}
+}
+
 /* PAINT GRID */
 .cs-paint-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0;border:1px solid #eeeef0;border-radius:12px;overflow:hidden;background:#fff}
 .cs-paint-item{background:#fff;padding:14px 16px;border-bottom:1px solid #f0f0f2;transition:all .15s}
@@ -1496,79 +1549,129 @@
     </div>
     @endif
 
-    {{-- G. STAN TECHNICZNY --}}
-    @if($car->technical_conditions && count($car->technical_conditions))
-    <div class="cs-data-section">
-        <div class="cs-data-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-            <h2><i data-lucide="shield-check" aria-hidden="true" style="color:#16a34a"></i> Stan techniczny</h2>
-            <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
-        </div>
-        <div class="cs-data-body open">
-            @php
-                $techLabels = [
-                    'engine' => 'Silnik', 'transmission' => 'Skrzynia biegów',
-                    'suspension' => 'Zawieszenie', 'electronics' => 'Elektronika',
-                    'body' => 'Nadwozie', 'brakes' => 'Układ hamulcowy', 'braking' => 'Układ hamulcowy',
-                    'steering' => 'Układ kierowniczy', 'exhaust' => 'Układ wydechowy',
-                    'ac' => 'Klimatyzacja', 'air_conditioning' => 'Klimatyzacja', 'aircon' => 'Klimatyzacja',
-                    'airbags' => 'Poduszki powietrzne', 'air_bags' => 'Poduszki powietrzne',
-                    'tires' => 'Opony', 'lights' => 'Oświetlenie',
-                    'interior' => 'Wnętrze', 'underbody' => 'Podwozie',
-                ];
-                $techStatusLabels = [
-                    'ok' => 'Sprawny', 'good' => 'Sprawny', 'sprawny' => 'Sprawny',
-                    'fair' => 'Dostateczny', 'warning' => 'Wymaga uwagi',
-                    'bad' => 'Niesprawny', 'broken' => 'Niesprawny',
-                    'true' => 'Sprawny', '1' => 'Sprawny',
-                ];
-            @endphp
-            <div class="cs-tech-list">
-                @foreach($car->technical_conditions as $comp => $status)
-                @php
-                    $raw = is_array($status) ? ($status['status'] ?? $status[0] ?? 'OK') : $status;
-                    $st = $techStatusLabels[mb_strtolower((string) $raw)] ?? $raw;
-                    $compLabel = $techLabels[strtolower((string) $comp)] ?? ucfirst((string) $comp);
-                @endphp
-                <div class="cs-tech-row">
-                    <span class="cs-tech-icon"><i data-lucide="check-circle" aria-hidden="true"></i></span>
-                    <span class="cs-tech-name">{{ $compLabel }}</span>
-                    <span class="cs-tech-status">{{ $st }}</span>
+    {{-- STAN TECHNICZNY PODCZAS OGLĘDZIN + NAGRANIE PRACY SILNIKA — two-column row --}}
+    @php
+        // Build the reference 8-item ordered list. Map admin-stored statuses onto
+        // the three visual buckets (ok / warn / fail) so the same card structure
+        // can carry real per-car data later without re-tagging icons.
+        $techRows = [
+            ['key' => 'engine',        'label' => 'Silnik',             'icon' => 'engine'],
+            ['key' => 'transmission',  'label' => 'Skrzynia biegów',    'icon' => 'gear'],
+            ['key' => 'suspension',    'label' => 'Zawieszenie',        'icon' => 'suspension'],
+            ['key' => 'brakes',        'label' => 'Hamulce',            'icon' => 'brakes'],
+            ['key' => 'steering',      'label' => 'Układ kierowniczy',  'icon' => 'steering'],
+            ['key' => 'ac',            'label' => 'Klimatyzacja',       'icon' => 'ac'],
+            ['key' => 'electronics',   'label' => 'Elektronika',        'icon' => 'electronics'],
+            ['key' => 'lights',        'label' => 'Oświetlenie',        'icon' => 'lights'],
+        ];
+        $techStatusFor = function (string $key) use ($car): array {
+            $raw = $car->technical_conditions[$key] ?? null;
+            if (is_array($raw)) $raw = $raw['status'] ?? $raw[0] ?? null;
+            $lower = strtolower(trim((string) $raw));
+            if ($lower === '' || in_array($lower, ['ok','good','sprawny','sprawna','true','1','pracuje prawidłowo','dobry'], true)) {
+                return ['cls' => 'ok',   'label' => 'Pracuje prawidłowo'];
+            }
+            if (str_contains($lower, 'uwag') || str_contains($lower, 'lekki') || str_contains($lower, 'fair') || str_contains($lower, 'warning')) {
+                return ['cls' => 'warn', 'label' => $raw];
+            }
+            if (str_contains($lower, 'usterk') || str_contains($lower, 'niespraw') || str_contains($lower, 'wymian') || str_contains($lower, 'bad') || str_contains($lower, 'broken')) {
+                return ['cls' => 'fail', 'label' => $raw];
+            }
+            return ['cls' => 'ok', 'label' => $raw];
+        };
+
+        // Engine video — derive embed type once.
+        $hasEngineVideoLocal = $car->engine_video_url || $car->engine_video_path;
+        $ytId = null; $vimId = null; $rawVidUrl = $car->engine_video_url;
+        if ($rawVidUrl) {
+            if (preg_match('~(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|v/|shorts/))([\w-]{11})~', $rawVidUrl, $m)) $ytId = $m[1];
+            elseif (preg_match('~vimeo\.com/(\d+)~', $rawVidUrl, $m)) $vimId = $m[1];
+        }
+    @endphp
+    <div class="cs-tech-engine-row">
+        {{-- LEFT — Stan techniczny podczas oględzin --}}
+        <div class="cs-tech-engine-card">
+            <div class="cs-tech-engine-card-head">
+                <div class="cs-tech-engine-card-ico">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+                </div>
+                <div class="cs-tech-engine-card-titlewrap">
+                    <h3 class="cs-tech-engine-card-title">Stan techniczny podczas oględzin</h3>
+                    <p class="cs-tech-engine-card-sub">Sprawdziliśmy kluczowe elementy techniczne pojazdu podczas oględzin i jazdy próbnej.</p>
+                    <p class="cs-tech-engine-card-sub">Poniżej znajdziesz ich stan oraz nagranie pracy silnika.</p>
+                </div>
+            </div>
+            <div class="cs-tech-list-panel">
+                @foreach($techRows as $row)
+                @php $status = $techStatusFor($row['key']); @endphp
+                <div class="cs-tech-list-row">
+                    <span class="cs-tech-list-ico" aria-hidden="true">
+                        @switch($row['icon'])
+                            @case('engine')
+                                <svg viewBox="0 0 24 24"><path d="M5 11h2v-2h2v2h4v-2h4v3h2v3h-2v3h-4v2h-4v-2h-2v-2H5z"/><path d="M3 9h2"/><path d="M19 7v8"/></svg>
+                                @break
+                            @case('gear')
+                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                                @break
+                            @case('suspension')
+                                <svg viewBox="0 0 24 24"><path d="M3 12h3l2-4 4 8 2-4 2 4 2-2h3"/><path d="M3 18h18"/></svg>
+                                @break
+                            @case('brakes')
+                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="m5.6 5.6 2.1 2.1"/><path d="m16.3 16.3 2.1 2.1"/><path d="m5.6 18.4 2.1-2.1"/><path d="m16.3 7.7 2.1-2.1"/></svg>
+                                @break
+                            @case('steering')
+                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M12 14v8"/><path d="m3.5 8 7 4"/><path d="m20.5 8-7 4"/></svg>
+                                @break
+                            @case('ac')
+                                <svg viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M2 12h20"/><path d="m4.93 4.93 14.14 14.14"/><path d="m19.07 4.93-14.14 14.14"/></svg>
+                                @break
+                            @case('electronics')
+                                <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3"/><path d="M15 2v3"/><path d="M9 19v3"/><path d="M15 19v3"/><path d="M2 9h3"/><path d="M2 15h3"/><path d="M19 9h3"/><path d="M19 15h3"/></svg>
+                                @break
+                            @case('lights')
+                                <svg viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c1 .8 1.5 2 1.5 3.3h5c0-1.3.5-2.5 1.5-3.3A7 7 0 0 0 12 2z"/></svg>
+                                @break
+                        @endswitch
+                    </span>
+                    <span class="cs-tech-list-name">{{ $row['label'] }}</span>
+                    <span class="cs-tech-list-status {{ $status['cls'] === 'ok' ? '' : $status['cls'] }}">
+                        <span class="check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
+                        {{ $status['label'] }}
+                    </span>
                 </div>
                 @endforeach
             </div>
         </div>
-    </div>
-    @endif
 
-    {{-- H. NAGRANIE PRACY SILNIKA --}}
-    @if($car->engine_video_url || $car->engine_video_path)
-    <div class="cs-data-section">
-        <div class="cs-data-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-            <h2><i data-lucide="play-circle" aria-hidden="true" style="color:#0066ff"></i> Nagranie pracy silnika</h2>
-            <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
-        </div>
-        <div class="cs-data-body open">
-            @php
-                $yt=null;$vim=null;$vidUrl=$car->engine_video_url;
-                if($vidUrl){
-                    if(preg_match('~(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|v/|shorts/))([\w-]{11})~', $vidUrl, $m)) $yt=$m[1];
-                    elseif(preg_match('~vimeo\.com/(\d+)~', $vidUrl, $m)) $vim=$m[1];
-                }
-            @endphp
-            <div style="position:relative;border-radius:12px;overflow:hidden;background:#000;aspect-ratio:16/9;max-width:820px;margin:0 auto">
-                @if($yt)
-                    <iframe src="https://www.youtube.com/embed/{{ $yt }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe>
-                @elseif($vim)
-                    <iframe src="https://player.vimeo.com/video/{{ $vim }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe>
+        {{-- RIGHT — Nagranie pracy silnika --}}
+        <div class="cs-tech-engine-card">
+            <div class="cs-tech-engine-card-head">
+                <div class="cs-tech-engine-card-ico">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                </div>
+                <div class="cs-tech-engine-card-titlewrap">
+                    <h3 class="cs-tech-engine-card-title">Nagranie pracy silnika</h3>
+                    <p class="cs-tech-engine-card-sub">Krótki film z uruchomienia i pracy silnika nagrany podczas inspekcji.</p>
+                </div>
+            </div>
+            <div class="cs-engine-video-panel">
+                @if($ytId)
+                    <iframe src="https://www.youtube.com/embed/{{ $ytId }}" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                @elseif($vimId)
+                    <iframe src="https://player.vimeo.com/video/{{ $vimId }}" allowfullscreen loading="lazy"></iframe>
                 @elseif($car->engine_video_path)
-                    <video src="{{ $car->engine_video_file_url }}" controls preload="metadata" style="width:100%;height:100%;display:block"></video>
+                    <video src="{{ $car->engine_video_file_url }}" controls preload="metadata" playsinline></video>
+                @elseif($rawVidUrl)
+                    <div class="cs-engine-video-empty">
+                        Pełne nagranie dostępne pod adresem:<br>
+                        <a href="{{ $rawVidUrl }}" target="_blank" rel="noopener" style="color:#fff;text-decoration:underline">{{ $rawVidUrl }}</a>
+                    </div>
                 @else
-                    <div style="padding:20px;color:#fff">Film: <a href="{{ $vidUrl }}" target="_blank" style="color:#fff;text-decoration:underline">link</a></div>
+                    <div class="cs-engine-video-empty">Nagranie zostanie dodane wkrótce.</div>
                 @endif
             </div>
         </div>
     </div>
-    @endif
 
 
         <!-- WIDOK 360° (wnętrze + zewnętrze w jednej sekcji) -->
