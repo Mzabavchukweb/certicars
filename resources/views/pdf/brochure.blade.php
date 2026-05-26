@@ -163,7 +163,8 @@
             @if($car->seats)<tr><td class="lbl">Miejsca</td><td class="val">{{ $car->seats }}</td></tr>@endif
             @if($car->vin)<tr><td class="lbl">VIN</td><td class="val">{{ $car->vin }}</td></tr>@endif
             @if($car->co2_emission)<tr><td class="lbl">Emisja CO₂</td><td class="val">{{ $car->co2_emission }}</td></tr>@endif
-            @if($car->emission_class)<tr><td class="lbl">Klasa emisji</td><td class="val">{{ $car->emission_class }}</td></tr>@endif
+            @php $emissionClassSpec = $car->emission_class ? preg_replace('/^(euro)\s*(\d.*)$/i', 'Euro $2', trim((string) $car->emission_class)) : null; @endphp
+            @if($emissionClassSpec)<tr><td class="lbl">Klasa emisji</td><td class="val">{{ $emissionClassSpec }}</td></tr>@endif
         </table>
     </div>
 </div>
@@ -198,12 +199,16 @@
 
 {{-- FUEL CONSUMPTION & EMISSIONS --}}
 @if($car->fuel_consumption || $car->co2_emission || $car->emission_class)
+@php
+    $fcRawPdf = $car->fuel_consumption ? trim(str_replace(',', '.', trim(preg_replace('/\s*[lL]\s*\/\s*100\s*km\.?/u', '', (string) $car->fuel_consumption)))) : null;
+    $emissionClassPdf = $car->emission_class ? preg_replace('/^(euro)\s*(\d.*)$/i', 'Euro $2', trim((string) $car->emission_class)) : null;
+@endphp
 <div class="sh">Zużycie paliwa i emisje</div>
 <table>
-    @if($car->fuel_consumption)<tr><td class="lbl">Zużycie paliwa (mieszany)</td><td class="val">{{ $car->fuel_consumption }} l/100km</td></tr>@endif
+    @if($fcRawPdf)<tr><td class="lbl">Zużycie paliwa (mieszany)</td><td class="val">{{ $fcRawPdf }} l/100 km</td></tr>@endif
     @if($car->fuel_procedure)<tr><td class="lbl">Procedura pomiaru</td><td class="val">{{ $car->fuel_procedure }}</td></tr>@endif
     @if($car->co2_emission)<tr><td class="lbl">Emisja CO₂</td><td class="val">{{ $car->co2_emission }}</td></tr>@endif
-    @if($car->emission_class)<tr><td class="lbl">Klasa emisji</td><td class="val">{{ $car->emission_class }}</td></tr>@endif
+    @if($emissionClassPdf)<tr><td class="lbl">Klasa emisji</td><td class="val">{{ $emissionClassPdf }}</td></tr>@endif
 </table>
 @endif
 

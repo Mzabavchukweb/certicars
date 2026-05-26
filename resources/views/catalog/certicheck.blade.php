@@ -24,8 +24,33 @@
 @endsection
 
 @section('styles')
-@media print{.no-print{display:none!important}.cc-page{box-shadow:none!important;margin:0!important;padding:20px!important}}
+/* CertiCheck is a brochure — hide the global float-call phone FAB on both screen + print. */
+.float-call{display:none!important}
+@media print{
+    .no-print{display:none!important}
+    .cc-page{box-shadow:none!important;margin:0!important;padding:0!important;border-radius:0!important}
+    .cc-section{break-inside:avoid;page-break-inside:avoid}
+    .cc-paint-grid,.cc-tech-grid,.cc-eq-grid,.cc-dmg{break-inside:avoid;page-break-inside:avoid}
+    body{background:#fff!important}
+    .cc-hero img,.cc-photo-grid img,.cc-dmg-photo img{max-width:100%}
+}
 .cc-page{max-width:900px;margin:40px auto;background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.08);overflow:hidden;font-family:'Inter',system-ui,sans-serif}
+.cc-hero{background:#0a0a0a;position:relative;line-height:0}
+.cc-hero img{width:100%;height:auto;max-height:420px;object-fit:cover;display:block}
+.cc-hero-placeholder{height:200px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);font-size:13px;letter-spacing:.4px}
+.cc-photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cc-photo-grid img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;display:block;background:#f5f5f7}
+.cc-dmg{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:14px 18px;margin-bottom:10px}
+.cc-dmg strong{color:#b45309;font-size:13px}
+.cc-dmg-tags{font-size:11px;color:#92400e;margin-left:6px}
+.cc-dmg p{font-size:12px;color:#78716c;margin:6px 0 0;line-height:1.5}
+.cc-dmg-photos{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.cc-dmg-photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px;display:block;background:#fff}
+.cc-tire-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.cc-tire-card{border:1px solid #eeeef0;border-radius:10px;padding:12px 14px;background:#fafafa}
+.cc-tire-card-title{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#6b7280;margin-bottom:6px}
+.cc-tire-card-spec{font-size:13.5px;font-weight:700;color:#1a1a1a}
+.cc-tire-card-tread{font-size:12px;color:#374151;margin-top:4px}
 .cc-header{background:linear-gradient(135deg,#0a0a0a 0%,#1a1a2e 100%);color:#fff;padding:40px 48px;position:relative;overflow:hidden}
 .cc-header::after{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:rgba(0,102,255,.12);border-radius:50%}
 .cc-brand{display:flex;align-items:center;gap:12px;margin-bottom:24px}
@@ -100,6 +125,15 @@
             @if($car->power_hp){{ $car->power_hp }} KM @if($car->power_kw)({{ $car->power_kw }} kW)@endif @endif
         </div>
         <div class="cc-car-id">{{ $car->identifier }} · Raport wygenerowany {{ now()->format('d.m.Y') }}</div>
+    </div>
+
+    {{-- HERO IMAGE — primary car photo via R2-aware accessor; placeholder if missing --}}
+    <div class="cc-hero">
+        @if($car->primaryImage && $car->primaryImage->url)
+            <img src="{{ $car->primaryImage->url }}" alt="{{ $car->title }}" onerror="this.onerror=null;this.src='/images/placeholder-car.svg';this.style.maxHeight='200px'">
+        @else
+            <div class="cc-hero-placeholder">Brak zdjęcia pojazdu</div>
+        @endif
     </div>
 
     {{-- ACTION BUTTONS --}}
@@ -181,14 +215,23 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v17"/><path d="M15 11h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 4"/></svg>
                 Emisje i zużycie paliwa
             </div>
+            @php
+                // Strip any embedded "l/100 km" / "L/100km" the admin may have typed,
+                // and normalise decimal separator. Render the unit exactly once.
+                $fcRaw = $car->fuel_consumption ? trim(str_replace(',', '.', trim(preg_replace('/\s*[lL]\s*\/\s*100\s*km\.?/u', '', (string) $car->fuel_consumption)))) : null;
+                // Normalise emission class: "euro 6" / "EURO6" → "Euro 6".
+                $emissionClass = $car->emission_class
+                    ? preg_replace('/^(euro)\s*(\d.*)$/i', 'Euro $2', trim((string) $car->emission_class))
+                    : null;
+            @endphp
             <div class="cc-grid-2">
                 <div>
-                    @if($car->fuel_consumption)<div class="cc-row"><span class="lbl">Zużycie paliwa (cykl mieszany)</span><span class="val">{{ $car->fuel_consumption }} l/100km</span></div>@endif
+                    @if($fcRaw)<div class="cc-row"><span class="lbl">Zużycie paliwa (cykl mieszany)</span><span class="val">{{ $fcRaw }} l/100 km</span></div>@endif
                     @if($car->fuel_procedure)<div class="cc-row"><span class="lbl">Procedura pomiaru</span><span class="val">{{ $car->fuel_procedure }}</span></div>@endif
                 </div>
                 <div>
                     @if($car->co2_emission)<div class="cc-row"><span class="lbl">Emisja CO₂</span><span class="val">{{ $car->co2_emission }} g/km</span></div>@endif
-                    @if($car->emission_class)<div class="cc-row"><span class="lbl">Klasa emisji</span><span class="val">{{ $car->emission_class }}</span></div>@endif
+                    @if($emissionClass)<div class="cc-row"><span class="lbl">Klasa emisji</span><span class="val">{{ $emissionClass }}</span></div>@endif
                 </div>
             </div>
         </div>
@@ -262,18 +305,79 @@
         </div>
         @endif
 
-        {{-- USZKODZENIA --}}
+        {{-- STAN WIZUALNY I USZKODZENIA --}}
         @if($car->damages->count())
         <div class="cc-section">
             <div class="cc-section-title">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-                Uszkodzenia pojazdu ({{ $car->damages->count() }})
+                Stan wizualny i ślady użytkowania ({{ $car->damages->count() }})
             </div>
             @foreach($car->damages as $d)
+            @php
+                // R2-aware URLs from PR #7: $d->image_url uses Storage::disk('public')->url
+                // which resolves to the configured R2 public URL on s3 disk. Same accessor
+                // is used for $dp->url. Never asset('storage/'.path).
+                $dmgPhotos = [];
+                if ($d->image_url) $dmgPhotos[] = $d->image_url;
+                foreach ($d->photos ?? [] as $dp) {
+                    $u = $dp->path ? $dp->url : null;
+                    if ($u && !in_array($u, $dmgPhotos)) $dmgPhotos[] = $u;
+                }
+            @endphp
             <div class="cc-dmg">
                 <strong>{{ $d->area }}</strong>
-                @if($d->tags && count($d->tags)) <span style="font-size:11px;color:#92400e">— {{ implode(', ', $d->tags) }}</span>@endif
+                @if($d->tags && count($d->tags))<span class="cc-dmg-tags">— {{ implode(', ', $d->tags) }}</span>@endif
                 @if($d->description)<p>{{ $d->description }}</p>@endif
+                @if(count($dmgPhotos))
+                <div class="cc-dmg-photos">
+                    @foreach(array_slice($dmgPhotos, 0, 6) as $pUrl)
+                        <img src="{{ $pUrl }}" alt="{{ $d->area }}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/placeholder-car.svg'">
+                    @endforeach
+                </div>
+                @endif
+            </div>
+            @endforeach
+        </div>
+        @endif
+
+        {{-- DOKUMENTACJA FOTOGRAFICZNA — gallery thumbnails for completeness --}}
+        @if($car->galleryImages && $car->galleryImages->count())
+        <div class="cc-section">
+            <div class="cc-section-title">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                Dokumentacja fotograficzna ({{ $car->galleryImages->count() }})
+            </div>
+            <div class="cc-photo-grid">
+                @foreach($car->galleryImages->take(9) as $img)
+                    @if($img->url)
+                    <img src="{{ $img->url }}" alt="{{ $car->title }}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/placeholder-car.svg'">
+                    @endif
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        {{-- OPONY --}}
+        @if($car->tireSets && $car->tireSets->count())
+        <div class="cc-section">
+            <div class="cc-section-title">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+                Opony
+            </div>
+            @foreach($car->tireSets as $set)
+            <div style="margin-bottom:14px">
+                <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:8px">{{ $set->season ?? 'Komplet opon' }}@if($set->brand) · {{ $set->brand }}@endif @if($set->model){{ $set->model }}@endif</div>
+                @if($set->tires && $set->tires->count())
+                <div class="cc-tire-grid">
+                    @foreach($set->tires as $t)
+                    <div class="cc-tire-card">
+                        <div class="cc-tire-card-title">{{ $t->position ?? 'Opona' }}</div>
+                        <div class="cc-tire-card-spec">{{ $t->size ?? '—' }}</div>
+                        @if($t->tread_depth !== null)<div class="cc-tire-card-tread">Bieżnik: <strong>{{ $t->tread_depth }} mm</strong></div>@endif
+                    </div>
+                    @endforeach
+                </div>
+                @endif
             </div>
             @endforeach
         </div>
