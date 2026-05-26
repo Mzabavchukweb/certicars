@@ -257,10 +257,11 @@
 
 /* DAMAGE / VISUAL CONDITION SECTION */
 .cs-dmg-gallery{border-radius:12px;overflow:hidden}
-.cs-dmg-gallery-stage{position:relative;background:#f5f5f7;overflow:hidden;border-radius:12px}
-.cs-dmg-gallery-slide{display:none}
-.cs-dmg-gallery-slide.active{display:block}
-.cs-dmg-gallery-slide img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;cursor:pointer}
+.cs-dmg-gallery-stage{position:relative;background:#f5f5f7;overflow:hidden;border-radius:12px;aspect-ratio:16/9;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+/* Slides stack on top of each other and cross-fade — no display:none jump cut. */
+.cs-dmg-gallery-slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .25s ease;pointer-events:none}
+.cs-dmg-gallery-slide.active{opacity:1;visibility:visible;pointer-events:auto;z-index:1}
+.cs-dmg-gallery-slide img{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer}
 .cs-dmg-gallery-label{position:absolute;bottom:14px;left:14px;background:rgba(0,0,0,.65);color:#fff;padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:2}
 .cs-dmg-gallery-meta{position:absolute;bottom:14px;right:14px;display:flex;align-items:center;gap:6px;z-index:2}
 .cs-dmg-gallery-counter{background:rgba(0,0,0,.65);color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
@@ -483,8 +484,8 @@
     .cs-damage-tab{font-size:12px;padding:7px 12px}
     .cs-damage-tab-ico,.cs-damage-tab-ico svg{width:14px;height:14px}
     .cs-dmg-gallery{border-radius:14px;background:#fff;border:1px solid #eeeef0;padding:8px}
-    .cs-dmg-gallery-stage{border-radius:10px}
-    .cs-dmg-gallery-slide img{aspect-ratio:4/3;border-radius:10px}
+    .cs-dmg-gallery-stage{border-radius:10px;aspect-ratio:4/3}
+    .cs-dmg-gallery-slide img{border-radius:10px}
     .cs-dmg-gallery-thumbs-wrap{margin-top:8px}
     .cs-dmg-gallery-thumb{width:64px;height:48px;border-width:2px;border-radius:6px}
     .cs-dmg-gallery-arrow{width:36px;height:36px}
@@ -1354,11 +1355,11 @@
                                 <button type="button" class="cs-dmg-gallery-arrow right" onclick="csDmgSlide(this,1)"><i data-lucide="chevron-right" style="width:22px;height:22px"></i></button>
                                 @endif
                             </div>
-                            {{-- Thumbnails — always shown --}}
+                            {{-- Thumbnails — only render when there's more than one photo
+                                 (a single-thumb strip is just a useless duplicate of the main image). --}}
+                            @if(count($dmgPhotos) > 1)
                             <div class="cs-dmg-gallery-thumbs-wrap">
-                                @if(count($dmgPhotos) > 1)
                                 <button type="button" class="cs-dmg-thumb-arrow left" onclick="csDmgScrollThumbs(this,-1)"><i data-lucide="chevron-left" style="width:14px;height:14px"></i></button>
-                                @endif
                                 <div class="cs-dmg-gallery-thumbs">
                                     @foreach($dmgPhotos as $pi => $pUrl)
                                     <div class="cs-dmg-gallery-thumb{{ $pi === 0 ? ' active' : '' }}" data-slide="{{ $pi }}" onclick="csDmgGoSlide(this,{{ $pi }})">
@@ -1366,10 +1367,9 @@
                                     </div>
                                     @endforeach
                                 </div>
-                                @if(count($dmgPhotos) > 1)
                                 <button type="button" class="cs-dmg-thumb-arrow right" onclick="csDmgScrollThumbs(this,1)"><i data-lucide="chevron-right" style="width:14px;height:14px"></i></button>
-                                @endif
                             </div>
+                            @endif
                         </div>
                         @else
                         <div style="padding:40px;text-align:center;color:var(--text-3)">
@@ -1751,7 +1751,7 @@
 </div>
 
 {{-- LIGHTBOX --}}
-<div class="cs-lightbox" id="csLightbox">
+<div class="cs-lightbox" id="csLightbox" onclick="if(event.target===this)csCloseLb()">
     <button class="cs-lightbox-close" onclick="csCloseLb()"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
     <button class="cs-lightbox-nav cs-lightbox-prev" onclick="csLbNav(-1)"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
     <img class="cs-lightbox-img" id="csLbImg" src="" alt="">
@@ -1800,6 +1800,38 @@ window.CAR_DAMAGE_GALLERY=@json($damageImgList->map(fn($i)=>['src'=>$i->url,'cap
 window.CAR_ALL_GALLERY=[...CAR_GALLERY,...CAR_DAMAGE_GALLERY];
 window.openCarGallery=(i)=>{csOpenLb(i||0)};
 
+// ==== iOS-SAFE BODY SCROLL LOCK ====
+// document.body.style.overflow='hidden' is broken on iOS Safari — the page still
+// scrolls behind the modal. The reliable cross-browser pattern is to freeze the
+// body at its current scroll position with position:fixed + negative top, then
+// restore the exact scroll position on unlock. The lock counter lets multiple
+// modals (e.g. inquiry + lightbox) stack without one closing unlocking the other.
+var _csLockY=0, _csLockDepth=0, _csLockPrev={};
+function csLockBody(){
+    if(_csLockDepth++>0)return;
+    _csLockY=window.pageYOffset||document.documentElement.scrollTop||0;
+    var b=document.body, s=b.style;
+    _csLockPrev={position:s.position,top:s.top,left:s.left,right:s.right,width:s.width,overflow:s.overflow};
+    s.position='fixed';
+    s.top=(-_csLockY)+'px';
+    s.left='0';
+    s.right='0';
+    s.width='100%';
+    s.overflow='hidden';
+}
+function csUnlockBody(){
+    if(_csLockDepth<=0)return;
+    if(--_csLockDepth>0)return;
+    var b=document.body, s=b.style;
+    s.position=_csLockPrev.position||'';
+    s.top=_csLockPrev.top||'';
+    s.left=_csLockPrev.left||'';
+    s.right=_csLockPrev.right||'';
+    s.width=_csLockPrev.width||'';
+    s.overflow=_csLockPrev.overflow||'';
+    window.scrollTo(0,_csLockY);
+}
+
 // ==== FULLSCREEN LIGHTBOX ====
 var _lbIdx=0;
 function csOpenLb(idx){
@@ -1811,11 +1843,11 @@ function csOpenLb(idx){
     img.alt=CAR_ALL_GALLERY[_lbIdx].caption||'';
     document.getElementById('csLbCounter').textContent=(_lbIdx+1)+' / '+CAR_ALL_GALLERY.length;
     lb.classList.add('open');
-    document.body.style.overflow='hidden';
+    csLockBody();
 }
 function csCloseLb(){
     document.getElementById('csLightbox').classList.remove('open');
-    document.body.style.overflow='';
+    csUnlockBody();
 }
 function csLbNav(dir){
     _lbIdx=(_lbIdx+dir+CAR_ALL_GALLERY.length)%CAR_ALL_GALLERY.length;
@@ -2175,8 +2207,10 @@ function _dmgLbShow(){
     img.src=_dmgLbPhotos[_dmgLbIdx].src;
     img.alt=_dmgLbPhotos[_dmgLbIdx].caption||'';
     document.getElementById('csLbCounter').textContent=(_dmgLbIdx+1)+' / '+_dmgLbPhotos.length;
-    lb.classList.add('open');
-    document.body.style.overflow='hidden';
+    if(!lb.classList.contains('open')){
+        lb.classList.add('open');
+        csLockBody();
+    }
 }
 // Override nav/close when damage lightbox is open
 (function(){
@@ -2193,6 +2227,60 @@ function _dmgLbShow(){
         _dmgLbPhotos=null;
         origClose();
     };
+})();
+
+// ==== TOUCH SWIPE — damage gallery stages + main gallery + lightbox ====
+// Simple horizontal-swipe detector. Threshold of 40px filters out scroll jitter.
+// pan-y in CSS keeps vertical page scroll responsive while we own X swipes.
+(function(){
+    function bindSwipe(el, onPrev, onNext){
+        if(!el)return;
+        var sx=0, sy=0, ex=0, ey=0, active=false;
+        el.addEventListener('touchstart', function(e){
+            var t=e.changedTouches[0];
+            sx=ex=t.clientX; sy=ey=t.clientY; active=true;
+        }, {passive:true});
+        el.addEventListener('touchmove', function(e){
+            if(!active)return;
+            var t=e.changedTouches[0];
+            ex=t.clientX; ey=t.clientY;
+        }, {passive:true});
+        el.addEventListener('touchend', function(){
+            if(!active)return;
+            active=false;
+            var dx=ex-sx, dy=ey-sy;
+            // horizontal swipe wins over vertical pan and clears the noise floor
+            if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)){
+                (dx<0 ? onNext : onPrev)();
+            }
+        }, {passive:true});
+    }
+    document.addEventListener('DOMContentLoaded', function(){
+        // Damage gallery: swipe between slides
+        document.querySelectorAll('.cs-dmg-gallery-stage').forEach(function(stage){
+            bindSwipe(stage,
+                function(){ var g=stage.closest('.cs-dmg-gallery'); if(!g)return;
+                    var slides=g.querySelectorAll('.cs-dmg-gallery-slide'); var cur=0;
+                    slides.forEach(function(s,i){ if(s.classList.contains('active'))cur=i; });
+                    _csDmgSetSlide(g, (cur-1+slides.length)%slides.length);
+                },
+                function(){ var g=stage.closest('.cs-dmg-gallery'); if(!g)return;
+                    var slides=g.querySelectorAll('.cs-dmg-gallery-slide'); var cur=0;
+                    slides.forEach(function(s,i){ if(s.classList.contains('active'))cur=i; });
+                    _csDmgSetSlide(g, (cur+1)%slides.length);
+                });
+        });
+        // Main car gallery: swipe between thumbnails (drives csSelImg)
+        var mainStage=document.querySelector('.cs-gallery-stage');
+        if(mainStage) bindSwipe(mainStage,
+            function(){ if(typeof csGalleryPrev==='function')csGalleryPrev(); },
+            function(){ if(typeof csGalleryNext==='function')csGalleryNext(); });
+        // Lightbox: swipe between photos
+        var lb=document.getElementById('csLightbox');
+        if(lb) bindSwipe(lb,
+            function(){ csLbNav(-1); },
+            function(){ csLbNav(1); });
+    });
 })();
 
 // Inline calculator
