@@ -263,10 +263,15 @@ class PublicPagesTest extends TestCase
         $car = $this->activeCar();
         $car->update(['has_certicheck' => true]);
 
+        // The promotional green "Sprawdzony CertiCheck / Raport / PDF" trust banner
+        // was removed from the public car page by design — only the CertiCheck CTA
+        // remains visible there. The PDF endpoint stays reachable directly.
         $this->get('/samochody/'.$car->slug)
             ->assertOk()
-            ->assertSee(route('catalog.certicheck', $car->slug), false)
-            ->assertSee(route('car.pdf', $car->slug), false);
+            ->assertSee(route('catalog.certicheck', $car->slug), false);
+
+        // PDF route remains functional even though it's no longer linked from the car page.
+        $this->get(route('car.pdf', $car->slug))->assertOk();
     }
 
     public function test_car_detail_hides_certicheck_section_when_unavailable(): void
