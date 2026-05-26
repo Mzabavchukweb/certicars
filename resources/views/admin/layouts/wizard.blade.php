@@ -228,6 +228,20 @@
     </div>
 </div>
 
+{{-- Upload-in-progress overlay — shown by wizSafeSubmit when the form has
+     any file inputs with attached files. Without this, a multi-minute media
+     upload (engine video + gallery + damage photos) looks frozen. --}}
+<div id="wizUploadOverlay" role="alert" aria-live="assertive"
+     style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.85);z-index:99998;align-items:center;justify-content:center;flex-direction:column;font-family:'Inter',system-ui,sans-serif;color:#fff;text-align:center;padding:24px">
+    <div style="width:56px;height:56px;border:5px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:wizUploadSpin 1s linear infinite;margin-bottom:24px"></div>
+    <div style="font-size:22px;font-weight:700;letter-spacing:-.3px;margin-bottom:8px">Zapisywanie…</div>
+    <div style="font-size:15px;font-weight:400;color:rgba(255,255,255,.85);max-width:520px;line-height:1.55">
+        Przesyłanie zdjęć i filmu. <strong style="color:#fff">Nie zamykaj tej strony.</strong><br>
+        Duże filmy mogą trwać kilka minut.
+    </div>
+</div>
+<style>@keyframes wizUploadSpin{to{transform:rotate(360deg)}}</style>
+
 <div id="wizSessionWarning" role="status" aria-live="polite"
      style="display:none;position:fixed;bottom:16px;right:16px;z-index:99999;background:#1f2937;color:#fff;padding:14px 18px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.25);font-size:13px;max-width:340px;font-family:'Inter',system-ui,sans-serif">
     <div style="font-weight:700;margin-bottom:4px" id="wizSessionWarningTitle">Sesja wkrótce wygaśnie</div>
@@ -563,6 +577,18 @@ function wizSafeSubmit() {
         b.style.cursor = 'wait';
         b.textContent = 'Zapisywanie…';
     });
+    // Show the upload-in-progress overlay if any file inputs have files.
+    // Without this, a multi-minute media upload looks frozen to the operator.
+    try {
+        var hasFiles = false;
+        form.querySelectorAll('input[type="file"]').forEach(function(input){
+            if (input.files && input.files.length > 0) hasFiles = true;
+        });
+        var overlay = document.getElementById('wizUploadOverlay');
+        if (overlay && hasFiles) {
+            overlay.style.display = 'flex';
+        }
+    } catch (e) { /* overlay is best-effort, never blocks submit */ }
     form.submit();
 }
 function wizResetSubmitState() {

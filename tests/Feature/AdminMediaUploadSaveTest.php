@@ -188,10 +188,10 @@ class AdminMediaUploadSaveTest extends TestCase
     {
         $source = file_get_contents(base_path('app/Http/Controllers/Admin/CarController.php'));
         // The fix moves the delete AFTER the successful safeStore + DB update.
-        // This regex confirms the order: safeStore() is called, return value
-        // is checked, AND only then is the old path deleted.
+        // This regex confirms the order: safeStore() (possibly wrapped in
+        // $this->timePhase(...) for the perf hotfix) → DB update → delete.
         $this->assertMatchesRegularExpression(
-            '/private function handleEngineVideo.*?\$newPath\s*=\s*\$this->safeStore.*?\$car->update\(\[.engine_video_path.\s*=>\s*\$newPath\]\).*?Storage::disk\(.public.\)->delete\(\$oldPath\)/s',
+            '/private function handleEngineVideo.*?\$newPath\s*=.*?safeStore.*?\$car->update\(\[.engine_video_path.\s*=>\s*\$newPath\]\).*?Storage::disk\(.public.\)->delete\(\$oldPath\)/s',
             $source,
             'handleEngineVideo must upload-then-update-then-delete (not delete-before-upload).'
         );
