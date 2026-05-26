@@ -28,10 +28,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, \Illuminate\Http\Request $request) {
             $msg = 'Sesja wygasła. Odśwież stronę i spróbuj ponownie.';
             if ($request->expectsJson()) {
-                return response()->json(['message' => $msg], 419);
+                return response()->json(['message' => $msg, 'session_expired' => true], 419);
             }
-            return redirect()->back()
+            // Add ?session_expired=1 so the wizard restore banner knows to surface a
+            // dedicated message AND so the autosave layer keeps the draft instead of
+            // assuming a successful save cleared it.
+            $back = redirect()->back()
                 ->withInput($request->except(['_token', 'password', 'password_confirmation']))
-                ->with('error', $msg);
+                ->with('error', $msg)
+                ->with('session_expired', true);
+            return $back;
         });
     })->create();

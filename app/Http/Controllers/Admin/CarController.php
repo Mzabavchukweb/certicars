@@ -125,11 +125,29 @@ class CarController extends Controller
         $reqId   = (string) \Illuminate\Support\Str::uuid();
         $userId  = optional($request->user())->id;
         $fileCounts = $this->safeFileCounts($request);
+        $diag = $this->parseClientDiag($request);
         \Log::info('car.save.start', [
-            'rid' => $reqId, 'op' => 'store', 'user_id' => $userId, 'files' => $fileCounts,
+            'rid'         => $reqId,
+            'op'          => 'store',
+            'user_id'     => $userId,
+            'files'       => $fileCounts,
+            'req_bytes'   => (int) $request->server('CONTENT_LENGTH'),
+            'field_count' => count($request->all()),
+            'button'      => $diag['button'] ?? null,
+            'step'        => $diag['step'] ?? null,
+            'opened_sec'  => $diag['elapsed_sec'] ?? null,
+            'had_draft'   => $diag['had_draft'] ?? null,
         ]);
 
-        $validated = $this->validateCar($request);
+        try {
+            $validated = $this->validateCar($request);
+        } catch (\Illuminate\Validation\ValidationException $ve) {
+            \Log::warning('car.save.validation_failed', [
+                'rid' => $reqId, 'op' => 'store', 'user_id' => $userId,
+                'fields' => array_keys($ve->errors()),
+            ]);
+            throw $ve;
+        }
         $validated = $this->processEquipment($validated);
         unset($validated['engine_video_file'], $validated['remove_engine_video'], $validated['image_alt'], $validated['active_tab']);
 
@@ -214,11 +232,30 @@ class CarController extends Controller
         $reqId   = (string) \Illuminate\Support\Str::uuid();
         $userId  = optional($request->user())->id;
         $fileCounts = $this->safeFileCounts($request);
+        $diag = $this->parseClientDiag($request);
         \Log::info('car.save.start', [
-            'rid' => $reqId, 'op' => 'update', 'user_id' => $userId, 'car_id' => $car->id, 'files' => $fileCounts,
+            'rid'         => $reqId,
+            'op'          => 'update',
+            'user_id'     => $userId,
+            'car_id'      => $car->id,
+            'files'       => $fileCounts,
+            'req_bytes'   => (int) $request->server('CONTENT_LENGTH'),
+            'field_count' => count($request->all()),
+            'button'      => $diag['button'] ?? null,
+            'step'        => $diag['step'] ?? null,
+            'opened_sec'  => $diag['elapsed_sec'] ?? null,
+            'had_draft'   => $diag['had_draft'] ?? null,
         ]);
 
-        $validated = $this->validateCar($request);
+        try {
+            $validated = $this->validateCar($request);
+        } catch (\Illuminate\Validation\ValidationException $ve) {
+            \Log::warning('car.save.validation_failed', [
+                'rid' => $reqId, 'op' => 'update', 'user_id' => $userId, 'car_id' => $car->id,
+                'fields' => array_keys($ve->errors()),
+            ]);
+            throw $ve;
+        }
         $validated = $this->processEquipment($validated);
         unset($validated['engine_video_file'], $validated['remove_engine_video'], $validated['image_alt'], $validated['active_tab']);
 
@@ -276,6 +313,34 @@ class CarController extends Controller
             if ($request->hasFile($field)) {
                 $val = $request->file($field);
                 $out[$field] = is_array($val) ? count($val) : 1;
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * Parse the wizard's client-side `_diag` hidden input. Safe to log:
+     * only integers + a button-name enum + a step number. Never contains
+     * PII, passwords, secrets, or raw payload. Returns [] on any parse error
+     * (the diag is best-effort observability, not load-bearing).
+     */
+    private function parseClientDiag(Request $request): array
+    {
+        $raw = $request->input('_diag');
+        if (!is_string($raw) || $raw === '') return [];
+        $data = json_decode($raw, true);
+        if (!is_array($data)) return [];
+        $allowedKeys = ['opened_at', 'elapsed_sec', 'field_count', 'file_count', 'file_total_bytes', 'button', 'step', 'had_draft'];
+        $out = [];
+        foreach ($allowedKeys as $k) {
+            if (!array_key_exists($k, $data)) continue;
+            $v = $data[$k];
+            if ($k === 'button') {
+                $out[$k] = in_array($v, ['save', 'save_exit'], true) ? $v : null;
+            } elseif ($k === 'had_draft') {
+                $out[$k] = (bool) $v;
+            } elseif (is_numeric($v)) {
+                $out[$k] = (int) $v;
             }
         }
         return $out;

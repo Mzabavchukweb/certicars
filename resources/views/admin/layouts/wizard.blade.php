@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    {{-- P1 data-loss safety: surface session expiry to the autosave + warning JS. --}}
+    <meta name="session-expires-at" content="{{ now()->addMinutes((int) config('session.lifetime'))->timestamp }}">
+    <meta name="wizard-autosave-key" content="wiz:car:{{ isset($car) && $car ? 'edit:' . $car->id : 'create' }}">
+    <meta name="wizard-car-updated-at" content="{{ isset($car) && $car ? $car->updated_at?->timestamp : '' }}">
+    <meta name="wizard-session-expired" content="{{ session('session_expired') ? '1' : '0' }}">
     <title>@yield('title','Kreator ogłoszenia') — CertiCars</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -207,6 +212,27 @@
     </style>
 </head>
 <body>
+
+{{-- P1 DATA-LOSS SAFETY — restore banner + session expiry warning.
+     Hidden by default; the autosave JS module shows them when applicable. --}}
+<div id="wizRestoreBanner" role="status" aria-live="polite"
+     style="display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:#fef3c7;border-bottom:2px solid #f59e0b;padding:12px 16px;box-shadow:0 2px 12px rgba(0,0,0,.08);font-family:'Inter',system-ui,sans-serif">
+    <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <strong style="color:#92400e;font-size:14px;font-weight:700">Znaleziono niezapisane dane formularza.</strong>
+        <span id="wizRestoreFilesHint" style="color:#92400e;font-size:13px;display:none;flex:1;min-width:240px"></span>
+        <span style="flex:1"></span>
+        <button type="button" id="wizRestoreAccept"
+                style="background:#92400e;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">Przywróć</button>
+        <button type="button" id="wizRestoreDiscard"
+                style="background:transparent;color:#92400e;border:1.5px solid #92400e;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Odrzuć</button>
+    </div>
+</div>
+
+<div id="wizSessionWarning" role="status" aria-live="polite"
+     style="display:none;position:fixed;bottom:16px;right:16px;z-index:99999;background:#1f2937;color:#fff;padding:14px 18px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.25);font-size:13px;max-width:340px;font-family:'Inter',system-ui,sans-serif">
+    <div style="font-weight:700;margin-bottom:4px" id="wizSessionWarningTitle">Sesja wkrótce wygaśnie</div>
+    <div style="opacity:.85;line-height:1.5" id="wizSessionWarningText">Twoje dane są zapisywane lokalnie. Zaloguj się ponownie w nowej karcie, aby kontynuować bezpiecznie.</div>
+</div>
 
 <div class="wiz-shell">
     {{-- ==================== TOP BAR ==================== --}}
@@ -560,10 +586,267 @@ window.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('wizSave')?.addEventListener('click', wizSafeSubmit);
     document.getElementById('wizSaveExit')?.addEventListener('click', wizSafeSubmit);
+
+    wizInitAutosave();
+    wizInitSessionWarning();
 });
 
 // On the last step "Dalej" dispatches wizard:publish — submit the form (guarded)
 window.addEventListener('wizard:publish', wizSafeSubmit);
+
+// ===================================================================
+// P1 DATA-LOSS SAFETY NET — wizard autosave + restore + session warning
+// Layer 1: persist non-file form values to localStorage on every input/change
+// Layer 2: show session-expiry warning before cookie dies
+// Layer 3: surface restore banner on form load if a draft exists
+// Layer 4: hidden _diag input on submit for safe observability
+// ===================================================================
+(function(){
+    // expose for tests + manual debugging
+    window.WizardAutosave = { storageKey:null, opened_at:Date.now(), filenames:[] };
+})();
+
+function wizStorageKey() {
+    return document.querySelector('meta[name="wizard-autosave-key"]')?.content || null;
+}
+function wizCarUpdatedAt() {
+    const v = document.querySelector('meta[name="wizard-car-updated-at"]')?.content || '';
+    const n = parseInt(v, 10);
+    return isNaN(n) ? 0 : n * 1000;
+}
+function wizSessionExpiresAtMs() {
+    const v = document.querySelector('meta[name="session-expires-at"]')?.content || '';
+    const n = parseInt(v, 10);
+    return isNaN(n) ? 0 : n * 1000;
+}
+function wizForm() { return document.getElementById('wizardForm'); }
+
+function wizSerializeForm() {
+    const form = wizForm();
+    if (!form) return null;
+    const SKIP_NAMES = new Set(['_token', '_ts', 'website', 'password', 'password_confirmation', '_diag']);
+    const out = {};
+    const filenames = [];
+    form.querySelectorAll('input,select,textarea').forEach(function(el){
+        if (!el.name) return;
+        if (SKIP_NAMES.has(el.name)) return;
+        if (el.type === 'password') return;
+        if (el.type === 'file') {
+            // can't restore <input type=file>, but record filenames for the hint
+            (el.files || []).forEach(function(f){
+                filenames.push({ name: f.name, size: f.size, field: el.name });
+            });
+            return;
+        }
+        if (el.type === 'checkbox' || el.type === 'radio') {
+            if (el.checked) {
+                out[el.name] = (out[el.name] === undefined) ? el.value : (Array.isArray(out[el.name]) ? out[el.name].concat([el.value]) : [out[el.name], el.value]);
+            }
+            return;
+        }
+        let v = el.value;
+        if (typeof v === 'string' && v.length > 4096) v = v.slice(0, 4096); // per-field cap
+        if (el.name.endsWith('[]')) {
+            (out[el.name] = out[el.name] || []).push(v);
+        } else {
+            out[el.name] = v;
+        }
+    });
+    return { values: out, filenames: filenames, saved_at: Date.now() };
+}
+
+function wizPersistDraft() {
+    const key = wizStorageKey();
+    if (!key) return;
+    try {
+        const payload = wizSerializeForm();
+        if (!payload) return;
+        const json = JSON.stringify(payload);
+        if (json.length > 1024 * 1024) {
+            // exceeds 1 MB cap — drop large textareas defensively and retry once
+            Object.keys(payload.values).forEach(function(k){
+                if (typeof payload.values[k] === 'string' && payload.values[k].length > 2000) payload.values[k] = payload.values[k].slice(0, 2000);
+            });
+            localStorage.setItem(key, JSON.stringify(payload));
+        } else {
+            localStorage.setItem(key, json);
+        }
+        window.WizardAutosave.filenames = payload.filenames;
+    } catch (e) {
+        // quota or serialization failure — silently drop; restore banner is best-effort
+        try { localStorage.removeItem(key); } catch(_) {}
+    }
+}
+
+function wizLoadDraft() {
+    const key = wizStorageKey();
+    if (!key) return null;
+    try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return null;
+        const payload = JSON.parse(raw);
+        if (!payload || typeof payload !== 'object') return null;
+        return payload;
+    } catch (e) { return null; }
+}
+
+function wizClearDraft() {
+    const key = wizStorageKey();
+    if (!key) return;
+    try { localStorage.removeItem(key); } catch (e) {}
+}
+
+function wizApplyDraft(payload) {
+    const form = wizForm();
+    if (!form || !payload || !payload.values) return;
+    Object.keys(payload.values).forEach(function(name){
+        const value = payload.values[name];
+        const els = form.querySelectorAll('[name="' + CSS.escape(name) + '"]');
+        if (!els.length) return;
+        if (els[0].type === 'checkbox' || els[0].type === 'radio') {
+            const wanted = Array.isArray(value) ? value : [value];
+            els.forEach(function(el){ el.checked = wanted.indexOf(el.value) !== -1; });
+        } else if (els.length === 1) {
+            els[0].value = value;
+            els[0].dispatchEvent(new Event('change', { bubbles: true }));
+        } else {
+            // array-named fields like equipment[Komfort] — fill in order
+            const arr = Array.isArray(value) ? value : [value];
+            els.forEach(function(el, i){ if (arr[i] !== undefined) el.value = arr[i]; });
+        }
+    });
+}
+
+function wizFormatFileHint(filenames) {
+    if (!filenames || !filenames.length) return '';
+    const first = filenames.slice(0, 3).map(function(f){ return f.name; });
+    const more = filenames.length - first.length;
+    return 'Do ponownego dodania: ' + first.join(', ') + (more > 0 ? ' (i ' + more + ' więcej)' : '') + '.';
+}
+
+function wizInitAutosave() {
+    const form = wizForm();
+    if (!form) return;
+    const key = wizStorageKey();
+    if (!key) return;
+
+    // restore banner
+    const draft = wizLoadDraft();
+    const carUpdated = wizCarUpdatedAt();
+    const sessionExpired = document.querySelector('meta[name="wizard-session-expired"]')?.content === '1';
+    if (draft && (sessionExpired || draft.saved_at > carUpdated)) {
+        const banner = document.getElementById('wizRestoreBanner');
+        const filesHint = document.getElementById('wizRestoreFilesHint');
+        if (banner) {
+            const hint = wizFormatFileHint(draft.filenames || []);
+            if (filesHint && hint) { filesHint.textContent = hint; filesHint.style.display = ''; }
+            banner.style.display = '';
+        }
+        document.getElementById('wizRestoreAccept')?.addEventListener('click', function(){
+            wizApplyDraft(draft);
+            const b = document.getElementById('wizRestoreBanner'); if (b) b.style.display = 'none';
+            window.WizardAutosave.had_draft = true;
+        }, { once: true });
+        document.getElementById('wizRestoreDiscard')?.addEventListener('click', function(){
+            wizClearDraft();
+            const b = document.getElementById('wizRestoreBanner'); if (b) b.style.display = 'none';
+        }, { once: true });
+    }
+
+    // persist on input/change (debounced) + heartbeat every 5s
+    let t = null;
+    const schedule = function(){ clearTimeout(t); t = setTimeout(wizPersistDraft, 300); };
+    form.addEventListener('input', schedule);
+    form.addEventListener('change', schedule);
+    setInterval(wizPersistDraft, 5000);
+
+    // clear draft on confirmed success — read flash via meta added by edit response
+    // (we infer success: when the page rendered the edit view AND no session_expired marker AND no validation errors).
+    const hasErrors = !!form.querySelector('.is-invalid, [data-validation-error]') || (document.querySelector('[data-flash="error"]'));
+    const isCreate = key.endsWith(':create');
+    if (!isCreate && !sessionExpired && !hasErrors) {
+        // we're on the edit page after a save → clear
+        wizClearDraft();
+    }
+
+    // add hidden _diag input right before submit
+    const beforeSubmit = function(){
+        const draftExists = !!wizLoadDraft();
+        let diagInput = form.querySelector('input[name="_diag"]');
+        if (!diagInput) {
+            diagInput = document.createElement('input');
+            diagInput.type = 'hidden'; diagInput.name = '_diag';
+            form.appendChild(diagInput);
+        }
+        // figure out which button triggered
+        const lastBtn = window._wizLastSubmitButton || null;
+        let fileCount = 0, fileTotal = 0;
+        form.querySelectorAll('input[type="file"]').forEach(function(input){
+            (input.files || []).forEach(function(f){ fileCount++; fileTotal += f.size; });
+        });
+        diagInput.value = JSON.stringify({
+            opened_at: Math.floor(window.WizardAutosave.opened_at / 1000),
+            elapsed_sec: Math.floor((Date.now() - window.WizardAutosave.opened_at) / 1000),
+            field_count: form.querySelectorAll('input,select,textarea').length,
+            file_count: fileCount,
+            file_total_bytes: fileTotal,
+            button: lastBtn,
+            step: parseInt(form.querySelector('input[name="active_tab"]')?.value || '0', 10) || null,
+            had_draft: draftExists,
+        });
+    };
+    form.addEventListener('submit', beforeSubmit, true);
+    document.getElementById('wizSave')?.addEventListener('click', function(){ window._wizLastSubmitButton = 'save'; });
+    document.getElementById('wizSaveExit')?.addEventListener('click', function(){ window._wizLastSubmitButton = 'save_exit'; });
+}
+
+function wizInitSessionWarning() {
+    const expiresAt = wizSessionExpiresAtMs();
+    if (!expiresAt) return;
+    const warn = document.getElementById('wizSessionWarning');
+    const title = document.getElementById('wizSessionWarningTitle');
+    const text = document.getElementById('wizSessionWarningText');
+    if (!warn) return;
+
+    function check() {
+        const msLeft = expiresAt - Date.now();
+        if (msLeft <= 0) {
+            title.textContent = 'Sesja wygasła';
+            text.textContent = 'Twoje dane są zapisywane lokalnie. Otwórz panel w nowej karcie i zaloguj się ponownie przed zapisem.';
+            warn.style.background = '#7f1d1d';
+            warn.style.display = '';
+        } else if (msLeft < 60 * 1000) {
+            title.textContent = 'Sesja wygaśnie za <1 min';
+            text.textContent = 'Zapisz teraz lub otwórz panel w nowej karcie i zaloguj się ponownie.';
+            warn.style.background = '#7f1d1d';
+            warn.style.display = '';
+        } else if (msLeft < 10 * 60 * 1000) {
+            const min = Math.ceil(msLeft / 60000);
+            title.textContent = 'Sesja wygaśnie za ~' + min + ' min';
+            text.textContent = 'Twoje dane są zapisywane lokalnie. Możesz odświeżyć sesję w nowej karcie.';
+            warn.style.background = '#1f2937';
+            warn.style.display = '';
+        } else {
+            warn.style.display = 'none';
+        }
+    }
+    check();
+    setInterval(check, 30 * 1000);
+
+    // before submit, if we're past T-30s, soft-warn unless user has already overridden
+    document.addEventListener('click', function(e){
+        if (!e.target.closest('#wizSave, #wizSaveExit')) return;
+        const msLeft = expiresAt - Date.now();
+        if (msLeft > 30 * 1000) return; // plenty of time, no warning
+        if (window._wizSessionWarningAck) return;
+        e.preventDefault(); e.stopPropagation();
+        if (confirm('Sesja mogła wygasnąć. Twoje dane są zapisane lokalnie. Otwórz panel w nowej karcie i zaloguj się ponownie, a następnie wróć tutaj.\n\nNacisnij OK, aby spróbować zapisać mimo to.')) {
+            window._wizSessionWarningAck = true;
+            // re-fire the click without intercept
+            e.target.click();
+        }
+    }, true);
+}
 </script>
 @yield('wizard-scripts')
 @stack('scripts')
