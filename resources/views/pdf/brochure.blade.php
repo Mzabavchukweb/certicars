@@ -122,7 +122,9 @@
     @if($car->transmission){{ $car->transmission }}@endif
 </div>
 
-@if($car->primaryImage)
+@if($car->primaryImage && ($car->primaryImage->pdf_src ?? null))
+<img src="{{ $car->primaryImage->pdf_src }}" class="car-img" onerror="this.style.display='none'">
+@elseif($car->primaryImage)
 <img src="{{ $car->primaryImage->url }}" class="car-img" onerror="this.style.display='none'">
 @endif
 
@@ -357,7 +359,15 @@
 @endif
 
 {{-- ===== PHOTO DOCUMENTATION ===== --}}
-@if($car->galleryImages && $car->galleryImages->count() > 1)
+@php
+    // Only render images that successfully resolved to a local file path —
+    // DomPDF is configured with isRemoteEnabled=false, so a raw R2 URL would
+    // silently fail and leave blank space. PdfController decorates every
+    // CarImage with $img->pdf_src for this purpose.
+    $galleryEmbeddable = $car->galleryImages?->filter(fn($i) => !empty($i->pdf_src))->values() ?? collect();
+    $damageEmbeddable  = $car->damageImages?->filter(fn($i) => !empty($i->pdf_src))->values() ?? collect();
+@endphp
+@if($galleryEmbeddable->count())
 <div class="pb"></div>
 <div class="hd">
     <div class="hd-left"><span class="hd-brand">Certi<span>Cars</span></span><span class="hd-badge">CertiCheck</span></div>
@@ -365,20 +375,49 @@
 </div>
 <div class="sh">Dokumentacja fotograficzna</div>
 <div class="photo-grid">
-    @foreach($car->galleryImages->take(8) as $img)
-    <img src="{{ $img->url }}" onerror="this.style.display='none'">
+    @foreach($galleryEmbeddable->take(8) as $img)
+    <img src="{{ $img->pdf_src }}" onerror="this.style.display='none'">
     @endforeach
 </div>
 @endif
 
 {{-- DAMAGE PHOTOS --}}
-@if($car->damageImages && $car->damageImages->count())
+@if($damageEmbeddable->count())
 <div class="sh" style="color:#b45309;border-bottom-color:#f59e0b">Zdjęcia uszkodzeń</div>
 <div class="photo-grid">
-    @foreach($car->damageImages->take(6) as $img)
-    <img src="{{ $img->url }}" onerror="this.style.display='none'">
+    @foreach($damageEmbeddable->take(6) as $img)
+    <img src="{{ $img->pdf_src }}" onerror="this.style.display='none'">
     @endforeach
 </div>
+@endif
+
+{{-- ENGINE VIDEO — DomPDF can't embed video, so surface the URL as a notice. --}}
+@php
+    $engineVideoUrl = null;
+    if ($car->engine_video_url) {
+        $engineVideoUrl = $car->engine_video_url;
+    } elseif ($car->engine_video_path) {
+        // Online URL for the report — public-facing single-car page hosts the video player.
+        $engineVideoUrl = url('/samochody/' . $car->slug);
+    }
+@endphp
+@if($engineVideoUrl)
+<div class="sh">Nagranie pracy silnika</div>
+<table>
+    <tr>
+        <td class="lbl">Dostępne online</td>
+        <td class="val" style="word-break:break-all">{{ $engineVideoUrl }}</td>
+    </tr>
+</table>
+@endif
+
+{{-- 360° PHOTOS — DomPDF can't render Pannellum, so surface them as a notice + URL. --}}
+@if($car->pano360Image || $car->exteriorPano360Image)
+<div class="sh">Zdjęcia 360°</div>
+<table>
+    @if($car->exteriorPano360Image)<tr><td class="lbl">Widok zewnętrzny 360°</td><td class="val" style="word-break:break-all">{{ url('/samochody/' . $car->slug) }}</td></tr>@endif
+    @if($car->pano360Image)<tr><td class="lbl">Widok wnętrza 360°</td><td class="val" style="word-break:break-all">{{ url('/samochody/' . $car->slug) }}</td></tr>@endif
+</table>
 @endif
 
 {{-- FOOTER --}}
