@@ -203,33 +203,73 @@
 .cs-status-body strong{display:block;font-size:14px;font-weight:700;color:#166534;margin-bottom:6px}
 .cs-status-body .badge{background:var(--yellow-bg);color:var(--yellow-dark);border:1px solid #fde68a;margin-top:4px}
 
-/* DAMAGES */
-.cs-damages-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px;-webkit-overflow-scrolling:touch;max-width:100%;scrollbar-width:none}
-.cs-damages-tabs::-webkit-scrollbar{display:none}
-.cs-damage-tab{flex-shrink:0;display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:#fff7ed;color:#b45309;border:1px solid #fed7aa;border-radius:50px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,border-color .15s,transform .12s}
-.cs-damage-tab:hover{background:#ffedd5}
-.cs-damage-tab.active{background:#0a0a0a;color:#fff;border-color:#0a0a0a}
-.cs-damage-tab-ico{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0}
-.cs-damage-tab-ico svg{width:16px;height:16px;display:block}
-.cs-damage-grid{display:grid;grid-template-columns:300px 1fr;gap:0;border:1px solid #eeeef0;border-radius:14px;overflow:hidden;background:#fff}
-.cs-damage-diagram{background:#f5f5f7;position:relative;overflow:hidden;min-height:500px}
-.cs-damage-diagram-inner{position:absolute;inset:0;overflow:hidden}
-.cs-damage-diagram-inner>img{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(1.7);width:100%;height:auto;pointer-events:none}
-.cs-damage-marker{position:absolute;transform:translate(-50%,-50%);width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;padding:0;margin:0;cursor:pointer;z-index:5;-webkit-tap-highlight-color:transparent}
-.cs-damage-marker-dot{width:26px;height:26px;border-radius:50%;background:#f59e0b;border:2px solid #fff;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 2px 8px rgba(245,158,11,.4);transition:transform .12s ease,box-shadow .12s ease}
-.cs-damage-marker-dot svg{width:14px;height:14px;display:block}
-.cs-damage-marker.active .cs-damage-marker-dot{transform:scale(1.15);box-shadow:0 0 0 6px rgba(245,158,11,.18),0 2px 10px rgba(245,158,11,.5)}
+/* DAMAGES — desktop reference rebuild */
+/* Subtitle under heading */
+.cs-damage-subtitle{font-size:13px;color:#6b7280;line-height:1.55;margin:-4px 0 18px;max-width:720px}
+/* Category chips row — reference layout: Wszystkie + Drobne + Lekkie rysy */
+.cs-damages-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;max-width:100%}
+.cs-damage-tab{flex-shrink:0;display:inline-flex;align-items:center;gap:9px;padding:8px 14px;background:#fff;color:#374151;border:1.5px solid #e5e7eb;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,border-color .15s}
+.cs-damage-tab:hover{border-color:#cbd5e1;background:#f8fafc}
+.cs-damage-tab.active{background:#eff6ff;color:#0066ff;border-color:#0066ff}
+.cs-damage-tab-dot{display:inline-block;width:10px;height:10px;border-radius:50%;flex-shrink:0;background:#f59e0b}
+.cs-damage-tab-dot.outline{background:transparent;border:2px solid #f59e0b}
+.cs-damage-tab-grid{display:inline-flex;width:14px;height:14px;flex-shrink:0;color:#6b7280}
+.cs-damage-tab.active .cs-damage-tab-grid{color:#0066ff}
+.cs-damage-tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:20px;padding:0 7px;border-radius:50px;background:#f1f5f9;color:#475569;font-size:11px;font-weight:700;margin-left:2px}
+.cs-damage-tab.active .cs-damage-tab-count{background:#0066ff;color:#fff}
+
+/* Damage grid: left diagram card / right photo card */
+.cs-damage-grid{display:grid;grid-template-columns:380px 1fr;gap:20px;background:transparent}
+.cs-damage-diagram{position:relative;background:#fafbfc;border:1px solid #eeeef0;border-radius:14px;overflow:hidden;min-height:auto;display:flex;flex-direction:column}
+.cs-damage-diagram-canvas{position:relative;width:100%;aspect-ratio:1/1;background:#fafbfc;overflow:hidden}
+.cs-damage-diagram-canvas img.cs-damage-diagram-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;pointer-events:none;padding:12px}
+.cs-damage-diagram-legend{padding:12px 16px 14px;border-top:1px solid #eeeef0;background:#fff;display:flex;flex-direction:column;gap:7px}
+.cs-damage-diagram-legend-item{display:flex;align-items:center;gap:8px;font-size:11.5px;color:#374151;line-height:1.3}
+.cs-damage-diagram-legend-item .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#f59e0b;flex-shrink:0}
+.cs-damage-diagram-legend-item .dot.outline{background:transparent;border:2px solid #f59e0b}
+
+/* Numbered markers on the diagram */
+.cs-damage-marker{position:absolute;transform:translate(-50%,-50%);width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;padding:0;margin:0;cursor:pointer;z-index:5;-webkit-tap-highlight-color:transparent}
+.cs-damage-marker-dot{width:24px;height:24px;border-radius:50%;background:#f59e0b;border:2px solid #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800;line-height:1;font-family:inherit;letter-spacing:-.2px;box-shadow:0 2px 6px rgba(245,158,11,.45);transition:transform .12s ease,box-shadow .12s ease,background .15s ease}
+.cs-damage-marker.outline .cs-damage-marker-dot{background:#fff;color:#b45309;border-color:#f59e0b}
+.cs-damage-marker.active .cs-damage-marker-dot{transform:scale(1.18);box-shadow:0 0 0 5px rgba(0,102,255,.18),0 2px 10px rgba(0,102,255,.35);background:#0066ff;color:#fff;border-color:#fff}
+.cs-damage-marker.outline.active .cs-damage-marker-dot{background:#0066ff;color:#fff;border-color:#fff}
 .cs-damage-marker:hover .cs-damage-marker-dot{transform:scale(1.1)}
-.cs-damage-detail{padding:24px;display:flex;flex-direction:column;border-left:1px solid #eeeef0}
-.cs-damage-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;color:var(--text-4);font-size:13.5px;gap:10px}
-.cs-damage-empty i{width:36px;height:36px}
+
+/* Hide damages filtered out by the active chip category */
+.cs-damage-marker[hidden]{display:none!important}
+
+/* Right-column gallery */
+.cs-damage-detail{display:flex;flex-direction:column;min-width:0}
 .cs-damage-item{display:none}
-.cs-damage-item.active{display:block}
-.cs-damage-item h3{font-size:16px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:7px}
-.cs-damage-item h3 i{width:18px;height:18px;color:var(--yellow)}
-.cs-damage-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.cs-damage-tags span{background:#0a0a0a;color:#fff;padding:5px 11px;border-radius:6px;font-size:11px;font-weight:500}
-.cs-damage-item p{font-size:13.5px;color:var(--text-2);line-height:1.65}
+.cs-damage-item.active{display:flex;flex-direction:column;width:100%}
+/* Overlay info card on bottom-left of main photo */
+.cs-dmg-overlay{position:absolute;left:14px;bottom:14px;background:rgba(255,255,255,.96);border-radius:10px;padding:10px 14px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 4px 14px rgba(0,0,0,.12);z-index:2;max-width:60%}
+.cs-dmg-overlay-type{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#b45309;display:inline-flex;align-items:center;gap:6px;margin-bottom:3px}
+.cs-dmg-overlay-type .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#f59e0b}
+.cs-dmg-overlay-type .dot.outline{background:transparent;border:2px solid #f59e0b}
+.cs-dmg-overlay-area{font-size:14.5px;font-weight:700;color:#0a0a0a;letter-spacing:-.2px}
+
+/* Numbered thumbnail badges */
+.cs-dmg-gallery-thumb{position:relative}
+.cs-dmg-thumb-num{position:absolute;top:6px;left:6px;background:rgba(10,10,10,.7);color:#fff;font-size:10px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;letter-spacing:-.1px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:2}
+
+/* "Zobacz wszystkie zdjęcia stanu pojazdu" CTA */
+.cs-dmg-all-cta{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:13.5px;font-weight:700;color:#0066ff;text-decoration:none;cursor:pointer;background:transparent;border:none;padding:0;align-self:flex-start;font-family:inherit}
+.cs-dmg-all-cta:hover{color:#0052cc}
+.cs-dmg-all-cta svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2}
+.cs-dmg-all-cta .lead{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#eff6ff;color:#0066ff}
+.cs-dmg-all-cta .lead svg{width:13px;height:13px}
+
+/* Per-damage card content text below gallery (description, tags) */
+.cs-damage-item-meta{margin-top:14px}
+.cs-damage-item-meta h3{font-size:15px;font-weight:700;margin:0 0 8px;color:#0a0a0a;display:flex;align-items:center;gap:8px}
+.cs-damage-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.cs-damage-tags span{background:#fff7ed;color:#b45309;border:1px solid #fed7aa;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600}
+.cs-damage-item-meta p{font-size:13.5px;color:#374151;line-height:1.6;margin:0}
+
+/* Empty placeholder when a chip's category has no damages */
+.cs-damage-empty-cat{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13.5px;background:#fff;border:1px dashed #e5e7eb;border-radius:14px;grid-column:1 / -1}
 
 /* PAINT GRID */
 .cs-paint-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0;border:1px solid #eeeef0;border-radius:12px;overflow:hidden;background:#fff}
@@ -465,24 +505,30 @@
     .cs-data-block .cs-data-row .lbl{font-size:14px;font-weight:700;gap:10px}
     .cs-data-block .cs-data-row .lbl i[data-lucide="check-circle"]{width:24px;height:24px;color:#16a34a;background:#dcfce7;border-radius:50%;padding:3px;flex-shrink:0}
     .cs-data-block .cs-data-row .val{font-size:14px;font-weight:700;color:#1a1a1a}
-    /* DAMAGE */
+    /* DAMAGE — mobile (compact, photo-first) */
     .cs-sections-2col{padding:0 14px;gap:12px}
+    .cs-damage-subtitle{font-size:12.5px;margin-bottom:14px}
     .cs-damages-tabs{gap:6px;padding-bottom:4px;margin-bottom:14px}
-    .cs-damage-grid{grid-template-columns:1fr;min-height:auto;border:none;border-radius:0;background:transparent;row-gap:16px}
-    /* Compact 1:1 diagram, contain, height capped — whole silhouette visible, no zoom-crop. */
-    .cs-damage-diagram{border-radius:14px;border:1px solid #eeeef0;background:#f7f8fa;min-height:0;width:100%;max-width:300px;margin-left:auto;margin-right:auto;aspect-ratio:1/1;max-height:260px}
-    .cs-damage-diagram-inner{min-height:0;inset:0}
-    .cs-damage-diagram-inner>img{top:0;left:0;transform:none;width:100%;height:100%;object-fit:contain;object-position:center}
-    .cs-damage-marker{width:44px;height:44px}
-    .cs-damage-marker-dot{width:22px;height:22px;border-width:2px}
-    .cs-damage-marker-dot svg{width:11px;height:11px}
-    .cs-damage-detail{padding:0;border-left:none;border-top:none}
+    .cs-damage-grid{grid-template-columns:1fr;min-height:auto;border:none;border-radius:0;background:transparent;row-gap:14px;gap:0}
+    /* Compact diagram on mobile — square, height-capped, contain so the silhouette never crops. */
+    .cs-damage-diagram{border-radius:14px;border:1px solid #eeeef0;background:#f7f8fa;width:100%;max-width:300px;margin-left:auto;margin-right:auto}
+    .cs-damage-diagram-canvas{aspect-ratio:1/1;max-height:260px}
+    .cs-damage-diagram-canvas img.cs-damage-diagram-img{padding:6px}
+    .cs-damage-diagram-legend{padding:10px 14px 12px}
+    .cs-damage-diagram-legend-item{font-size:11px}
+    .cs-damage-marker{width:40px;height:40px}
+    .cs-damage-marker-dot{width:22px;height:22px;border-width:2px;font-size:10px}
     .cs-damage-item h3{font-size:14px;margin-bottom:8px}
     .cs-damage-item p{font-size:12.5px}
     .cs-damage-tags{margin-bottom:10px}
     .cs-damage-tags span{font-size:10px;padding:4px 9px}
     .cs-damage-tab{font-size:12px;padding:7px 12px}
-    .cs-damage-tab-ico,.cs-damage-tab-ico svg{width:14px;height:14px}
+    .cs-damage-tab-count{min-width:20px;height:18px;font-size:10.5px}
+    .cs-dmg-overlay{left:10px;bottom:10px;padding:8px 12px;max-width:70%}
+    .cs-dmg-overlay-type{font-size:9px}
+    .cs-dmg-overlay-area{font-size:12.5px}
+    .cs-dmg-thumb-num{width:16px;height:16px;font-size:9px;top:4px;left:4px}
+    .cs-dmg-all-cta{font-size:12.5px;margin-top:10px}
     .cs-dmg-gallery{border-radius:14px;background:#fff;border:1px solid #eeeef0;padding:8px}
     .cs-dmg-gallery-stage{border-radius:10px;aspect-ratio:4/3}
     .cs-dmg-gallery-slide img{border-radius:10px}
@@ -1270,26 +1316,62 @@
     </div>
     @endif
 
-    {{-- STAN WIZUALNY I ŚLADY UŻYTKOWANIA --}}
+    {{-- STAN WIZUALNY I ŚLADY EKSPLOATACJI --}}
     @if($car->damages->count())
+    @php
+        // Classify each damage into one of two reference categories. Severity drives it:
+        // low or empty → 'minor' (filled orange dot · "Drobne ślady eksploatacji")
+        // anything else → 'scratch' (outlined orange dot · "Lekkie rysy i otarcia")
+        // 'category' is stamped on every damage for the JS chip filter.
+        $damagesNumbered = $car->damages->values();
+        $catMinor   = collect();
+        $catScratch = collect();
+        foreach ($damagesNumbered as $idx => $d) {
+            $sev = strtolower((string) ($d->severity ?? ''));
+            $cat = ($sev === '' || $sev === 'low' || $sev === 'minor' || $sev === 'niski') ? 'minor' : 'scratch';
+            $d->__cat = $cat;          // used as data attribute
+            $d->__num = $idx + 1;       // 1-based marker / thumb number
+            if ($cat === 'minor') $catMinor->push($d); else $catScratch->push($d);
+        }
+        $countAll     = $damagesNumbered->count();
+        $countMinor   = $catMinor->count();
+        $countScratch = $catScratch->count();
+    @endphp
     <div class="cs-data-section">
         <div class="cs-data-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-            <h2><i data-lucide="map-pin" aria-hidden="true" style="color:var(--yellow)"></i> Stan wizualny i ślady użytkowania</h2>
+            <h2><i data-lucide="map-pin" aria-hidden="true" style="color:#0066ff"></i> Stan wizualny i ślady eksploatacji</h2>
             <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
         </div>
         <div class="cs-data-body open">
-            <p style="font-size:12.5px;color:var(--text-3);margin-bottom:14px">Kliknij oznaczenie, aby zobaczyć informacje</p>
-            <div class="cs-damages-tabs">
-                @foreach($car->damages as $d)
-                @php
-                    $tabColor = match($d->type) { 'accident' => '#dc2626', 'repaired' => '#9ca3af', default => '#f59e0b' };
-                @endphp
-                    <button type="button" class="cs-damage-tab{{ $loop->first ? ' active' : '' }}" data-damage-tab="{{ $d->id }}" onclick="csSelDamage({{ $d->id }})"><span class="cs-damage-tab-ico" style="color:{{ $tabColor }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>{{ $d->area }}</button>
-                @endforeach
+            <p class="cs-damage-subtitle">Delikatnie oznaczone miejsca pokazują elementy, na które warto zwrócić uwagę podczas oględzin pojazdu.</p>
+
+            {{-- Category chips: Wszystkie / Drobne ślady eksploatacji / Lekkie rysy i otarcia --}}
+            <div class="cs-damages-tabs" role="tablist">
+                <button type="button" class="cs-damage-tab active" data-damage-cat="all" onclick="csFilterDamageCat(this,'all')" role="tab" aria-selected="true">
+                    <span class="cs-damage-tab-grid" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+                    Wszystkie
+                    <span class="cs-damage-tab-count">{{ $countAll }}</span>
+                </button>
+                @if($countMinor > 0)
+                <button type="button" class="cs-damage-tab" data-damage-cat="minor" onclick="csFilterDamageCat(this,'minor')" role="tab" aria-selected="false">
+                    <span class="cs-damage-tab-dot" aria-hidden="true"></span>
+                    Drobne ślady eksploatacji
+                    <span class="cs-damage-tab-count">{{ $countMinor }}</span>
+                </button>
+                @endif
+                @if($countScratch > 0)
+                <button type="button" class="cs-damage-tab" data-damage-cat="scratch" onclick="csFilterDamageCat(this,'scratch')" role="tab" aria-selected="false">
+                    <span class="cs-damage-tab-dot outline" aria-hidden="true"></span>
+                    Lekkie rysy i otarcia
+                    <span class="cs-damage-tab-count">{{ $countScratch }}</span>
+                </button>
+                @endif
             </div>
+
             <div class="cs-damage-grid">
+                {{-- Left: car top-view diagram with numbered markers + legend --}}
                 <div class="cs-damage-diagram">
-                    <div class="cs-damage-diagram-inner">
+                    <div class="cs-damage-diagram-canvas">
                         @php
                             $bodyTypeMap = [
                                 'sedan' => 'sedan', 'suv' => 'suv', 'coupé' => 'coupe', 'coupe' => 'coupe',
@@ -1299,30 +1381,34 @@
                             $btKey = strtolower($car->body_type ?? $car->category ?? 'sedan');
                             $topImg = $bodyTypeMap[$btKey] ?? 'sedan';
                         @endphp
-                        <img src="/img/body-types-top/{{ $topImg }}.png" alt="" aria-hidden="true" draggable="false">
-                        @foreach($car->damages as $d)
-                        @php
-                            $mColor = match($d->type) { 'accident' => '#dc2626', 'repaired' => '#9ca3af', default => '#f59e0b' };
-                        @endphp
-                        <button type="button" class="cs-damage-marker{{ $loop->first ? ' active' : '' }}" data-damage-marker="{{ $d->id }}" onclick="csSelDamage({{ $d->id }})" aria-label="{{ $d->area }}" style="left:{{ $d->position_x ?? 50 }}%;top:{{ $d->position_y ?? 50 }}%">
-                            <span class="cs-damage-marker-dot" style="background:{{ $mColor }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+                        <img class="cs-damage-diagram-img" src="/img/body-types-top/{{ $topImg }}.png" alt="" aria-hidden="true" draggable="false">
+                        @foreach($damagesNumbered as $d)
+                        <button type="button"
+                                class="cs-damage-marker{{ $loop->first ? ' active' : '' }}{{ $d->__cat === 'scratch' ? ' outline' : '' }}"
+                                data-damage-marker="{{ $d->id }}"
+                                data-damage-cat="{{ $d->__cat }}"
+                                onclick="csSelDamage({{ $d->id }})"
+                                aria-label="{{ $d->area }}"
+                                style="left:{{ $d->position_x ?? 50 }}%;top:{{ $d->position_y ?? 50 }}%">
+                            <span class="cs-damage-marker-dot">{{ $d->__num }}</span>
                         </button>
                         @endforeach
                     </div>
-                </div>
-                <div class="cs-damage-detail" id="csDamageDetail">
-                    <div class="cs-damage-empty" id="csDamageEmpty" style="display:none">
-                        <i data-lucide="mouse-pointer-click" aria-hidden="true"></i>
-                        Wybierz element z mapy
+                    <div class="cs-damage-diagram-legend">
+                        @if($countMinor > 0)
+                        <div class="cs-damage-diagram-legend-item"><span class="dot"></span>Drobne ślady eksploatacji</div>
+                        @endif
+                        @if($countScratch > 0)
+                        <div class="cs-damage-diagram-legend-item"><span class="dot outline"></span>Lekkie rysy i otarcia</div>
+                        @endif
                     </div>
-                    @foreach($car->damages as $d)
+                </div>
+
+                {{-- Right: selected damage photo + thumbnails + bottom CTA --}}
+                <div class="cs-damage-detail" id="csDamageDetail">
+                    @foreach($damagesNumbered as $d)
                     @php
-                        // Build image array: damage's own image first, then per-damage gallery photos.
-                        // P1 fix: use R2-aware model accessors (CarDamage::image_url, CarImage::url)
-                        // instead of asset('storage/'.path) — the latter returns
-                        // https://certicars.pl/storage/... which 404s on production where
-                        // FILESYSTEM_DISK=s3 (R2). The accessors handle local vs s3 disk +
-                        // placeholder fallback for missing paths.
+                        // R2-aware photo URLs (PR #7). Damage main image first, then per-damage photos.
                         $dmgPhotos = [];
                         if ($d->image_url) {
                             $dmgPhotos[] = $d->image_url;
@@ -1331,38 +1417,42 @@
                             $url = $dp->path ? $dp->url : null;
                             if ($url && !in_array($url, $dmgPhotos)) $dmgPhotos[] = $url;
                         }
+                        $catLabel = $d->__cat === 'scratch' ? 'Lekkie rysy i otarcia' : 'Drobne ślady eksploatacji';
                     @endphp
-                    <div class="cs-damage-item{{ $loop->first ? ' active' : '' }}" id="csDamage-{{ $d->id }}">
+                    <div class="cs-damage-item{{ $loop->first ? ' active' : '' }}" id="csDamage-{{ $d->id }}" data-damage-cat="{{ $d->__cat }}">
                         @if(count($dmgPhotos))
                         <div class="cs-dmg-gallery" data-dmg-id="{{ $d->id }}">
-                            {{-- Main image --}}
+                            {{-- Main image stage --}}
                             <div class="cs-dmg-gallery-stage">
                                 @foreach($dmgPhotos as $pi => $pUrl)
                                 <div class="cs-dmg-gallery-slide{{ $pi === 0 ? ' active' : '' }}" data-slide="{{ $pi }}">
                                     <img src="{{ $pUrl }}" alt="{{ $d->area }}" {{ $pi === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"' }} decoding="async" onclick="csDmgLightbox(this)" onerror="this.onerror=null;this.src='/images/placeholder-car.svg'">
                                 </div>
                                 @endforeach
-                                {{-- Label --}}
-                                <div class="cs-dmg-gallery-label">{{ $d->area }}</div>
-                                {{-- Counter + fullscreen --}}
+                                {{-- Bottom-left overlay card: category + area --}}
+                                <div class="cs-dmg-overlay">
+                                    <div class="cs-dmg-overlay-type"><span class="dot{{ $d->__cat === 'scratch' ? ' outline' : '' }}"></span>{{ $catLabel }}</div>
+                                    <div class="cs-dmg-overlay-area">{{ $d->area }}</div>
+                                </div>
+                                {{-- Top-right counter + fullscreen --}}
                                 <div class="cs-dmg-gallery-meta">
                                     <span class="cs-dmg-gallery-counter"><span class="cs-dmg-gallery-cur">1</span>/{{ count($dmgPhotos) }}</span>
                                     <button type="button" class="cs-dmg-gallery-fs" onclick="csDmgLightbox(this.closest('.cs-dmg-gallery-stage').querySelector('.cs-dmg-gallery-slide.active img'))" title="Pełny ekran"><i data-lucide="maximize-2" style="width:16px;height:16px"></i></button>
                                 </div>
                                 @if(count($dmgPhotos) > 1)
-                                {{-- Arrows --}}
                                 <button type="button" class="cs-dmg-gallery-arrow left" onclick="csDmgSlide(this,-1)"><i data-lucide="chevron-left" style="width:22px;height:22px"></i></button>
                                 <button type="button" class="cs-dmg-gallery-arrow right" onclick="csDmgSlide(this,1)"><i data-lucide="chevron-right" style="width:22px;height:22px"></i></button>
                                 @endif
                             </div>
-                            {{-- Thumbnails — only render when there's more than one photo
-                                 (a single-thumb strip is just a useless duplicate of the main image). --}}
+
+                            {{-- Numbered thumbnails — only when >1 photo --}}
                             @if(count($dmgPhotos) > 1)
                             <div class="cs-dmg-gallery-thumbs-wrap">
                                 <button type="button" class="cs-dmg-thumb-arrow left" onclick="csDmgScrollThumbs(this,-1)"><i data-lucide="chevron-left" style="width:14px;height:14px"></i></button>
                                 <div class="cs-dmg-gallery-thumbs">
                                     @foreach($dmgPhotos as $pi => $pUrl)
                                     <div class="cs-dmg-gallery-thumb{{ $pi === 0 ? ' active' : '' }}" data-slide="{{ $pi }}" onclick="csDmgGoSlide(this,{{ $pi }})">
+                                        <span class="cs-dmg-thumb-num">{{ $pi + 1 }}</span>
                                         <img src="{{ $pUrl }}" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/placeholder-car.svg'">
                                     </div>
                                     @endforeach
@@ -1370,15 +1460,36 @@
                                 <button type="button" class="cs-dmg-thumb-arrow right" onclick="csDmgScrollThumbs(this,1)"><i data-lucide="chevron-right" style="width:14px;height:14px"></i></button>
                             </div>
                             @endif
+
+                            {{-- Bottom CTA: "Zobacz wszystkie zdjęcia stanu pojazdu" — opens lightbox at this damage's first photo --}}
+                            <button type="button" class="cs-dmg-all-cta" onclick="csDmgLightbox(this.closest('.cs-dmg-gallery').querySelector('.cs-dmg-gallery-slide.active img'))">
+                                <span class="lead"><svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/></svg></span>
+                                Zobacz wszystkie zdjęcia stanu pojazdu
+                                <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                            </button>
                         </div>
                         @else
-                        <div style="padding:40px;text-align:center;color:var(--text-3)">
+                        <div style="padding:40px;text-align:center;color:var(--text-3);background:#fff;border:1px dashed #e5e7eb;border-radius:14px">
                             <i data-lucide="image-off" style="width:32px;height:32px;margin-bottom:8px"></i>
                             <div style="font-size:13px">Brak zdjęć dla tego elementu</div>
                         </div>
                         @endif
+
+                        @if($d->description || ($d->tags && count($d->tags)))
+                        <div class="cs-damage-item-meta">
+                            @if($d->tags && count($d->tags))
+                            <div class="cs-damage-tags">@foreach($d->tags as $t)<span>{{ $t }}</span>@endforeach</div>
+                            @endif
+                            @if($d->description)<p>{{ $d->description }}</p>@endif
+                        </div>
+                        @endif
                     </div>
                     @endforeach
+
+                    {{-- Empty state when no damages match the active category chip --}}
+                    <div class="cs-damage-empty-cat" id="csDamageEmptyCat" style="display:none">
+                        Brak zdjęć dla wybranej kategorii.
+                    </div>
                 </div>
             </div>
         </div>
@@ -2125,14 +2236,16 @@ window.csPano360ExtInit = (function(){
 })();
 @endif
 
-// Damage section — select damage by ID
+// Damage section — select damage by ID. Markers and items now sync via data-damage-marker
+// / data-damage-cat. Chips are filtered by csFilterDamageCat (below).
 function csSelDamage(id){
-    const empty=document.getElementById('csDamageEmpty');if(empty)empty.style.display='none';
     document.querySelectorAll('.cs-damage-item').forEach(d=>d.classList.remove('active'));
-    const it=document.getElementById('csDamage-'+id);if(it)it.classList.add('active');
-    document.querySelectorAll('[data-damage-tab]').forEach(t=>t.classList.toggle('active',t.dataset.damageTab==id));
+    const it=document.getElementById('csDamage-'+id);
+    if(it)it.classList.add('active');
     document.querySelectorAll('[data-damage-marker]').forEach(m=>m.classList.toggle('active',m.dataset.damageMarker==id));
-    // Reset gallery to first slide; force-eager-load it on tap so first paint is instant
+    var emptyCat=document.getElementById('csDamageEmptyCat');
+    if(emptyCat)emptyCat.style.display='none';
+    // Reset gallery to first slide; force-eager-load on tap for instant paint.
     if(it){
         const g=it.querySelector('.cs-dmg-gallery');
         if(g){
@@ -2140,6 +2253,34 @@ function csSelDamage(id){
             const firstImg=g.querySelector('.cs-dmg-gallery-slide img');
             if(firstImg&&firstImg.loading==='lazy')firstImg.loading='eager';
         }
+    }
+}
+
+// Category chip filter — hides markers + items outside the selected category,
+// auto-selects the first damage that matches, or shows an empty-state if none.
+function csFilterDamageCat(btn,cat){
+    document.querySelectorAll('.cs-damage-tab').forEach(function(t){
+        var on=(t.dataset.damageCat===cat);
+        t.classList.toggle('active',on);
+        t.setAttribute('aria-selected',on?'true':'false');
+    });
+    var markers=document.querySelectorAll('[data-damage-marker]');
+    var firstId=null;
+    markers.forEach(function(m){
+        var match=(cat==='all'||m.dataset.damageCat===cat);
+        m.hidden=!match;
+        if(match&&firstId===null)firstId=m.dataset.damageMarker;
+    });
+    document.querySelectorAll('.cs-damage-item').forEach(function(it){
+        var match=(cat==='all'||it.dataset.damageCat===cat);
+        if(!match)it.classList.remove('active');
+    });
+    var emptyCat=document.getElementById('csDamageEmptyCat');
+    if(firstId){
+        if(emptyCat)emptyCat.style.display='none';
+        csSelDamage(firstId);
+    } else if(emptyCat){
+        emptyCat.style.display='block';
     }
 }
 
