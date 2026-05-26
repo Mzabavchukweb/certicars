@@ -64,6 +64,7 @@
 
 @section('styles')
 .cs-wrap{padding:0 0 40px;background:#f5f5f7;min-height:100vh;overflow-x:hidden}
+@media(max-width:1024px){.cs-wrap{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}}
 .cs-wrap .container{max-width:1200px;padding-left:24px;padding-right:24px;box-sizing:border-box;overflow:hidden}
 .cs-wrap *,.cs-wrap *::before,.cs-wrap *::after{box-sizing:border-box}
 /* Focus visible */
@@ -442,14 +443,16 @@
     .cs-sidebar-summary-row{font-size:12.5px;padding:10px 0}
     .cs-calc-trigger{padding:12px 14px;font-size:12px}
     /* DATA SECTIONS — rounded card */
-    .cs-data-section{border-radius:16px;border:none;box-shadow:0 1px 8px rgba(0,0,0,.06);overflow:hidden}
-    .cs-data-header{padding:20px 20px 16px}
-    .cs-data-header h2{font-size:18px;font-weight:900;letter-spacing:-.3px}
-    .cs-data-body{padding:0 20px 20px}
-    .cs-data-row{font-size:14px;padding:14px 0;border-bottom:1px solid #f0f0f2}
+    .cs-data-section{border-radius:16px;border:none;box-shadow:0 1px 8px rgba(0,0,0,.06);overflow:hidden;margin-bottom:22px}
+    .cs-data-header{padding:22px 22px 14px;text-align:left}
+    .cs-data-header h2{font-size:18px;font-weight:900;letter-spacing:-.3px;text-align:left}
+    .cs-data-body{padding:4px 22px 22px}
+    .cs-data-row{font-size:14px;padding:16px 0;border-bottom:1px solid #f0f0f2;gap:16px;align-items:flex-start}
     .cs-data-row:last-child{border-bottom:none}
-    .cs-data-row .lbl{font-weight:700;color:#1a1a1a;min-width:0;flex-shrink:1}
-    .cs-data-row .val{font-weight:700;color:#1a1a1a;font-size:14px;max-width:55%;text-align:right}
+    .cs-data-row .lbl{font-weight:700;color:#1a1a1a;min-width:0;flex:1 1 auto;line-height:1.45;word-break:normal;overflow-wrap:break-word}
+    .cs-data-row .val{font-weight:700;color:#1a1a1a;font-size:14px;max-width:58%;text-align:right;line-height:1.45;word-break:break-word;overflow-wrap:break-word;white-space:normal;overflow:visible;text-overflow:clip;flex-shrink:0}
+    /* Stack 2-col section grid (Damage etc.) with a healthier gap on mobile */
+    .cs-sections-2col{gap:22px!important}
     /* STAN TECHNICZNY — separate blocks stacked */
     .cs-data-2col{grid-template-columns:1fr!important;gap:28px}
     .cs-data-block{padding:0!important;border:none!important;background:transparent!important;box-shadow:none!important}
@@ -511,8 +514,9 @@
     .cs-head h1{font-size:19px}
     .cs-gallery{border-radius:10px}
     .cs-sidebar-card{border-radius:14px}
-    .cs-data-section{border-radius:14px}
-    .cs-data-row .val{max-width:50%}
+    .cs-data-section{border-radius:14px;margin-bottom:18px}
+    .cs-data-row{padding:15px 0;gap:14px}
+    .cs-data-row .val{max-width:55%}
     .cs-price-value{font-size:26px}
     .cs-sections-2col{padding:0 12px}
     .cs-nav-btn{padding:6px 8px;font-size:11px}
@@ -525,8 +529,8 @@
     .cs-tire-icon{width:40px!important;height:40px!important}
     .cs-tire-col{padding:14px 10px!important}
     .cs-tire-data-row:first-of-type{font-size:16px!important}
-    .cs-data-body{padding:0 16px 16px}
-    .cs-data-header{padding:16px}
+    .cs-data-body{padding:4px 18px 18px}
+    .cs-data-header{padding:18px 18px 12px}
     .cs-gallery-tabs{gap:4px;padding:8px 0 6px}
     .cs-gallery-tab{font-size:10px;padding:4px 8px;gap:3px}
     .cs-gallery-tab svg,.cs-gallery-tab i{width:11px;height:11px}
@@ -579,7 +583,7 @@
 .cs-inquiry-success button:hover{background:#e8e8ea}
 
 /* STICKY MOBILE CTA BAR */
-.cs-sticky-cta{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e7eb;padding:10px 14px;z-index:999;box-shadow:0 -4px 20px rgba(0,0,0,.08);gap:8px;grid-template-columns:1fr 1fr;transform:translateY(100%);transition:transform .25s ease}
+.cs-sticky-cta{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e7eb;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));z-index:999;box-shadow:0 -4px 20px rgba(0,0,0,.08);gap:8px;grid-template-columns:1fr 1fr;transform:translateY(100%);transition:transform .25s ease}
 .cs-sticky-cta.visible{transform:translateY(0)}
 .cs-sticky-cta a,.cs-sticky-cta button{display:flex;align-items:center;justify-content:center;gap:6px;padding:13px 16px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;border:none}
 .cs-sticky-cta .cs-sticky-call{background:#0066ff;color:#fff;box-shadow:0 2px 10px rgba(0,102,255,.3)}
@@ -1178,7 +1182,13 @@
         <div class="cs-data-body">
             <div class="cs-data-grid-2col">
                 @if($rowOk($car->fuel_consumption))
-                    <div class="cs-data-row"><span class="lbl">Średnie zużycie</span><span class="val">{{ $car->fuel_consumption }} l/100km</span></div>
+                    @php
+                        // Strip any embedded "l/100 km" / "L/100km" the admin may have already typed,
+                        // and normalise decimal separator. Render the unit exactly once below.
+                        $fcRaw = trim(preg_replace('/\s*[lL]\s*\/\s*100\s*km\.?/u', '', (string) $car->fuel_consumption));
+                        $fcRaw = trim(str_replace(',', '.', $fcRaw));
+                    @endphp
+                    <div class="cs-data-row"><span class="lbl">Średnie zużycie</span><span class="val">{{ $fcRaw }} l/100 km</span></div>
                 @endif
                 @if($rowOk($car->co2_emission))
                     <div class="cs-data-row"><span class="lbl">Emisja CO₂</span><span class="val">{{ $car->co2_emission }} g/km</span></div>
