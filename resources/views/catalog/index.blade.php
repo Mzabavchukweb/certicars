@@ -25,7 +25,7 @@
 .cat-bt-card:hover .cat-bt-icon img,.cat-bt-card.active .cat-bt-icon img{transform:translateY(-2px)}
 .cat-bt-icon svg{width:24px;height:24px;stroke:var(--text-3);fill:none;stroke-width:1.5;transition:stroke .18s}
 .cat-bt-card.active .cat-bt-icon svg,.cat-bt-card:hover .cat-bt-icon svg{stroke:var(--blue)}
-.cat-bt-label{font-size:11px;font-weight:600;color:var(--text-2);text-align:center;white-space:nowrap}
+.cat-bt-label{font-size:13px;font-weight:600;color:var(--text-2);text-align:center;white-space:nowrap;letter-spacing:-.1px}
 .cat-bt-icon img.flip{transform:scaleX(-1)}
 .cat-bt-card:hover .cat-bt-icon img.flip,.cat-bt-card.active .cat-bt-icon img.flip{transform:scaleX(-1) translateY(-2px)}
 
@@ -211,14 +211,10 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
                 'pickup'    => 'suv.png',
             ];
 
-            // Domyślne typy — zawsze widoczne (z homepage)
-            $defaultTypes = ['Sedan', 'SUV', 'Coupé', 'Bus', 'Kombi', 'Hatchback'];
-
-            // Merge z DB — dodaj typy z bazy których jeszcze nie ma w domyślnych
-            $dbLower = $categories->map(fn($c) => strtolower($c))->toArray();
-            $defaultLower = array_map('strtolower', $defaultTypes);
-            $extraFromDb = $categories->filter(fn($c) => !in_array(strtolower($c), $defaultLower))->values();
-            $allTypes = collect($defaultTypes)->merge($extraFromDb);
+            // Strict whitelist — only the six body-type tiles + the leading "Wszystkie" card.
+            // Catch-all DB categories like "Samochód osobowy" must not leak into the tile bar;
+            // they're still selectable through the sidebar filter, just not promoted up here.
+            $allTypes = collect(['Sedan', 'SUV', 'Coupé', 'Bus', 'Kombi', 'Hatchback']);
         @endphp
         <div class="cat-bt-grid">
             {{-- Karta: Wszystkie --}}
