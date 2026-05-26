@@ -43,6 +43,16 @@ class SecurityHeaders
                 $connectSrc .= ' ' . $cdnOrigin;
             }
 
+            // media-src: needed for the <video> element on the public car page.
+            // Without an explicit media-src, the browser falls back to
+            // default-src 'self' and blocks the engine-work-recording video
+            // served from R2 (production CSP violation). Reuses the same
+            // config-driven R2 origin as connect-src (Pannellum).
+            $mediaSrc = "'self'";
+            if ($cdnOrigin) {
+                $mediaSrc .= ' ' . $cdnOrigin;
+            }
+
             $csp = [
                 "default-src 'self'",
                 "base-uri 'self'",
@@ -50,6 +60,7 @@ class SecurityHeaders
                 "frame-ancestors 'self'",
                 "form-action 'self'",
                 "img-src 'self' data: blob: https:",
+                "media-src $mediaSrc",
                 "font-src 'self' data: https://fonts.gstatic.com",
                 "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
                 "script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net",
