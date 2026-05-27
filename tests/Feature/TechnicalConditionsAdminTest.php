@@ -119,17 +119,34 @@ class TechnicalConditionsAdminTest extends TestCase
         $this->assertMatchesRegularExpression('/class="cs-tech-list-status\s+fail"/', $html);
     }
 
-    /** 4. missing data falls back safely to 'ok' */
-    public function test_missing_technical_conditions_default_to_ok(): void
+    /** 4. missing data → tech+engine row is hidden entirely (admin hasn't filled it) */
+    public function test_missing_technical_conditions_hides_section(): void
     {
         $car = Car::create(['brand_id' => $this->brand->id, 'model' => 'A4', 'slug' => 'no-tech', 'status' => 'active']);
         $html = $this->get('/samochody/' . $car->slug)->assertOk()->getContent();
 
-        // All 8 items render with default "Bez zarzutu" (8 hits).
-        $this->assertGreaterThanOrEqual(8, substr_count($html, 'Bez zarzutu'),
-            'Cars without technical_conditions must show all 8 rows as default OK.');
-        $this->assertStringNotContainsString('cs-tech-list-status warn', $html);
-        $this->assertStringNotContainsString('cs-tech-list-status fail', $html);
+        // No per-item status entries and no engine recording → the whole
+        // "Stan techniczny + Nagranie pracy silnika" row should not render.
+        $this->assertStringNotContainsString('<div class="cs-tech-engine-row">', $html,
+            'Cars with no technical_conditions and no engine video must not render the tech/engine row.');
+        // None of the 8 default rows should be emitted either.
+        $this->assertStringNotContainsString('Bez zarzutu', $html);
+    }
+
+    /** 4b. engine video present but no tech statuses → section still renders */
+    public function test_engine_video_alone_keeps_section_visible(): void
+    {
+        $car = Car::create([
+            'brand_id' => $this->brand->id, 'model' => 'A4', 'slug' => 'video-only',
+            'status'   => 'active',
+            'engine_video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        ]);
+        $html = $this->get('/samochody/' . $car->slug)->assertOk()->getContent();
+
+        // Empty tech_conditions still produces 8 default-OK rows in this case,
+        // because the section as a whole has real engine-video content to show.
+        $this->assertStringContainsString('cs-tech-engine-row', $html);
+        $this->assertGreaterThanOrEqual(8, substr_count($html, 'Bez zarzutu'));
     }
 
     /** 5. invalid status is normalised to 'ok' on save (not rejected outright) */
