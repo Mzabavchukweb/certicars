@@ -679,6 +679,69 @@ class PublicPagesTest extends TestCase
         $this->assertStringContainsString('Brak nieprawidłowości', $html);
     }
 
+    // ---------------------------------------------------------------------
+    // 'Podobne pojazdy' section + legal disclaimer bar
+    // ---------------------------------------------------------------------
+
+    public function test_related_cars_section_renders_with_brand_icon_and_subtitle(): void
+    {
+        // Create the current car + at least one related candidate of the same brand.
+        $brand = Brand::create(['name' => 'BMW', 'slug' => 'bmw']);
+        $current = Car::create([
+            'brand_id' => $brand->id, 'model' => 'X5 Current', 'slug' => 'bmw-x5-current',
+            'status' => 'active', 'is_sold' => false, 'price' => 80000, 'fuel_type' => 'Diesel',
+        ]);
+        Car::create([
+            'brand_id' => $brand->id, 'model' => 'X3 Related', 'slug' => 'bmw-x3-related',
+            'status' => 'active', 'is_sold' => false, 'price' => 70000, 'fuel_type' => 'Benzyna',
+        ]);
+
+        $html = $this->get('/samochody/'.$current->slug)->assertOk()->getContent();
+
+        $this->assertStringContainsString('cs-related-section',            $html);
+        $this->assertStringContainsString('cs-related-head-ico',           $html);
+        $this->assertStringContainsString('>Podobne pojazdy</h3>',         $html);
+        $this->assertStringContainsString('Inne samochody, które mogą Cię zainteresować.', $html);
+        // Related car appears, current car is not in its own related strip.
+        $this->assertStringContainsString('X3 Related', $html);
+        // Fuel badge on the related card.
+        $this->assertStringContainsString('vcard-fuel-badge', $html);
+        // CTA wording on the card was updated to "Zobacz szczegóły".
+        $this->assertStringContainsString('Zobacz szczegóły', $html);
+    }
+
+    public function test_related_cars_section_excludes_current_car(): void
+    {
+        $brand = Brand::create(['name' => 'Volvo', 'slug' => 'volvo']);
+        $current = Car::create([
+            'brand_id' => $brand->id, 'model' => 'XC60 Current', 'slug' => 'volvo-xc60-current',
+            'status' => 'active', 'is_sold' => false, 'price' => 90000,
+        ]);
+        Car::create([
+            'brand_id' => $brand->id, 'model' => 'V60 Sibling', 'slug' => 'volvo-v60-sibling',
+            'status' => 'active', 'is_sold' => false, 'price' => 70000,
+        ]);
+
+        $html = $this->get('/samochody/'.$current->slug)->assertOk()->getContent();
+
+        // The current car must never appear in its own Podobne pojazdy strip.
+        $this->assertStringNotContainsString(
+            '<a href="' . route('catalog.show', $current) . '" class="vcard">',
+            $html,
+            'Current car must be excluded from the related-cars strip.'
+        );
+        $this->assertStringContainsString('V60 Sibling', $html);
+    }
+
+    public function test_legal_disclaimer_bar_renders_below_related_cars(): void
+    {
+        $car = $this->activeCar();
+        $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
+
+        $this->assertStringContainsString('cs-legal-bar', $html);
+        $this->assertStringContainsString('Nie stanowią jednak oferty handlowej w rozumieniu art. 66 §1 Kodeksu cywilnego.', $html);
+    }
+
     public function test_pano360_card_image_urls_never_use_raw_storage_path(): void
     {
         // Source-grep regression guard mirroring the PR #7 pattern: card images

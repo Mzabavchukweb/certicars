@@ -671,6 +671,52 @@
     .cs-equipment-grid{grid-template-columns:1fr}
 }
 /* RELATED CARS */
+/* ============ PODOBNE POJAZDY (section wrapper + nav + fuel badge) ============ */
+/* Reuses the .cs-tech-engine-card system for the wrapper so the section sits
+   inside the same content-container card as the rest of the redesign. */
+.cs-related-section{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box}
+.cs-related-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.cs-related-head-left{display:flex;align-items:flex-start;gap:14px;flex:1;min-width:240px}
+.cs-related-head-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-related-head-ico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cs-related-head-title{font-size:17px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:0 0 6px;line-height:1.25}
+.cs-related-head-sub{font-size:12.5px;color:#6b7280;line-height:1.55;margin:0;max-width:520px}
+.cs-related-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-left:auto}
+.cs-related-all{font-size:13px;font-weight:700;color:#0066ff;display:inline-flex;align-items:center;gap:4px;text-decoration:none}
+.cs-related-all:hover{color:#0052cc}
+.cs-related-all svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4}
+.cs-related-nav{display:flex;gap:6px}
+.cs-related-nav button{width:34px;height:34px;border-radius:50%;border:1.5px solid #e5e7eb;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .15s,color .15s;color:#374151;padding:0}
+.cs-related-nav button:hover{border-color:#0066ff;color:#0066ff}
+.cs-related-nav button:disabled{opacity:.4;cursor:not-allowed;border-color:#e5e7eb;color:#374151}
+.cs-related-nav button svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4}
+
+/* Fuel badge on each vcard (top-left). Heart stays on the right via existing
+   .lcard-fav class. */
+.vcard-fuel-badge{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.96);color:#0a0a0a;font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;letter-spacing:.3px;display:inline-flex;align-items:center;gap:5px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 1px 4px rgba(0,0,0,.1);z-index:2}
+.vcard-fuel-badge svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* Legal disclaimer bar — sits below the related cars section. */
+.cs-legal-bar{display:flex;align-items:flex-start;gap:10px;background:#eff6ff;border:1px solid #dbeafe;border-radius:12px;padding:12px 16px;max-width:calc(1200px - 48px);margin:0 auto 28px;font-size:12px;line-height:1.55;color:#475569}
+.cs-legal-bar-ico{flex-shrink:0;width:28px;height:28px;border-radius:8px;background:#dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.cs-legal-bar-ico svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.cs-legal-bar p{margin:0}
+.cs-legal-bar strong{color:#0a0a0a;font-weight:700}
+
+@media(max-width:1024px){
+    .cs-related-section{padding:20px}
+    .cs-related-head-title{font-size:16px}
+}
+@media(max-width:768px){
+    .cs-related-section,.cs-legal-bar{margin-left:14px!important;margin-right:14px!important;max-width:none!important}
+    .cs-related-section{padding:18px 16px;border-radius:14px}
+    .cs-related-controls{width:100%;margin-left:0;justify-content:space-between}
+    .vcard-fuel-badge{font-size:10px;padding:3px 8px;top:10px;left:10px}
+}
+@media(max-width:500px){
+    .cs-related-section,.cs-legal-bar{margin-left:12px!important;margin-right:12px!important}
+}
+
 .cs-related-grid{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px}
 .cs-related-grid::-webkit-scrollbar{display:none}
 .cs-related-grid>*{flex:0 0 calc(33.333% - 14px);scroll-snap-align:start;min-width:260px}
@@ -2131,23 +2177,32 @@
     </div>
     @endif
 
+    {{-- PODOBNE POJAZDY — wrapped in the same .cs-related-section card system as
+         the other redesigned sections (blue icon tile, title, subtitle, content
+         container). Cards use the global .vcard system + a new fuel badge. --}}
     @if($relatedCars->count())
-    <div style="margin-top:20px;padding:24px 24px 32px;border-top:1px solid var(--border-l);max-width:1200px;margin-left:auto;margin-right:auto">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
-            <div>
-                <h2 style="font-size:22px;font-weight:800;letter-spacing:-.4px;color:var(--text)">Podobne pojazdy</h2>
+    <div class="cs-related-section">
+        <div class="cs-related-head">
+            <div class="cs-related-head-left">
+                <div class="cs-related-head-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+                </div>
+                <div>
+                    <h3 class="cs-related-head-title">Podobne pojazdy</h3>
+                    <p class="cs-related-head-sub">Inne samochody, które mogą Cię zainteresować.</p>
+                </div>
             </div>
-            <div style="display:flex;align-items:center;gap:12px">
-                <a href="{{ route('catalog') }}" style="font-size:13px;font-weight:700;color:var(--blue);display:inline-flex;align-items:center;gap:5px;text-decoration:none">
+            <div class="cs-related-controls">
+                <a href="{{ route('catalog') }}" class="cs-related-all">
                     Zobacz wszystkie
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </a>
-                <div style="display:flex;gap:6px">
-                    <button type="button" onclick="csRelScroll(-1)" style="width:36px;height:36px;border-radius:50%;border:1.5px solid #e5e5e7;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#0066ff'" onmouseout="this.style.borderColor='#e5e5e7'">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                <div class="cs-related-nav">
+                    <button type="button" onclick="csRelScroll(-1)" aria-label="Przewiń w lewo">
+                        <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
                     </button>
-                    <button type="button" onclick="csRelScroll(1)" style="width:36px;height:36px;border-radius:50%;border:1.5px solid #e5e5e7;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#0066ff'" onmouseout="this.style.borderColor='#e5e5e7'">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    <button type="button" onclick="csRelScroll(1)" aria-label="Przewiń w prawo">
+                        <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
                     </button>
                 </div>
             </div>
@@ -2157,11 +2212,19 @@
             <a href="{{ route('catalog.show', $relCar) }}" class="vcard">
                 <div class="vcard-img">
                     @if($relCar->primaryImage)
-                        <img src="{{ $relCar->primaryImage->url }}" alt="{{ $relCar->primaryImage->alt }}" loading="lazy">
+                        <img src="{{ $relCar->primaryImage->url }}" alt="{{ $relCar->primaryImage->alt }}" loading="lazy" onerror="this.onerror=null;this.src='/images/placeholder-car.svg'">
                     @else
                         <div class="vcard-placeholder"><svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></div>
                     @endif
+                    {{-- Fuel badge top-left (matches reference layout) --}}
+                    @if($relCar->fuel_type)
+                    <span class="vcard-fuel-badge">
+                        <svg viewBox="0 0 24 24"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>
+                        {{ \App\Helpers\CarLabels::fuelType($relCar->fuel_type) ?? $relCar->fuel_type }}
+                    </span>
+                    @endif
                     @if($relCar->is_featured)<div class="vcard-badge">Wyróżnione</div>@endif
+                    {{-- Favorite heart (top-right) — same handler as the catalog --}}
                     <button class="lcard-fav" data-id="{{ $relCar->id }}" aria-label="Dodaj do ulubionych" onclick="event.preventDefault();event.stopPropagation();toggleFav(event,{{ $relCar->id }})">
                         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                     </button>
@@ -2170,14 +2233,13 @@
                     <div class="vcard-title">{{ $relCar->title }}</div>
                     <div class="vcard-specs">
                         @if($relCar->first_registration)<span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> {{ $relCar->first_registration }}</span>@endif
-                        @if($relCar->fuel_type)<span>{{ $relCar->fuel_type }}</span>@endif
-                        @if($relCar->transmission)<span>{{ $relCar->transmission }}</span>@endif
+                        @if($relCar->mileage)<span>{{ number_format((float) $relCar->mileage,0,'',' ') }} km</span>@endif
+                        @if($relCar->transmission)<span>{{ \App\Helpers\CarLabels::transmission($relCar->transmission) ?? $relCar->transmission }}</span>@endif
                         @if($relCar->power_hp)<span>{{ $relCar->power_hp }} KM</span>@endif
                     </div>
-                    @if($relCar->mileage)<div style="font-size:12px;color:#6b7280;margin-bottom:8px">{{ number_format((float) $relCar->mileage,0,'',' ') }} km</div>@endif
                     <div class="vcard-bottom">
                         <div class="vcard-price">{{ $relCar->formatted_price }}</div>
-                        <span class="vcard-link">Sprawdź <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+                        <span class="vcard-link">Zobacz szczegóły <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
                     </div>
                 </div>
             </a>
@@ -2185,6 +2247,17 @@
         </div>
     </div>
     @endif
+
+    {{-- Legal disclaimer bar — sits below all single-car content. --}}
+    <div class="cs-legal-bar">
+        <div class="cs-legal-bar-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+        </div>
+        <p>
+            <strong>Informacje zawarte na tej stronie</strong> zostały przygotowane z najwyższą starannością.
+            Nie stanowią jednak oferty handlowej w rozumieniu art. 66 §1 Kodeksu cywilnego.
+        </p>
+    </div>
 
 </div>
 </div>
