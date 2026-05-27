@@ -104,7 +104,7 @@
 
 /* GALLERY — edge-to-edge, no frame */
 .cs-gallery{background:#e8e8ea;border-radius:14px;overflow:hidden;border:1px solid #e5e5e7;width:100%;max-width:100%;box-sizing:border-box}
-.cs-gallery-stage{position:relative;width:100%;aspect-ratio:3/2;background:#e8e8ea;overflow:hidden}
+.cs-gallery-stage{position:relative;width:100%;aspect-ratio:16/9;background:#e8e8ea;overflow:hidden}
 .cs-gallery-main{position:absolute;inset:0;background:#e8e8ea;display:flex;align-items:center;justify-content:center;width:100%;height:100%;box-sizing:border-box}
 .cs-gallery-main:not(.active){display:none!important}
 .cs-gallery-main img{width:100%;height:100%;object-fit:cover}
