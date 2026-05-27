@@ -352,6 +352,71 @@
     .cs-pano360-card-play svg{width:22px;height:22px}
 }
 
+/* ============ PAINT + TIRES TWO-CARD ROW ============ */
+/* Shares the same card system as .cs-tech-engine-row (PR #25): white card,
+   18px radius, blue 44px icon tile, same content container width. */
+.cs-pt-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;max-width:calc(1200px - 48px);margin-left:auto;margin-right:auto;width:100%;box-sizing:border-box;align-items:stretch}
+.cs-pt-card{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;display:flex;flex-direction:column;min-width:0;height:100%}
+.cs-pt-card-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.cs-pt-card-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-pt-card-ico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cs-pt-card-title{font-size:17px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:0 0 6px;line-height:1.25}
+.cs-pt-card-sub{font-size:12.5px;color:#6b7280;line-height:1.55;margin:0;max-width:520px}
+
+/* PAINT — compact grid of measurements with status colours */
+.cs-pt-paint-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;flex:1}
+.cs-pt-paint-cell{background:#f9fafb;border:1px solid #f0f0f2;border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.cs-pt-paint-cell.ok{background:linear-gradient(180deg,#f0fdf4,#fff 80%);border-color:#bbf7d0}
+.cs-pt-paint-cell.warn{background:linear-gradient(180deg,#fffbeb,#fff 80%);border-color:#fde68a}
+.cs-pt-paint-cell.bad{background:linear-gradient(180deg,#fef2f2,#fff 80%);border-color:#fecaca}
+.cs-pt-paint-cell-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-pt-paint-cell-value{font-size:15px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;display:flex;align-items:baseline;gap:4px}
+.cs-pt-paint-cell-value .unit{font-size:11px;font-weight:600;color:#6b7280;letter-spacing:0}
+.cs-pt-paint-cell.ok .cs-pt-paint-cell-value{color:#15803d}
+.cs-pt-paint-cell.warn .cs-pt-paint-cell-value{color:#b45309}
+.cs-pt-paint-cell.bad .cs-pt-paint-cell-value{color:#b91c1c}
+.cs-pt-paint-legend{display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f2;font-size:11px;color:#6b7280}
+.cs-pt-paint-legend-item{display:inline-flex;align-items:center;gap:6px;line-height:1.3}
+.cs-pt-paint-legend-item .sw{display:inline-block;width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.cs-pt-paint-cta{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:12.5px;font-weight:700;color:#0066ff;text-decoration:none;align-self:flex-start;padding:8px 14px;border:1.5px solid #dbeafe;background:#eff6ff;border-radius:10px;transition:background .15s,border-color .15s}
+.cs-pt-paint-cta:hover{background:#dbeafe;border-color:#bfdbfe;color:#0052cc}
+.cs-pt-paint-cta svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2}
+
+/* TIRES — 4 wheel positions, optional rim/status footer */
+.cs-pt-tire-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1}
+.cs-pt-tire-cell{background:#f9fafb;border:1px solid #f0f0f2;border-radius:10px;padding:11px 12px}
+.cs-pt-tire-cell-head{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:#6b7280;margin-bottom:5px}
+.cs-pt-tire-cell-head .marker{display:inline-block;width:7px;height:7px;border-radius:50%;background:#16a34a}
+.cs-pt-tire-cell-head .marker.warn{background:#f59e0b}
+.cs-pt-tire-cell-spec{font-size:12.5px;font-weight:600;color:#0a0a0a;margin-bottom:3px;line-height:1.4;word-break:break-word}
+.cs-pt-tire-cell-tread{font-size:11.5px;color:#374151}
+.cs-pt-tire-cell-tread strong{color:#15803d;font-weight:800}
+.cs-pt-tire-cell-tread strong.warn{color:#b45309}
+.cs-pt-tire-empty{font-size:12px;color:#9ca3af;font-style:italic}
+.cs-pt-tire-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f2;font-size:12px;color:#374151;flex-wrap:wrap}
+.cs-pt-tire-footer .right{color:#15803d;font-weight:700}
+.cs-pt-tire-footer .right.warn{color:#b45309}
+
+/* Empty state shared by both cards */
+.cs-pt-empty{font-size:13px;color:#9ca3af;font-style:italic;padding:24px 0;text-align:center;background:#fafbfc;border:1px dashed #e5e7eb;border-radius:10px;flex:1;display:flex;align-items:center;justify-content:center}
+
+@media(max-width:1024px){
+    .cs-pt-row{grid-template-columns:1fr;gap:14px}
+    .cs-pt-card{padding:20px}
+    .cs-pt-card-title{font-size:16px}
+    .cs-pt-paint-grid{grid-template-columns:repeat(2,1fr)}
+    .cs-pt-tire-list{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+    .cs-pt-row{margin-left:14px!important;margin-right:14px!important;max-width:none!important}
+    .cs-pt-card{padding:18px 16px;border-radius:14px}
+}
+@media(max-width:500px){
+    .cs-pt-row{margin-left:12px!important;margin-right:12px!important}
+    .cs-pt-paint-grid{grid-template-columns:1fr 1fr}
+    .cs-pt-tire-list{grid-template-columns:1fr 1fr}
+}
+
 /* Engine video panel (inside right card) */
 .cs-engine-video-panel{position:relative;border-radius:14px;overflow:hidden;background:#0a0a0a;aspect-ratio:16/10;flex:1;min-height:280px}
 .cs-engine-video-panel iframe,.cs-engine-video-panel video{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000}
@@ -1804,141 +1869,144 @@
     </div>
     @endif
 
+    {{-- POMIARY LAKIERU + KOŁA I OPONY — two-card row directly below the 360 section.
+         Both cards use the same .cs-pt-card system (matches PR #25 tech+engine row).
+         Each card stays graceful with a "Brak danych" empty state. --}}
+    @php
+        $paintMeasurements = collect($car->paint_measurements ?? [])->filter(function ($v) {
+            $val = is_array($v) ? ($v['value'] ?? $v[0] ?? null) : $v;
+            return (int) preg_replace('/[^0-9]/', '', (string) $val) > 0;
+        });
+        $hasPaintData = $paintMeasurements->isNotEmpty();
+        $hasTireData  = $car->tireSets && $car->tireSets->count() > 0;
+    @endphp
+    @if($hasPaintData || $hasTireData)
+    <div class="cs-pt-row">
 
-
-    {{-- J. POMIARY GRUBOŚCI LAKIERU --}}
-    @if($car->paint_measurements && count($car->paint_measurements))
-    <div class="cs-data-section">
-        <div class="cs-data-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-            <h2><i data-lucide="paintbrush" aria-hidden="true"></i> Pomiary grubości lakieru</h2>
-            <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
-        </div>
-        <div class="cs-data-body open">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:8px">
-                <p style="font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:6px;margin:0">
-                    <i data-lucide="info" aria-hidden="true" style="width:14px;height:14px;flex-shrink:0"></i>
-                    Pomiary wykonane profesjonalnym czujnikiem lakieru. Normy fabryczne: 90–150 µm.
-                </p>
-                <a href="#" style="font-size:12px;font-weight:700;color:var(--blue);display:inline-flex;align-items:center;gap:4px;text-decoration:none;white-space:nowrap">Jak czytać pomiary? <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        {{-- LEFT — Pomiary grubości lakieru --}}
+        <div class="cs-pt-card">
+            <div class="cs-pt-card-head">
+                <div class="cs-pt-card-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5"/><path d="M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></svg>
+                </div>
+                <div>
+                    <h3 class="cs-pt-card-title">Pomiary grubości lakieru</h3>
+                    <p class="cs-pt-card-sub">Pomiary wykonane profesjonalnym czujnikiem podczas oględzin.</p>
+                </div>
             </div>
-            <div class="cs-paint-grid">
+            @if($hasPaintData)
                 @php
                     $paintPanelNames = [
                         0 => 'Dach', 1 => 'Maska', 2 => 'Błotnik P-L', 3 => 'Błotnik P-P',
                         4 => 'Drzwi P-L', 5 => 'Drzwi P-P', 6 => 'Błotnik T-L', 7 => 'Błotnik T-P',
                         8 => 'Drzwi T-L', 9 => 'Drzwi T-P', 10 => 'Klapa bagażnika',
-                        11 => 'Zderzak przód', 12 => 'Zderzak tył', 13 => 'Próg lewy', 14 => 'Próg prawy',
+                        11 => 'Zderzak P', 12 => 'Zderzak T', 13 => 'Próg lewy', 14 => 'Próg prawy',
                     ];
                 @endphp
-                @foreach($car->paint_measurements as $panel => $value)
-                @php
-                    $val = is_array($value) ? ($value['value'] ?? $value[0] ?? '') : $value;
-                    $numVal = (int) preg_replace('/[^0-9]/', '', $val);
-                    if($numVal <= 0) continue; // skip empty measurements
-                    $panelLabel = is_array($value) && isset($value['area']) ? $value['area'] : (is_numeric($panel) ? ($paintPanelNames[$panel] ?? 'Panel '.($panel + 1)) : $panel);
-                    $paintClass = $numVal > 300 ? 'paint-danger' : ($numVal > 150 ? 'paint-warn' : 'paint-ok');
-                    $dotColor = $numVal > 300 ? '#ef4444' : ($numVal > 150 ? '#f59e0b' : '#10b981');
-                @endphp
-                <div class="cs-paint-item {{ $paintClass }}">
-                    <div class="cs-paint-label">{{ $panelLabel }}</div>
-                    <div class="cs-paint-value"><span class="cs-paint-dot" style="background:{{ $dotColor }}"></span>{{ $val }} <span style="font-size:12px;font-weight:500;color:var(--text-3)">µm</span></div>
-                </div>
-                @endforeach
-            </div>
-            <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid #eeeef0;font-size:11px;font-weight:600">
-                <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#10b981"></span> Lakier fabryczny (90–150 µm)</span>
-                <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#f59e0b"></span> Ponownie lakierowany (150–300 µm)</span>
-                <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#ef4444"></span> Naprawa / szpachla (powyżej 300 µm)</span>
-            </div>
-        </div>
-    </div>
-    @endif
-
-        <!-- KOŁA I OPONY (CarOnSale style) -->
-    @if($car->tireSets->count())
-    <div class="cs-data-section">
-        <div class="cs-data-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-            <h2><i data-lucide="circle-dot" aria-hidden="true"></i> Koła i opony</h2>
-            <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
-        </div>
-        <div class="cs-data-body open">
-        @foreach($car->tireSets as $set)
-        @php
-            $setTires = $set->tires;
-            $positionLabels = [
-                'front_left' => 'Przednia lewa',
-                'front_right' => 'Przednia prawa',
-                'rear_left' => 'Tylna lewa',
-                'rear_right' => 'Tylna prawa',
-            ];
-        @endphp
-        <div class="cs-tire-set">
-            <h3 class="cs-tire-set-title">
-                {{ $set->set_number }}. Komplet @if($set->is_mounted)(zamontowane) <i data-lucide="info" aria-hidden="true"></i>@endif
-            </h3>
-            <div class="cs-tire-table">
-                <div class="cs-tire-th"></div>
-                @foreach($setTires as $t)
-                <div class="cs-tire-th" style="text-align:center">{{ $positionLabels[$t->position] ?? $t->position }}</div>
-                @endforeach
-                <div class="cs-tire-info">
-                    @if($set->tire_type)
-                    <div class="cs-tire-info-row"><div class="lbl">Rodzaj opon</div><div class="val">{{ $set->tire_type }}</div></div>
-                    @endif
-                    @if($set->rim)
-                    <div class="cs-tire-info-row"><div class="lbl">Felga</div><div class="val">{{ $set->rim }}</div></div>
-                    @endif
-                    <div class="cs-tire-info-row"><div class="lbl">Głębokość bieżnika</div></div>
-                    <div class="cs-tire-info-row"><div class="lbl">Stan</div></div>
-                </div>
-                @foreach($setTires as $t)
-                @php
-                    $depth = (float)($t->tread_depth ?? 0);
-                    $hasIssue = $t->condition && is_array($t->condition) && count($t->condition) > 0;
-                    $statusCls = $hasIssue ? 'warn' : 'ok';
-                @endphp
-                <div class="cs-tire-col">
-                    <div class="cs-tire-col-head">
-                        <div class="cs-tire-icon">
-                            <svg class="wheel" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="36" cy="36" r="33" stroke="#d4d4d8" stroke-width="2" fill="#f4f4f5"/>
-                                <circle cx="36" cy="36" r="24" stroke="#d4d4d8" stroke-width="1.5" fill="white"/>
-                                <circle cx="36" cy="36" r="6" fill="#e4e4e7" stroke="#d4d4d8" stroke-width="1"/>
-                                <line x1="36" y1="12" x2="36" y2="24" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="36" y1="48" x2="36" y2="60" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="12" y1="36" x2="24" y2="36" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="48" y1="36" x2="60" y2="36" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="19.8" y1="19.8" x2="27.5" y2="27.5" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="44.5" y1="44.5" x2="52.2" y2="52.2" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="52.2" y1="19.8" x2="44.5" y2="27.5" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="27.5" y1="44.5" x2="19.8" y2="52.2" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round"/>
-                            </svg>
-                            <span class="cs-tire-status-icon {{ $statusCls }}">
-                                @if($hasIssue)<i data-lucide="alert-triangle" aria-hidden="true"></i>
-                                @else<i data-lucide="check" aria-hidden="true"></i>@endif
-                            </span>
-                        </div>
-                        <div class="cs-tire-pos-name">{{ $positionLabels[$t->position] ?? $t->position }}</div>
+                <div class="cs-pt-paint-grid">
+                    @foreach($paintMeasurements as $panel => $value)
+                    @php
+                        $val = is_array($value) ? ($value['value'] ?? $value[0] ?? '') : $value;
+                        $numVal = (int) preg_replace('/[^0-9]/', '', (string) $val);
+                        $panelLabel = is_array($value) && isset($value['area'])
+                            ? $value['area']
+                            : (is_numeric($panel) ? ($paintPanelNames[$panel] ?? 'Panel '.($panel + 1)) : $panel);
+                        // Thresholds per user spec:
+                        //   ≤150 µm  → green  (fabryczna powłoka)
+                        //   151–250  → orange (druga warstwa lakieru)
+                        //   >250     → red    (szpachla / naprawa)
+                        $cls = $numVal > 250 ? 'bad' : ($numVal > 150 ? 'warn' : 'ok');
+                    @endphp
+                    <div class="cs-pt-paint-cell {{ $cls }}">
+                        <span class="cs-pt-paint-cell-label">{{ $panelLabel }}</span>
+                        <span class="cs-pt-paint-cell-value">{{ $numVal }}<span class="unit">µm</span></span>
                     </div>
-                    <div class="cs-tire-data-row" style="font-weight:700">{{ $t->tread_depth ?? '—' }}</div>
-                    <div class="cs-tire-data-row {{ $hasIssue ? 'warn-txt' : 'ok-txt' }}">
-                        @if($hasIssue)
-                            <i data-lucide="alert-triangle" aria-hidden="true" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:3px"></i>{{ implode(', ', $t->condition) }}
-                        @else
-                            <i data-lucide="check" aria-hidden="true" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:3px"></i>Brak nieprawidłowości
-                        @endif
-                    </div>
+                    @endforeach
                 </div>
-                @endforeach
-            </div>
-            @if($set->notes)
-            <div style="margin-top:12px;padding:10px 14px;background:var(--yellow-bg);border-radius:10px;font-size:12.5px;color:var(--yellow-dark);display:flex;align-items:center;gap:8px">
-                <i data-lucide="info" aria-hidden="true" style="width:14px;height:14px"></i> {{ $set->notes }}
-            </div>
+                <div class="cs-pt-paint-legend">
+                    <span class="cs-pt-paint-legend-item"><span class="sw" style="background:#16a34a"></span>Fabryczna powłoka (≤150 µm)</span>
+                    <span class="cs-pt-paint-legend-item"><span class="sw" style="background:#f59e0b"></span>Druga warstwa (151–250 µm)</span>
+                    <span class="cs-pt-paint-legend-item"><span class="sw" style="background:#dc2626"></span>Szpachla / naprawa (>250 µm)</span>
+                </div>
+                @if($car->has_certicheck)
+                <a href="{{ route('catalog.certicheck', $car->slug) }}" class="cs-pt-paint-cta">
+                    Zobacz szczegółowy raport
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </a>
+                @endif
+            @else
+                <div class="cs-pt-empty">Brak danych o pomiarach lakieru.</div>
             @endif
         </div>
-        @endforeach
+
+        {{-- RIGHT — Koła i opony --}}
+        <div class="cs-pt-card">
+            <div class="cs-pt-card-head">
+                <div class="cs-pt-card-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>
+                </div>
+                <div>
+                    <h3 class="cs-pt-card-title">Koła i opony</h3>
+                    <p class="cs-pt-card-sub">Informacje o stanie opon i felg.</p>
+                </div>
+            </div>
+            @if($hasTireData)
+                @php
+                    // Render the first (or mounted) set. Tires keyed by position so we
+                    // can render the four canonical wheels in a stable visual order.
+                    $primarySet = $car->tireSets->firstWhere('is_mounted', true) ?? $car->tireSets->first();
+                    $tiresByPos = $primarySet->tires->keyBy('position');
+                    $positions  = [
+                        'front_left'  => 'Przód lewy',
+                        'front_right' => 'Przód prawy',
+                        'rear_left'   => 'Tył lewy',
+                        'rear_right'  => 'Tył prawy',
+                    ];
+                    $anyIssue = false;
+                @endphp
+                <div class="cs-pt-tire-list">
+                    @foreach($positions as $key => $label)
+                    @php
+                        $t = $tiresByPos->get($key);
+                        $hasIssue = $t && $t->condition && is_array($t->condition) && count($t->condition) > 0;
+                        if ($hasIssue) $anyIssue = true;
+                    @endphp
+                    <div class="cs-pt-tire-cell">
+                        <div class="cs-pt-tire-cell-head">
+                            <span class="marker {{ $hasIssue ? 'warn' : '' }}"></span>
+                            {{ $label }}
+                        </div>
+                        @if($t)
+                            <div class="cs-pt-tire-cell-spec">{{ $primarySet->tire_type ?? '—' }}</div>
+                            @if($t->tread_depth !== null)
+                                <div class="cs-pt-tire-cell-tread">Bieżnik <strong class="{{ $hasIssue ? 'warn' : '' }}">{{ $t->tread_depth }} mm</strong></div>
+                            @else
+                                <div class="cs-pt-tire-empty">Brak pomiaru</div>
+                            @endif
+                        @else
+                            <div class="cs-pt-tire-empty">Brak danych</div>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
+                @if($primarySet->rim || $primarySet->tire_type)
+                <div class="cs-pt-tire-footer">
+                    <span>
+                        @if($primarySet->rim){{ $primarySet->rim }}@endif
+                        @if($primarySet->tire_type && $primarySet->rim) · {{ $primarySet->tire_type }}@elseif($primarySet->tire_type){{ $primarySet->tire_type }}@endif
+                    </span>
+                    @if($primarySet->tires->count())
+                    <span class="right {{ $anyIssue ? 'warn' : '' }}">
+                        @if($anyIssue)Wymaga uwagi @else Stan bardzo dobry @endif
+                    </span>
+                    @endif
+                </div>
+                @endif
+            @else
+                <div class="cs-pt-empty">Brak danych o stanie opon.</div>
+            @endif
         </div>
+
     </div>
     @endif
 

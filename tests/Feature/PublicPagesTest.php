@@ -535,6 +535,132 @@ class PublicPagesTest extends TestCase
         $this->assertStringNotContainsString('<h4 class="cs-pano360-card-title">360° wnętrza</h4>', $html);
     }
 
+    // ---------------------------------------------------------------------
+    // 'Pomiary grubości lakieru' + 'Koła i opony' two-card row
+    // ---------------------------------------------------------------------
+
+    public function test_paint_and_tires_cards_hidden_when_no_data(): void
+    {
+        $car = $this->activeCar();
+        $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
+
+        // Without paint_measurements OR tireSets, the .cs-pt-row container must not
+        // render (the section is fully optional). CSS class definition is in the
+        // <style> block regardless — we look for the actual element opener.
+        $this->assertStringNotContainsString('<div class="cs-pt-row">', $html);
+        $this->assertStringNotContainsString('>Pomiary grubości lakieru</h3>', $html);
+        $this->assertStringNotContainsString('>Koła i opony</h3>',              $html);
+    }
+
+    public function test_paint_card_renders_status_colours_from_real_measurements(): void
+    {
+        $car = $this->activeCar();
+        $car->update([
+            'paint_measurements' => [
+                ['area' => 'Dach',  'value' => 120],   // ≤150 → ok
+                ['area' => 'Maska', 'value' => 210],   // 151–250 → warn
+                ['area' => 'Drzwi', 'value' => 320],   // >250 → bad
+            ],
+        ]);
+        $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
+
+        $this->assertStringContainsString('Pomiary grubości lakieru', $html);
+        $this->assertStringContainsString('Pomiary wykonane profesjonalnym czujnikiem', $html);
+
+        // Each cell carries the threshold-driven CSS class.
+        $this->assertMatchesRegularExpression(
+            '/<div class="cs-pt-paint-cell ok">[\s\S]+?Dach[\s\S]+?120/',
+            $html,
+            'Dach 120µm must render as cs-pt-paint-cell.ok'
+        );
+        $this->assertMatchesRegularExpression(
+            '/<div class="cs-pt-paint-cell warn">[\s\S]+?Maska[\s\S]+?210/',
+            $html,
+            'Maska 210µm must render as cs-pt-paint-cell.warn'
+        );
+        $this->assertMatchesRegularExpression(
+            '/<div class="cs-pt-paint-cell bad">[\s\S]+?Drzwi[\s\S]+?320/',
+            $html,
+            'Drzwi 320µm must render as cs-pt-paint-cell.bad'
+        );
+        // Legend renders all three states.
+        $this->assertStringContainsString('Fabryczna powłoka (≤150 µm)',  $html);
+        $this->assertStringContainsString('Druga warstwa (151–250 µm)',   $html);
+        $this->assertStringContainsString('Szpachla / naprawa (>250 µm)', $html);
+    }
+
+    public function test_paint_card_empty_when_only_zero_measurements(): void
+    {
+        // Measurements that all resolve to 0 (or empty) should fall to the empty
+        // state, not show an empty grid.
+        $car = $this->activeCar();
+        $car->update([
+            'paint_measurements' => [['area' => 'Dach', 'value' => 0]],
+            'tireSets'           => [], // and tires absent so the whole row hides
+        ]);
+        $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
+
+        // Row hidden entirely (no paint AND no tires).
+        $this->assertStringNotContainsString('<div class="cs-pt-row">', $html);
+    }
+
+    public function test_tires_card_renders_four_positions_from_real_tire_set(): void
+    {
+        $car = $this->activeCar();
+        $set = \App\Models\CarTireSet::create([
+            'car_id'     => $car->id,
+            'set_number' => 1,
+            'is_mounted' => true,
+            'tire_type'  => '215/55 R17',
+            'rim'        => 'Felgi aluminiowe 17"',
+        ]);
+        foreach ([
+            'front_left'  => 6.5,
+            'front_right' => 6.0,
+            'rear_left'   => 5.5,
+            'rear_right'  => 5.5,
+        ] as $pos => $depth) {
+            \App\Models\CarTire::create([
+                'car_tire_set_id' => $set->id,
+                'position'        => $pos,
+                'tread_depth'     => $depth,
+            ]);
+        }
+
+        $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
+
+        $this->assertStringContainsString('Koła i opony',         $html);
+        $this->assertStringContainsString('Przód lewy',           $html);
+        $this->assertStringContainsString('Przód prawy',          $html);
+        $this->assertStringContainsString('Tył lewy',             $html);
+        $this->assertStringContainsString('Tył prawy',            $html);
+        $this->assertStringContainsString('215/55 R17',           $html);
+        $this->assertStringContainsString('Felgi aluminiowe 17',  $html);
+        // No tire has issues, so footer reports "Stan bardzo dobry".
+        $this->assertStringContainsString('Stan bardzo dobry',    $html);
+    }
+
+    public function test_tires_card_marks_position_when_condition_has_issue(): void
+    {
+        $car = $this->activeCar();
+        $set = \App\Models\CarTireSet::create([
+            'car_id' => $car->id, 'set_number' => 1, 'is_mounted' => true, 'tire_type' => '205/55 R16',
+        ]);
+        \App\Models\CarTire::create([
+            'car_tire_set_id' => $set->id, 'position' => 'front_left',  'tread_depth' => 6.0,
+        ]);
+        \App\Models\CarTire::create([
+            'car_tire_set_id' => $set->id, 'position' => 'rear_right',  'tread_depth' => 3.0,
+            'condition' => ['nierówny bieżnik'],
+        ]);
+
+        $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
+
+        // Bad tire's tread strong tag gets the .warn class.
+        $this->assertMatchesRegularExpression('/Bieżnik <strong class="warn">3 mm/', $html);
+        $this->assertStringContainsString('Wymaga uwagi', $html);
+    }
+
     public function test_pano360_card_image_urls_never_use_raw_storage_path(): void
     {
         // Source-grep regression guard mirroring the PR #7 pattern: card images
