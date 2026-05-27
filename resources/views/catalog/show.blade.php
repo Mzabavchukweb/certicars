@@ -382,70 +382,58 @@
 .cs-pt-paint-cta:hover{background:#dbeafe;border-color:#bfdbfe;color:#0052cc}
 .cs-pt-paint-cta svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2}
 
-/* TIRES — reference layout: bordered set card with metadata column on left,
-   4 wheel positions across the row (wheel icon + green check overlay), a
-   tread-depth row aligned to those columns, divider, and a status row. */
-.cs-pt-tire-set{background:#fff;border:1px solid #eeeef0;border-radius:14px;padding:18px 20px;flex:1;display:flex;flex-direction:column;gap:14px}
-.cs-pt-tire-set-head{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:#0a0a0a;letter-spacing:-.1px}
-.cs-pt-tire-set-head .num{color:#0a0a0a}
-.cs-pt-tire-set-head .mount{color:#0066ff;font-weight:600;font-size:13px}
+/* TIRES — stacked-rows layout. No tire/wheel image: one card per tire set
+   with four full-width rows (position + spec text on the left, green tread
+   pill on the right) and a compact summary footer (rim + overall status). */
+.cs-pt-tire-set{background:#fff;border:1px solid #eeeef0;border-radius:14px;padding:6px 16px 16px;flex:1;display:flex;flex-direction:column}
+.cs-pt-tire-set-head{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:#0a0a0a;letter-spacing:-.1px;padding:12px 0 8px;border-bottom:1px solid #eef0f3;margin-bottom:4px}
+.cs-pt-tire-set-head .mount{color:#0066ff;font-weight:600;font-size:12.5px}
 .cs-pt-tire-set-head .info{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#eff6ff;color:#0066ff;flex-shrink:0;margin-left:2px}
 .cs-pt-tire-set-head .info svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.4}
 
-/* Grid: meta column 180px on desktop + 4 equal wheel columns. Stacks on tablet. */
-.cs-pt-tire-table{display:grid;grid-template-columns:180px repeat(4,1fr);gap:0;column-gap:12px;align-items:start}
-.cs-pt-tire-meta{display:flex;flex-direction:column;gap:10px;padding-top:8px}
-.cs-pt-tire-meta-row .lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:#6b7280;margin-bottom:3px;line-height:1.2}
-.cs-pt-tire-meta-row .val{font-size:13.5px;font-weight:700;color:#0a0a0a;line-height:1.35}
-.cs-pt-tire-meta-row .val.empty{color:#9ca3af;font-weight:500;font-style:italic}
+/* Single tire row */
+.cs-pt-tire-row{display:flex;align-items:center;gap:14px;padding:14px 4px;border-bottom:1px solid #f0f0f2}
+.cs-pt-tire-row:last-of-type{border-bottom:none}
+.cs-pt-tire-row-info{flex:1;min-width:0}
+.cs-pt-tire-row-pos{font-size:13.5px;font-weight:700;color:#0a0a0a;letter-spacing:-.1px;margin-bottom:2px;line-height:1.3}
+.cs-pt-tire-row-spec{font-size:12.5px;color:#374151;line-height:1.35;word-break:break-word}
+.cs-pt-tire-row-model{font-size:12px;color:#6b7280;margin-top:2px;line-height:1.35}
+.cs-pt-tire-row-empty{font-size:12px;color:#9ca3af;font-style:italic}
 
-/* Wheel cell: icon + position label */
-.cs-pt-tire-wheel{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
-.cs-pt-tire-wheel-ico{position:relative;width:64px;height:64px;display:flex;align-items:center;justify-content:center}
-.cs-pt-tire-wheel-ico svg.wheel{width:100%;height:100%}
-.cs-pt-tire-wheel-ico .badge{position:absolute;bottom:-2px;right:-2px;width:22px;height:22px;border-radius:50%;background:#16a34a;color:#fff;border:2px solid #fff;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.15)}
-.cs-pt-tire-wheel-ico .badge.warn{background:#f59e0b}
-.cs-pt-tire-wheel-ico .badge.bad{background:#dc2626}
-.cs-pt-tire-wheel-ico .badge svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
-.cs-pt-tire-wheel-name{font-size:11.5px;font-weight:600;color:#374151;line-height:1.3}
+/* Green tread pill (right side, premium look) */
+.cs-pt-tire-tread-pill{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;padding:7px 14px;border-radius:50px;background:#dcfce7;color:#15803d;font-size:13px;font-weight:700;letter-spacing:-.1px;min-width:78px;text-align:center;line-height:1.2}
+.cs-pt-tire-tread-pill.warn{background:#fef3c7;color:#b45309}
+.cs-pt-tire-tread-pill.bad{background:#fee2e2;color:#b91c1c}
+.cs-pt-tire-tread-pill.empty{background:#f1f5f9;color:#94a3b8;font-weight:600}
 
-/* Tread-depth row (5 columns: label + 4 values) */
-.cs-pt-tire-tread{display:grid;grid-template-columns:180px repeat(4,1fr);column-gap:12px;align-items:center;padding-top:6px}
-.cs-pt-tire-tread-lbl{font-size:11.5px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px}
-.cs-pt-tire-tread-val{text-align:center;font-size:14px;font-weight:700;color:#0a0a0a;letter-spacing:-.1px}
-.cs-pt-tire-tread-val.empty{color:#9ca3af;font-weight:500}
-
-.cs-pt-tire-divider{height:1px;background:#eef0f3;margin:4px 0}
-
-/* Status row (5 columns: label + 4 per-wheel statuses) */
-.cs-pt-tire-status{display:grid;grid-template-columns:180px repeat(4,1fr);column-gap:12px;align-items:center}
-.cs-pt-tire-status-lbl{font-size:11.5px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px}
-.cs-pt-tire-status-val{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11.5px;font-weight:600;color:#15803d;line-height:1.3;text-align:center}
-.cs-pt-tire-status-val.warn{color:#b45309}
-.cs-pt-tire-status-val.bad{color:#b91c1c}
-.cs-pt-tire-status-val .ico{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#dcfce7;color:#15803d;flex-shrink:0}
-.cs-pt-tire-status-val.warn .ico{background:#fef3c7;color:#b45309}
-.cs-pt-tire-status-val.bad .ico{background:#fee2e2;color:#b91c1c}
-.cs-pt-tire-status-val .ico svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+/* Bottom summary row inside the same set card */
+.cs-pt-tire-summary{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 4px 4px;margin-top:8px;border-top:1px solid #f0f0f2;font-size:13px;color:#374151;flex-wrap:wrap}
+.cs-pt-tire-summary-left{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:#0a0a0a;min-width:0}
+.cs-pt-tire-summary-left .ico{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#eff6ff;color:#0066ff;flex-shrink:0}
+.cs-pt-tire-summary-left .ico svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.cs-pt-tire-summary-right{font-size:13px;font-weight:700;color:#15803d;display:inline-flex;align-items:center;gap:6px;flex-shrink:0}
+.cs-pt-tire-summary-right.warn{color:#b45309}
+.cs-pt-tire-summary-right.bad{color:#b91c1c}
+.cs-pt-tire-summary-right .ico{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#dcfce7;color:#15803d}
+.cs-pt-tire-summary-right.warn .ico{background:#fef3c7;color:#b45309}
+.cs-pt-tire-summary-right.bad .ico{background:#fee2e2;color:#b91c1c}
+.cs-pt-tire-summary-right .ico svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 
 .cs-pt-tire-empty{font-size:12px;color:#9ca3af;font-style:italic}
 
-/* Responsive — tablet/mobile collapse the 5-column grid into a stacked
-   information hierarchy: title → metadata → 4 wheels (2x2) → tread → status. */
 @media(max-width:768px){
-    .cs-pt-tire-set{padding:16px}
-    .cs-pt-tire-table{grid-template-columns:repeat(4,1fr);column-gap:6px}
-    .cs-pt-tire-meta{grid-column:1 / -1;flex-direction:row;flex-wrap:wrap;gap:14px 22px;padding-top:0;padding-bottom:6px;border-bottom:1px solid #eef0f3;margin-bottom:4px}
-    .cs-pt-tire-wheel-ico{width:54px;height:54px}
-    .cs-pt-tire-wheel-name{font-size:11px}
-    .cs-pt-tire-tread,.cs-pt-tire-status{grid-template-columns:repeat(4,1fr);column-gap:6px}
-    .cs-pt-tire-tread-lbl,.cs-pt-tire-status-lbl{grid-column:1 / -1;margin-bottom:6px}
-    .cs-pt-tire-status-val{font-size:10.5px}
+    .cs-pt-tire-set{padding:4px 14px 14px}
+    .cs-pt-tire-row{padding:12px 2px;gap:10px}
+    .cs-pt-tire-row-pos{font-size:13px}
+    .cs-pt-tire-row-spec{font-size:12px}
+    .cs-pt-tire-row-model{font-size:11.5px}
+    .cs-pt-tire-tread-pill{font-size:12px;min-width:66px;padding:6px 12px}
+    .cs-pt-tire-summary{flex-direction:column;align-items:flex-start;gap:8px;padding-top:12px}
 }
 @media(max-width:500px){
-    .cs-pt-tire-set{padding:14px 12px}
-    .cs-pt-tire-table{grid-template-columns:repeat(2,1fr);row-gap:14px;column-gap:8px}
-    .cs-pt-tire-tread,.cs-pt-tire-status{grid-template-columns:repeat(2,1fr);row-gap:10px;column-gap:8px}
+    .cs-pt-tire-set{padding:4px 12px 12px}
+    .cs-pt-tire-row{padding:11px 2px}
+    .cs-pt-tire-tread-pill{min-width:60px;font-size:11.5px}
 }
 
 /* Empty state shared by both cards */
@@ -2049,124 +2037,98 @@
             </div>
             @if($hasTireData)
                 @php
-                    // Render the mounted set first, fall back to the first set otherwise.
+                    // Mounted set first, fall back to the first set otherwise.
                     $primarySet = $car->tireSets->firstWhere('is_mounted', true) ?? $car->tireSets->first();
                     $tiresByPos = $primarySet->tires->keyBy('position');
                     $positions  = [
-                        'front_left'  => 'Przednia lewa',
-                        'front_right' => 'Przednia prawa',
-                        'rear_left'   => 'Tylna lewa',
-                        'rear_right'  => 'Tylna prawa',
+                        'front_left'  => 'Przód lewy',
+                        'front_right' => 'Przód prawy',
+                        'rear_left'   => 'Tył lewy',
+                        'rear_right'  => 'Tył prawy',
                     ];
-                    // Resolve per-wheel status into one of {ok, warn, bad} so the
-                    // status row has a consistent visual vocabulary even when
-                    // CarTire.condition is an array of free-text issue tags.
+                    // Per-tire status from condition[] → ok / warn / bad enum.
                     $resolveWheelStatus = function ($t) {
-                        if (!$t) return ['key' => 'ok', 'label' => 'Brak danych', 'isEmpty' => true];
+                        if (!$t) return 'empty';
                         $cond = is_array($t->condition) ? $t->condition : [];
-                        if (count($cond) === 0) return ['key' => 'ok', 'label' => 'Brak nieprawidłowości'];
+                        if (count($cond) === 0) return 'ok';
                         $joined = mb_strtolower(implode(' ', $cond));
-                        if (str_contains($joined, 'zużyt') || str_contains($joined, 'uszkodz') || str_contains($joined, 'wymian') || str_contains($joined, 'pęknięt')) {
-                            return ['key' => 'bad', 'label' => implode(', ', $cond)];
-                        }
-                        return ['key' => 'warn', 'label' => implode(', ', $cond)];
+                        if (str_contains($joined, 'zużyt') || str_contains($joined, 'uszkodz') || str_contains($joined, 'wymian') || str_contains($joined, 'pęknięt')) return 'bad';
+                        return 'warn';
                     };
+                    $anyIssue = false;
+                    foreach ($tiresByPos as $t) {
+                        $s = $resolveWheelStatus($t);
+                        if ($s === 'warn' || $s === 'bad') { $anyIssue = true; break; }
+                    }
                 @endphp
                 <div class="cs-pt-tire-set">
                     <div class="cs-pt-tire-set-head">
-                        <span class="num">{{ $primarySet->set_number ?? 1 }}.</span> Komplet
+                        <span>{{ $primarySet->set_number ?? 1 }}. Komplet</span>
                         @if($primarySet->is_mounted)<span class="mount">(zamontowane)</span>@endif
                         <span class="info" aria-hidden="true" title="Dane pomiarowe z inspekcji pojazdu">
                             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                         </span>
                     </div>
 
-                    <div class="cs-pt-tire-table">
-                        {{-- Left metadata column --}}
-                        <div class="cs-pt-tire-meta">
-                            <div class="cs-pt-tire-meta-row">
-                                <div class="lbl">Rodzaj opon</div>
-                                <div class="val {{ $primarySet->tire_type ? '' : 'empty' }}">{{ $primarySet->tire_type ?: 'Brak danych' }}</div>
-                            </div>
-                            <div class="cs-pt-tire-meta-row">
-                                <div class="lbl">Felga</div>
-                                <div class="val {{ $primarySet->rim ? '' : 'empty' }}">{{ $primarySet->rim ?: 'Brak danych' }}</div>
-                            </div>
-                        </div>
-
-                        {{-- 4 wheel positions with icon + status badge --}}
-                        @foreach($positions as $key => $label)
-                        @php
-                            $t = $tiresByPos->get($key);
-                            $status = $resolveWheelStatus($t);
-                        @endphp
-                        <div class="cs-pt-tire-wheel">
-                            <div class="cs-pt-tire-wheel-ico" aria-hidden="true">
-                                <svg class="wheel" viewBox="0 0 72 72" fill="none">
-                                    <circle cx="36" cy="36" r="33" stroke="#cbd5e1" stroke-width="2" fill="#f4f4f5"/>
-                                    <circle cx="36" cy="36" r="24" stroke="#cbd5e1" stroke-width="1.5" fill="#ffffff"/>
-                                    <circle cx="36" cy="36" r="6"  fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1"/>
-                                    <line x1="36" y1="12" x2="36" y2="24" stroke="#cbd5e1" stroke-width="1.6" stroke-linecap="round"/>
-                                    <line x1="36" y1="48" x2="36" y2="60" stroke="#cbd5e1" stroke-width="1.6" stroke-linecap="round"/>
-                                    <line x1="12" y1="36" x2="24" y2="36" stroke="#cbd5e1" stroke-width="1.6" stroke-linecap="round"/>
-                                    <line x1="48" y1="36" x2="60" y2="36" stroke="#cbd5e1" stroke-width="1.6" stroke-linecap="round"/>
-                                    <line x1="19.8" y1="19.8" x2="27.5" y2="27.5" stroke="#cbd5e1" stroke-width="1.6" stroke-linecap="round"/>
-                                    <line x1="44.5" y1="44.5" x2="52.2" y2="52.2" stroke="#cbd5e1" stroke-width="1.6" stroke-linecap="round"/>
-                                    <line x1="52.2" y1="19.8" x2="44.5" y2="27.5" stroke="#cbd5e1" stroke-width="1.6" stroke-linecap="round"/>
-                                    <line x1="27.5" y1="44.5" x2="19.8" y2="52.2" stroke="#cbd5e1" stroke-width="1.6" stroke-linecap="round"/>
-                                </svg>
-                                @if(!($status['isEmpty'] ?? false))
-                                <span class="badge {{ $status['key'] === 'ok' ? '' : $status['key'] }}">
-                                    @if($status['key'] === 'ok')
-                                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                                    @elseif($status['key'] === 'warn')
-                                        <svg viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                                    @else
-                                        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                    @endif
-                                </span>
+                    {{-- Four stacked rows — one per wheel position. No tire/wheel image. --}}
+                    @foreach($positions as $key => $label)
+                    @php
+                        $t = $tiresByPos->get($key);
+                        $statusKey = $resolveWheelStatus($t);
+                        // tread_depth is stored as a single numeric value; render with the
+                        // Polish decimal separator (6,0 mm) when there's a fractional part.
+                        $treadDisplay = null;
+                        if ($t && $t->tread_depth !== null) {
+                            $td = (float) $t->tread_depth;
+                            $treadDisplay = (floor($td) == $td)
+                                ? number_format($td, 1, ',', ' ') . ' mm'
+                                : number_format($td, 1, ',', ' ') . ' mm';
+                        }
+                    @endphp
+                    <div class="cs-pt-tire-row">
+                        <div class="cs-pt-tire-row-info">
+                            <div class="cs-pt-tire-row-pos">{{ $label }}</div>
+                            @if($t)
+                                @if($primarySet->tire_type)
+                                    <div class="cs-pt-tire-row-spec">{{ $primarySet->tire_type }}</div>
                                 @endif
-                            </div>
-                            <div class="cs-pt-tire-wheel-name">{{ $label }}</div>
+                                @if($t->condition && is_array($t->condition) && count($t->condition))
+                                    <div class="cs-pt-tire-row-model">{{ implode(', ', $t->condition) }}</div>
+                                @endif
+                            @else
+                                <div class="cs-pt-tire-row-empty">Brak danych</div>
+                            @endif
                         </div>
-                        @endforeach
+                        @if($treadDisplay !== null)
+                            <span class="cs-pt-tire-tread-pill {{ $statusKey === 'ok' || $statusKey === 'empty' ? '' : $statusKey }}">{{ $treadDisplay }}</span>
+                        @else
+                            <span class="cs-pt-tire-tread-pill empty">— mm</span>
+                        @endif
                     </div>
+                    @endforeach
 
-                    {{-- Tread depth row aligned to the 4 wheel columns --}}
-                    <div class="cs-pt-tire-tread">
-                        <div class="cs-pt-tire-tread-lbl">Głębokość bieżnika</div>
-                        @foreach($positions as $key => $label)
-                        @php $t = $tiresByPos->get($key); @endphp
-                        <div class="cs-pt-tire-tread-val {{ $t && $t->tread_depth !== null ? '' : 'empty' }}">
-                            {{ $t && $t->tread_depth !== null ? $t->tread_depth . ' mm' : '—' }}
-                        </div>
-                        @endforeach
-                    </div>
-
-                    <div class="cs-pt-tire-divider"></div>
-
-                    {{-- Status row aligned to the 4 wheel columns --}}
-                    <div class="cs-pt-tire-status">
-                        <div class="cs-pt-tire-status-lbl">Stan</div>
-                        @foreach($positions as $key => $label)
-                        @php $status = $resolveWheelStatus($tiresByPos->get($key)); @endphp
-                        <div class="cs-pt-tire-status-val {{ $status['key'] === 'ok' ? '' : $status['key'] }}">
+                    {{-- Bottom summary: rim/felga left, overall status right --}}
+                    <div class="cs-pt-tire-summary">
+                        <span class="cs-pt-tire-summary-left">
                             <span class="ico" aria-hidden="true">
-                                @if($status['key'] === 'ok')
-                                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                                @elseif($status['key'] === 'warn')
+                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                            </span>
+                            {{ $primarySet->rim ?: 'Brak informacji o felgach' }}
+                        </span>
+                        <span class="cs-pt-tire-summary-right {{ $anyIssue ? 'warn' : '' }}">
+                            <span class="ico" aria-hidden="true">
+                                @if($anyIssue)
                                     <svg viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                 @else
-                                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
                                 @endif
                             </span>
-                            {{ $status['label'] }}
-                        </div>
-                        @endforeach
+                            {{ $anyIssue ? 'Wymaga uwagi' : 'Stan bardzo dobry' }}
+                        </span>
                     </div>
 
                     @if($primarySet->notes)
-                    <div style="margin-top:6px;padding:9px 12px;background:#fef3c7;border:1px solid #fde68a;color:#92400e;border-radius:8px;font-size:12px;line-height:1.5">{{ $primarySet->notes }}</div>
+                    <div style="margin-top:8px;padding:9px 12px;background:#fef3c7;border:1px solid #fde68a;color:#92400e;border-radius:8px;font-size:12px;line-height:1.5">{{ $primarySet->notes }}</div>
                     @endif
                 </div>
             @else
