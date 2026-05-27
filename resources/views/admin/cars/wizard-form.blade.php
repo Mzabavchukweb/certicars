@@ -1325,25 +1325,62 @@
             <div class="wz-section-badge"><i data-lucide="star" style="width:16px;height:16px"></i></div>
             <div><div class="wz-section-title">Najważniejsze wyposażenie (8 kafelków)</div><div class="wz-section-subtitle">Wybierz do 8 elementów, które wyróżnią się ikonami na górze sekcji Wyposażenie. Możesz zostawić puste sloty.</div></div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
+        @php
+            // Lookup table for the per-slot icon preview. JS reads it via data-eq-icon
+            // on the wrapper and swaps the visible Lucide icon when the select changes.
+            $iconMap = [];
+            foreach (\App\Helpers\EquipmentCatalog::OPTIONS as $key => $opt) {
+                $iconMap[$key] = $opt['icon'];
+            }
+        @endphp
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px" id="wzEqSlots" data-eq-icon-map='@json($iconMap)'>
             @for($i = 0; $i < 8; $i++)
-            <div class="wz-field" style="margin:0">
+            @php
+                $currentKey = $highlighted[$i] ?? null;
+                $currentIcon = $currentKey ? ($iconMap[$currentKey] ?? null) : null;
+            @endphp
+            <div class="wz-field wz-eq-slot" style="margin:0">
                 <label>Slot {{ $i + 1 }}</label>
-                <select name="highlighted_equipment[]">
-                    <option value="">— pusty —</option>
-                    @foreach($eqGrouped as $catKey => $catOptions)
-                        @if(!empty($catOptions))
-                        <optgroup label="{{ $eqCatLabels[$catKey]['label'] }}">
-                            @foreach($catOptions as $optKey => $opt)
-                            <option value="{{ $optKey }}" @selected($highlighted[$i] === $optKey)>{{ $opt['label'] }}</option>
-                            @endforeach
-                        </optgroup>
-                        @endif
-                    @endforeach
-                </select>
+                <div style="display:flex;align-items:center;gap:10px">
+                    <div class="wz-eq-slot-preview" style="flex-shrink:0;width:42px;height:42px;border-radius:10px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center;border:1px solid #dbe6ff">
+                        <i data-lucide="{{ $currentIcon ?? 'star' }}" data-default="star" style="width:22px;height:22px;{{ $currentIcon ? '' : 'opacity:.35' }}"></i>
+                    </div>
+                    <select name="highlighted_equipment[]" class="wz-eq-slot-select" style="flex:1;min-width:0">
+                        <option value="">— pusty —</option>
+                        @foreach($eqGrouped as $catKey => $catOptions)
+                            @if(!empty($catOptions))
+                            <optgroup label="{{ $eqCatLabels[$catKey]['label'] }}">
+                                @foreach($catOptions as $optKey => $opt)
+                                <option value="{{ $optKey }}" @selected($currentKey === $optKey)>{{ $opt['label'] }}</option>
+                                @endforeach
+                            </optgroup>
+                            @endif
+                        @endforeach
+                    </select>
+                </div>
             </div>
             @endfor
         </div>
+        <script>
+        (function(){
+            // Live icon preview: when admin picks an option from the dropdown, swap
+            // the Lucide icon in the preview tile next to it. Avoids needing a
+            // page reload to see what each slot will look like on the frontend.
+            const root = document.getElementById('wzEqSlots');
+            if(!root) return;
+            const map = JSON.parse(root.dataset.eqIconMap || '{}');
+            root.addEventListener('change', function(e){
+                const sel = e.target.closest('.wz-eq-slot-select');
+                if(!sel) return;
+                const slot = sel.closest('.wz-eq-slot');
+                const icoHost = slot && slot.querySelector('.wz-eq-slot-preview');
+                if(!icoHost) return;
+                const iconName = map[sel.value] || icoHost.querySelector('[data-default]')?.dataset.default || 'star';
+                icoHost.innerHTML = '<i data-lucide="' + iconName + '" data-default="star" style="width:22px;height:22px;' + (sel.value ? '' : 'opacity:.35') + '"></i>';
+                if(window.lucide) window.lucide.createIcons();
+            });
+        })();
+        </script>
     </div>
 
     <div class="wz-section">
