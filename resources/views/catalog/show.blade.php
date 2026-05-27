@@ -810,23 +810,10 @@
 .cs-related-grid>*{flex:0 0 calc(33.333% - 14px);scroll-snap-align:start;min-width:260px}
 
 @media(max-width:768px){
-    /* Single mobile gutter: container padding provides base side spacing from the
-       viewport edge. Full-width section cards get extra inset so their rounded
-       corners and borders don't butt flush against the container padding boundary.
-       This matches the visual breathing room of the sidebar info-tile cards. */
-    .cs-wrap .container{padding-left:16px;padding-right:16px}
-    /* Shared mobile inset for ALL cards: grid (sidebar/gallery), benefit row,
-       gethelp, data sections, 3-card row, related, legal. All get the same
-       side inset so everything aligns from top to bottom. */
-    .cs-grid,
-    .cs-benefits-row,
-    .cs-gethelp-section,
-    .cs-data-section,
-    .cs-info-3row,
-    .cs-tech-engine-row,
-    .cs-related-section,
-    .cs-legal-bar{max-width:calc(100% - 20px);margin-left:auto;margin-right:auto}
-    .cs-sections-2col{padding:0;margin:0;max-width:calc(100% - 20px)}
+    /* Mobile gutter: container padding is the SOLE source of side spacing.
+       Every child inherits this gutter equally — no per-class overrides needed. */
+    .cs-wrap .container{padding-left:24px;padding-right:24px}
+    .cs-sections-2col{padding:0;margin:0}
     .cs-nav-bar{flex-direction:row;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0}
     .cs-nav-bar-left{flex:0 0 auto}
     .cs-nav-bar-left .cs-nav-btn{width:auto}
@@ -944,7 +931,7 @@
     .cs-card{padding:20px}
 }
 @media(max-width:500px){
-    .cs-wrap .container{padding-left:14px;padding-right:14px}
+    .cs-wrap .container{padding-left:20px;padding-right:20px}
     .cs-sections-2col{padding:0}
     .cs-head h1{font-size:19px}
     .cs-gallery{border-radius:10px}
