@@ -271,6 +271,91 @@
 /* Empty placeholder when a chip's category has no damages */
 .cs-damage-empty-cat{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13.5px;background:#fff;border:1px dashed #e5e7eb;border-radius:14px;grid-column:1 / -1}
 
+/* ============ BENEFIT ROW (5 items below gallery) ============ */
+.cs-benefits-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;background:#fff;border:1px solid #eeeef0;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);max-width:calc(1200px - 48px);margin:0 auto 16px;padding:0;overflow:hidden;width:100%;box-sizing:border-box}
+.cs-benefit-item{display:flex;align-items:center;gap:10px;padding:14px 16px;border-right:1px solid #eef0f3;min-width:0}
+.cs-benefit-item:last-child{border-right:none}
+.cs-benefit-ico{flex-shrink:0;width:34px;height:34px;border-radius:10px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-benefit-ico svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cs-benefit-text{font-size:12.5px;font-weight:600;color:#0a0a0a;line-height:1.35;letter-spacing:-.1px;min-width:0}
+@media(max-width:1024px){
+    .cs-benefits-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .cs-benefit-item{border-right:1px solid #eef0f3;border-bottom:1px solid #eef0f3}
+    .cs-benefit-item:nth-child(2n){border-right:none}
+    .cs-benefit-item:nth-last-child(-n+1):nth-child(odd),.cs-benefit-item:nth-last-child(-n+2):nth-child(2n){border-bottom:none}
+}
+@media(max-width:768px){
+    .cs-benefits-row{margin-left:14px!important;margin-right:14px!important;max-width:none!important;border-radius:12px}
+}
+@media(max-width:500px){
+    .cs-benefits-row{grid-template-columns:1fr;margin-left:12px!important;margin-right:12px!important}
+    .cs-benefit-item{border-right:none}
+    .cs-benefit-item:last-child{border-bottom:none}
+}
+
+/* ============ GWARANCJA TECHNICZNA — GetHelp warranty section ============ */
+.cs-gethelp-section{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box}
+.cs-gethelp-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.cs-gethelp-head-left{display:flex;align-items:flex-start;gap:14px;flex:1;min-width:240px}
+.cs-gethelp-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-gethelp-ico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cs-gethelp-title{font-size:17px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:0 0 4px;line-height:1.25;display:flex;align-items:center;gap:6px}
+.cs-gethelp-title .info-i{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#eff6ff;color:#0066ff;font-size:10px;font-weight:700;flex-shrink:0}
+.cs-gethelp-sub{font-size:12.5px;color:#6b7280;line-height:1.55;margin:0;max-width:580px}
+.cs-gethelp-more{font-size:13px;font-weight:700;color:#0066ff;display:inline-flex;align-items:center;gap:5px;text-decoration:none;margin-left:auto;align-self:center}
+.cs-gethelp-more:hover{color:#0052cc}
+.cs-gethelp-more svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4}
+.cs-gethelp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.cs-gethelp-pkg{position:relative;background:#fff;border:1.5px solid #e5e7eb;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:8px;transition:border-color .15s,background .15s;cursor:pointer}
+.cs-gethelp-pkg:hover{border-color:#cbd5e1}
+.cs-gethelp-pkg.active{background:#eff6ff;border-color:#0066ff;box-shadow:0 0 0 3px rgba(0,102,255,.1)}
+.cs-gethelp-pkg-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.cs-gethelp-pkg-name{font-size:14.5px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px}
+.cs-gethelp-pkg-badge{display:inline-flex;align-items:center;padding:3px 8px;background:#dcfce7;color:#15803d;font-size:10px;font-weight:700;border-radius:50px;letter-spacing:.3px;text-transform:uppercase}
+.cs-gethelp-pkg.active .cs-gethelp-pkg-badge{background:#0066ff;color:#fff}
+.cs-gethelp-pkg-price{font-size:13px;font-weight:700;color:#0a0a0a}
+.cs-gethelp-pkg-price .free{color:#16a34a}
+.cs-gethelp-pkg-desc{font-size:11.5px;color:#6b7280;line-height:1.5;margin:0}
+.cs-gethelp-foot{margin-top:14px;padding-top:14px;border-top:1px solid #f0f0f2;font-size:11.5px;color:#6b7280;line-height:1.55}
+.cs-gethelp-foot strong{color:#0a0a0a;font-weight:700}
+@media(max-width:1024px){
+    .cs-gethelp-grid{grid-template-columns:1fr;gap:10px}
+    .cs-gethelp-section{padding:20px}
+}
+@media(max-width:768px){
+    .cs-gethelp-section{margin-left:14px!important;margin-right:14px!important;max-width:none!important;padding:18px 16px;border-radius:14px}
+    .cs-gethelp-more{margin-left:0;margin-top:8px}
+}
+@media(max-width:500px){
+    .cs-gethelp-section{margin-left:12px!important;margin-right:12px!important}
+}
+
+/* ============ 3-card bottom row (Historia / Dokumenty / Formalności) ============ */
+.cs-info-3row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box;align-items:stretch}
+.cs-info-3card{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:22px 24px;display:flex;flex-direction:column;min-width:0;height:100%}
+.cs-info-3card-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #f0f0f2}
+.cs-info-3card-ico{flex-shrink:0;width:38px;height:38px;border-radius:10px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-info-3card-ico svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cs-info-3card-title{font-size:15px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0;line-height:1.3}
+.cs-info-3card-rows{flex:1;display:flex;flex-direction:column}
+.cs-info-3row-line{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid #f5f5f7;font-size:13px;line-height:1.4}
+.cs-info-3row-line:last-child{border-bottom:none}
+.cs-info-3row-line .lbl{color:#6b7280;font-weight:500;min-width:0;flex-shrink:1}
+.cs-info-3row-line .val{font-weight:700;color:#0a0a0a;text-align:right;word-break:break-word;flex-shrink:0;max-width:60%}
+.cs-info-3row-line .val.muted{color:#9ca3af;font-weight:500;font-style:italic}
+.cs-info-3row-line .val.ok{color:#15803d}
+@media(max-width:1024px){
+    .cs-info-3row{grid-template-columns:1fr 1fr;gap:14px}
+    .cs-info-3card{padding:18px 18px}
+}
+@media(max-width:768px){
+    .cs-info-3row{grid-template-columns:1fr;margin-left:14px!important;margin-right:14px!important;max-width:none!important}
+    .cs-info-3card{border-radius:14px}
+}
+@media(max-width:500px){
+    .cs-info-3row{margin-left:12px!important;margin-right:12px!important}
+}
+
 /* ============ TECH + ENGINE-VIDEO TWO-COLUMN ROW ============ */
 .cs-tech-engine-row{display:grid;grid-template-columns:1.15fr 1fr;gap:20px;margin-bottom:16px;align-items:stretch;max-width:calc(1200px - 48px);margin-left:auto;margin-right:auto;width:100%;box-sizing:border-box}
 .cs-tech-engine-card{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;display:flex;flex-direction:column;min-width:0;height:100%}
@@ -1386,7 +1471,93 @@
         $dispBody = CarLabels::bodyType($car->body_type ?? $car->category);
         $dispCountry = CarLabels::country($car->country_registration);
         $dispImportedFrom = CarLabels::country($car->imported_from);
+
+        // Benefit row — 5 short reassurance tiles. Items that depend on car
+        // fields render dynamic text; the rest are universal CertiCars offers.
+        $importedFrom = CarLabels::importedFromStatement($car);
+        $exciseLine   = CarLabels::exciseStatement($car);
+        $benefits = [];
+        if ($importedFrom)                          $benefits[] = ['ico' => 'globe',       'text' => $importedFrom];
+        if ($exciseLine || $car->taxation === null) $benefits[] = ['ico' => 'badge-check', 'text' => $exciseLine ?: 'Akcyza opłacona'];
+        $benefits[] = ['ico' => 'clipboard-check', 'text' => 'Przygotowany do rejestracji'];
+        $benefits[] = ['ico' => 'percent',         'text' => 'Kupujący zwolniony z PCC 2%'];
+        $benefits[] = ['ico' => 'search-check',    'text' => 'Możliwość sprawdzenia auta przed zakupem'];
+        $benefits = array_slice($benefits, 0, 5);
     @endphp
+
+    {{-- =================== BENEFIT ROW (5 items) =================== --}}
+    <div class="cs-benefits-row">
+        @foreach($benefits as $b)
+        <div class="cs-benefit-item">
+            <span class="cs-benefit-ico" aria-hidden="true">
+                @switch($b['ico'])
+                    @case('globe')
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        @break
+                    @case('badge-check')
+                        <svg viewBox="0 0 24 24"><path d="M12 2 3 7v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V7Z"/><path d="m9 12 2 2 4-4"/></svg>
+                        @break
+                    @case('clipboard-check')
+                        <svg viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+                        @break
+                    @case('percent')
+                        <svg viewBox="0 0 24 24"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+                        @break
+                    @case('search-check')
+                        <svg viewBox="0 0 24 24"><path d="m8 11 2 2 4-4"/><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        @break
+                @endswitch
+            </span>
+            <span class="cs-benefit-text">{{ $b['text'] }}</span>
+        </div>
+        @endforeach
+    </div>
+
+    {{-- =================== GWARANCJA TECHNICZNA GETHELP =================== --}}
+    @php
+        // Three GetHelp packages. The "currently selected" one is whatever the car
+        // is sold with by default; falls back to "Classic" if no flag exists.
+        $activePkg = strtolower((string) ($car->gethelp_package ?? 'classic'));
+        $gethelpPackages = [
+            ['key' => 'classic', 'name' => 'GetHelp Classic', 'badge' => '12 mies.', 'price' => 'W cenie',         'desc' => 'Podstawowa ochrona układu napędowego oraz wsparcie assistance 24/7.'],
+            ['key' => 'optimum', 'name' => 'GetHelp Optimum', 'badge' => '24 mies.', 'price' => '+ 2 900 zł',      'desc' => 'Rozszerzony zakres ochrony, w tym elektronika, klimatyzacja i komfort jazdy.'],
+            ['key' => 'grand',   'name' => 'GetHelp Grand',   'badge' => '36 mies.', 'price' => '+ 5 900 zł',      'desc' => 'Najszersza ochrona z assistance, autem zastępczym i zakresem niemal pełnym.'],
+        ];
+    @endphp
+    <div class="cs-gethelp-section">
+        <div class="cs-gethelp-head">
+            <div class="cs-gethelp-head-left">
+                <div class="cs-gethelp-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+                </div>
+                <div>
+                    <h3 class="cs-gethelp-title">Gwarancja techniczna GetHelp <span class="info-i" title="Wybierz pakiet ochrony pojazdu po zakupie">i</span></h3>
+                    <p class="cs-gethelp-sub">Wybierz pakiet ochrony technicznej pojazdu po zakupie. Pakiet Classic jest w cenie samochodu, pozostałe można rozszerzyć.</p>
+                </div>
+            </div>
+            <a href="{{ url('/o-nas#gethelp') }}" class="cs-gethelp-more">
+                Dowiedz się więcej o gwarancji
+                <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+        </div>
+        <div class="cs-gethelp-grid">
+            @foreach($gethelpPackages as $pkg)
+            <div class="cs-gethelp-pkg{{ $pkg['key'] === $activePkg ? ' active' : '' }}">
+                <div class="cs-gethelp-pkg-head">
+                    <span class="cs-gethelp-pkg-name">{{ $pkg['name'] }}</span>
+                    <span class="cs-gethelp-pkg-badge">{{ $pkg['badge'] }}</span>
+                </div>
+                <div class="cs-gethelp-pkg-price">
+                    @if($pkg['price'] === 'W cenie')<span class="free">W cenie samochodu</span>@else{{ $pkg['price'] }}@endif
+                </div>
+                <p class="cs-gethelp-pkg-desc">{{ $pkg['desc'] }}</p>
+            </div>
+            @endforeach
+        </div>
+        <div class="cs-gethelp-foot">
+            <strong>Pełny zakres ochrony</strong> dostępny w wybranych ASO partnerskich. Szczegóły gwarancji można sprawdzić w umowie sprzedaży i regulaminie GetHelp.
+        </div>
+    </div>
 
     {{-- A. DANE POJAZDU — expanded by default on both desktop and mobile --}}
     <div class="cs-data-section cs-collapsible-mobile">
@@ -1432,6 +1603,77 @@
                 @if($rowOk($car->vin))
                     <div class="cs-data-row"><span class="lbl">VIN</span><span class="val" style="font-family:'SF Mono',Menlo,monospace;font-size:12px;letter-spacing:.4px">{{ $car->vin }}</span></div>
                 @endif
+            </div>
+        </div>
+    </div>
+
+    {{-- =================== 3-CARD SUMMARY ROW (Historia / Dokumenty / Formalności) =================== --}}
+    @php
+        // Pull the same labelled values used by the deeper accordion sections so
+        // the summary row stays in sync without re-deriving anything. All helpers
+        // are null-safe; muted "—" placeholders appear only when the field is
+        // genuinely empty in admin.
+        $svc3      = CarLabels::bool($car->service_book) ?: CarLabels::bool($car->service_documentation);
+        $regCert3  = CarLabels::bool($car->registration_cert);
+        $manual3   = CarLabels::bool($car->owners_manual);
+        $bookSt3   = CarLabels::status($car->service_book_status) ?? $car->service_book_status;
+        $exciseSh  = match (strtolower((string) $car->taxation)) {
+            'paid', 'oplacona', 'opłacona' => 'Opłacona',
+            'unpaid', 'nieoplacona', 'nieopłacona' => 'Nieopłacona',
+            'na', 'nie_dotyczy', 'nie dotyczy' => 'Nie dotyczy',
+            default => $car->taxation ? ucfirst((string) $car->taxation) : null,
+        };
+        $hasMuted = fn($v) => $v ?: '—';
+    @endphp
+    <div class="cs-info-3row">
+        {{-- A. HISTORIA POJAZDU --}}
+        <div class="cs-info-3card">
+            <div class="cs-info-3card-head">
+                <div class="cs-info-3card-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
+                </div>
+                <h3 class="cs-info-3card-title">Historia pojazdu</h3>
+            </div>
+            <div class="cs-info-3card-rows">
+                <div class="cs-info-3row-line"><span class="lbl">Pochodzenie</span><span class="val {{ $dispCountry ? '' : 'muted' }}">{{ $hasMuted($dispCountry) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Importowany</span><span class="val">{{ $car->is_imported || $rowOk($car->imported_from) ? 'Tak' : 'Nie' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Liczba właścicieli</span><span class="val {{ $car->previous_owners === null ? 'muted' : '' }}">{{ $car->previous_owners === null ? '—' : ($car->previous_owners == 0 ? 'Pierwszy' : $car->previous_owners) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Historia serwisowa</span><span class="val {{ $svc3 ? '' : 'muted' }}">{{ $hasMuted($svc3) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Ostatni przegląd</span><span class="val {{ $rowOk($car->last_service) ? '' : 'muted' }}">{{ $hasMuted($car->last_service) }}</span></div>
+            </div>
+        </div>
+
+        {{-- B. DOKUMENTY --}}
+        <div class="cs-info-3card">
+            <div class="cs-info-3card-head">
+                <div class="cs-info-3card-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>
+                </div>
+                <h3 class="cs-info-3card-title">Dokumenty</h3>
+            </div>
+            <div class="cs-info-3card-rows">
+                <div class="cs-info-3row-line"><span class="lbl">Faktura</span><span class="val ok">Tak, VAT-marża</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Dowód rejestracyjny</span><span class="val {{ $regCert3 ? '' : 'muted' }}">{{ $hasMuted($regCert3) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Liczba kluczyków</span><span class="val {{ $rowOk($car->number_of_keys) ? '' : 'muted' }}">{{ $hasMuted($car->number_of_keys) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Książka serwisowa</span><span class="val {{ $bookSt3 ? '' : 'muted' }}">{{ $hasMuted($bookSt3) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Instrukcja obsługi</span><span class="val {{ $manual3 ? '' : 'muted' }}">{{ $hasMuted($manual3) }}</span></div>
+            </div>
+        </div>
+
+        {{-- C. FORMALNOŚCI --}}
+        <div class="cs-info-3card">
+            <div class="cs-info-3card-head">
+                <div class="cs-info-3card-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+                </div>
+                <h3 class="cs-info-3card-title">Formalności</h3>
+            </div>
+            <div class="cs-info-3card-rows">
+                <div class="cs-info-3row-line"><span class="lbl">Akcyza</span><span class="val ok">{{ $exciseSh ?: 'Opłacona' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Przegląd techniczny</span><span class="val {{ $rowOk($car->next_inspection) ? '' : 'muted' }}">{{ $hasMuted($car->next_inspection) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Przygotowany do rejestracji</span><span class="val ok">Tak</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">PCC 2%</span><span class="val ok">Kupujący zwolniony</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Możliwość transportu</span><span class="val ok">Tak, w całej Polsce</span></div>
             </div>
         </div>
     </div>
