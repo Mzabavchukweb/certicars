@@ -1684,10 +1684,18 @@
             </div>
             <div class="cs-info-3card-rows">
                 <div class="cs-info-3row-line"><span class="lbl">Pochodzenie</span><span class="val {{ $dispCountry ? '' : 'muted' }}">{{ $hasMuted($dispCountry) }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Importowany</span><span class="val">{{ $car->is_imported || $rowOk($car->imported_from) ? 'Tak' : 'Nie' }}</span></div>
+                @php
+                    // Show specific import country when admin filled it AND it differs from
+                    // country_registration; otherwise fall back to the Tak/Nie summary.
+                    $importedSpecific = ($rowOk($dispImportedFrom) && $car->imported_from !== $car->country_registration) ? $dispImportedFrom : null;
+                @endphp
+                <div class="cs-info-3row-line"><span class="lbl">Importowany</span><span class="val">{{ $importedSpecific ?? (($car->is_imported || $rowOk($car->imported_from)) ? 'Tak' : 'Nie') }}</span></div>
                 <div class="cs-info-3row-line"><span class="lbl">Liczba właścicieli</span><span class="val {{ $car->previous_owners === null ? 'muted' : '' }}">{{ $car->previous_owners === null ? '—' : ($car->previous_owners == 0 ? 'Pierwszy' : $car->previous_owners) }}</span></div>
                 <div class="cs-info-3row-line"><span class="lbl">Historia serwisowa</span><span class="val {{ $svc3 ? '' : 'muted' }}">{{ $hasMuted($svc3) }}</span></div>
                 <div class="cs-info-3row-line"><span class="lbl">Ostatni przegląd</span><span class="val {{ $rowOk($car->last_service) ? '' : 'muted' }}">{{ $hasMuted($car->last_service) }}</span></div>
+                @if($rowOk($car->vehicle_history))
+                <div class="cs-info-3row-line" style="flex-direction:column;align-items:flex-start;gap:2px"><span class="lbl">Opis historii</span><span class="val" style="text-align:left;max-width:100%;font-weight:600;color:#374151">{{ $car->vehicle_history }}</span></div>
+                @endif
             </div>
         </div>
 
@@ -1726,38 +1734,10 @@
         </div>
     </div>
 
-    {{-- B. HISTORIA POJAZDU — collapsed on mobile by default --}}
-    @if($rowOk($dispCountry) || $rowOk($dispImportedFrom) || $rowOk($car->first_registration) || $car->previous_owners !== null || $rowOk($car->vehicle_history) || $rowOk(CarLabels::bool($car->service_book)))
-    <div class="cs-data-section cs-collapsible-mobile">
-        <div class="cs-data-header" onclick="csToggleAccordion(this)">
-            <h2><x-icon name="history" size="20"/>Historia pojazdu</h2>
-            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
-        </div>
-        <div class="cs-data-body">
-            <div class="cs-data-grid-2col">
-                @if($rowOk($dispCountry))
-                    <div class="cs-data-row"><span class="lbl">Kraj rejestracji</span><span class="val">{{ $dispCountry }}</span></div>
-                @endif
-                @if($rowOk($dispImportedFrom) && $car->imported_from !== $car->country_registration)
-                    <div class="cs-data-row"><span class="lbl">Importowany z</span><span class="val">{{ $dispImportedFrom }}</span></div>
-                @endif
-                @if($rowOk($car->first_registration))
-                    <div class="cs-data-row"><span class="lbl">Pierwsza rejestracja</span><span class="val">{{ $car->first_registration }}</span></div>
-                @endif
-                @if($car->previous_owners !== null)
-                    <div class="cs-data-row"><span class="lbl">Właściciele</span><span class="val">{{ $car->previous_owners == 0 ? 'Pierwszy właściciel' : $car->previous_owners }}</span></div>
-                @endif
-                @if($rowOk($car->vehicle_history))
-                    <div class="cs-data-row"><span class="lbl">Historia pojazdu</span><span class="val">{{ $car->vehicle_history }}</span></div>
-                @endif
-                @php $svcBook = CarLabels::bool($car->service_book); @endphp
-                @if($rowOk($svcBook))
-                    <div class="cs-data-row"><span class="lbl">Sprawdzony w bazach</span><span class="val">{{ $svcBook }}</span></div>
-                @endif
-            </div>
-        </div>
-    </div>
-    @endif
+    {{-- (Historia pojazdu accordion removed — its content is already shown in the
+         3-card summary row above. The unique fields below were merged into the
+         summary card's "Historia pojazdu" tile (free-text + specific import
+         country). Removed at render source, not hidden with CSS. --}}
 
     {{-- C. SERWISOWANIE — collapsed on mobile by default --}}
     @php
