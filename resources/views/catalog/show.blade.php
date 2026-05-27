@@ -277,6 +277,11 @@
 .cs-benefit-item:last-child{border-right:none}
 .cs-benefit-ico{flex-shrink:0;width:34px;height:34px;border-radius:10px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
 .cs-benefit-ico svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* Country flag variant — circular, no tinted background, bordered. Used by the
+   leftmost "Sprowadzony z …" tile so it visually matches the reference. */
+.cs-benefit-ico.flag{width:30px;height:30px;border-radius:50%;background:#fff;border:1px solid rgba(0,0,0,.08);overflow:hidden;padding:0}
+.cs-benefit-ico.flag .cs-flag{display:flex;flex-direction:column;width:100%;height:100%}
+.cs-benefit-ico.flag .cs-flag span{flex:1;display:block;width:100%}
 .cs-benefit-text{font-size:12.5px;font-weight:600;color:#0a0a0a;line-height:1.35;letter-spacing:-.1px;min-width:0}
 @media(max-width:1024px){
     .cs-benefits-row{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -1474,10 +1479,47 @@
 
         // Benefit row — 5 short reassurance tiles. Items that depend on car
         // fields render dynamic text; the rest are universal CertiCars offers.
-        $importedFrom = CarLabels::importedFromStatement($car);
+        // Resolve the imported-from country once so the leftmost tile can always
+        // render with the matching national flag. Falls back to Germany — the
+        // CertiCars default sourcing country — when admin hasn't filled the
+        // country fields yet (so the row stays at 5 cells like the reference).
+        $countryRaw    = $car->country_registration ?: $car->imported_from ?: 'Niemcy';
+        $countryName   = CarLabels::country($countryRaw) ?? $countryRaw;
+        $importedText  = CarLabels::importedFromStatement($car)
+                         ?? ('Sprowadzony z ' . match ($countryName) {
+                             'Niemcy' => 'Niemiec', 'Włochy' => 'Włoch', 'Czechy' => 'Czech',
+                             'Francja' => 'Francji', 'Hiszpania' => 'Hiszpanii', 'Holandia' => 'Holandii',
+                             'Belgia' => 'Belgii', 'Austria' => 'Austrii', 'Szwajcaria' => 'Szwajcarii',
+                             'Dania' => 'Danii', 'Szwecja' => 'Szwecji', 'Norwegia' => 'Norwegii',
+                             'Japonia' => 'Japonii', 'Polska' => 'Polski',
+                             'USA' => 'USA', 'Wielka Brytania' => 'Wielkiej Brytanii',
+                             default => $countryName,
+                         });
+        // Horizontal-stripe palette per country (top → bottom). Keys match the
+        // values returned by CarLabels::country(). Fallback is the German flag.
+        $flagPalettes = [
+            'Niemcy'           => ['#000000', '#dd0000', '#ffce00'],
+            'Polska'           => ['#ffffff', '#dc143c', '#dc143c'],
+            'Francja'          => ['#0055a4', '#ffffff', '#ef4135'],
+            'Włochy'           => ['#009246', '#ffffff', '#ce2b37'],
+            'Hiszpania'        => ['#aa151b', '#f1bf00', '#aa151b'],
+            'Holandia'         => ['#ae1c28', '#ffffff', '#21468b'],
+            'Belgia'           => ['#000000', '#fdda24', '#ef3340'],
+            'Austria'          => ['#ed2939', '#ffffff', '#ed2939'],
+            'Szwajcaria'       => ['#d52b1e', '#ffffff', '#d52b1e'],
+            'Dania'            => ['#c8102e', '#ffffff', '#c8102e'],
+            'Szwecja'          => ['#006aa7', '#fecc00', '#006aa7'],
+            'Norwegia'         => ['#ef2b2d', '#ffffff', '#002868'],
+            'Czechy'           => ['#ffffff', '#11457e', '#d7141a'],
+            'USA'              => ['#b22234', '#ffffff', '#3c3b6e'],
+            'Wielka Brytania'  => ['#012169', '#ffffff', '#c8102e'],
+            'Japonia'          => ['#ffffff', '#bc002d', '#ffffff'],
+        ];
+        $flagStripes = $flagPalettes[$countryName] ?? $flagPalettes['Niemcy'];
+
         $exciseLine   = CarLabels::exciseStatement($car);
         $benefits = [];
-        if ($importedFrom)                          $benefits[] = ['ico' => 'globe',       'text' => $importedFrom];
+        $benefits[] = ['ico' => 'flag',            'text' => $importedText, 'stripes' => $flagStripes];
         if ($exciseLine || $car->taxation === null) $benefits[] = ['ico' => 'badge-check', 'text' => $exciseLine ?: 'Akcyza opłacona'];
         $benefits[] = ['ico' => 'clipboard-check', 'text' => 'Przygotowany do rejestracji'];
         $benefits[] = ['ico' => 'percent',         'text' => 'Kupujący zwolniony z PCC 2%'];
@@ -1489,10 +1531,14 @@
     <div class="cs-benefits-row">
         @foreach($benefits as $b)
         <div class="cs-benefit-item">
-            <span class="cs-benefit-ico" aria-hidden="true">
+            <span class="cs-benefit-ico{{ $b['ico'] === 'flag' ? ' flag' : '' }}" aria-hidden="true">
                 @switch($b['ico'])
-                    @case('globe')
-                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    @case('flag')
+                        <span class="cs-flag">
+                            <span style="background:{{ $b['stripes'][0] }}"></span>
+                            <span style="background:{{ $b['stripes'][1] }}"></span>
+                            <span style="background:{{ $b['stripes'][2] }}"></span>
+                        </span>
                         @break
                     @case('badge-check')
                         <svg viewBox="0 0 24 24"><path d="M12 2 3 7v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V7Z"/><path d="m9 12 2 2 4-4"/></svg>
