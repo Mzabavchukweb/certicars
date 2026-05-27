@@ -807,7 +807,7 @@
        so every section visually aligns. Per-section margin/max-width overrides used
        to live here and produced a double gutter (container pad + section margin)
        inconsistently across cards — removed. */
-    .cs-wrap .container{padding-left:14px;padding-right:14px}
+    .cs-wrap .container{padding-left:24px;padding-right:24px}
     .cs-sections-2col{padding:0!important;margin:0!important}
     .cs-nav-bar{flex-direction:row;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0}
     .cs-nav-bar-left{flex:0 0 auto}
@@ -927,7 +927,7 @@
     .cs-card{padding:20px}
 }
 @media(max-width:500px){
-    .cs-wrap .container{padding-left:12px;padding-right:12px}
+    .cs-wrap .container{padding-left:20px;padding-right:20px}
     .cs-sections-2col{padding:0!important}
     .cs-head h1{font-size:19px}
     .cs-gallery{border-radius:10px}
