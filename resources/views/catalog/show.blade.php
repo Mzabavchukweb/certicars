@@ -810,11 +810,23 @@
 .cs-related-grid>*{flex:0 0 calc(33.333% - 14px);scroll-snap-align:start;min-width:260px}
 
 @media(max-width:768px){
-    /* Single mobile gutter: container's padding is the only source of side spacing,
-       so every section visually aligns. Full-width section cards get visual breathing
-       room from the viewport edges matching the info-tile reference cards. */
+    /* Single mobile gutter: container padding provides base side spacing from the
+       viewport edge. Full-width section cards get extra inset so their rounded
+       corners and borders don't butt flush against the container padding boundary.
+       This matches the visual breathing room of the sidebar info-tile cards. */
     .cs-wrap .container{padding-left:16px;padding-right:16px}
-    .cs-sections-2col{padding:0;margin:0}
+    /* Shared mobile inset for ALL cards: grid (sidebar/gallery), benefit row,
+       gethelp, data sections, 3-card row, related, legal. All get the same
+       side inset so everything aligns from top to bottom. */
+    .cs-grid,
+    .cs-benefits-row,
+    .cs-gethelp-section,
+    .cs-data-section,
+    .cs-info-3row,
+    .cs-tech-engine-row,
+    .cs-related-section,
+    .cs-legal-bar{max-width:calc(100% - 20px);margin-left:auto;margin-right:auto}
+    .cs-sections-2col{padding:0;margin:0;max-width:calc(100% - 20px)}
     .cs-nav-bar{flex-direction:row;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0}
     .cs-nav-bar-left{flex:0 0 auto}
     .cs-nav-bar-left .cs-nav-btn{width:auto}
