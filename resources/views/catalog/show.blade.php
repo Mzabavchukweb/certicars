@@ -298,8 +298,10 @@
 .cs-tech-list-status .check svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 
 /* ============ 360° CARDS SECTION ============ */
+/* Always 2 columns on desktop — missing 360 source renders as a clean disabled
+   placeholder card, never as a full-width banner. Stacks on tablet/mobile via
+   the media query below. */
 .cs-pano360-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;max-width:calc(1200px - 48px);margin-left:auto;margin-right:auto;width:100%;box-sizing:border-box}
-.cs-pano360-row.single{grid-template-columns:1fr}
 .cs-pano360-section-card{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box}
 .cs-pano360-section-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
 .cs-pano360-section-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
@@ -321,10 +323,14 @@
 .cs-pano360-card-text{position:absolute;left:22px;right:22px;bottom:20px;z-index:2}
 .cs-pano360-card-title{font-size:18px;font-weight:800;letter-spacing:-.3px;line-height:1.2;margin:0 0 4px}
 .cs-pano360-card-sub{font-size:13px;color:rgba(255,255,255,.85);line-height:1.4;margin:0}
-.cs-pano360-card.disabled{cursor:not-allowed;opacity:.7}
+.cs-pano360-card.disabled{cursor:not-allowed;background:linear-gradient(135deg,#1e293b,#0f172a)}
 .cs-pano360-card.disabled:hover{transform:none;box-shadow:none}
 .cs-pano360-card.disabled:hover .cs-pano360-card-img{transform:none}
-.cs-pano360-card.disabled:hover .cs-pano360-card-play{transform:translate(-50%,-50%);background:rgba(255,255,255,.18)}
+.cs-pano360-card.disabled:hover .cs-pano360-card-play{transform:translate(-50%,-50%);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.25)}
+.cs-pano360-card.disabled .cs-pano360-card-mark{background:rgba(255,255,255,.08);color:rgba(255,255,255,.55)}
+.cs-pano360-card.disabled .cs-pano360-card-play{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.5)}
+.cs-pano360-card.disabled .cs-pano360-card-title{color:rgba(255,255,255,.85)}
+.cs-pano360-card.disabled .cs-pano360-card-sub{color:rgba(255,255,255,.55)}
 
 @media(max-width:1024px){
     .cs-pano360-row{grid-template-columns:1fr;gap:14px}
@@ -1756,8 +1762,9 @@
                 <p class="cs-pano360-section-sub">Obejrzyj pojazd z każdej strony. Przesuwaj, obracaj i przybliżaj obraz, aby dokładnie zapoznać się z autem.</p>
             </div>
         </div>
-        @php $singleCard = !($car->pano360Image && $car->exteriorPano360Image); @endphp
-        <div class="cs-pano360-row{{ $singleCard ? ' single' : '' }}">
+        {{-- Always render two card slots side-by-side. Missing 360 source → disabled
+             placeholder card so the section never collapses to a full-width banner. --}}
+        <div class="cs-pano360-row">
             @if($car->exteriorPano360Image)
             <button type="button" class="cs-pano360-card" onclick="csOpenPano360('pano360ext')" aria-label="Otwórz widok 360° z zewnątrz">
                 @if($car->exteriorPano360Image->url)
@@ -1778,7 +1785,22 @@
                     <p class="cs-pano360-card-sub">Obejrzyj auto dookoła</p>
                 </div>
             </button>
+            @else
+            <div class="cs-pano360-card disabled" aria-disabled="true">
+                <span class="cs-pano360-card-mark">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    360° · Z ZEWNĄTRZ
+                </span>
+                <span class="cs-pano360-card-play">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </span>
+                <div class="cs-pano360-card-text">
+                    <h4 class="cs-pano360-card-title">Brak widoku 360° z zewnątrz</h4>
+                    <p class="cs-pano360-card-sub">Materiał dodany zostanie wkrótce</p>
+                </div>
+            </div>
             @endif
+
             @if($car->pano360Image)
             <button type="button" class="cs-pano360-card" onclick="csOpenPano360('pano360')" aria-label="Otwórz widok 360° wnętrza">
                 @if($car->pano360Image->url)
@@ -1799,6 +1821,20 @@
                     <p class="cs-pano360-card-sub">Zobacz kabinę kierowcy i przestrzeń pasażerską</p>
                 </div>
             </button>
+            @else
+            <div class="cs-pano360-card disabled" aria-disabled="true">
+                <span class="cs-pano360-card-mark">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    360° · WNĘTRZE
+                </span>
+                <span class="cs-pano360-card-play">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </span>
+                <div class="cs-pano360-card-text">
+                    <h4 class="cs-pano360-card-title">Brak widoku 360° wnętrza</h4>
+                    <p class="cs-pano360-card-sub">Materiał dodany zostanie wkrótce</p>
+                </div>
+            </div>
             @endif
         </div>
     </div>
