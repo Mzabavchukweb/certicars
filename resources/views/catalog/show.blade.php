@@ -291,15 +291,15 @@
     .cs-benefit-item:nth-last-child(-n+1):nth-child(odd),.cs-benefit-item:nth-last-child(-n+2):nth-child(2n){border-bottom:none}
 }
 @media(max-width:768px){
-    .cs-benefits-row{border-radius:14px;margin-top:8px;margin-bottom:20px}
-    .cs-benefit-item{padding:16px 18px;gap:12px}
+    .cs-benefits-row{border-radius:14px;margin-top:8px;margin-bottom:20px;border-color:#e5e7eb;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .cs-benefit-item{padding:16px 20px;gap:12px}
     .cs-benefit-ico{width:36px;height:36px;border-radius:10px}
     .cs-benefit-ico.flag{width:32px;height:32px}
     .cs-benefit-text{font-size:13px;line-height:1.4}
 }
 @media(max-width:500px){
     .cs-benefits-row{grid-template-columns:1fr;border-radius:14px;margin-bottom:18px}
-    .cs-benefit-item{border-right:none;padding:14px 18px;gap:12px}
+    .cs-benefit-item{border-right:none;padding:14px 20px;gap:12px}
     .cs-benefit-item:last-child{border-bottom:none}
     .cs-benefit-ico{width:36px;height:36px}
     .cs-benefit-ico.flag{width:32px;height:32px}
@@ -336,7 +336,7 @@
     .cs-gethelp-section{padding:20px}
 }
 @media(max-width:768px){
-    .cs-gethelp-section{padding:18px 16px;border-radius:14px}
+    .cs-gethelp-section{padding:18px 20px;border-radius:14px;border-color:#e5e7eb;box-shadow:0 2px 8px rgba(0,0,0,.06)}
     .cs-gethelp-more{margin-left:0;margin-top:8px}
 }
 
@@ -360,7 +360,7 @@
 }
 @media(max-width:768px){
     .cs-info-3row{grid-template-columns:1fr}
-    .cs-info-3card{border-radius:14px}
+    .cs-info-3card{border-radius:14px;border-color:#e5e7eb;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:18px 20px}
 }
 
 /* ============ TECH + ENGINE-VIDEO TWO-COLUMN ROW ============ */
@@ -800,7 +800,7 @@
     .cs-related-head-title{font-size:16px}
 }
 @media(max-width:768px){
-    .cs-related-section{padding:18px 16px;border-radius:14px}
+    .cs-related-section{padding:18px 20px;border-radius:14px;border-color:#e5e7eb;box-shadow:0 2px 8px rgba(0,0,0,.06)}
     .cs-related-controls{width:100%;margin-left:0;justify-content:space-between}
     .vcard-fuel-badge{font-size:10px;padding:3px 8px;top:10px;left:10px}
 }
@@ -811,11 +811,10 @@
 
 @media(max-width:768px){
     /* Single mobile gutter: container's padding is the only source of side spacing,
-       so every section visually aligns. Per-section margin/max-width overrides used
-       to live here and produced a double gutter (container pad + section margin)
-       inconsistently across cards — removed. */
+       so every section visually aligns. Full-width section cards get visual breathing
+       room from the viewport edges matching the info-tile reference cards. */
     .cs-wrap .container{padding-left:16px;padding-right:16px}
-    .cs-sections-2col{padding:0!important;margin:0!important}
+    .cs-sections-2col{padding:0;margin:0}
     .cs-nav-bar{flex-direction:row;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0}
     .cs-nav-bar-left{flex:0 0 auto}
     .cs-nav-bar-left .cs-nav-btn{width:auto}
@@ -854,8 +853,7 @@
     .cs-data-row:last-child{border-bottom:none}
     .cs-data-row .lbl{font-weight:700;color:#1a1a1a;min-width:0;flex:1 1 auto;line-height:1.45;word-break:normal;overflow-wrap:break-word}
     .cs-data-row .val{font-weight:700;color:#1a1a1a;font-size:14px;max-width:58%;text-align:right;line-height:1.45;word-break:break-word;overflow-wrap:break-word;white-space:normal;overflow:visible;text-overflow:clip;flex-shrink:0}
-    /* Stack 2-col section grid (Damage etc.) with a healthier gap on mobile */
-    .cs-sections-2col{gap:22px!important}
+    .cs-sections-2col{gap:22px}
     /* STAN TECHNICZNY — separate blocks stacked */
     .cs-data-2col{grid-template-columns:1fr!important;gap:28px}
     .cs-data-block{padding:0!important;border:none!important;background:transparent!important;box-shadow:none!important}
@@ -865,7 +863,7 @@
     .cs-data-block .cs-data-row .lbl i[data-lucide="check-circle"]{width:24px;height:24px;color:#16a34a;background:#dcfce7;border-radius:50%;padding:3px;flex-shrink:0}
     .cs-data-block .cs-data-row .val{font-size:14px;font-weight:700;color:#1a1a1a}
     /* DAMAGE — mobile (compact, photo-first) */
-    .cs-sections-2col{padding:0 14px;gap:12px}
+    .cs-sections-2col{padding:0;gap:12px}
     .cs-damage-subtitle{font-size:12.5px;margin-bottom:14px}
     .cs-damages-tabs{gap:6px;padding-bottom:4px;margin-bottom:14px}
     .cs-damage-grid{grid-template-columns:1fr;min-height:auto;border:none;border-radius:0;background:transparent;row-gap:14px;gap:0}
@@ -935,7 +933,7 @@
 }
 @media(max-width:500px){
     .cs-wrap .container{padding-left:14px;padding-right:14px}
-    .cs-sections-2col{padding:0!important}
+    .cs-sections-2col{padding:0}
     .cs-head h1{font-size:19px}
     .cs-gallery{border-radius:10px}
     .cs-sidebar-card{border-radius:14px}
@@ -943,7 +941,7 @@
     .cs-data-row{padding:15px 0;gap:14px}
     .cs-data-row .val{max-width:55%}
     .cs-price-value{font-size:26px}
-    .cs-sections-2col{padding:0 12px}
+    .cs-sections-2col{padding:0}
     .cs-nav-btn{padding:6px 8px;font-size:11px}
     .cs-damage-diagram{max-height:260px;max-width:300px}
     .cs-damage-marker{width:42px;height:42px}
