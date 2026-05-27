@@ -1068,32 +1068,6 @@
 #csShareToast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%) translateY(8px);background:#1a1a1a;color:#fff;padding:10px 18px;border-radius:50px;font-size:13.5px;font-weight:600;z-index:99999;opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;box-shadow:0 6px 20px rgba(0,0,0,.25)}
 #csShareToast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* INFO BENEFIT TILES under sidebar card — equal height, aligned rows */
-.cs-info-tiles{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:10px;align-items:stretch}
-.cs-info-tile{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 14px;text-align:center;display:flex;flex-direction:column;align-items:center;height:100%;min-height:0;min-width:0;overflow:hidden}
-.cs-info-tile *{max-width:100%;word-wrap:break-word}
-.cs-info-tile-icon{width:44px;height:44px;border-radius:12px;background:#e8f1ff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;flex-shrink:0}
-.cs-info-tile-title{font-size:14px;font-weight:800;color:#1a1a1a;margin:0 0 6px;letter-spacing:-.1px;flex-shrink:0}
-.cs-info-tile-body{font-size:11.5px;color:#6b7280;line-height:1.5;flex:1 1 auto}
-.cs-info-tile-link{display:inline-flex;align-items:center;gap:4px;margin-top:10px;font-size:11.5px;font-weight:600;color:#0066ff;text-decoration:none;flex-shrink:0}
-.cs-info-tile-link:hover{color:#0052cc}
-.cs-info-tile-link svg{flex-shrink:0}
-@media(max-width:1024px){
-    .cs-info-tiles{gap:10px;margin-top:14px}
-}
-@media(max-width:768px){
-    .cs-info-tiles{gap:12px;margin-top:16px}
-    .cs-info-tile{padding:20px 16px;border-radius:14px}
-    .cs-info-tile-icon{width:42px;height:42px;margin-bottom:12px}
-    .cs-info-tile-title{font-size:14px;margin-bottom:6px}
-    .cs-info-tile-body{font-size:12px;line-height:1.55}
-    .cs-info-tile-link{margin-top:12px;font-size:12px}
-}
-@media(max-width:480px){
-    .cs-info-tile{padding:18px 14px}
-    .cs-info-tile-title{font-size:13.5px}
-    .cs-info-tile-icon{width:40px;height:40px;margin-bottom:10px}
-}
 .cs-sticky-cta svg{width:16px;height:16px;flex-shrink:0}
 @media(max-width:1024px){.cs-sticky-cta{display:grid}}
 
@@ -1452,25 +1426,6 @@
 
 
             </div>{{-- /cs-sidebar-card --}}
-
-            {{-- BENEFIT TILES — below the sidebar card --}}
-            <div class="cs-info-tiles">
-                <div class="cs-info-tile">
-                    <div class="cs-info-tile-icon">
-                        <x-icon name="check" size="22" tone="blue" :strokeWidth="2"/>
-                    </div>
-                    <div class="cs-info-tile-title">Dostępny od ręki</div>
-                    <div class="cs-info-tile-body">Auto gotowe do odbioru<br>Możliwa jazda próbna</div>
-                </div>
-                <div class="cs-info-tile">
-                    <div class="cs-info-tile-icon">
-                        <x-icon name="truck" size="22" tone="blue" :strokeWidth="2"/>
-                    </div>
-                    <div class="cs-info-tile-title">Dostawa pod dom</div>
-                    <div class="cs-info-tile-body">Po wcześniejszych oględzinach<br>Cena do ustalenia</div>
-                    <a href="{{ route('contact') }}" class="cs-info-tile-link">Dowiedz się więcej <x-icon name="arrow-right" size="11" :strokeWidth="2.5"/></a>
-                </div>
-            </div>
         </div>
         </div><!-- /cs-sidebar -->
 
