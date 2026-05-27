@@ -306,8 +306,26 @@
     .cs-benefit-text{font-size:13px}
 }
 
+/* ============ FINANCING + GETHELP two-column row ============ */
+.cs-finance-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box;align-items:stretch}
+.cs-finance-card{margin:0!important;max-width:none!important;width:100%;height:100%;display:flex;flex-direction:column}
+.cs-finance-head{display:flex;align-items:flex-start;gap:14px;padding:24px 26px 0}
+.cs-finance-head-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-finance-title{font-size:17px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:0 0 4px;line-height:1.25}
+.cs-finance-sub{font-size:12.5px;color:#6b7280;line-height:1.55;margin:0;max-width:480px}
+@media(max-width:1024px){
+    .cs-finance-row{grid-template-columns:1fr;gap:14px}
+    .cs-finance-head{padding:20px 20px 0}
+}
+
 /* ============ GWARANCJA TECHNICZNA — GetHelp warranty section ============ */
 .cs-gethelp-section{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box}
+/* Compact variant for use inside .cs-finance-row right column */
+.cs-finance-row .cs-gethelp-section{margin:0;max-width:none;height:100%;display:flex;flex-direction:column}
+.cs-finance-row .cs-gethelp-grid{grid-template-columns:1fr;gap:8px}
+.cs-finance-row .cs-gethelp-pkg{padding:14px 16px}
+.cs-finance-row .cs-gethelp-pkg-desc{font-size:11px;line-height:1.45}
+.cs-finance-row .cs-gethelp-more{font-size:12.5px;margin-top:6px}
 .cs-gethelp-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;flex-wrap:wrap}
 .cs-gethelp-head-left{display:flex;align-items:flex-start;gap:14px;flex:1;min-width:240px}
 .cs-gethelp-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
@@ -752,7 +770,6 @@
     .cs-grid{grid-template-columns:minmax(0,1fr);gap:20px}
     .cs-grid > div{min-width:0;max-width:100%}
     .cs-sidebar{position:static}
-    .cs-calc-inline{display:none}
     .cs-head{display:none}
     .cs-mob-head{display:block!important}
     .cs-sidebar-summary{display:none!important}
@@ -1060,7 +1077,6 @@
     .cs-grid > div:first-child > .cs-mob-topbar{order:0}
     .cs-grid > div:first-child > .cs-gallery{order:1}
     .cs-grid > div:first-child > .cs-gallery-tabs-wrap{order:2;margin-top:8px}
-    .cs-grid > div:first-child > .cs-calc-inline{order:3}
     /* Connector-line fix: drop the bottom hairline under price (made buttons below look attached) */
     .cs-price-section{border-bottom:none}
 }
@@ -1276,48 +1292,6 @@
             @endif
         </div>
 
-        <!-- KALKULATOR KREDYTU (inline) -->
-        <div class="cs-calc-inline">
-            <div class="cs-calc-result">
-                <div class="cs-calc-rate-label">Rata od</div>
-                <div class="cs-calc-rate-value"><span id="csCalcInlineRate">—</span> <span class="cs-calc-rate-suffix">/ mies.*</span></div>
-                <div class="cs-calc-rate-sub">Szacowana rata dla wybranych parametrów</div>
-            </div>
-            <div class="cs-calc-controls">
-                <div class="cs-calc-field">
-                    <label>Wpłata własna</label>
-                    <div class="cs-calc-input-wrap">
-                        <input type="number" id="csCalcDp" value="{{ $car->price ? round($car->price * 0.2) : 0 }}" min="0" max="{{ $car->price ?? 0 }}" step="1000">
-                        <span>zł</span>
-                    </div>
-                </div>
-                <div class="cs-calc-field">
-                    <label>Okres finansowania</label>
-                    <select id="csCalcTerm">
-                        <option value="12">12 miesięcy</option>
-                        <option value="24">24 miesiące</option>
-                        <option value="36">36 miesięcy</option>
-                        <option value="48" selected>48 miesięcy</option>
-                        <option value="60">60 miesięcy</option>
-                        <option value="72">72 miesiące</option>
-                        <option value="84">84 miesiące</option>
-                        <option value="96">96 miesięcy</option>
-                    </select>
-                </div>
-                <div class="cs-calc-field" style="flex:0 0 auto;min-width:auto">
-                    <label>&nbsp;</label>
-                    <button type="button" class="cs-calc-cta" onclick="csOpenInquiry('financing','financing_form')">
-                        Zapytaj o finansowanie
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </button>
-                </div>
-            </div>
-            <div class="cs-calc-footer">
-                <span class="cs-calc-disclaimer">*Przykładowa rata przy RRSO 7,9%. Nie stanowi oferty w rozumieniu prawa.</span>
-            </div>
-        </div>
-
-
         </div><!-- /left column: gallery -->
 
 
@@ -1514,10 +1488,8 @@
         @endforeach
     </div>
 
-    {{-- =================== GWARANCJA TECHNICZNA GETHELP =================== --}}
+    {{-- =================== FINANSOWANIE + GETHELP (two-column row) =================== --}}
     @php
-        // Three GetHelp packages. The "currently selected" one is whatever the car
-        // is sold with by default; falls back to "Classic" if no flag exists.
         $activePkg = strtolower((string) ($car->gethelp_package ?? 'classic'));
         $gethelpPackages = [
             ['key' => 'classic', 'name' => 'GetHelp Classic', 'badge' => '12 mies.', 'price' => 'W cenie',         'desc' => 'Podstawowa ochrona układu napędowego oraz wsparcie assistance 24/7.'],
@@ -1525,38 +1497,91 @@
             ['key' => 'grand',   'name' => 'GetHelp Grand',   'badge' => '36 mies.', 'price' => '+ 5 900 zł',      'desc' => 'Najszersza ochrona z assistance, autem zastępczym i zakresem niemal pełnym.'],
         ];
     @endphp
-    <div class="cs-gethelp-section">
-        <div class="cs-gethelp-head">
-            <div class="cs-gethelp-head-left">
-                <div class="cs-gethelp-ico" aria-hidden="true">
-                    <x-icon name="shield-check" size="20"/>
+    <div class="cs-finance-row">
+        {{-- LEFT: Finansowanie pojazdu --}}
+        <div class="cs-calc-inline cs-finance-card">
+            <div class="cs-finance-head">
+                <div class="cs-finance-head-ico" aria-hidden="true">
+                    <x-icon name="wallet" size="20"/>
                 </div>
                 <div>
-                    <h3 class="cs-gethelp-title">Gwarancja techniczna GetHelp <span class="info-i" title="Wybierz pakiet ochrony pojazdu po zakupie">i</span></h3>
-                    <p class="cs-gethelp-sub">Wybierz pakiet ochrony technicznej pojazdu po zakupie. Pakiet Classic jest w cenie samochodu, pozostałe można rozszerzyć.</p>
+                    <h3 class="cs-finance-title">Finansowanie pojazdu</h3>
+                    <p class="cs-finance-sub">Oblicz orientacyjną ratę kredytu lub leasingu dla tego auta.</p>
                 </div>
             </div>
-            <a href="{{ url('/o-nas#gethelp') }}" class="cs-gethelp-more">
-                Dowiedz się więcej o gwarancji
-                <x-icon name="arrow-right" size="16"/>
-            </a>
-        </div>
-        <div class="cs-gethelp-grid">
-            @foreach($gethelpPackages as $pkg)
-            <div class="cs-gethelp-pkg{{ $pkg['key'] === $activePkg ? ' active' : '' }}">
-                <div class="cs-gethelp-pkg-head">
-                    <span class="cs-gethelp-pkg-name">{{ $pkg['name'] }}</span>
-                    <span class="cs-gethelp-pkg-badge">{{ $pkg['badge'] }}</span>
-                </div>
-                <div class="cs-gethelp-pkg-price">
-                    @if($pkg['price'] === 'W cenie')<span class="free">W cenie samochodu</span>@else{{ $pkg['price'] }}@endif
-                </div>
-                <p class="cs-gethelp-pkg-desc">{{ $pkg['desc'] }}</p>
+            <div class="cs-calc-result">
+                <div class="cs-calc-rate-label">Rata od</div>
+                <div class="cs-calc-rate-value"><span id="csCalcInlineRate">—</span> <span class="cs-calc-rate-suffix">/ mies.*</span></div>
+                <div class="cs-calc-rate-sub">Szacowana rata dla wybranych parametrów</div>
             </div>
-            @endforeach
+            <div class="cs-calc-controls">
+                <div class="cs-calc-field">
+                    <label>Wpłata własna</label>
+                    <div class="cs-calc-input-wrap">
+                        <input type="number" id="csCalcDp" value="{{ $car->price ? round($car->price * 0.2) : 0 }}" min="0" max="{{ $car->price ?? 0 }}" step="1000">
+                        <span>zł</span>
+                    </div>
+                </div>
+                <div class="cs-calc-field">
+                    <label>Okres finansowania</label>
+                    <select id="csCalcTerm">
+                        <option value="12">12 miesięcy</option>
+                        <option value="24">24 miesiące</option>
+                        <option value="36">36 miesięcy</option>
+                        <option value="48" selected>48 miesięcy</option>
+                        <option value="60">60 miesięcy</option>
+                        <option value="72">72 miesiące</option>
+                        <option value="84">84 miesiące</option>
+                        <option value="96">96 miesięcy</option>
+                    </select>
+                </div>
+                <div class="cs-calc-field" style="flex:0 0 auto;min-width:auto">
+                    <label>&nbsp;</label>
+                    <button type="button" class="cs-calc-cta" onclick="csOpenInquiry('financing','financing_form')">
+                        Zapytaj o finansowanie
+                        <x-icon name="arrow-right" size="16" :strokeWidth="2.5"/>
+                    </button>
+                </div>
+            </div>
+            <div class="cs-calc-footer">
+                <span class="cs-calc-disclaimer">*Przykładowa rata przy RRSO 7,9%. Nie stanowi oferty w rozumieniu prawa.</span>
+            </div>
         </div>
-        <div class="cs-gethelp-foot">
-            <strong>Pełny zakres ochrony</strong> dostępny w wybranych ASO partnerskich. Szczegóły gwarancji można sprawdzić w umowie sprzedaży i regulaminie GetHelp.
+
+        {{-- RIGHT: Gwarancja techniczna GetHelp --}}
+        <div class="cs-gethelp-section cs-gethelp-section--compact">
+            <div class="cs-gethelp-head">
+                <div class="cs-gethelp-head-left">
+                    <div class="cs-gethelp-ico" aria-hidden="true">
+                        <x-icon name="shield-check" size="20"/>
+                    </div>
+                    <div>
+                        <h3 class="cs-gethelp-title">Gwarancja techniczna GetHelp <span class="info-i" title="Wybierz pakiet ochrony pojazdu po zakupie">i</span></h3>
+                        <p class="cs-gethelp-sub">Wybierz pakiet ochrony technicznej pojazdu po zakupie. Pakiet Classic jest w cenie samochodu, pozostałe można rozszerzyć.</p>
+                    </div>
+                </div>
+                <a href="{{ url('/o-nas#gethelp') }}" class="cs-gethelp-more">
+                    Dowiedz się więcej o gwarancji
+                    <x-icon name="arrow-right" size="16"/>
+                </a>
+            </div>
+            <div class="cs-gethelp-grid">
+                @foreach($gethelpPackages as $pkg)
+                <div class="cs-gethelp-pkg{{ $pkg['key'] === $activePkg ? ' active' : '' }}">
+                    <div class="cs-gethelp-pkg-head">
+                        <span class="cs-gethelp-pkg-name">{{ $pkg['name'] }}</span>
+                        <span class="cs-gethelp-pkg-badge">{{ $pkg['badge'] }}</span>
+                    </div>
+                    <div class="cs-gethelp-pkg-price">
+                        @if($pkg['price'] === 'W cenie')<span class="free">W cenie samochodu</span>@else{{ $pkg['price'] }}@endif
+                    </div>
+                    <p class="cs-gethelp-pkg-desc">{{ $pkg['desc'] }}</p>
+                </div>
+                @endforeach
+            </div>
+            <div class="cs-gethelp-foot">
+                <strong>Pełny zakres ochrony</strong> dostępny w wybranych ASO partnerskich. Szczegóły gwarancji można sprawdzić w umowie sprzedaży i regulaminie GetHelp.
+            </div>
         </div>
     </div>
 
