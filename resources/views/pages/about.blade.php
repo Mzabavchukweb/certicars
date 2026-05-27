@@ -99,7 +99,7 @@
         <div>
             <nav class="about-breadcrumb">
                 <a href="{{ route('home') }}">Strona główna</a>
-                <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                <x-icon name="chevron-right" size="14"/>
                 <span>O nas</span>
             </nav>
             <div class="about-hero-label">Nasza historia</div>
@@ -109,7 +109,7 @@
         <div class="about-hero-right">
             <div class="ach-card ach-card-lg">
                 <div class="ach-icon">
-                    <svg viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+                    <x-icon name="shield-check" size="24"/>
                 </div>
                 <div class="ach-card-lg-body">
                     <h4>Certyfikat CertiCheck</h4>
@@ -118,21 +118,21 @@
             </div>
             <div class="ach-card">
                 <div class="ach-icon">
-                    <svg viewBox="0 0 24 24"><path d="M2 7l10-5 10 5"/><path d="M12 22V12"/><path d="M17 9.5 12 12 7 9.5"/><path d="m2 7 10 5 10-5"/></svg>
+                    <x-icon name="package" size="24"/>
                 </div>
                 <h4>Pomiar lakieru</h4>
                 <p>Każdy punkt nadwozia sprawdzony grubościomierzem.</p>
             </div>
             <div class="ach-card">
                 <div class="ach-icon">
-                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    <x-icon name="file-text" size="24"/>
                 </div>
                 <h4>Historia serwisowa</h4>
                 <p>Kompletna dokumentacja z ASO i serwisów partnerskich.</p>
             </div>
             <div class="ach-card">
                 <div class="ach-icon">
-                    <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                    <x-icon name="truck" size="24"/>
                 </div>
                 <h4>Jazda próbna</h4>
                 <p>Testuj każde auto przed decyzją — bez presji.</p>
@@ -151,21 +151,21 @@
         <div class="values-grid">
             <div class="val-card">
                 <div class="val-icon">
-                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <x-icon name="shield" size="28"/>
                 </div>
                 <h3>Transparentność</h3>
                 <p>Każde auto ma pełną dokumentację — raport lakierniczy, historię serwisową i szczegółowy protokół inspekcji. Żadnych ukrytych wad.</p>
             </div>
             <div class="val-card">
                 <div class="val-icon">
-                    <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-9.953-9.953c-.549-.055-.997.398-.997.951v8a1 1 0 0 0 1 1h8z"/><path d="M3 20.659A10 10 0 0 0 15.041 3"/></svg>
+                    <x-icon name="badge-check" size="28"/>
                 </div>
                 <h3>Jakość inspekcji</h3>
                 <p>Nasza kontrola obejmuje ponad 150 punktów technicznych, pomiar grubości lakieru i mapę uszkodzeń nadwozia — standard premium.</p>
             </div>
             <div class="val-card">
                 <div class="val-icon">
-                    <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                    <x-icon name="wallet" size="28"/>
                 </div>
                 <h3>Uczciwa cena</h3>
                 <p>Ceny ustalamy na podstawie aktualnej analizy rynku i stanu pojazdu. Bez zawyżania — tylko realna wartość każdego samochodu.</p>
@@ -183,28 +183,28 @@
         <div class="timeline">
             <div class="tl-item">
                 <div class="tl-num">01
-                    <div class="tl-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                    <div class="tl-icon"><x-icon name="shield" size="18"/></div>
                 </div>
                 <h4>Przyjęcie pojazdu</h4>
                 <p>Auto trafia do naszego salonu i przechodzi pierwszą ocenę wizualną oraz sprawdzenie historii.</p>
             </div>
             <div class="tl-item">
                 <div class="tl-num">02
-                    <div class="tl-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
+                    <div class="tl-icon"><x-icon name="search" size="18"/></div>
                 </div>
                 <h4>Inspekcja CertiCheck</h4>
                 <p>150+ punkty kontrolne, pomiar lakieru, mapa uszkodzeń, odczyt diagnostyczny — protokół dla każdego auta.</p>
             </div>
             <div class="tl-item">
                 <div class="tl-num">03
-                    <div class="tl-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                    <div class="tl-icon"><x-icon name="file-text" size="18"/></div>
                 </div>
                 <h4>Dokumentacja i wycena</h4>
                 <p>Przygotowujemy kompletny raport PDF i ustalamy cenę na podstawie stanu i analizy rynku.</p>
             </div>
             <div class="tl-item">
                 <div class="tl-num">04
-                    <div class="tl-icon"><svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div>
+                    <div class="tl-icon"><x-icon name="rocket" size="18"/></div>
                 </div>
                 <h4>Trafia do oferty</h4>
                 <p>Auto dostępne online z pełnym raportem. Kupujesz ze spokojem — wiesz dokładnie co kupujesz.</p>
@@ -220,11 +220,11 @@
         <p>Przeglądaj ofertę certyfikowanych pojazdów lub skontaktuj się z nami bezpośrednio.</p>
         <div class="about-cta-btns">
             <a href="{{ route('catalog') }}" class="cta-btn-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <x-icon name="search" size="15" :strokeWidth="2.5"/>
                 Przeglądaj ofertę
             </a>
             <a href="{{ route('contact') }}" class="cta-btn-outline">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.21 12 19.79 19.79 0 0 1 1.14 3.38 2 2 0 0 1 3.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <x-icon name="phone" size="15" :strokeWidth="2.5"/>
                 Skontaktuj się
             </a>
         </div>

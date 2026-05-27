@@ -40,20 +40,18 @@ $color   = $color ?? '#ef4444';
 <body>
 <div class="err" role="main">
     <div class="err-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            {!! $iconSvg ?? '<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>' !!}
-        </svg>
+        <x-icon :name="$iconName ?? 'alert-circle'" size="38" :strokeWidth="2.2"/>
     </div>
     <div class="err-code">{{ $code }}</div>
     <h1>{{ $title }}</h1>
     <p>{{ $message }}</p>
     <div class="btns">
         <a href="{{ url('/') }}" class="btn btn-primary">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12L12 3l9 9M5 10v10h14V10"/></svg>
+            <x-icon name="home" size="15" :strokeWidth="2.4"/>
             Strona główna
         </a>
         <a href="{{ url('/samochody') }}" class="btn btn-outline">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 17h8M5 11l1-3a3 3 0 0 1 3-2h6a3 3 0 0 1 3 2l1 3M5 11h14v5a1 1 0 0 1-1 1h-1v2h-2v-2H8v2H6v-2H5a1 1 0 0 1-1-1v-5h1z"/></svg>
+            <x-icon name="car" size="15" :strokeWidth="2.4"/>
             Oferta
         </a>
     </div>

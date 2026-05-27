@@ -184,14 +184,14 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
     <div class="cat-header-in">
         <nav class="cat-breadcrumb" aria-label="Breadcrumb">
             <a href="{{ route('home') }}">Strona główna</a>
-            <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+            <x-icon name="chevron-right" size="14"/>
             <span>Samochody osobowe</span>
         </nav>
         <div class="cat-header-row">
             <h1>Samochody osobowe <span>{{ $cars->total() }} {{ $cars->total() == 1 ? 'ogłoszenie' : ($cars->total() < 5 && $cars->total() > 1 ? 'ogłoszenia' : 'ogłoszeń') }}</span></h1>
             @if($activeFilters)
             <a href="{{ route('catalog') }}" style="font-size:13px;color:var(--text-3);display:inline-flex;align-items:center;gap:5px;text-decoration:none;transition:color .15s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-3)'">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                <x-icon name="x" size="13"/>
                 Wyczyść filtry ({{ $activeFilters }})
             </a>
             @endif
@@ -221,7 +221,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
             <a href="{{ route('catalog', request()->except('category')) }}"
                class="cat-bt-card {{ !request('category') ? 'active' : '' }}">
                 <div class="cat-bt-icon">
-                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                    <x-icon name="layout-grid" size="22"/>
                 </div>
                 <span class="cat-bt-label">Wszystkie</span>
             </a>
@@ -239,7 +239,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
                     @if($imgFile)
                         <img src="/img/body-types/{{ $imgFile }}" alt="{{ $cat }}" loading="lazy">
                     @else
-                        <svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+                        <x-icon name="car" size="22"/>
                     @endif
                 </div>
                 <span class="cat-bt-label">{{ $cat }}</span>
@@ -256,23 +256,23 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
     <aside class="cat-sidebar">
         <button type="button" class="cat-mob-toggle" onclick="document.getElementById('catPanel').classList.toggle('open')">
             <span style="display:flex;align-items:center;gap:8px">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg>
+                <x-icon name="sliders-horizontal" size="16"/>
                 Filtry
                 @if($activeFilters)<span class="cat-active-badge">{{ $activeFilters }}</span>@endif
             </span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            <x-icon name="chevron-down" size="16"/>
         </button>
 
         <form method="GET" action="{{ route('catalog') }}" id="catFilterForm">
             <div class="cat-panel {{ $activeFilters?'open':'' }}" id="catPanel">
                 <div class="cat-panel-head">
                     <h3>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg>
+                        <x-icon name="sliders-horizontal" size="18"/>
                         Filtry
                     </h3>
                     @if($activeFilters)
                     <a href="{{ route('catalog') }}" class="cat-reset" style="margin:0;font-size:11px">
-                        <svg viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg> Wyczyść
+                        <x-icon name="x" size="14"/> Wyczyść
                     </a>
                     @endif
                 </div>
@@ -280,7 +280,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     <div class="cat-filter-group">
                         <div class="cat-flabel">
-                            <svg viewBox="0 0 24 24"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M4 14h16"/></svg>
+                            <x-icon name="rectangle-vertical" size="14"/>
                             Marka
                         </div>
                         <select name="brand" class="cat-select">
@@ -293,7 +293,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     <div class="cat-filter-group">
                         <div class="cat-flabel">
-                            <svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+                            <x-icon name="car" size="22"/>
                             Typ nadwozia
                         </div>
                         <select name="category" class="cat-select">
@@ -304,7 +304,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     <div class="cat-filter-group" style="margin-top:14px">
                         <div class="cat-flabel">
-                            <svg viewBox="0 0 24 24"><line x1="3" x2="15" y1="22" y2="22"/><line x1="4" x2="14" y1="9" y2="9"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/></svg>
+                            <x-icon name="fuel" size="14"/>
                             Paliwo
                         </div>
                         <select name="fuel_type" class="cat-select">
@@ -315,7 +315,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     <div class="cat-filter-group" style="margin-top:14px">
                         <div class="cat-flabel">
-                            <svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <x-icon name="settings" size="14"/>
                             Skrzynia biegów
                         </div>
                         <select name="transmission" class="cat-select">
@@ -329,7 +329,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     <div class="cat-filter-group">
                         <div class="cat-flabel">
-                            <svg viewBox="0 0 24 24"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/></svg>
+                            <x-icon name="car-front" size="14"/>
                             Cena (zł)
                         </div>
                         <div class="cat-row">
@@ -340,7 +340,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     <div class="cat-filter-group" style="margin-top:14px">
                         <div class="cat-flabel">
-                            <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                            <x-icon name="calendar" size="14"/>
                             Rok produkcji
                         </div>
                         <div class="cat-row">
@@ -351,7 +351,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     <div class="cat-filter-group" style="margin-top:14px">
                         <div class="cat-flabel">
-                            <svg viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
+                            <x-icon name="gauge" size="14"/>
                             Przebieg (km)
                         </div>
                         <div class="cat-row">
@@ -362,7 +362,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     <div class="cat-filter-group" style="margin-top:14px">
                         <div class="cat-flabel">
-                            <svg viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+                            <x-icon name="zap" size="14"/>
                             Moc silnika (KM)
                         </div>
                         <div class="cat-row">
@@ -374,12 +374,12 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
                 </div>
                 <div class="cat-panel-foot">
                     <button type="submit" class="cat-submit">
-                        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <x-icon name="search" size="16"/>
                         Szukaj
                     </button>
                     @if($activeFilters)
                     <a href="{{ route('catalog') }}" class="cat-reset">
-                        <svg viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                        <x-icon name="x" size="14"/>
                         Wyczyść wszystkie filtry
                     </a>
                     @endif
@@ -413,7 +413,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
             <span class="cat-pill">
                 {{ $label }}
                 <a href="{{ route('catalog', request()->except($key)) }}" style="color:inherit;display:flex;align-items:center;margin-left:2px" aria-label="Usuń filtr">
-                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                    <x-icon name="x" size="12" :strokeWidth="2.5"/>
                 </a>
             </span>
             @endforeach
@@ -442,19 +442,19 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
                     @else
                         <div class="lcard-img-placeholder">
                     @endif
-                            <svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+                            <x-icon name="car" size="22"/>
                         </div>
                     @if($car->is_featured)<div class="lcard-badge-top">Wyróżnione</div>@endif
 
                     @php $imgCount = $car->images->count(); @endphp
                     @if($imgCount > 1)
                     <div class="lcard-photo-count">
-                        <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                        <x-icon name="image" size="14"/>
                         {{ $imgCount }}
                     </div>
                     @endif
                     <button class="lcard-fav" data-id="{{ $car->id }}" aria-label="Dodaj do ulubionych" onclick="toggleFav(event,{{ $car->id }})">
-                        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        <x-icon name="heart" size="16"/>
                     </button>
                 </div>
 
@@ -469,25 +469,25 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
                         <div class="lcard-specs">
                             @if($car->mileage)
                             <div class="lcard-spec">
-                                <svg viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
+                                <x-icon name="gauge" size="14"/>
                                 {{ number_format((float) $car->mileage, 0, '.', ' ') }} km
                             </div>
                             @endif
                             @if($car->fuel_type)
                             <div class="lcard-spec">
-                                <svg viewBox="0 0 24 24"><line x1="3" x2="15" y1="22" y2="22"/><line x1="4" x2="14" y1="9" y2="9"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>
+                                <x-icon name="fuel" size="14"/>
                                 {{ $car->fuel_type }}
                             </div>
                             @endif
                             @if($car->power_hp)
                             <div class="lcard-spec">
-                                <svg viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+                                <x-icon name="zap" size="14"/>
                                 {{ $car->power_hp }} KM
                             </div>
                             @endif
                             @if($car->first_registration)
                             <div class="lcard-spec">
-                                <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                                <x-icon name="calendar" size="14"/>
                                 {{ $car->first_registration }}
                             </div>
                             @endif
@@ -497,7 +497,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
                         <div class="lcard-meta">
                             <span class="cc-badge" onclick="event.preventDefault();event.stopPropagation();var a=document.createElement('a');a.href='/samochody/{{ $car->slug }}/pdf';a.download='';document.body.appendChild(a);a.click();a.remove()">
                                 <span class="cc-badge-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="#0066ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
+                                    <x-icon name="clipboard-check" size="14" tone="blue" :strokeWidth="2.2"/>
                                 </span>
                                 <span class="cc-badge-text"><em>Certi</em>Check</span>
                             </span>
@@ -516,13 +516,13 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
             @empty
             <div class="cat-empty">
                 <div class="cat-empty-icon">
-                    <svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+                    <x-icon name="car" size="22"/>
                 </div>
                 @if($activeFilters)
                     <h3>Brak wyników dla tych filtrów</h3>
                     <p>Żaden pojazd nie spełnia wszystkich wybranych kryteriów. Spróbuj rozszerzyć zakres lub wyczyść wybrane filtry.</p>
                     <div class="cat-empty-pills">
-                        @if(request('brand')) <span class="cat-empty-pill"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67"/></svg>Marka wybrana</span> @endif
+                        @if(request('brand')) <span class="cat-empty-pill"><x-icon name="heart" size="12"/>Marka wybrana</span> @endif
                         @if(request('fuel_type')) <span class="cat-empty-pill">Paliwo: {{ request('fuel_type') }}</span> @endif
                         @if(request('price_min') || request('price_max')) <span class="cat-empty-pill">Cena: {{ request('price_min','0') }}–{{ request('price_max','∞') }} zł</span> @endif
                         @if(request('year_min') || request('year_max')) <span class="cat-empty-pill">Rok: {{ request('year_min','–') }}–{{ request('year_max','–') }}</span> @endif
@@ -531,7 +531,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
                     </div>
                     <div class="cat-empty-actions">
                         <a href="{{ route('catalog') }}" class="btn btn-blue btn-pill">
-                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                            <x-icon name="rotate-cw" size="14" :strokeWidth="2.2"/>
                             Wyczyść wszystkie filtry
                         </a>
                         <a href="{{ route('catalog') }}" class="btn btn-outline btn-pill">Przeglądaj całą ofertę</a>

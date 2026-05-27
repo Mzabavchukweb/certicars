@@ -268,23 +268,23 @@
         <div class="topbar-in">
             <div class="topbar-left">
                 <a href="tel:+48585586090">
-                    <svg class="tb-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>
+                    <x-icon name="phone" size="14" class="tb-ico"/>
                     <span class="tb-strong">+48 58 558 60 90</span>
                 </a>
                 <span class="tb-sep"></span>
                 <a href="mailto:kontakt@certicars.pl" class="tb-hide-lg">
-                    <svg class="tb-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                    <x-icon name="mail" size="14" class="tb-ico"/>
                     kontakt@certicars.pl
                 </a>
             </div>
             <div class="topbar-right">
                 <span class="tb-item tb-hide-lg">
-                    <svg class="tb-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <x-icon name="clock" size="14" class="tb-ico"/>
                     Pon–Pt <span class="tb-strong">9:00–18:00</span>
                 </span>
                 <span class="tb-sep tb-hide-lg"></span>
                 <span class="tb-item">
-                    <svg class="tb-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                    <x-icon name="map-pin" size="14" class="tb-ico"/>
                     Warszawa
                 </span>
             </div>
@@ -326,37 +326,37 @@
 
         <nav class="nav-mobile" id="navMobile" aria-label="Menu mobilne">
             <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home')?'active':'' }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <x-icon name="home" size="16"/>
                 Strona główna
             </a>
             <a href="{{ route('catalog') }}" class="nav-link {{ request()->routeIs('catalog*')?'active':'' }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+                <x-icon name="car" size="16"/>
                 Oferta samochodów
             </a>
             <a href="{{ route('about') }}" class="nav-link {{ request()->routeIs('about')?'active':'' }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <x-icon name="info" size="16"/>
                 O nas
             </a>
             <a href="{{ route('contact') }}" class="nav-link {{ request()->routeIs('contact')?'active':'' }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.21 12 19.79 19.79 0 0 1 1.14 3.38 2 2 0 0 1 3.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <x-icon name="phone" size="16"/>
                 Kontakt
             </a>
             <a href="{{ route('favorites') }}" class="nav-link" id="navMobFavLink" style="position:relative">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <x-icon name="heart" size="16"/>
                 Obserwowane
                 <span id="navMobFavCount" style="background:#0066ff;color:#fff;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:none;align-items:center;justify-content:center;padding:0 6px;margin-left:auto">0</span>
             </a>
             <a href="{{ route('catalog') }}" class="nav-link nav-mobile-cta">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <x-icon name="search" size="16"/>
                 Znajdź auto
             </a>
             <div class="nav-mobile-contact">
                 <a href="tel:+48585586090">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>
+                    <x-icon name="phone" size="16"/>
                     +48 58 558 60 90
                 </a>
                 <a href="mailto:kontakt@certicars.pl">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                    <x-icon name="mail" size="16"/>
                     kontakt@certicars.pl
                 </a>
             </div>
@@ -366,7 +366,7 @@
     <main id="main">@yield('content')</main>
 
     <a href="tel:+48585586090" class="float-call" aria-label="Zadzwoń +48 58 558 60 90">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <x-icon name="phone" size="28" :strokeWidth="2.2"/>
     </a>
 
 
@@ -380,8 +380,8 @@
                 <span>Certi<span>Cars</span></span>
             </a>
             <div class="footer-top-socials">
-                <a href="#" class="footer-social" aria-label="Facebook"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-                <a href="#" class="footer-social" aria-label="Instagram"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#e4405f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+                <a href="#" class="footer-social" aria-label="Facebook" style="color:#1877f2"><x-icon name="facebook" size="17"/></a>
+                <a href="#" class="footer-social" aria-label="Instagram" style="color:#e4405f"><x-icon name="instagram" size="17"/></a>
             </div>
         </div>
 
@@ -391,7 +391,7 @@
                 <h3>O CertiCars</h3>
                 <p>Każdy samochód w naszej ofercie przechodzi pełną inspekcję techniczną i weryfikację historii pojazdu. Kupujesz z pewnością.</p>
                 <div style="margin-top:20px;padding:16px 18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px">
-                    <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:8px;display:flex;align-items:center;gap:6px"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7eb3ff" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Godziny otwarcia</div>
+                    <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:8px;display:flex;align-items:center;gap:6px;color:#7eb3ff"><x-icon name="clock" size="14"/> <span style="color:#fff">Godziny otwarcia</span></div>
                     <div class="footer-hours">
                         <div><span>Poniedziałek – Piątek</span><span class="val">9:00 – 18:00</span></div>
                         <div><span>Sobota</span><span class="val">10:00 – 14:00</span></div>
@@ -404,15 +404,15 @@
             <div>
                 <h3>Kontakt</h3>
                 <div class="footer-contact-item">
-                    <div class="footer-contact-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+                    <div class="footer-contact-icon"><x-icon name="phone" size="16"/></div>
                     <div><div style="font-size:11px;color:rgba(255,255,255,.4);font-weight:500">Telefon</div><a href="tel:+48585586090" style="font-weight:700;color:#fff">+48 58 558 60 90</a></div>
                 </div>
                 <div class="footer-contact-item">
-                    <div class="footer-contact-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div>
+                    <div class="footer-contact-icon"><x-icon name="mail" size="16"/></div>
                     <div><div style="font-size:11px;color:rgba(255,255,255,.4);font-weight:500">E-mail</div><a href="mailto:kontakt@certicars.pl" style="font-weight:700;color:#fff">kontakt@certicars.pl</a></div>
                 </div>
                 <div class="footer-contact-item">
-                    <div class="footer-contact-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                    <div class="footer-contact-icon"><x-icon name="map-pin" size="16"/></div>
                     <div><div style="font-size:11px;color:rgba(255,255,255,.4);font-weight:500">Adres</div><span style="font-weight:700;color:#fff;font-size:13.5px">Warszawa, Polska</span></div>
                 </div>
                 {{-- Mini map --}}
@@ -441,7 +441,7 @@
         </div>
         <div class="footer-btm">
             <span>© {{ date('Y') }} CertiCars. Wszelkie prawa zastrzeżone.</span>
-            <span style="display:flex;align-items:center;gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4ea3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg> Zweryfikowany dealer</span>
+            <span style="display:flex;align-items:center;gap:5px;color:#4ea3ff"><x-icon name="shield-check" size="12"/> <span style="color:inherit">Zweryfikowany dealer</span></span>
         </div>
     </footer>
 
@@ -536,10 +536,10 @@
     <div class="lb-backdrop" id="lbBackdrop">
         <div class="lb-stage">
             <div class="lb-count" id="lbCount"></div>
-            <button type="button" class="lb-x" onclick="closeLb()" aria-label="Zamknij"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-            <button type="button" class="lb-nav prev" id="lbPrev" aria-label="Poprzednie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <button type="button" class="lb-x" onclick="closeLb()" aria-label="Zamknij"><x-icon name="x" size="22"/></button>
+            <button type="button" class="lb-nav prev" id="lbPrev" aria-label="Poprzednie"><x-icon name="chevron-left" size="22"/></button>
             <img class="lb-img" id="lbImg" alt="Powiększenie zdjęcia">
-            <button type="button" class="lb-nav next" id="lbNext" aria-label="Następne"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            <button type="button" class="lb-nav next" id="lbNext" aria-label="Następne"><x-icon name="chevron-right" size="22"/></button>
             <div class="lb-thumbs" id="lbThumbs"></div>
             <div class="lb-caption" id="lbCaption"></div>
         </div>
