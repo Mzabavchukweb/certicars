@@ -538,6 +538,21 @@ class CarController extends Controller
             $validated['equipment'] = $processed;
         }
 
+        // Highlighted equipment — array of up to 8 option keys from
+        // EquipmentCatalog::OPTIONS. Empty slots are submitted as empty strings
+        // by the <select> and dropped here. Unknown keys are also filtered.
+        if (array_key_exists('highlighted_equipment', $validated)) {
+            $valid = array_keys(\App\Helpers\EquipmentCatalog::OPTIONS);
+            $cleaned = [];
+            foreach ((array) ($validated['highlighted_equipment'] ?? []) as $key) {
+                $key = is_string($key) ? trim($key) : '';
+                if ($key !== '' && in_array($key, $valid, true)) {
+                    $cleaned[] = $key;
+                }
+            }
+            $validated['highlighted_equipment'] = $cleaned ?: null;
+        }
+
         // technical_conditions storage shape:
         //   { key => { status: 'ok'|'attention'|'bad', note: string } }
         // — preserved per item so the wizard's status pills + note input
@@ -672,6 +687,8 @@ class CarController extends Controller
             'technical_conditions.*.status' => 'nullable|in:ok,attention,bad',   // explicit enum when nested
             'technical_conditions.*.note'   => 'nullable|string|max:500',
             'equipment' => 'nullable|array',
+            'highlighted_equipment'   => 'nullable|array|max:8',
+            'highlighted_equipment.*' => 'nullable|string|max:64',
         ], [
             'brand_id.required' => 'Wybierz markę pojazdu.',
             'brand_id.exists'   => 'Wybrana marka nie istnieje w systemie.',

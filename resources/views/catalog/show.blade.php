@@ -705,11 +705,43 @@
 .cs-feat-eq-item{display:flex;align-items:center;gap:8px;padding:8px 0;font-size:14.5px;color:#1a1a1a;font-weight:600;white-space:nowrap}
 .cs-feat-eq-item i{width:18px;height:18px;color:#16a34a;flex-shrink:0;stroke-width:2.2}
 
-/* FULL EQUIPMENT (COS style — clean grid) */
-.cs-equipment-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 32px;padding:4px 0}
-.cs-equipment-item{display:flex;align-items:center;gap:10px;padding:12px 0;font-size:13.5px;color:#374151;border-bottom:1px solid #f0f0f2}
-.cs-equipment-item:last-child{border-bottom:none}
-.cs-equipment-item i{width:14px;height:14px;color:#16a34a;flex-shrink:0;stroke-width:2.5}
+/* WYPOSAŻENIE — reference rebuild: header + 8 highlighted tiles + 6 category cards */
+.cs-equip-section{max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box}
+.cs-equip-head{margin-bottom:18px}
+.cs-equip-title{font-size:22px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:0 0 4px;line-height:1.2}
+.cs-equip-sub{font-size:13.5px;color:#6b7280;line-height:1.5;margin:0}
+/* Top 8 highlighted tiles */
+.cs-equip-tiles{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px;margin-bottom:20px}
+.cs-equip-tile{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px 10px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;min-width:0;transition:border-color .15s,box-shadow .15s}
+.cs-equip-tile:hover{border-color:#cbd5e1;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.cs-equip-tile-ico{width:46px;height:46px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cs-equip-tile-label{font-size:12px;font-weight:700;color:#1a1a1a;letter-spacing:-.1px;line-height:1.3;word-break:break-word}
+/* Category cards */
+.cs-equip-cats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.cs-equip-cat{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;min-width:0}
+.cs-equip-cat-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #f0f0f2}
+.cs-equip-cat-ico{flex-shrink:0;width:34px;height:34px;border-radius:9px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-equip-cat-title{font-size:15px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0;line-height:1.2}
+.cs-equip-cat-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.cs-equip-cat-list li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#374151;line-height:1.4}
+.cs-equip-cat-list li svg{flex-shrink:0;margin-top:2px;color:#0066ff!important}
+
+/* Tablet: 4-col top tiles, 2-col category cards */
+@media(max-width:1024px){
+    .cs-equip-tiles{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+    .cs-equip-cats{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+}
+/* Mobile: 2-col tiles, single-col cards */
+@media(max-width:600px){
+    .cs-equip-tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .cs-equip-tile{padding:16px 10px}
+    .cs-equip-tile-ico{width:42px;height:42px}
+    .cs-equip-tile-label{font-size:11.5px}
+    .cs-equip-cats{grid-template-columns:1fr;gap:10px}
+    .cs-equip-cat{padding:16px}
+    .cs-equip-title{font-size:18px}
+    .cs-equip-sub{font-size:12.5px}
+}
 .cs-eq-count{font-size:13px;color:var(--text-3);font-weight:500;margin-left:auto}
 
 /* DATA SECTION (CarOnSale style — pixel-perfect) */
@@ -1829,20 +1861,62 @@
     </div>
     @endif
 
-    {{-- E. WYPOSAŻENIE --}}
-    @if($totalCount > 0)
-    <div class="cs-data-section">
-        <div class="cs-data-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-            <h2><i data-lucide="list-checks" aria-hidden="true"></i> Wyposażenie <span style="font-size:13px;font-weight:500;color:var(--text-3);margin-left:8px">{{ $totalCount }} pozycji</span></h2>
-            <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
+    {{-- E. WYPOSAŻENIE — rebuilt to match reference structure --}}
+    @php
+        $hl = collect($car->highlighted_equipment ?? [])
+            ->filter(fn($k) => \App\Helpers\EquipmentCatalog::option($k) !== null)
+            ->take(8)
+            ->values();
+        $eqGrouped = \App\Helpers\EquipmentCatalog::groupEquipmentForDisplay($car->equipment);
+        $hasEqSection = $hl->isNotEmpty() || $totalCount > 0;
+    @endphp
+    @if($hasEqSection)
+    <div class="cs-equip-section">
+        <div class="cs-equip-head">
+            <h2 class="cs-equip-title">Wyposażenie</h2>
+            <p class="cs-equip-sub">Najważniejsze elementy wyposażenia tego egzemplarza</p>
         </div>
-        <div class="cs-data-body open">
-            <div class="cs-equipment-grid">
-                @foreach($allEquipmentItems as $item)
-                <div class="cs-equipment-item"><i data-lucide="check" aria-hidden="true"></i> {{ $item }}</div>
-                @endforeach
+
+        @if($hl->isNotEmpty())
+        {{-- Top 8 highlighted tiles. Admin picks them from EquipmentCatalog options. --}}
+        <div class="cs-equip-tiles">
+            @foreach($hl as $key)
+                @php $opt = \App\Helpers\EquipmentCatalog::option($key); @endphp
+                <div class="cs-equip-tile">
+                    <div class="cs-equip-tile-ico" aria-hidden="true">
+                        <x-icon :name="$opt['icon']" size="22" :strokeWidth="1.8"/>
+                    </div>
+                    <div class="cs-equip-tile-label">{{ $opt['label'] }}</div>
+                </div>
+            @endforeach
+        </div>
+        @endif
+
+        @if(!empty($eqGrouped))
+        {{-- Category cards. Items are real equipment data grouped/categorized via
+             EquipmentCatalog::groupEquipmentForDisplay. Empty categories are
+             dropped by the helper. --}}
+        <div class="cs-equip-cats">
+            @foreach($eqGrouped as $catKey => $items)
+            @php $catMeta = \App\Helpers\EquipmentCatalog::CATEGORIES[$catKey] ?? null; @endphp
+            @if($catMeta)
+            <div class="cs-equip-cat">
+                <div class="cs-equip-cat-head">
+                    <div class="cs-equip-cat-ico" aria-hidden="true">
+                        <x-icon :name="$catMeta['icon']" size="18" :strokeWidth="1.8"/>
+                    </div>
+                    <h3 class="cs-equip-cat-title">{{ $catMeta['label'] }}</h3>
+                </div>
+                <ul class="cs-equip-cat-list">
+                    @foreach($items as $item)
+                    <li><x-icon name="check" size="14" tone="blue" :strokeWidth="2.5"/><span>{{ $item }}</span></li>
+                    @endforeach
+                </ul>
             </div>
+            @endif
+            @endforeach
         </div>
+        @endif
     </div>
     @endif
 
