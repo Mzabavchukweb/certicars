@@ -291,10 +291,10 @@
     .cs-benefit-item:nth-last-child(-n+1):nth-child(odd),.cs-benefit-item:nth-last-child(-n+2):nth-child(2n){border-bottom:none}
 }
 @media(max-width:768px){
-    .cs-benefits-row{margin-left:14px!important;margin-right:14px!important;max-width:none!important;border-radius:12px}
+    .cs-benefits-row{border-radius:12px}
 }
 @media(max-width:500px){
-    .cs-benefits-row{grid-template-columns:1fr;margin-left:12px!important;margin-right:12px!important}
+    .cs-benefits-row{grid-template-columns:1fr}
     .cs-benefit-item{border-right:none}
     .cs-benefit-item:last-child{border-bottom:none}
 }
@@ -329,11 +329,8 @@
     .cs-gethelp-section{padding:20px}
 }
 @media(max-width:768px){
-    .cs-gethelp-section{margin-left:14px!important;margin-right:14px!important;max-width:none!important;padding:18px 16px;border-radius:14px}
+    .cs-gethelp-section{padding:18px 16px;border-radius:14px}
     .cs-gethelp-more{margin-left:0;margin-top:8px}
-}
-@media(max-width:500px){
-    .cs-gethelp-section{margin-left:12px!important;margin-right:12px!important}
 }
 
 /* ============ 3-card bottom row (Historia / Dokumenty / Formalności) ============ */
@@ -355,11 +352,8 @@
     .cs-info-3card{padding:18px 18px}
 }
 @media(max-width:768px){
-    .cs-info-3row{grid-template-columns:1fr;margin-left:14px!important;margin-right:14px!important;max-width:none!important}
+    .cs-info-3row{grid-template-columns:1fr}
     .cs-info-3card{border-radius:14px}
-}
-@media(max-width:500px){
-    .cs-info-3row{margin-left:12px!important;margin-right:12px!important}
 }
 
 /* ============ TECH + ENGINE-VIDEO TWO-COLUMN ROW ============ */
@@ -434,15 +428,12 @@
     .cs-pano360-card-play svg{width:26px;height:26px}
 }
 @media(max-width:768px){
-    .cs-pano360-row{margin-left:14px!important;margin-right:14px!important;max-width:none!important}
-    .cs-pano360-section-card{margin-left:14px!important;margin-right:14px!important;max-width:none!important;padding:18px 16px;border-radius:14px}
+    .cs-pano360-section-card{padding:18px 16px;border-radius:14px}
     .cs-pano360-card{height:200px}
     .cs-pano360-card-text{left:16px;right:16px;bottom:16px}
     .cs-pano360-card-mark{top:14px;left:14px;font-size:10px;padding:5px 9px}
 }
 @media(max-width:500px){
-    .cs-pano360-row{margin-left:12px!important;margin-right:12px!important}
-    .cs-pano360-section-card{margin-left:12px!important;margin-right:12px!important}
     .cs-pano360-card{height:180px}
     .cs-pano360-card-play{width:56px;height:56px}
     .cs-pano360-card-play svg{width:22px;height:22px}
@@ -555,11 +546,9 @@
     .cs-pt-tire-list{grid-template-columns:1fr 1fr}
 }
 @media(max-width:768px){
-    .cs-pt-row{margin-left:14px!important;margin-right:14px!important;max-width:none!important}
     .cs-pt-card{padding:18px 16px;border-radius:14px}
 }
 @media(max-width:500px){
-    .cs-pt-row{margin-left:12px!important;margin-right:12px!important}
     .cs-pt-paint-grid{grid-template-columns:1fr 1fr}
     .cs-pt-tire-list{grid-template-columns:1fr 1fr}
 }
@@ -804,13 +793,9 @@
     .cs-related-head-title{font-size:16px}
 }
 @media(max-width:768px){
-    .cs-related-section,.cs-legal-bar{margin-left:14px!important;margin-right:14px!important;max-width:none!important}
     .cs-related-section{padding:18px 16px;border-radius:14px}
     .cs-related-controls{width:100%;margin-left:0;justify-content:space-between}
     .vcard-fuel-badge{font-size:10px;padding:3px 8px;top:10px;left:10px}
-}
-@media(max-width:500px){
-    .cs-related-section,.cs-legal-bar{margin-left:12px!important;margin-right:12px!important}
 }
 
 .cs-related-grid{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px}
@@ -818,12 +803,12 @@
 .cs-related-grid>*{flex:0 0 calc(33.333% - 14px);scroll-snap-align:start;min-width:260px}
 
 @media(max-width:768px){
+    /* Single mobile gutter: container's padding is the only source of side spacing,
+       so every section visually aligns. Per-section margin/max-width overrides used
+       to live here and produced a double gutter (container pad + section margin)
+       inconsistently across cards — removed. */
     .cs-wrap .container{padding-left:14px;padding-right:14px}
-    /* Unify ALL section side margins to match sidebar card */
-    .cs-wrap > .cs-data-section,.cs-wrap > div:not(.container) > .cs-data-section{max-width:none!important;margin-left:14px!important;margin-right:14px!important;padding-left:0!important;padding-right:0!important}
-    .cs-wrap > .cs-data-section[style],.cs-data-section[style]{margin-left:14px!important;margin-right:14px!important;padding-left:0!important;padding-right:0!important;max-width:none!important}
-    .cs-tech-engine-row{max-width:none!important;margin-left:14px!important;margin-right:14px!important}
-    .cs-sections-2col{padding:0 14px!important;margin:0!important}
+    .cs-sections-2col{padding:0!important;margin:0!important}
     .cs-nav-bar{flex-direction:row;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0}
     .cs-nav-bar-left{flex:0 0 auto}
     .cs-nav-bar-left .cs-nav-btn{width:auto}
@@ -943,9 +928,7 @@
 }
 @media(max-width:500px){
     .cs-wrap .container{padding-left:12px;padding-right:12px}
-    .cs-wrap > .cs-data-section,.cs-wrap > div:not(.container) > .cs-data-section,.cs-data-section[style]{margin-left:12px!important;margin-right:12px!important}
-    .cs-tech-engine-row{margin-left:12px!important;margin-right:12px!important}
-    .cs-sections-2col{padding:0 12px!important}
+    .cs-sections-2col{padding:0!important}
     .cs-head h1{font-size:19px}
     .cs-gallery{border-radius:10px}
     .cs-sidebar-card{border-radius:14px}
