@@ -604,15 +604,15 @@ class PublicPagesTest extends TestCase
         $this->assertStringNotContainsString('<div class="cs-pt-row">', $html);
     }
 
-    public function test_tires_card_renders_four_positions_from_real_tire_set(): void
+    public function test_tires_card_renders_reference_layout_from_real_tire_set(): void
     {
         $car = $this->activeCar();
         $set = \App\Models\CarTireSet::create([
             'car_id'     => $car->id,
             'set_number' => 1,
             'is_mounted' => true,
-            'tire_type'  => '215/55 R17',
-            'rim'        => 'Felgi aluminiowe 17"',
+            'tire_type'  => 'Opony całoroczne',
+            'rim'        => '16" Aluminium',
         ]);
         foreach ([
             'front_left'  => 6.5,
@@ -629,15 +629,31 @@ class PublicPagesTest extends TestCase
 
         $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
 
-        $this->assertStringContainsString('Koła i opony',         $html);
-        $this->assertStringContainsString('Przód lewy',           $html);
-        $this->assertStringContainsString('Przód prawy',          $html);
-        $this->assertStringContainsString('Tył lewy',             $html);
-        $this->assertStringContainsString('Tył prawy',            $html);
-        $this->assertStringContainsString('215/55 R17',           $html);
-        $this->assertStringContainsString('Felgi aluminiowe 17',  $html);
-        // No tire has issues, so footer reports "Stan bardzo dobry".
-        $this->assertStringContainsString('Stan bardzo dobry',    $html);
+        // Section title + canonical layout markers.
+        $this->assertStringContainsString('Koła i opony',           $html);
+        $this->assertStringContainsString('cs-pt-tire-set',         $html);
+        $this->assertStringContainsString('cs-pt-tire-table',       $html);
+        $this->assertStringContainsString('cs-pt-tire-divider',     $html);
+        // Set head: "1. Komplet (zamontowane)".
+        $this->assertStringContainsString('Komplet',                $html);
+        $this->assertStringContainsString('(zamontowane)',          $html);
+        // Left metadata column.
+        $this->assertStringContainsString('>Rodzaj opon<',          $html);
+        $this->assertStringContainsString('Opony całoroczne',       $html);
+        $this->assertStringContainsString('>Felga<',                $html);
+        $this->assertStringContainsString('16&quot; Aluminium',     $html);
+        // Four position labels (reference uses "Przednia lewa"/"Tylna prawa" etc.).
+        $this->assertStringContainsString('Przednia lewa',          $html);
+        $this->assertStringContainsString('Przednia prawa',         $html);
+        $this->assertStringContainsString('Tylna lewa',             $html);
+        $this->assertStringContainsString('Tylna prawa',            $html);
+        // Tread depth row with values aligned to the four columns.
+        $this->assertStringContainsString('Głębokość bieżnika',     $html);
+        $this->assertStringContainsString('6.5 mm',                 $html);
+        $this->assertStringContainsString('5.5 mm',                 $html);
+        // Status row "Stan" with all-OK statuses.
+        $this->assertStringContainsString('>Stan<',                 $html);
+        $this->assertStringContainsString('Brak nieprawidłowości',  $html);
     }
 
     public function test_tires_card_marks_position_when_condition_has_issue(): void
@@ -656,9 +672,11 @@ class PublicPagesTest extends TestCase
 
         $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
 
-        // Bad tire's tread strong tag gets the .warn class.
-        $this->assertMatchesRegularExpression('/Bieżnik <strong class="warn">3 mm/', $html);
-        $this->assertStringContainsString('Wymaga uwagi', $html);
+        // Bad-positioned tire renders inside the status row with .warn class +
+        // surfaces the condition text instead of "Brak nieprawidłowości".
+        $this->assertMatchesRegularExpression('/cs-pt-tire-status-val warn[\s\S]+?nierówny bieżnik/', $html);
+        // The OK tire keeps the green "Brak nieprawidłowości" status.
+        $this->assertStringContainsString('Brak nieprawidłowości', $html);
     }
 
     public function test_pano360_card_image_urls_never_use_raw_storage_path(): void
