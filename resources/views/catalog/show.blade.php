@@ -291,12 +291,19 @@
     .cs-benefit-item:nth-last-child(-n+1):nth-child(odd),.cs-benefit-item:nth-last-child(-n+2):nth-child(2n){border-bottom:none}
 }
 @media(max-width:768px){
-    .cs-benefits-row{border-radius:12px}
+    .cs-benefits-row{border-radius:14px;margin-top:8px;margin-bottom:20px}
+    .cs-benefit-item{padding:16px 18px;gap:12px}
+    .cs-benefit-ico{width:36px;height:36px;border-radius:10px}
+    .cs-benefit-ico.flag{width:32px;height:32px}
+    .cs-benefit-text{font-size:13px;line-height:1.4}
 }
 @media(max-width:500px){
-    .cs-benefits-row{grid-template-columns:1fr}
-    .cs-benefit-item{border-right:none}
+    .cs-benefits-row{grid-template-columns:1fr;border-radius:14px;margin-bottom:18px}
+    .cs-benefit-item{border-right:none;padding:14px 18px;gap:12px}
     .cs-benefit-item:last-child{border-bottom:none}
+    .cs-benefit-ico{width:36px;height:36px}
+    .cs-benefit-ico.flag{width:32px;height:32px}
+    .cs-benefit-text{font-size:13px}
 }
 
 /* ============ GWARANCJA TECHNICZNA — GetHelp warranty section ============ */
@@ -1062,7 +1069,7 @@
 
 /* INFO BENEFIT TILES under sidebar card — equal height, aligned rows */
 .cs-info-tiles{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:10px;align-items:stretch}
-.cs-info-tile{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 12px;text-align:center;display:flex;flex-direction:column;align-items:center;height:100%;min-height:0;min-width:0;overflow:hidden}
+.cs-info-tile{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 14px;text-align:center;display:flex;flex-direction:column;align-items:center;height:100%;min-height:0;min-width:0;overflow:hidden}
 .cs-info-tile *{max-width:100%;word-wrap:break-word}
 .cs-info-tile-icon{width:44px;height:44px;border-radius:12px;background:#e8f1ff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;flex-shrink:0}
 .cs-info-tile-title{font-size:14px;font-weight:800;color:#1a1a1a;margin:0 0 6px;letter-spacing:-.1px;flex-shrink:0}
@@ -1070,9 +1077,21 @@
 .cs-info-tile-link{display:inline-flex;align-items:center;gap:4px;margin-top:10px;font-size:11.5px;font-weight:600;color:#0066ff;text-decoration:none;flex-shrink:0}
 .cs-info-tile-link:hover{color:#0052cc}
 .cs-info-tile-link svg{flex-shrink:0}
+@media(max-width:1024px){
+    .cs-info-tiles{gap:10px;margin-top:14px}
+}
+@media(max-width:768px){
+    .cs-info-tiles{gap:12px;margin-top:16px}
+    .cs-info-tile{padding:20px 16px;border-radius:14px}
+    .cs-info-tile-icon{width:42px;height:42px;margin-bottom:12px}
+    .cs-info-tile-title{font-size:14px;margin-bottom:6px}
+    .cs-info-tile-body{font-size:12px;line-height:1.55}
+    .cs-info-tile-link{margin-top:12px;font-size:12px}
+}
 @media(max-width:480px){
-    .cs-info-tile{padding:16px 12px}
+    .cs-info-tile{padding:18px 14px}
     .cs-info-tile-title{font-size:13.5px}
+    .cs-info-tile-icon{width:40px;height:40px;margin-bottom:10px}
 }
 .cs-sticky-cta svg{width:16px;height:16px;flex-shrink:0}
 @media(max-width:1024px){.cs-sticky-cta{display:grid}}
