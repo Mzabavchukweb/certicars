@@ -686,7 +686,7 @@
 .cs-data-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;user-select:none;border-bottom:1px solid #eeeef0}
 .cs-data-header h2{font-size:17px;font-weight:700;color:#1a1a1a;letter-spacing:-.2px;display:flex;align-items:center;gap:8px;margin:0;line-height:1.3;font-family:'Inter',sans-serif}
 .cs-data-header h2 i,.cs-data-header h2 svg{display:inline-flex;align-items:center;justify-content:center}
-.cs-data-header h2 svg{width:18px;height:18px;flex-shrink:0;color:#10b981}
+.cs-data-header h2 svg,.cs-data-header h2 i[data-lucide],.cs-data-header h2 i.cs-icon{width:18px;height:18px;flex-shrink:0;color:#0066ff;stroke-width:2}
 .cs-data-header .chev{display:none}
 /* Collapsible accordion behavior — applied only at mobile breakpoint */
 @media(max-width:1024px){
@@ -1528,31 +1528,21 @@
     @endphp
 
     {{-- =================== BENEFIT ROW (5 items) =================== --}}
+    {{-- Icon system: Lucide via <x-icon>. Flag tile keeps its CSS stripes — no
+         Lucide flag glyph, and the colours are the country flag itself. --}}
     <div class="cs-benefits-row">
         @foreach($benefits as $b)
         <div class="cs-benefit-item">
             <span class="cs-benefit-ico{{ $b['ico'] === 'flag' ? ' flag' : '' }}" aria-hidden="true">
-                @switch($b['ico'])
-                    @case('flag')
-                        <span class="cs-flag">
-                            <span style="background:{{ $b['stripes'][0] }}"></span>
-                            <span style="background:{{ $b['stripes'][1] }}"></span>
-                            <span style="background:{{ $b['stripes'][2] }}"></span>
-                        </span>
-                        @break
-                    @case('badge-check')
-                        <svg viewBox="0 0 24 24"><path d="M12 2 3 7v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V7Z"/><path d="m9 12 2 2 4-4"/></svg>
-                        @break
-                    @case('clipboard-check')
-                        <svg viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
-                        @break
-                    @case('percent')
-                        <svg viewBox="0 0 24 24"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
-                        @break
-                    @case('search-check')
-                        <svg viewBox="0 0 24 24"><path d="m8 11 2 2 4-4"/><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                        @break
-                @endswitch
+                @if($b['ico'] === 'flag')
+                    <span class="cs-flag">
+                        <span style="background:{{ $b['stripes'][0] }}"></span>
+                        <span style="background:{{ $b['stripes'][1] }}"></span>
+                        <span style="background:{{ $b['stripes'][2] }}"></span>
+                    </span>
+                @else
+                    <x-icon :name="$b['ico']" size="18"/>
+                @endif
             </span>
             <span class="cs-benefit-text">{{ $b['text'] }}</span>
         </div>
@@ -1574,7 +1564,7 @@
         <div class="cs-gethelp-head">
             <div class="cs-gethelp-head-left">
                 <div class="cs-gethelp-ico" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+                    <x-icon name="shield-check" size="20"/>
                 </div>
                 <div>
                     <h3 class="cs-gethelp-title">Gwarancja techniczna GetHelp <span class="info-i" title="Wybierz pakiet ochrony pojazdu po zakupie">i</span></h3>
@@ -1583,7 +1573,7 @@
             </div>
             <a href="{{ url('/o-nas#gethelp') }}" class="cs-gethelp-more">
                 Dowiedz się więcej o gwarancji
-                <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                <x-icon name="arrow-right" size="16"/>
             </a>
         </div>
         <div class="cs-gethelp-grid">
@@ -1608,7 +1598,7 @@
     {{-- A. DANE POJAZDU — expanded by default on both desktop and mobile --}}
     <div class="cs-data-section cs-collapsible-mobile">
         <div class="cs-data-header open" onclick="csToggleAccordion(this)">
-            <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>Dane pojazdu</h2>
+            <h2><x-icon name="car" size="20"/>Dane pojazdu</h2>
             <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
         </div>
         <div class="cs-data-body">
@@ -1676,7 +1666,7 @@
         <div class="cs-info-3card">
             <div class="cs-info-3card-head">
                 <div class="cs-info-3card-ico" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
+                    <x-icon name="history" size="18"/>
                 </div>
                 <h3 class="cs-info-3card-title">Historia pojazdu</h3>
             </div>
@@ -1693,7 +1683,7 @@
         <div class="cs-info-3card">
             <div class="cs-info-3card-head">
                 <div class="cs-info-3card-ico" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>
+                    <x-icon name="file-text" size="18"/>
                 </div>
                 <h3 class="cs-info-3card-title">Dokumenty</h3>
             </div>
@@ -1710,7 +1700,7 @@
         <div class="cs-info-3card">
             <div class="cs-info-3card-head">
                 <div class="cs-info-3card-ico" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+                    <x-icon name="shield-check" size="18"/>
                 </div>
                 <h3 class="cs-info-3card-title">Formalności</h3>
             </div>
@@ -1728,7 +1718,7 @@
     @if($rowOk($dispCountry) || $rowOk($dispImportedFrom) || $rowOk($car->first_registration) || $car->previous_owners !== null || $rowOk($car->vehicle_history) || $rowOk(CarLabels::bool($car->service_book)))
     <div class="cs-data-section cs-collapsible-mobile">
         <div class="cs-data-header" onclick="csToggleAccordion(this)">
-            <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="m2 14 6-6 6 6 6-6"/></svg>Historia pojazdu</h2>
+            <h2><x-icon name="history" size="20"/>Historia pojazdu</h2>
             <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
         </div>
         <div class="cs-data-body">
@@ -1765,7 +1755,7 @@
     @if($rowOk($svcDoc) || $rowOk($asoSvc) || $rowOk($car->service_history) || $rowOk($car->last_service) || $rowOk($car->next_inspection))
     <div class="cs-data-section cs-collapsible-mobile">
         <div class="cs-data-header" onclick="csToggleAccordion(this)">
-            <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Serwisowanie</h2>
+            <h2><x-icon name="wrench" size="20"/>Serwisowanie</h2>
             <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
         </div>
         <div class="cs-data-body">
@@ -1802,7 +1792,7 @@
     @if($rowOk($cocDocs) || $rowOk($svcBookStatus) || $rowOk($regCert) || $rowOk($ownersManual) || $rowOk($vehicleFolder) || $rowOk($huAuReport))
     <div class="cs-data-section cs-collapsible-mobile">
         <div class="cs-data-header" onclick="csToggleAccordion(this)">
-            <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>Dokumenty</h2>
+            <h2><x-icon name="file-text" size="20"/>Dokumenty</h2>
             <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
         </div>
         <div class="cs-data-body">
@@ -1834,7 +1824,7 @@
     @if($rowOk($car->fuel_consumption) || $rowOk($car->co2_emission) || $rowOk($car->emission_class))
     <div class="cs-data-section cs-collapsible-mobile">
         <div class="cs-data-header" onclick="csToggleAccordion(this)">
-            <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>Zużycie paliwa</h2>
+            <h2><x-icon name="fuel" size="20"/>Zużycie paliwa</h2>
             <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
         </div>
         <div class="cs-data-body">
