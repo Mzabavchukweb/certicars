@@ -306,56 +306,62 @@
     .cs-benefit-text{font-size:13px}
 }
 
-/* ============ FINANCING + GETHELP two-column row ============ */
+/* ============ FINANCING + GETHELP compact two-column row ============ */
 .cs-finance-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box;align-items:stretch}
-.cs-finance-card{margin:0!important;max-width:none!important;width:100%;height:100%;display:flex;flex-direction:column}
-.cs-finance-head{display:flex;align-items:flex-start;gap:14px;padding:24px 26px 0}
-.cs-finance-head-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
-.cs-finance-title{font-size:17px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:0 0 4px;line-height:1.25}
-.cs-finance-sub{font-size:12.5px;color:#6b7280;line-height:1.55;margin:0;max-width:480px}
-@media(max-width:1024px){
-    .cs-finance-row{grid-template-columns:1fr;gap:14px}
-    .cs-finance-head{padding:20px 20px 0}
+@media(max-width:1024px){.cs-finance-row{grid-template-columns:1fr;gap:14px}}
+
+/* Shared compact-card chrome */
+.cs-finance-card,.cs-gethelp-card{background:#fff;border:1px solid #eeeef0;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 14px rgba(0,0,0,.04);padding:18px 20px;display:flex;flex-direction:column;width:100%;min-width:0;box-sizing:border-box}
+
+/* Finansowanie pojazdu — compact */
+.cs-finance-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.cs-finance-head-ico{flex-shrink:0;width:34px;height:34px;border-radius:9px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-finance-title{font-size:15.5px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0;line-height:1.2}
+.cs-finance-sub{font-size:12px;color:#6b7280;line-height:1.45;margin:2px 0 0}
+.cs-finance-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.cs-finance-field{display:flex;flex-direction:column;min-width:0}
+.cs-finance-field label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#6b7280;margin-bottom:5px}
+.cs-finance-readonly{height:38px;display:flex;align-items:center;padding:0 12px;background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;font-weight:700;color:#1a1a1a;letter-spacing:-.2px}
+.cs-finance-input-wrap{position:relative;display:flex;align-items:center}
+.cs-finance-input-wrap input{width:100%;height:38px;background:#fff;border:1.5px solid #d1d5db;border-radius:8px;padding:0 36px 0 12px;font-size:14px;font-weight:700;color:#1a1a1a;outline:none;transition:border-color .15s;min-width:0}
+.cs-finance-input-wrap input:focus{border-color:#0066ff;box-shadow:0 0 0 3px rgba(0,102,255,.08)}
+.cs-finance-input-wrap span{position:absolute;right:12px;font-size:12px;font-weight:600;color:#6b7280;pointer-events:none}
+.cs-finance-field select{width:100%;height:38px;background:#fff;border:1.5px solid #d1d5db;border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:#1a1a1a;cursor:pointer;outline:none;appearance:auto;transition:border-color .15s}
+.cs-finance-field select:focus{border-color:#0066ff;box-shadow:0 0 0 3px rgba(0,102,255,.08)}
+.cs-finance-result{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 14px;background:#f7faff;border:1px solid #dbe6ff;border-radius:12px;margin-bottom:10px;flex-wrap:wrap}
+.cs-finance-result-left{display:flex;flex-direction:column;min-width:0}
+.cs-finance-result-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:#0052cc;margin-bottom:2px}
+.cs-finance-result-value{font-size:22px;font-weight:900;color:#0a0a0a;letter-spacing:-.4px;line-height:1.1}
+.cs-finance-result-value .suffix{font-size:12px;font-weight:600;color:#6b7280;letter-spacing:0}
+.cs-finance-cta{height:40px;padding:0 18px;background:#0066ff;color:#fff;border:none;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,102,255,.25);transition:all .15s;flex-shrink:0}
+.cs-finance-cta:hover{background:#0052cc;box-shadow:0 4px 14px rgba(0,102,255,.35);transform:translateY(-1px)}
+.cs-finance-foot{font-size:10.5px;color:#9ca3af;line-height:1.5;margin-top:auto;padding-top:6px}
+
+@media(max-width:768px){
+    .cs-finance-controls{grid-template-columns:1fr 1fr}
+    .cs-finance-field:first-child{grid-column:1 / -1}
+    .cs-finance-result{flex-direction:column;align-items:stretch;gap:10px}
+    .cs-finance-cta{width:100%;justify-content:center}
 }
 
-/* ============ GWARANCJA TECHNICZNA — GetHelp warranty section ============ */
-.cs-gethelp-section{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box}
-/* Compact variant for use inside .cs-finance-row right column */
-.cs-finance-row .cs-gethelp-section{margin:0;max-width:none;height:100%;display:flex;flex-direction:column}
-.cs-finance-row .cs-gethelp-grid{grid-template-columns:1fr;gap:8px}
-.cs-finance-row .cs-gethelp-pkg{padding:14px 16px}
-.cs-finance-row .cs-gethelp-pkg-desc{font-size:11px;line-height:1.45}
-.cs-finance-row .cs-gethelp-more{font-size:12.5px;margin-top:6px}
-.cs-gethelp-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;flex-wrap:wrap}
-.cs-gethelp-head-left{display:flex;align-items:flex-start;gap:14px;flex:1;min-width:240px}
-.cs-gethelp-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
-.cs-gethelp-ico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.cs-gethelp-title{font-size:17px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:0 0 4px;line-height:1.25;display:flex;align-items:center;gap:6px}
-.cs-gethelp-title .info-i{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#eff6ff;color:#0066ff;font-size:10px;font-weight:700;flex-shrink:0}
-.cs-gethelp-sub{font-size:12.5px;color:#6b7280;line-height:1.55;margin:0;max-width:580px}
-.cs-gethelp-more{font-size:13px;font-weight:700;color:#0066ff;display:inline-flex;align-items:center;gap:5px;text-decoration:none;margin-left:auto;align-self:center}
-.cs-gethelp-more:hover{color:#0052cc}
-.cs-gethelp-more svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4}
-.cs-gethelp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.cs-gethelp-pkg{position:relative;background:#fff;border:1.5px solid #e5e7eb;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:8px;transition:border-color .15s,background .15s;cursor:pointer}
-.cs-gethelp-pkg:hover{border-color:#cbd5e1}
-.cs-gethelp-pkg.active{background:#eff6ff;border-color:#0066ff;box-shadow:0 0 0 3px rgba(0,102,255,.1)}
-.cs-gethelp-pkg-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.cs-gethelp-pkg-name{font-size:14.5px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px}
-.cs-gethelp-pkg-badge{display:inline-flex;align-items:center;padding:3px 8px;background:#dcfce7;color:#15803d;font-size:10px;font-weight:700;border-radius:50px;letter-spacing:.3px;text-transform:uppercase}
-.cs-gethelp-pkg.active .cs-gethelp-pkg-badge{background:#0066ff;color:#fff}
-.cs-gethelp-pkg-price{font-size:13px;font-weight:700;color:#0a0a0a}
-.cs-gethelp-pkg-price .free{color:#16a34a}
-.cs-gethelp-pkg-desc{font-size:11.5px;color:#6b7280;line-height:1.5;margin:0}
-.cs-gethelp-foot{margin-top:14px;padding-top:14px;border-top:1px solid #f0f0f2;font-size:11.5px;color:#6b7280;line-height:1.55}
-.cs-gethelp-foot strong{color:#0a0a0a;font-weight:700}
-@media(max-width:1024px){
-    .cs-gethelp-grid{grid-template-columns:1fr;gap:10px}
-    .cs-gethelp-section{padding:20px}
-}
+/* Gwarancja techniczna GetHelp — compact (3 mini cards in one row) */
+.cs-gethelp-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.cs-gethelp-ico{flex-shrink:0;width:34px;height:34px;border-radius:9px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-gethelp-title{font-size:15.5px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0;line-height:1.2;display:flex;align-items:center;gap:6px}
+.cs-gethelp-title .info-i{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:#eff6ff;color:#0066ff;font-size:9.5px;font-weight:700;flex-shrink:0}
+.cs-gethelp-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.cs-gethelp-mini{background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:5px;min-width:0;transition:border-color .15s,background .15s,box-shadow .15s}
+.cs-gethelp-mini.active{background:#eff6ff;border-color:#0066ff;box-shadow:0 0 0 3px rgba(0,102,255,.1)}
+.cs-gethelp-mini-ico{width:32px;height:32px;border-radius:8px;background:#e8f1ff;color:#0066ff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cs-gethelp-mini-name{font-size:13px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;line-height:1.2}
+.cs-gethelp-mini-price{font-size:12px;font-weight:700;color:#0a0a0a;line-height:1.2}
+.cs-gethelp-mini-price.free{color:#16a34a}
+.cs-gethelp-more-link{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:#0066ff;text-decoration:none;margin-bottom:10px;align-self:flex-start}
+.cs-gethelp-more-link:hover{color:#0052cc}
+.cs-gethelp-helper{font-size:10.5px;color:#9ca3af;line-height:1.5;margin-top:auto}
+
 @media(max-width:768px){
-    .cs-gethelp-section{padding:18px 20px;border-radius:14px;border-color:#e5e7eb;box-shadow:0 2px 8px rgba(0,0,0,.06);width:auto;max-width:none}
-    .cs-gethelp-more{margin-left:0;margin-top:8px}
+    .cs-gethelp-row{grid-template-columns:1fr;gap:8px}
 }
 
 /* ============ 3-card bottom row (Historia / Dokumenty / Formalności) ============ */
@@ -983,26 +989,6 @@
     .cs-gallery-nav.prev{left:6px}
     .cs-gallery-nav.next{right:6px}
 }
-/* INLINE CALCULATOR */
-.cs-calc-inline{background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;margin-top:12px}
-.cs-calc-result{padding:20px 20px 16px;border-bottom:1px solid #f0f0f2}
-.cs-calc-rate-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:#6b7280;margin-bottom:6px}
-.cs-calc-rate-value{font-size:30px;font-weight:800;color:#1a1a1a;letter-spacing:-.5px;line-height:1}
-.cs-calc-rate-suffix{font-size:14px;font-weight:500;color:#6b7280}
-.cs-calc-rate-sub{font-size:11.5px;color:#9ca3af;margin-top:8px}
-.cs-calc-controls{display:flex;align-items:flex-end;gap:10px;padding:16px 20px;flex-wrap:wrap}
-.cs-calc-field{flex:1;min-width:130px}
-.cs-calc-field label{display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:#6b7280;margin-bottom:5px}
-.cs-calc-input-wrap{display:flex;align-items:center;background:#fff;border:1.5px solid #d1d5db;border-radius:8px;padding:0 12px;height:42px;transition:border-color .15s}
-.cs-calc-input-wrap:focus-within{border-color:#0066ff;box-shadow:0 0 0 3px rgba(0,102,255,.08)}
-.cs-calc-input-wrap input{border:none;background:none;font-size:15px;font-weight:700;color:#1a1a1a;width:100%;outline:none;padding:0}
-.cs-calc-input-wrap span{font-size:12px;font-weight:600;color:#9ca3af;margin-left:4px;white-space:nowrap}
-.cs-calc-field select{width:100%;height:42px;background:#fff;border:1.5px solid #d1d5db;border-radius:8px;padding:0 12px;font-size:15px;font-weight:700;color:#1a1a1a;cursor:pointer;outline:none;appearance:auto;transition:border-color .15s}
-.cs-calc-field select:focus{border-color:#0066ff;box-shadow:0 0 0 3px rgba(0,102,255,.08)}
-.cs-calc-cta{height:42px;padding:0 22px;background:#0066ff;color:#fff;border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;white-space:nowrap;transition:all .15s;box-shadow:0 2px 8px rgba(0,102,255,.25)}
-.cs-calc-cta:hover{background:#0052cc;box-shadow:0 4px 14px rgba(0,102,255,.35)}
-.cs-calc-footer{padding:12px 20px;background:#fafafa;border-top:1px solid #f0f0f2}
-.cs-calc-disclaimer{font-size:9.5px;color:#b0b0b4;line-height:1.4}
 /* INQUIRY MODAL */
 .cs-inquiry-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
 .cs-inquiry-overlay.open{display:flex}
@@ -1498,89 +1484,83 @@
         ];
     @endphp
     <div class="cs-finance-row">
-        {{-- LEFT: Finansowanie pojazdu --}}
-        <div class="cs-calc-inline cs-finance-card">
+        {{-- LEFT: Finansowanie pojazdu (compact) --}}
+        <div class="cs-finance-card">
             <div class="cs-finance-head">
                 <div class="cs-finance-head-ico" aria-hidden="true">
-                    <x-icon name="wallet" size="20"/>
+                    <x-icon name="wallet" size="18"/>
                 </div>
                 <div>
                     <h3 class="cs-finance-title">Finansowanie pojazdu</h3>
-                    <p class="cs-finance-sub">Oblicz orientacyjną ratę kredytu lub leasingu dla tego auta.</p>
+                    <p class="cs-finance-sub">Sprawdź orientacyjną ratę dla tego auta.</p>
                 </div>
             </div>
-            <div class="cs-calc-result">
-                <div class="cs-calc-rate-label">Rata od</div>
-                <div class="cs-calc-rate-value"><span id="csCalcInlineRate">—</span> <span class="cs-calc-rate-suffix">/ mies.*</span></div>
-                <div class="cs-calc-rate-sub">Szacowana rata dla wybranych parametrów</div>
-            </div>
-            <div class="cs-calc-controls">
-                <div class="cs-calc-field">
+            <div class="cs-finance-controls">
+                <div class="cs-finance-field">
+                    <label>Cena pojazdu</label>
+                    <div class="cs-finance-readonly" id="csCalcPrice" data-price="{{ $car->price ?? 0 }}">{{ $car->price ? number_format((float) $car->price, 0, '', ' ') . ' zł' : '—' }}</div>
+                </div>
+                <div class="cs-finance-field">
                     <label>Wpłata własna</label>
-                    <div class="cs-calc-input-wrap">
+                    <div class="cs-finance-input-wrap">
                         <input type="number" id="csCalcDp" value="{{ $car->price ? round($car->price * 0.2) : 0 }}" min="0" max="{{ $car->price ?? 0 }}" step="1000">
                         <span>zł</span>
                     </div>
                 </div>
-                <div class="cs-calc-field">
+                <div class="cs-finance-field">
                     <label>Okres finansowania</label>
                     <select id="csCalcTerm">
-                        <option value="12">12 miesięcy</option>
-                        <option value="24">24 miesiące</option>
-                        <option value="36">36 miesięcy</option>
-                        <option value="48" selected>48 miesięcy</option>
-                        <option value="60">60 miesięcy</option>
-                        <option value="72">72 miesiące</option>
-                        <option value="84">84 miesiące</option>
-                        <option value="96">96 miesięcy</option>
+                        <option value="12">12 mies.</option>
+                        <option value="24">24 mies.</option>
+                        <option value="36">36 mies.</option>
+                        <option value="48" selected>48 mies.</option>
+                        <option value="60">60 mies.</option>
+                        <option value="72">72 mies.</option>
+                        <option value="84">84 mies.</option>
+                        <option value="96">96 mies.</option>
                     </select>
                 </div>
-                <div class="cs-calc-field" style="flex:0 0 auto;min-width:auto">
-                    <label>&nbsp;</label>
-                    <button type="button" class="cs-calc-cta" onclick="csOpenInquiry('financing','financing_form')">
-                        Zapytaj o finansowanie
-                        <x-icon name="arrow-right" size="16" :strokeWidth="2.5"/>
-                    </button>
-                </div>
             </div>
-            <div class="cs-calc-footer">
-                <span class="cs-calc-disclaimer">*Przykładowa rata przy RRSO 7,9%. Nie stanowi oferty w rozumieniu prawa.</span>
+            <div class="cs-finance-result">
+                <div class="cs-finance-result-left">
+                    <span class="cs-finance-result-label">Orientacyjna rata miesięczna</span>
+                    <div class="cs-finance-result-value"><span id="csCalcInlineRate">—</span> <span class="suffix">/ mies.</span></div>
+                </div>
+                <button type="button" class="cs-finance-cta" onclick="csOpenInquiry('financing','financing_form')">
+                    Zapytaj o finansowanie
+                    <x-icon name="arrow-right" size="14" :strokeWidth="2.5"/>
+                </button>
+            </div>
+            <div class="cs-finance-foot">
+                <span>*Przykładowa rata przy RRSO 7,9%. Nie stanowi oferty w rozumieniu prawa.</span>
             </div>
         </div>
 
-        {{-- RIGHT: Gwarancja techniczna GetHelp --}}
-        <div class="cs-gethelp-section cs-gethelp-section--compact">
+        {{-- RIGHT: Gwarancja techniczna GetHelp (compact) --}}
+        <div class="cs-gethelp-card">
             <div class="cs-gethelp-head">
-                <div class="cs-gethelp-head-left">
-                    <div class="cs-gethelp-ico" aria-hidden="true">
-                        <x-icon name="shield-check" size="20"/>
-                    </div>
-                    <div>
-                        <h3 class="cs-gethelp-title">Gwarancja techniczna GetHelp <span class="info-i" title="Wybierz pakiet ochrony pojazdu po zakupie">i</span></h3>
-                        <p class="cs-gethelp-sub">Wybierz pakiet ochrony technicznej pojazdu po zakupie. Pakiet Classic jest w cenie samochodu, pozostałe można rozszerzyć.</p>
-                    </div>
+                <div class="cs-gethelp-ico" aria-hidden="true">
+                    <x-icon name="shield-check" size="18"/>
                 </div>
-                <a href="{{ url('/o-nas#gethelp') }}" class="cs-gethelp-more">
-                    Dowiedz się więcej o gwarancji
-                    <x-icon name="arrow-right" size="16"/>
-                </a>
+                <h3 class="cs-gethelp-title">Gwarancja techniczna GetHelp <span class="info-i" title="Wybierz pakiet ochrony pojazdu po zakupie">i</span></h3>
             </div>
-            <div class="cs-gethelp-grid">
+            <div class="cs-gethelp-row">
                 @foreach($gethelpPackages as $pkg)
-                <div class="cs-gethelp-pkg{{ $pkg['key'] === $activePkg ? ' active' : '' }}">
-                    <div class="cs-gethelp-pkg-head">
-                        <span class="cs-gethelp-pkg-name">{{ $pkg['name'] }}</span>
-                        <span class="cs-gethelp-pkg-badge">{{ $pkg['badge'] }}</span>
+                <div class="cs-gethelp-mini{{ $pkg['key'] === $activePkg ? ' active' : '' }}">
+                    <div class="cs-gethelp-mini-ico" aria-hidden="true">
+                        <x-icon name="shield-check" size="18"/>
                     </div>
-                    <div class="cs-gethelp-pkg-price">
-                        @if($pkg['price'] === 'W cenie')<span class="free">W cenie samochodu</span>@else{{ $pkg['price'] }}@endif
-                    </div>
-                    <p class="cs-gethelp-pkg-desc">{{ $pkg['desc'] }}</p>
+                    <div class="cs-gethelp-mini-name">{{ $pkg['name'] }}</div>
+                    <div class="cs-gethelp-mini-price {{ $pkg['price'] === 'W cenie' ? 'free' : '' }}">{{ $pkg['price'] === 'W cenie' ? 'W cenie' : $pkg['price'] }}</div>
                 </div>
                 @endforeach
             </div>
-            <div class="cs-gethelp-foot">
-                <strong>Pełny zakres ochrony</strong> dostępny w wybranych ASO partnerskich. Szczegóły gwarancji można sprawdzić w umowie sprzedaży i regulaminie GetHelp.
+            <a href="{{ url('/o-nas#gethelp') }}" class="cs-gethelp-more-link">
+                Dowiedz się więcej o gwarancji
+                <x-icon name="arrow-right" size="14" :strokeWidth="2.5"/>
+            </a>
+            <div class="cs-gethelp-helper">
+                Dostępność i zakres gwarancji zależy od pojazdu, jego wieku, przebiegu oraz historii serwisowej. Szczegóły u naszego doradcy.
             </div>
         </div>
     </div>
