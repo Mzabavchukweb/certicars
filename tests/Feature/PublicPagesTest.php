@@ -557,9 +557,10 @@ class PublicPagesTest extends TestCase
         $car = $this->activeCar();
         $car->update([
             'paint_measurements' => [
-                ['area' => 'Dach',  'value' => 120],   // ≤150 → ok
-                ['area' => 'Maska', 'value' => 210],   // 151–250 → warn
-                ['area' => 'Drzwi', 'value' => 320],   // >250 → bad
+                ['area' => 'Dach',  'value' => 120],   // 90–150 → ok
+                ['area' => 'Maska', 'value' => 210],   // 150–300 → warn
+                ['area' => 'Drzwi', 'value' => 320],   // >300 → bad
+                ['area' => 'Próg',  'value' => 280],   // 150–300 still warn (just under 300)
             ],
         ]);
         $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
@@ -576,17 +577,25 @@ class PublicPagesTest extends TestCase
         $this->assertMatchesRegularExpression(
             '/<div class="cs-pt-paint-cell warn">[\s\S]+?Maska[\s\S]+?210/',
             $html,
-            'Maska 210µm must render as cs-pt-paint-cell.warn'
+            'Maska 210µm must render as cs-pt-paint-cell.warn (151–300 range)'
+        );
+        $this->assertMatchesRegularExpression(
+            '/<div class="cs-pt-paint-cell warn">[\s\S]+?Próg[\s\S]+?280/',
+            $html,
+            'Próg 280µm must still render as warn — the bad threshold is >300 per spec.'
         );
         $this->assertMatchesRegularExpression(
             '/<div class="cs-pt-paint-cell bad">[\s\S]+?Drzwi[\s\S]+?320/',
             $html,
             'Drzwi 320µm must render as cs-pt-paint-cell.bad'
         );
-        // Legend renders all three states.
-        $this->assertStringContainsString('Fabryczna powłoka (≤150 µm)',  $html);
-        $this->assertStringContainsString('Druga warstwa (151–250 µm)',   $html);
-        $this->assertStringContainsString('Szpachla / naprawa (>250 µm)', $html);
+        // Each cell renders the new status dot + value structure.
+        $this->assertStringContainsString('<span class="dot" aria-hidden="true"></span>', $html,
+            'Each paint cell must carry a colored status dot next to the value.');
+        // Legend renders all three states with the updated reference wording + ranges.
+        $this->assertStringContainsString('Lakier fabryczny (90–150 µm)',         $html);
+        $this->assertStringContainsString('Ponownie lakierowany (150–300 µm)',    $html);
+        $this->assertStringContainsString('Naprawa / szpachla (powyżej 300 µm)',  $html);
     }
 
     public function test_paint_card_empty_when_only_zero_measurements(): void

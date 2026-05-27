@@ -365,16 +365,28 @@
 
 /* PAINT — compact grid of measurements with status colours */
 .cs-pt-paint-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;flex:1}
-.cs-pt-paint-cell{background:#f9fafb;border:1px solid #f0f0f2;border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0}
-.cs-pt-paint-cell.ok{background:linear-gradient(180deg,#f0fdf4,#fff 80%);border-color:#bbf7d0}
-.cs-pt-paint-cell.warn{background:linear-gradient(180deg,#fffbeb,#fff 80%);border-color:#fde68a}
-.cs-pt-paint-cell.bad{background:linear-gradient(180deg,#fef2f2,#fff 80%);border-color:#fecaca}
-.cs-pt-paint-cell-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cs-pt-paint-cell-value{font-size:15px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;display:flex;align-items:baseline;gap:4px}
+/* Paint cell — same layout as before, refined visual styling per the reference:
+   soft tinted background per status, colored dot next to the value, smaller
+   muted µm unit, neutral grey label. Status modifiers .ok / .warn / .bad map
+   to the three threshold buckets (≤150 / 151–300 / >300). */
+.cs-pt-paint-cell{background:#f9fafb;border:1px solid #f0f0f2;border-radius:10px;padding:11px 13px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.cs-pt-paint-cell.ok  {background:#f0fdf4;border-color:#bbf7d0}
+.cs-pt-paint-cell.warn{background:#fffbeb;border-color:#fde68a}
+.cs-pt-paint-cell.bad {background:#fef2f2;border-color:#fecaca}
+.cs-pt-paint-cell-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.45px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-pt-paint-cell-value{font-size:16px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;display:inline-flex;align-items:center;gap:7px;line-height:1.1}
+.cs-pt-paint-cell-value .dot{display:inline-block;width:9px;height:9px;border-radius:50%;flex-shrink:0;background:#16a34a;box-shadow:0 0 0 2px rgba(22,163,74,.18)}
+.cs-pt-paint-cell-value .num{display:inline-flex;align-items:baseline;gap:3px}
 .cs-pt-paint-cell-value .unit{font-size:11px;font-weight:600;color:#6b7280;letter-spacing:0}
-.cs-pt-paint-cell.ok .cs-pt-paint-cell-value{color:#15803d}
+.cs-pt-paint-cell.ok   .cs-pt-paint-cell-value{color:#15803d}
 .cs-pt-paint-cell.warn .cs-pt-paint-cell-value{color:#b45309}
-.cs-pt-paint-cell.bad .cs-pt-paint-cell-value{color:#b91c1c}
+.cs-pt-paint-cell.bad  .cs-pt-paint-cell-value{color:#b91c1c}
+.cs-pt-paint-cell.ok   .cs-pt-paint-cell-value .dot{background:#16a34a;box-shadow:0 0 0 2px rgba(22,163,74,.18)}
+.cs-pt-paint-cell.warn .cs-pt-paint-cell-value .dot{background:#f59e0b;box-shadow:0 0 0 2px rgba(245,158,11,.18)}
+.cs-pt-paint-cell.bad  .cs-pt-paint-cell-value .dot{background:#dc2626;box-shadow:0 0 0 2px rgba(220,38,38,.18)}
+.cs-pt-paint-cell.ok   .cs-pt-paint-cell-value .unit{color:#16a34a;opacity:.7}
+.cs-pt-paint-cell.warn .cs-pt-paint-cell-value .unit{color:#b45309;opacity:.7}
+.cs-pt-paint-cell.bad  .cs-pt-paint-cell-value .unit{color:#b91c1c;opacity:.7}
 .cs-pt-paint-legend{display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f2;font-size:11px;color:#6b7280}
 .cs-pt-paint-legend-item{display:inline-flex;align-items:center;gap:6px;line-height:1.3}
 .cs-pt-paint-legend-item .sw{display:inline-block;width:10px;height:10px;border-radius:3px;flex-shrink:0}
@@ -1996,22 +2008,28 @@
                         $panelLabel = is_array($value) && isset($value['area'])
                             ? $value['area']
                             : (is_numeric($panel) ? ($paintPanelNames[$panel] ?? 'Panel '.($panel + 1)) : $panel);
-                        // Thresholds per user spec:
-                        //   ≤150 µm  → green  (fabryczna powłoka)
-                        //   151–250  → orange (druga warstwa lakieru)
-                        //   >250     → red    (szpachla / naprawa)
-                        $cls = $numVal > 250 ? 'bad' : ($numVal > 150 ? 'warn' : 'ok');
+                        // Reference thresholds:
+                        //   90–150  µm → green  (fabryczna powłoka)
+                        //   150–300 µm → orange (ponownie lakierowany)
+                        //   >300    µm → red    (szpachla / naprawa)
+                        // Values below 90 µm are not in the reference colour map; treat
+                        // them as factory-range (green) since they represent an unusually
+                        // thin original coat rather than damage.
+                        $cls = $numVal > 300 ? 'bad' : ($numVal > 150 ? 'warn' : 'ok');
                     @endphp
                     <div class="cs-pt-paint-cell {{ $cls }}">
                         <span class="cs-pt-paint-cell-label">{{ $panelLabel }}</span>
-                        <span class="cs-pt-paint-cell-value">{{ $numVal }}<span class="unit">µm</span></span>
+                        <span class="cs-pt-paint-cell-value">
+                            <span class="dot" aria-hidden="true"></span>
+                            <span class="num">{{ $numVal }}<span class="unit">µm</span></span>
+                        </span>
                     </div>
                     @endforeach
                 </div>
                 <div class="cs-pt-paint-legend">
-                    <span class="cs-pt-paint-legend-item"><span class="sw" style="background:#16a34a"></span>Fabryczna powłoka (≤150 µm)</span>
-                    <span class="cs-pt-paint-legend-item"><span class="sw" style="background:#f59e0b"></span>Druga warstwa (151–250 µm)</span>
-                    <span class="cs-pt-paint-legend-item"><span class="sw" style="background:#dc2626"></span>Szpachla / naprawa (>250 µm)</span>
+                    <span class="cs-pt-paint-legend-item"><span class="sw" style="background:#16a34a"></span>Lakier fabryczny (90–150 µm)</span>
+                    <span class="cs-pt-paint-legend-item"><span class="sw" style="background:#f59e0b"></span>Ponownie lakierowany (150–300 µm)</span>
+                    <span class="cs-pt-paint-legend-item"><span class="sw" style="background:#dc2626"></span>Naprawa / szpachla (powyżej 300 µm)</span>
                 </div>
                 @if($car->has_certicheck)
                 <a href="{{ route('catalog.certicheck', $car->slug) }}" class="cs-pt-paint-cta">
