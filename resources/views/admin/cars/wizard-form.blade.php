@@ -1313,6 +1313,39 @@
      ║  STEP 6 — Wyposażenie                                      ║
      ╚══════════════════════════════════════════════════════════════╝ --}}
 <div class="wz-step" data-step="6">
+    {{-- Highlighted equipment — top 8 icon tiles shown on the public page --}}
+    @php
+        $highlighted = old('highlighted_equipment', $car?->highlighted_equipment ?? []);
+        $highlighted = is_array($highlighted) ? array_pad(array_slice($highlighted, 0, 8), 8, null) : array_fill(0, 8, null);
+        $eqGrouped   = \App\Helpers\EquipmentCatalog::optionsGroupedByCategory();
+        $eqCatLabels = \App\Helpers\EquipmentCatalog::CATEGORIES;
+    @endphp
+    <div class="wz-section" style="margin-bottom:18px">
+        <div class="wz-section-header">
+            <div class="wz-section-badge"><i data-lucide="star" style="width:16px;height:16px"></i></div>
+            <div><div class="wz-section-title">Najważniejsze wyposażenie (8 kafelków)</div><div class="wz-section-subtitle">Wybierz do 8 elementów, które wyróżnią się ikonami na górze sekcji Wyposażenie. Możesz zostawić puste sloty.</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
+            @for($i = 0; $i < 8; $i++)
+            <div class="wz-field" style="margin:0">
+                <label>Slot {{ $i + 1 }}</label>
+                <select name="highlighted_equipment[]">
+                    <option value="">— pusty —</option>
+                    @foreach($eqGrouped as $catKey => $catOptions)
+                        @if(!empty($catOptions))
+                        <optgroup label="{{ $eqCatLabels[$catKey]['label'] }}">
+                            @foreach($catOptions as $optKey => $opt)
+                            <option value="{{ $optKey }}" @selected($highlighted[$i] === $optKey)>{{ $opt['label'] }}</option>
+                            @endforeach
+                        </optgroup>
+                        @endif
+                    @endforeach
+                </select>
+            </div>
+            @endfor
+        </div>
+    </div>
+
     <div class="wz-section">
         <div class="wz-section-header">
             <div class="wz-section-badge"><i data-lucide="list-checks" style="width:16px;height:16px"></i></div>
