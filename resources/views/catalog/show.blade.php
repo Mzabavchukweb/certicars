@@ -291,7 +291,7 @@
     .cs-benefit-item:nth-last-child(-n+1):nth-child(odd),.cs-benefit-item:nth-last-child(-n+2):nth-child(2n){border-bottom:none}
 }
 @media(max-width:768px){
-    .cs-benefits-row{border-radius:14px;margin-top:8px;margin-bottom:20px;border-color:#e5e7eb;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .cs-benefits-row{border-radius:14px;margin-top:8px;margin-bottom:20px;border-color:#e5e7eb;box-shadow:0 2px 8px rgba(0,0,0,.06);width:auto;max-width:none}
     .cs-benefit-item{padding:16px 20px;gap:12px}
     .cs-benefit-ico{width:36px;height:36px;border-radius:10px}
     .cs-benefit-ico.flag{width:32px;height:32px}
@@ -336,7 +336,7 @@
     .cs-gethelp-section{padding:20px}
 }
 @media(max-width:768px){
-    .cs-gethelp-section{padding:18px 20px;border-radius:14px;border-color:#e5e7eb;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .cs-gethelp-section{padding:18px 20px;border-radius:14px;border-color:#e5e7eb;box-shadow:0 2px 8px rgba(0,0,0,.06);width:auto;max-width:none}
     .cs-gethelp-more{margin-left:0;margin-top:8px}
 }
 
@@ -359,7 +359,7 @@
     .cs-info-3card{padding:18px 18px}
 }
 @media(max-width:768px){
-    .cs-info-3row{grid-template-columns:1fr}
+    .cs-info-3row{grid-template-columns:1fr;width:auto;max-width:none}
     .cs-info-3card{border-radius:14px;border-color:#e5e7eb;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:18px 20px}
 }
 
@@ -800,7 +800,7 @@
     .cs-related-head-title{font-size:16px}
 }
 @media(max-width:768px){
-    .cs-related-section{padding:18px 20px;border-radius:14px;border-color:#e5e7eb;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .cs-related-section{padding:18px 20px;border-radius:14px;border-color:#e5e7eb;box-shadow:0 2px 8px rgba(0,0,0,.06);width:auto;max-width:none}
     .cs-related-controls{width:100%;margin-left:0;justify-content:space-between}
     .vcard-fuel-badge{font-size:10px;padding:3px 8px;top:10px;left:10px}
 }
@@ -811,8 +811,12 @@
 
 @media(max-width:768px){
     /* Mobile gutter: container padding is the SOLE source of side spacing.
-       Every child inherits this gutter equally — no per-class overrides needed. */
+       Reset desktop width:100%/max-width on all sections so they behave like
+       the cs-grid — natural block elements filling their parent equally. */
     .cs-wrap .container{padding-left:24px;padding-right:24px}
+    .cs-pt-row,
+    .cs-legal-bar,
+    .cs-data-section{width:auto;max-width:none}
     .cs-sections-2col{padding:0;margin:0}
     .cs-nav-bar{flex-direction:row;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0}
     .cs-nav-bar-left{flex:0 0 auto}
