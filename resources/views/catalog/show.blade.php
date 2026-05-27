@@ -388,8 +388,13 @@
 .cs-tech-list-status .check svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 
 /* ============ 360° CARDS SECTION ============ */
+/* 360° row — always a 2-column layout on desktop. When admin has only filled
+   one of the two sources, we still render the row as 2 columns and place the
+   single real card in the left column with a max-width so it doesn't visually
+   stretch full-width. We never invent a placeholder for the missing source. */
 .cs-pano360-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;max-width:calc(1200px - 48px);margin-left:auto;margin-right:auto;width:100%;box-sizing:border-box}
-.cs-pano360-row.single{grid-template-columns:1fr}
+.cs-pano360-row.single{grid-template-columns:repeat(2,minmax(0,1fr));justify-content:start}
+.cs-pano360-row.single .cs-pano360-card{max-width:100%}
 .cs-pano360-section-card{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box}
 .cs-pano360-section-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
 .cs-pano360-section-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
@@ -2086,13 +2091,25 @@
             if (preg_match('~(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|v/|shorts/))([\w-]{11})~', $rawVidUrl, $m)) $ytId = $m[1];
             elseif (preg_match('~vimeo\.com/(\d+)~', $rawVidUrl, $m)) $vimId = $m[1];
         }
+        // Hide the whole tech+video row when admin hasn't filled either side
+        // (no per-item status entries AND no engine recording of any form).
+        $hasAnyTechStatus = !empty(array_filter((array) ($car->technical_conditions ?? []), function ($v) {
+            if (is_array($v)) {
+                $s = $v['status'] ?? null;
+                $n = trim((string) ($v['note'] ?? ''));
+                return ($s && $s !== 'ok') || $n !== '';
+            }
+            return is_string($v) && trim($v) !== '';
+        }));
+        $showTechEngineRow = $hasAnyTechStatus || $hasEngineVideoLocal;
     @endphp
+    @if($showTechEngineRow)
     <div class="cs-tech-engine-row">
         {{-- LEFT — Stan techniczny podczas oględzin --}}
         <div class="cs-tech-engine-card">
             <div class="cs-tech-engine-card-head">
                 <div class="cs-tech-engine-card-ico">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+                    <x-icon name="shield-check" size="22"/>
                 </div>
                 <div class="cs-tech-engine-card-titlewrap">
                     <h3 class="cs-tech-engine-card-title">Stan techniczny podczas oględzin</h3>
@@ -2103,45 +2120,29 @@
             <div class="cs-tech-list-panel">
                 @foreach($techRows as $row)
                 @php $status = $techStatusFor($row['key']); @endphp
+                @php
+                    // Map our internal part keys → Lucide icon names. Keeps one
+                    // consistent visual family for all 8 tech-status rows.
+                    $techIconMap = [
+                        'engine'      => 'cog',
+                        'gear'        => 'settings-2',
+                        'suspension'  => 'activity',
+                        'brakes'      => 'disc-3',
+                        'steering'    => 'circle-dot',
+                        'ac'          => 'snowflake',
+                        'electronics' => 'cpu',
+                        'lights'      => 'lightbulb',
+                    ];
+                    $statusIconMap = ['ok' => 'check', 'warn' => 'alert-triangle', 'fail' => 'x'];
+                @endphp
                 <div class="cs-tech-list-row">
                     <span class="cs-tech-list-ico" aria-hidden="true">
-                        @switch($row['icon'])
-                            @case('engine')
-                                <svg viewBox="0 0 24 24"><path d="M5 11h2v-2h2v2h4v-2h4v3h2v3h-2v3h-4v2h-4v-2h-2v-2H5z"/><path d="M3 9h2"/><path d="M19 7v8"/></svg>
-                                @break
-                            @case('gear')
-                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                                @break
-                            @case('suspension')
-                                <svg viewBox="0 0 24 24"><path d="M3 12h3l2-4 4 8 2-4 2 4 2-2h3"/><path d="M3 18h18"/></svg>
-                                @break
-                            @case('brakes')
-                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="m5.6 5.6 2.1 2.1"/><path d="m16.3 16.3 2.1 2.1"/><path d="m5.6 18.4 2.1-2.1"/><path d="m16.3 7.7 2.1-2.1"/></svg>
-                                @break
-                            @case('steering')
-                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M12 14v8"/><path d="m3.5 8 7 4"/><path d="m20.5 8-7 4"/></svg>
-                                @break
-                            @case('ac')
-                                <svg viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M2 12h20"/><path d="m4.93 4.93 14.14 14.14"/><path d="m19.07 4.93-14.14 14.14"/></svg>
-                                @break
-                            @case('electronics')
-                                <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3"/><path d="M15 2v3"/><path d="M9 19v3"/><path d="M15 19v3"/><path d="M2 9h3"/><path d="M2 15h3"/><path d="M19 9h3"/><path d="M19 15h3"/></svg>
-                                @break
-                            @case('lights')
-                                <svg viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c1 .8 1.5 2 1.5 3.3h5c0-1.3.5-2.5 1.5-3.3A7 7 0 0 0 12 2z"/></svg>
-                                @break
-                        @endswitch
+                        <x-icon :name="$techIconMap[$row['icon']] ?? 'circle'" size="20"/>
                     </span>
                     <span class="cs-tech-list-name">{{ $row['label'] }}</span>
                     <span class="cs-tech-list-status {{ $status['cls'] === 'ok' ? '' : $status['cls'] }}">
                         <span class="check">
-                            @if($status['cls'] === 'ok')
-                                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                            @elseif($status['cls'] === 'warn')
-                                <svg viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                            @else
-                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-                            @endif
+                            <x-icon :name="$statusIconMap[$status['cls']] ?? 'check'" size="11"/>
                         </span>
                         {{ $status['label'] }}
                     </span>
@@ -2154,7 +2155,7 @@
         <div class="cs-tech-engine-card">
             <div class="cs-tech-engine-card-head">
                 <div class="cs-tech-engine-card-ico">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                    <x-icon name="video" size="22"/>
                 </div>
                 <div class="cs-tech-engine-card-titlewrap">
                     <h3 class="cs-tech-engine-card-title">Nagranie pracy silnika</h3>
@@ -2179,6 +2180,7 @@
             </div>
         </div>
     </div>
+    @endif
 
 
     {{-- WIDOK 360° POJAZDU — two clickable cards that jump to the gallery's 360° tab.
@@ -2189,7 +2191,7 @@
     <div class="cs-pano360-section-card">
         <div class="cs-pano360-section-head">
             <div class="cs-pano360-section-ico">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                <x-icon name="rotate-3d" size="22"/>
             </div>
             <div>
                 <h3 class="cs-pano360-section-title">Widok 360° pojazdu</h3>
@@ -2207,11 +2209,11 @@
                 @endif
                 <div class="cs-pano360-card-overlay"></div>
                 <span class="cs-pano360-card-mark">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <x-icon name="map-pin" size="12"/>
                     360° · Z ZEWNĄTRZ
                 </span>
                 <span class="cs-pano360-card-play">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    <x-icon name="rotate-3d" size="32"/>
                 </span>
                 <div class="cs-pano360-card-text">
                     <h4 class="cs-pano360-card-title">360° z zewnątrz</h4>
@@ -2228,11 +2230,11 @@
                 @endif
                 <div class="cs-pano360-card-overlay"></div>
                 <span class="cs-pano360-card-mark">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    <x-icon name="armchair" size="12"/>
                     360° · WNĘTRZE
                 </span>
                 <span class="cs-pano360-card-play">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    <x-icon name="rotate-3d" size="32"/>
                 </span>
                 <div class="cs-pano360-card-text">
                     <h4 class="cs-pano360-card-title">360° wnętrza</h4>
@@ -2262,7 +2264,7 @@
         <div class="cs-pt-card">
             <div class="cs-pt-card-head">
                 <div class="cs-pt-card-ico" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5"/><path d="M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></svg>
+                    <x-icon name="paintbrush" size="22"/>
                 </div>
                 <div>
                     <h3 class="cs-pt-card-title">Pomiary grubości lakieru</h3>
@@ -2312,7 +2314,7 @@
                 @if($car->has_certicheck)
                 <a href="{{ route('catalog.certicheck', $car->slug) }}" class="cs-pt-paint-cta">
                     Zobacz szczegółowy raport
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    <x-icon name="arrow-right" size="14"/>
                 </a>
                 @endif
             @else
@@ -2324,7 +2326,7 @@
         <div class="cs-pt-card">
             <div class="cs-pt-card-head">
                 <div class="cs-pt-card-ico" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>
+                    <x-icon name="circle-dot" size="22"/>
                 </div>
                 <div>
                     <h3 class="cs-pt-card-title">Koła i opony</h3>
@@ -2443,7 +2445,7 @@
         <div class="cs-related-head">
             <div class="cs-related-head-left">
                 <div class="cs-related-head-ico" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+                    <x-icon name="car" size="22"/>
                 </div>
                 <div>
                     <h3 class="cs-related-head-title">Podobne pojazdy</h3>
@@ -2453,14 +2455,14 @@
             <div class="cs-related-controls">
                 <a href="{{ route('catalog') }}" class="cs-related-all">
                     Zobacz wszystkie
-                    <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    <x-icon name="arrow-right" size="14"/>
                 </a>
                 <div class="cs-related-nav">
                     <button type="button" onclick="csRelScroll(-1)" aria-label="Przewiń w lewo">
-                        <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+                        <x-icon name="chevron-left" size="18"/>
                     </button>
                     <button type="button" onclick="csRelScroll(1)" aria-label="Przewiń w prawo">
-                        <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                        <x-icon name="chevron-right" size="18"/>
                     </button>
                 </div>
             </div>
@@ -2509,7 +2511,7 @@
     {{-- Legal disclaimer bar — sits below all single-car content. --}}
     <div class="cs-legal-bar">
         <div class="cs-legal-bar-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+            <x-icon name="shield" size="14"/>
         </div>
         <p>
             <strong>Informacje zawarte na tej stronie</strong> zostały przygotowane z najwyższą starannością.
@@ -2586,11 +2588,11 @@
 {{-- STICKY MOBILE CTA --}}
 <div class="cs-sticky-cta" id="csStickyBar">
     <a href="tel:+48585586090" class="cs-sticky-call">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <x-icon name="phone" size="16"/>
         Zadzwoń
     </a>
     <button type="button" class="cs-sticky-msg" onclick="csOpenInquiry('general','sticky_mobile_cta')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        <x-icon name="mail" size="16"/>
         Napisz
     </button>
 </div>
