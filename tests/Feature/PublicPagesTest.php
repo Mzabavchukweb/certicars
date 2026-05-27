@@ -519,20 +519,25 @@ class PublicPagesTest extends TestCase
         $this->assertStringContainsString('pano-exterior.jpg', $html);
     }
 
-    public function test_pano360_cards_section_renders_single_when_only_one_asset(): void
+    public function test_pano360_cards_section_renders_disabled_placeholder_for_missing_asset(): void
     {
+        // Reference layout requires both card slots side-by-side. The missing
+        // 360 source renders as a clean disabled placeholder card — the
+        // exterior card must NOT stretch full-width when interior data is missing.
         $car = $this->activeCar();
         \App\Models\CarImage::create(['car_id' => $car->id, 'type' => 'pano360ext', 'path' => 'https://cdn.example.test/cars/'.$car->id.'/pano-exterior.jpg', 'sort_order' => 0]);
 
         $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
 
         $this->assertStringContainsString('Widok 360° pojazdu',     $html);
-        $this->assertStringContainsString('cs-pano360-row single',  $html, 'Grid must collapse to a single-column variant when only one 360 asset is present.');
-        // The card-title <h4> is unique to the new section; the gallery tab
-        // buttons up top carry the same text so we have to match the card
-        // markup specifically here.
+        $this->assertStringNotContainsString('cs-pano360-row single', $html,
+            'Two-column grid must always render — no .single full-width collapse.');
+        // Real card for the asset that exists.
         $this->assertStringContainsString('<h4 class="cs-pano360-card-title">360° z zewnątrz</h4>', $html);
-        $this->assertStringNotContainsString('<h4 class="cs-pano360-card-title">360° wnętrza</h4>', $html);
+        // Disabled placeholder card for the missing interior asset.
+        $this->assertStringContainsString('cs-pano360-card disabled', $html,
+            'Missing 360 source must render as a disabled placeholder card.');
+        $this->assertStringContainsString('Brak widoku 360° wnętrza', $html);
     }
 
     public function test_pano360_card_image_urls_never_use_raw_storage_path(): void
