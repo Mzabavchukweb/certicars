@@ -742,7 +742,7 @@
 /* FLOATING WIDGETS — handled by global layout */
 
 @media(max-width:1024px){
-    .cs-grid{grid-template-columns:1fr;gap:20px}
+    .cs-grid{grid-template-columns:minmax(0,1fr);gap:20px}
     .cs-grid > div{min-width:0;max-width:100%}
     .cs-sidebar{position:static}
     .cs-calc-inline{display:none}
@@ -807,7 +807,7 @@
        so every section visually aligns. Per-section margin/max-width overrides used
        to live here and produced a double gutter (container pad + section margin)
        inconsistently across cards — removed. */
-    .cs-wrap .container{padding-left:24px;padding-right:24px}
+    .cs-wrap .container{padding-left:16px;padding-right:16px}
     .cs-sections-2col{padding:0!important;margin:0!important}
     .cs-nav-bar{flex-direction:row;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0}
     .cs-nav-bar-left{flex:0 0 auto}
@@ -927,7 +927,7 @@
     .cs-card{padding:20px}
 }
 @media(max-width:500px){
-    .cs-wrap .container{padding-left:20px;padding-right:20px}
+    .cs-wrap .container{padding-left:14px;padding-right:14px}
     .cs-sections-2col{padding:0!important}
     .cs-head h1{font-size:19px}
     .cs-gallery{border-radius:10px}
@@ -1061,8 +1061,9 @@
 #csShareToast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* INFO BENEFIT TILES under sidebar card — equal height, aligned rows */
-.cs-info-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;align-items:stretch}
-.cs-info-tile{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;height:100%;min-height:0}
+.cs-info-tiles{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:10px;align-items:stretch}
+.cs-info-tile{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 12px;text-align:center;display:flex;flex-direction:column;align-items:center;height:100%;min-height:0;min-width:0;overflow:hidden}
+.cs-info-tile *{max-width:100%;word-wrap:break-word}
 .cs-info-tile-icon{width:44px;height:44px;border-radius:12px;background:#e8f1ff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;flex-shrink:0}
 .cs-info-tile-title{font-size:14px;font-weight:800;color:#1a1a1a;margin:0 0 6px;letter-spacing:-.1px;flex-shrink:0}
 .cs-info-tile-body{font-size:11.5px;color:#6b7280;line-height:1.5;flex:1 1 auto}
@@ -1423,9 +1424,9 @@
                     </div>
                 </div>
                 <!-- CTA BUTTONS (mobile) -->
-                <div class="cs-mob-cta" style="display:none;grid-template-columns:1fr 1fr;gap:10px;padding:0 22px 16px">
-                    <a href="tel:+48585586090" style="display:flex;align-items:center;justify-content:center;gap:6px;background:#0066ff;color:#fff;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:700;text-decoration:none;border:none">Zadzwoń</a>
-                    <button type="button" onclick="csOpenInquiry('general','trust_banner_cta')" style="display:flex;align-items:center;justify-content:center;gap:6px;background:#f3f4f6;color:#1a1a1a;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:700;border:none;cursor:pointer">Napisz wiadomość</button>
+                <div class="cs-mob-cta" style="display:none;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;padding:0 16px 16px">
+                    <a href="tel:+48585586090" style="display:flex;align-items:center;justify-content:center;gap:6px;background:#0066ff;color:#fff;padding:13px 10px;border-radius:12px;font-size:14px;font-weight:700;text-decoration:none;border:none;min-width:0;white-space:nowrap">Zadzwoń</a>
+                    <button type="button" onclick="csOpenInquiry('general','trust_banner_cta')" style="display:flex;align-items:center;justify-content:center;gap:6px;background:#f3f4f6;color:#1a1a1a;padding:13px 10px;border-radius:12px;font-size:14px;font-weight:700;border:none;cursor:pointer;min-width:0;white-space:nowrap">Napisz</button>
                 </div>
 
 
