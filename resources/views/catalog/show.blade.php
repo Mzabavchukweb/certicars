@@ -271,6 +271,96 @@
 /* Empty placeholder when a chip's category has no damages */
 .cs-damage-empty-cat{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13.5px;background:#fff;border:1px dashed #e5e7eb;border-radius:14px;grid-column:1 / -1}
 
+/* ============ BENEFIT ROW (5 items below gallery) ============ */
+.cs-benefits-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;background:#fff;border:1px solid #eeeef0;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);max-width:calc(1200px - 48px);margin:0 auto 16px;padding:0;overflow:hidden;width:100%;box-sizing:border-box}
+.cs-benefit-item{display:flex;align-items:center;gap:10px;padding:14px 16px;border-right:1px solid #eef0f3;min-width:0}
+.cs-benefit-item:last-child{border-right:none}
+.cs-benefit-ico{flex-shrink:0;width:34px;height:34px;border-radius:10px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-benefit-ico svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* Country flag variant — circular, no tinted background, bordered. Used by the
+   leftmost "Sprowadzony z …" tile so it visually matches the reference. */
+.cs-benefit-ico.flag{width:30px;height:30px;border-radius:50%;background:#fff;border:1px solid rgba(0,0,0,.08);overflow:hidden;padding:0}
+.cs-benefit-ico.flag .cs-flag{display:flex;flex-direction:column;width:100%;height:100%}
+.cs-benefit-ico.flag .cs-flag span{flex:1;display:block;width:100%}
+.cs-benefit-text{font-size:12.5px;font-weight:600;color:#0a0a0a;line-height:1.35;letter-spacing:-.1px;min-width:0}
+@media(max-width:1024px){
+    .cs-benefits-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .cs-benefit-item{border-right:1px solid #eef0f3;border-bottom:1px solid #eef0f3}
+    .cs-benefit-item:nth-child(2n){border-right:none}
+    .cs-benefit-item:nth-last-child(-n+1):nth-child(odd),.cs-benefit-item:nth-last-child(-n+2):nth-child(2n){border-bottom:none}
+}
+@media(max-width:768px){
+    .cs-benefits-row{margin-left:14px!important;margin-right:14px!important;max-width:none!important;border-radius:12px}
+}
+@media(max-width:500px){
+    .cs-benefits-row{grid-template-columns:1fr;margin-left:12px!important;margin-right:12px!important}
+    .cs-benefit-item{border-right:none}
+    .cs-benefit-item:last-child{border-bottom:none}
+}
+
+/* ============ GWARANCJA TECHNICZNA — GetHelp warranty section ============ */
+.cs-gethelp-section{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box}
+.cs-gethelp-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.cs-gethelp-head-left{display:flex;align-items:flex-start;gap:14px;flex:1;min-width:240px}
+.cs-gethelp-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-gethelp-ico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cs-gethelp-title{font-size:17px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:0 0 4px;line-height:1.25;display:flex;align-items:center;gap:6px}
+.cs-gethelp-title .info-i{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#eff6ff;color:#0066ff;font-size:10px;font-weight:700;flex-shrink:0}
+.cs-gethelp-sub{font-size:12.5px;color:#6b7280;line-height:1.55;margin:0;max-width:580px}
+.cs-gethelp-more{font-size:13px;font-weight:700;color:#0066ff;display:inline-flex;align-items:center;gap:5px;text-decoration:none;margin-left:auto;align-self:center}
+.cs-gethelp-more:hover{color:#0052cc}
+.cs-gethelp-more svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4}
+.cs-gethelp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.cs-gethelp-pkg{position:relative;background:#fff;border:1.5px solid #e5e7eb;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:8px;transition:border-color .15s,background .15s;cursor:pointer}
+.cs-gethelp-pkg:hover{border-color:#cbd5e1}
+.cs-gethelp-pkg.active{background:#eff6ff;border-color:#0066ff;box-shadow:0 0 0 3px rgba(0,102,255,.1)}
+.cs-gethelp-pkg-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.cs-gethelp-pkg-name{font-size:14.5px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px}
+.cs-gethelp-pkg-badge{display:inline-flex;align-items:center;padding:3px 8px;background:#dcfce7;color:#15803d;font-size:10px;font-weight:700;border-radius:50px;letter-spacing:.3px;text-transform:uppercase}
+.cs-gethelp-pkg.active .cs-gethelp-pkg-badge{background:#0066ff;color:#fff}
+.cs-gethelp-pkg-price{font-size:13px;font-weight:700;color:#0a0a0a}
+.cs-gethelp-pkg-price .free{color:#16a34a}
+.cs-gethelp-pkg-desc{font-size:11.5px;color:#6b7280;line-height:1.5;margin:0}
+.cs-gethelp-foot{margin-top:14px;padding-top:14px;border-top:1px solid #f0f0f2;font-size:11.5px;color:#6b7280;line-height:1.55}
+.cs-gethelp-foot strong{color:#0a0a0a;font-weight:700}
+@media(max-width:1024px){
+    .cs-gethelp-grid{grid-template-columns:1fr;gap:10px}
+    .cs-gethelp-section{padding:20px}
+}
+@media(max-width:768px){
+    .cs-gethelp-section{margin-left:14px!important;margin-right:14px!important;max-width:none!important;padding:18px 16px;border-radius:14px}
+    .cs-gethelp-more{margin-left:0;margin-top:8px}
+}
+@media(max-width:500px){
+    .cs-gethelp-section{margin-left:12px!important;margin-right:12px!important}
+}
+
+/* ============ 3-card bottom row (Historia / Dokumenty / Formalności) ============ */
+.cs-info-3row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box;align-items:stretch}
+.cs-info-3card{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:22px 24px;display:flex;flex-direction:column;min-width:0;height:100%}
+.cs-info-3card-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #f0f0f2}
+.cs-info-3card-ico{flex-shrink:0;width:38px;height:38px;border-radius:10px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-info-3card-ico svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cs-info-3card-title{font-size:15px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0;line-height:1.3}
+.cs-info-3card-rows{flex:1;display:flex;flex-direction:column}
+.cs-info-3row-line{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid #f5f5f7;font-size:13px;line-height:1.4}
+.cs-info-3row-line:last-child{border-bottom:none}
+.cs-info-3row-line .lbl{color:#6b7280;font-weight:500;min-width:0;flex-shrink:1}
+.cs-info-3row-line .val{font-weight:700;color:#0a0a0a;text-align:right;word-break:break-word;flex-shrink:0;max-width:60%}
+.cs-info-3row-line .val.muted{color:#9ca3af;font-weight:500;font-style:italic}
+.cs-info-3row-line .val.ok{color:#15803d}
+@media(max-width:1024px){
+    .cs-info-3row{grid-template-columns:1fr 1fr;gap:14px}
+    .cs-info-3card{padding:18px 18px}
+}
+@media(max-width:768px){
+    .cs-info-3row{grid-template-columns:1fr;margin-left:14px!important;margin-right:14px!important;max-width:none!important}
+    .cs-info-3card{border-radius:14px}
+}
+@media(max-width:500px){
+    .cs-info-3row{margin-left:12px!important;margin-right:12px!important}
+}
+
 /* ============ TECH + ENGINE-VIDEO TWO-COLUMN ROW ============ */
 .cs-tech-engine-row{display:grid;grid-template-columns:1.15fr 1fr;gap:20px;margin-bottom:16px;align-items:stretch;max-width:calc(1200px - 48px);margin-left:auto;margin-right:auto;width:100%;box-sizing:border-box}
 .cs-tech-engine-card{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;display:flex;flex-direction:column;min-width:0;height:100%}
@@ -350,6 +440,122 @@
     .cs-pano360-card{height:180px}
     .cs-pano360-card-play{width:56px;height:56px}
     .cs-pano360-card-play svg{width:22px;height:22px}
+}
+
+/* ============ PAINT + TIRES TWO-CARD ROW ============ */
+/* Shares the same card system as .cs-tech-engine-row (PR #25): white card,
+   18px radius, blue 44px icon tile, same content container width. */
+.cs-pt-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;max-width:calc(1200px - 48px);margin-left:auto;margin-right:auto;width:100%;box-sizing:border-box;align-items:stretch}
+.cs-pt-card{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;display:flex;flex-direction:column;min-width:0;height:100%}
+.cs-pt-card-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.cs-pt-card-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-pt-card-ico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cs-pt-card-title{font-size:17px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:0 0 6px;line-height:1.25}
+.cs-pt-card-sub{font-size:12.5px;color:#6b7280;line-height:1.55;margin:0;max-width:520px}
+
+/* PAINT — compact grid of measurements with status colours */
+.cs-pt-paint-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;flex:1}
+/* Paint cell — same layout as before, refined visual styling per the reference:
+   soft tinted background per status, colored dot next to the value, smaller
+   muted µm unit, neutral grey label. Status modifiers .ok / .warn / .bad map
+   to the three threshold buckets (≤150 / 151–300 / >300). */
+.cs-pt-paint-cell{background:#f9fafb;border:1px solid #f0f0f2;border-radius:10px;padding:11px 13px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.cs-pt-paint-cell.ok  {background:#f0fdf4;border-color:#bbf7d0}
+.cs-pt-paint-cell.warn{background:#fffbeb;border-color:#fde68a}
+.cs-pt-paint-cell.bad {background:#fef2f2;border-color:#fecaca}
+.cs-pt-paint-cell-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.45px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-pt-paint-cell-value{font-size:16px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;display:inline-flex;align-items:center;gap:7px;line-height:1.1}
+.cs-pt-paint-cell-value .dot{display:inline-block;width:9px;height:9px;border-radius:50%;flex-shrink:0;background:#16a34a;box-shadow:0 0 0 2px rgba(22,163,74,.18)}
+.cs-pt-paint-cell-value .num{display:inline-flex;align-items:baseline;gap:3px}
+.cs-pt-paint-cell-value .unit{font-size:11px;font-weight:600;color:#6b7280;letter-spacing:0}
+.cs-pt-paint-cell.ok   .cs-pt-paint-cell-value{color:#15803d}
+.cs-pt-paint-cell.warn .cs-pt-paint-cell-value{color:#b45309}
+.cs-pt-paint-cell.bad  .cs-pt-paint-cell-value{color:#b91c1c}
+.cs-pt-paint-cell.ok   .cs-pt-paint-cell-value .dot{background:#16a34a;box-shadow:0 0 0 2px rgba(22,163,74,.18)}
+.cs-pt-paint-cell.warn .cs-pt-paint-cell-value .dot{background:#f59e0b;box-shadow:0 0 0 2px rgba(245,158,11,.18)}
+.cs-pt-paint-cell.bad  .cs-pt-paint-cell-value .dot{background:#dc2626;box-shadow:0 0 0 2px rgba(220,38,38,.18)}
+.cs-pt-paint-cell.ok   .cs-pt-paint-cell-value .unit{color:#16a34a;opacity:.7}
+.cs-pt-paint-cell.warn .cs-pt-paint-cell-value .unit{color:#b45309;opacity:.7}
+.cs-pt-paint-cell.bad  .cs-pt-paint-cell-value .unit{color:#b91c1c;opacity:.7}
+.cs-pt-paint-legend{display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f2;font-size:11px;color:#6b7280}
+.cs-pt-paint-legend-item{display:inline-flex;align-items:center;gap:6px;line-height:1.3}
+.cs-pt-paint-legend-item .sw{display:inline-block;width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.cs-pt-paint-cta{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:12.5px;font-weight:700;color:#0066ff;text-decoration:none;align-self:flex-start;padding:8px 14px;border:1.5px solid #dbeafe;background:#eff6ff;border-radius:10px;transition:background .15s,border-color .15s}
+.cs-pt-paint-cta:hover{background:#dbeafe;border-color:#bfdbfe;color:#0052cc}
+.cs-pt-paint-cta svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2}
+
+/* TIRES — stacked-rows layout. No tire/wheel image: one card per tire set
+   with four full-width rows (position + spec text on the left, green tread
+   pill on the right) and a compact summary footer (rim + overall status). */
+.cs-pt-tire-set{background:#fff;border:1px solid #eeeef0;border-radius:14px;padding:6px 16px 16px;flex:1;display:flex;flex-direction:column}
+.cs-pt-tire-set-head{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:#0a0a0a;letter-spacing:-.1px;padding:12px 0 8px;border-bottom:1px solid #eef0f3;margin-bottom:4px}
+.cs-pt-tire-set-head .mount{color:#0066ff;font-weight:600;font-size:12.5px}
+.cs-pt-tire-set-head .info{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#eff6ff;color:#0066ff;flex-shrink:0;margin-left:2px}
+.cs-pt-tire-set-head .info svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.4}
+
+/* Single tire row */
+.cs-pt-tire-row{display:flex;align-items:center;gap:14px;padding:14px 4px;border-bottom:1px solid #f0f0f2}
+.cs-pt-tire-row:last-of-type{border-bottom:none}
+.cs-pt-tire-row-info{flex:1;min-width:0}
+.cs-pt-tire-row-pos{font-size:13.5px;font-weight:700;color:#0a0a0a;letter-spacing:-.1px;margin-bottom:2px;line-height:1.3}
+.cs-pt-tire-row-spec{font-size:12.5px;color:#374151;line-height:1.35;word-break:break-word}
+.cs-pt-tire-row-model{font-size:12px;color:#6b7280;margin-top:2px;line-height:1.35}
+.cs-pt-tire-row-empty{font-size:12px;color:#9ca3af;font-style:italic}
+
+/* Green tread pill (right side, premium look) */
+.cs-pt-tire-tread-pill{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;padding:7px 14px;border-radius:50px;background:#dcfce7;color:#15803d;font-size:13px;font-weight:700;letter-spacing:-.1px;min-width:78px;text-align:center;line-height:1.2}
+.cs-pt-tire-tread-pill.warn{background:#fef3c7;color:#b45309}
+.cs-pt-tire-tread-pill.bad{background:#fee2e2;color:#b91c1c}
+.cs-pt-tire-tread-pill.empty{background:#f1f5f9;color:#94a3b8;font-weight:600}
+
+/* Bottom summary row inside the same set card */
+.cs-pt-tire-summary{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 4px 4px;margin-top:8px;border-top:1px solid #f0f0f2;font-size:13px;color:#374151;flex-wrap:wrap}
+.cs-pt-tire-summary-left{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:#0a0a0a;min-width:0}
+.cs-pt-tire-summary-left .ico{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#eff6ff;color:#0066ff;flex-shrink:0}
+.cs-pt-tire-summary-left .ico svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.cs-pt-tire-summary-right{font-size:13px;font-weight:700;color:#15803d;display:inline-flex;align-items:center;gap:6px;flex-shrink:0}
+.cs-pt-tire-summary-right.warn{color:#b45309}
+.cs-pt-tire-summary-right.bad{color:#b91c1c}
+.cs-pt-tire-summary-right .ico{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#dcfce7;color:#15803d}
+.cs-pt-tire-summary-right.warn .ico{background:#fef3c7;color:#b45309}
+.cs-pt-tire-summary-right.bad .ico{background:#fee2e2;color:#b91c1c}
+.cs-pt-tire-summary-right .ico svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+
+.cs-pt-tire-empty{font-size:12px;color:#9ca3af;font-style:italic}
+
+@media(max-width:768px){
+    .cs-pt-tire-set{padding:4px 14px 14px}
+    .cs-pt-tire-row{padding:12px 2px;gap:10px}
+    .cs-pt-tire-row-pos{font-size:13px}
+    .cs-pt-tire-row-spec{font-size:12px}
+    .cs-pt-tire-row-model{font-size:11.5px}
+    .cs-pt-tire-tread-pill{font-size:12px;min-width:66px;padding:6px 12px}
+    .cs-pt-tire-summary{flex-direction:column;align-items:flex-start;gap:8px;padding-top:12px}
+}
+@media(max-width:500px){
+    .cs-pt-tire-set{padding:4px 12px 12px}
+    .cs-pt-tire-row{padding:11px 2px}
+    .cs-pt-tire-tread-pill{min-width:60px;font-size:11.5px}
+}
+
+/* Empty state shared by both cards */
+.cs-pt-empty{font-size:13px;color:#9ca3af;font-style:italic;padding:24px 0;text-align:center;background:#fafbfc;border:1px dashed #e5e7eb;border-radius:10px;flex:1;display:flex;align-items:center;justify-content:center}
+
+@media(max-width:1024px){
+    .cs-pt-row{grid-template-columns:1fr;gap:14px}
+    .cs-pt-card{padding:20px}
+    .cs-pt-card-title{font-size:16px}
+    .cs-pt-paint-grid{grid-template-columns:repeat(2,1fr)}
+    .cs-pt-tire-list{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+    .cs-pt-row{margin-left:14px!important;margin-right:14px!important;max-width:none!important}
+    .cs-pt-card{padding:18px 16px;border-radius:14px}
+}
+@media(max-width:500px){
+    .cs-pt-row{margin-left:12px!important;margin-right:12px!important}
+    .cs-pt-paint-grid{grid-template-columns:1fr 1fr}
+    .cs-pt-tire-list{grid-template-columns:1fr 1fr}
 }
 
 /* Engine video panel (inside right card) */
@@ -480,7 +686,7 @@
 .cs-data-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;user-select:none;border-bottom:1px solid #eeeef0}
 .cs-data-header h2{font-size:17px;font-weight:700;color:#1a1a1a;letter-spacing:-.2px;display:flex;align-items:center;gap:8px;margin:0;line-height:1.3;font-family:'Inter',sans-serif}
 .cs-data-header h2 i,.cs-data-header h2 svg{display:inline-flex;align-items:center;justify-content:center}
-.cs-data-header h2 svg{width:18px;height:18px;flex-shrink:0;color:#10b981}
+.cs-data-header h2 svg,.cs-data-header h2 i[data-lucide],.cs-data-header h2 i.cs-icon{width:18px;height:18px;flex-shrink:0;color:#0066ff;stroke-width:2}
 .cs-data-header .chev{display:none}
 /* Collapsible accordion behavior — applied only at mobile breakpoint */
 @media(max-width:1024px){
@@ -555,6 +761,52 @@
     .cs-equipment-grid{grid-template-columns:1fr}
 }
 /* RELATED CARS */
+/* ============ PODOBNE POJAZDY (section wrapper + nav + fuel badge) ============ */
+/* Reuses the .cs-tech-engine-card system for the wrapper so the section sits
+   inside the same content-container card as the rest of the redesign. */
+.cs-related-section{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box}
+.cs-related-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.cs-related-head-left{display:flex;align-items:flex-start;gap:14px;flex:1;min-width:240px}
+.cs-related-head-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-related-head-ico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cs-related-head-title{font-size:17px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:0 0 6px;line-height:1.25}
+.cs-related-head-sub{font-size:12.5px;color:#6b7280;line-height:1.55;margin:0;max-width:520px}
+.cs-related-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-left:auto}
+.cs-related-all{font-size:13px;font-weight:700;color:#0066ff;display:inline-flex;align-items:center;gap:4px;text-decoration:none}
+.cs-related-all:hover{color:#0052cc}
+.cs-related-all svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4}
+.cs-related-nav{display:flex;gap:6px}
+.cs-related-nav button{width:34px;height:34px;border-radius:50%;border:1.5px solid #e5e7eb;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .15s,color .15s;color:#374151;padding:0}
+.cs-related-nav button:hover{border-color:#0066ff;color:#0066ff}
+.cs-related-nav button:disabled{opacity:.4;cursor:not-allowed;border-color:#e5e7eb;color:#374151}
+.cs-related-nav button svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4}
+
+/* Fuel badge on each vcard (top-left). Heart stays on the right via existing
+   .lcard-fav class. */
+.vcard-fuel-badge{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.96);color:#0a0a0a;font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;letter-spacing:.3px;display:inline-flex;align-items:center;gap:5px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 1px 4px rgba(0,0,0,.1);z-index:2}
+.vcard-fuel-badge svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* Legal disclaimer bar — sits below the related cars section. */
+.cs-legal-bar{display:flex;align-items:flex-start;gap:10px;background:#eff6ff;border:1px solid #dbeafe;border-radius:12px;padding:12px 16px;max-width:calc(1200px - 48px);margin:0 auto 28px;font-size:12px;line-height:1.55;color:#475569}
+.cs-legal-bar-ico{flex-shrink:0;width:28px;height:28px;border-radius:8px;background:#dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.cs-legal-bar-ico svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.cs-legal-bar p{margin:0}
+.cs-legal-bar strong{color:#0a0a0a;font-weight:700}
+
+@media(max-width:1024px){
+    .cs-related-section{padding:20px}
+    .cs-related-head-title{font-size:16px}
+}
+@media(max-width:768px){
+    .cs-related-section,.cs-legal-bar{margin-left:14px!important;margin-right:14px!important;max-width:none!important}
+    .cs-related-section{padding:18px 16px;border-radius:14px}
+    .cs-related-controls{width:100%;margin-left:0;justify-content:space-between}
+    .vcard-fuel-badge{font-size:10px;padding:3px 8px;top:10px;left:10px}
+}
+@media(max-width:500px){
+    .cs-related-section,.cs-legal-bar{margin-left:12px!important;margin-right:12px!important}
+}
+
 .cs-related-grid{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px}
 .cs-related-grid::-webkit-scrollbar{display:none}
 .cs-related-grid>*{flex:0 0 calc(33.333% - 14px);scroll-snap-align:start;min-width:260px}
@@ -1224,12 +1476,129 @@
         $dispBody = CarLabels::bodyType($car->body_type ?? $car->category);
         $dispCountry = CarLabels::country($car->country_registration);
         $dispImportedFrom = CarLabels::country($car->imported_from);
+
+        // Benefit row — 5 short reassurance tiles. Items that depend on car
+        // fields render dynamic text; the rest are universal CertiCars offers.
+        // Resolve the imported-from country once so the leftmost tile can always
+        // render with the matching national flag. Falls back to Germany — the
+        // CertiCars default sourcing country — when admin hasn't filled the
+        // country fields yet (so the row stays at 5 cells like the reference).
+        $countryRaw    = $car->country_registration ?: $car->imported_from ?: 'Niemcy';
+        $countryName   = CarLabels::country($countryRaw) ?? $countryRaw;
+        $importedText  = CarLabels::importedFromStatement($car)
+                         ?? ('Sprowadzony z ' . match ($countryName) {
+                             'Niemcy' => 'Niemiec', 'Włochy' => 'Włoch', 'Czechy' => 'Czech',
+                             'Francja' => 'Francji', 'Hiszpania' => 'Hiszpanii', 'Holandia' => 'Holandii',
+                             'Belgia' => 'Belgii', 'Austria' => 'Austrii', 'Szwajcaria' => 'Szwajcarii',
+                             'Dania' => 'Danii', 'Szwecja' => 'Szwecji', 'Norwegia' => 'Norwegii',
+                             'Japonia' => 'Japonii', 'Polska' => 'Polski',
+                             'USA' => 'USA', 'Wielka Brytania' => 'Wielkiej Brytanii',
+                             default => $countryName,
+                         });
+        // Horizontal-stripe palette per country (top → bottom). Keys match the
+        // values returned by CarLabels::country(). Fallback is the German flag.
+        $flagPalettes = [
+            'Niemcy'           => ['#000000', '#dd0000', '#ffce00'],
+            'Polska'           => ['#ffffff', '#dc143c', '#dc143c'],
+            'Francja'          => ['#0055a4', '#ffffff', '#ef4135'],
+            'Włochy'           => ['#009246', '#ffffff', '#ce2b37'],
+            'Hiszpania'        => ['#aa151b', '#f1bf00', '#aa151b'],
+            'Holandia'         => ['#ae1c28', '#ffffff', '#21468b'],
+            'Belgia'           => ['#000000', '#fdda24', '#ef3340'],
+            'Austria'          => ['#ed2939', '#ffffff', '#ed2939'],
+            'Szwajcaria'       => ['#d52b1e', '#ffffff', '#d52b1e'],
+            'Dania'            => ['#c8102e', '#ffffff', '#c8102e'],
+            'Szwecja'          => ['#006aa7', '#fecc00', '#006aa7'],
+            'Norwegia'         => ['#ef2b2d', '#ffffff', '#002868'],
+            'Czechy'           => ['#ffffff', '#11457e', '#d7141a'],
+            'USA'              => ['#b22234', '#ffffff', '#3c3b6e'],
+            'Wielka Brytania'  => ['#012169', '#ffffff', '#c8102e'],
+            'Japonia'          => ['#ffffff', '#bc002d', '#ffffff'],
+        ];
+        $flagStripes = $flagPalettes[$countryName] ?? $flagPalettes['Niemcy'];
+
+        $exciseLine   = CarLabels::exciseStatement($car);
+        $benefits = [];
+        $benefits[] = ['ico' => 'flag',            'text' => $importedText, 'stripes' => $flagStripes];
+        if ($exciseLine || $car->taxation === null) $benefits[] = ['ico' => 'badge-check', 'text' => $exciseLine ?: 'Akcyza opłacona'];
+        $benefits[] = ['ico' => 'clipboard-check', 'text' => 'Przygotowany do rejestracji'];
+        $benefits[] = ['ico' => 'percent',         'text' => 'Kupujący zwolniony z PCC 2%'];
+        $benefits[] = ['ico' => 'search-check',    'text' => 'Możliwość sprawdzenia auta przed zakupem'];
+        $benefits = array_slice($benefits, 0, 5);
     @endphp
+
+    {{-- =================== BENEFIT ROW (5 items) =================== --}}
+    {{-- Icon system: Lucide via <x-icon>. Flag tile keeps its CSS stripes — no
+         Lucide flag glyph, and the colours are the country flag itself. --}}
+    <div class="cs-benefits-row">
+        @foreach($benefits as $b)
+        <div class="cs-benefit-item">
+            <span class="cs-benefit-ico{{ $b['ico'] === 'flag' ? ' flag' : '' }}" aria-hidden="true">
+                @if($b['ico'] === 'flag')
+                    <span class="cs-flag">
+                        <span style="background:{{ $b['stripes'][0] }}"></span>
+                        <span style="background:{{ $b['stripes'][1] }}"></span>
+                        <span style="background:{{ $b['stripes'][2] }}"></span>
+                    </span>
+                @else
+                    <x-icon :name="$b['ico']" size="18"/>
+                @endif
+            </span>
+            <span class="cs-benefit-text">{{ $b['text'] }}</span>
+        </div>
+        @endforeach
+    </div>
+
+    {{-- =================== GWARANCJA TECHNICZNA GETHELP =================== --}}
+    @php
+        // Three GetHelp packages. The "currently selected" one is whatever the car
+        // is sold with by default; falls back to "Classic" if no flag exists.
+        $activePkg = strtolower((string) ($car->gethelp_package ?? 'classic'));
+        $gethelpPackages = [
+            ['key' => 'classic', 'name' => 'GetHelp Classic', 'badge' => '12 mies.', 'price' => 'W cenie',         'desc' => 'Podstawowa ochrona układu napędowego oraz wsparcie assistance 24/7.'],
+            ['key' => 'optimum', 'name' => 'GetHelp Optimum', 'badge' => '24 mies.', 'price' => '+ 2 900 zł',      'desc' => 'Rozszerzony zakres ochrony, w tym elektronika, klimatyzacja i komfort jazdy.'],
+            ['key' => 'grand',   'name' => 'GetHelp Grand',   'badge' => '36 mies.', 'price' => '+ 5 900 zł',      'desc' => 'Najszersza ochrona z assistance, autem zastępczym i zakresem niemal pełnym.'],
+        ];
+    @endphp
+    <div class="cs-gethelp-section">
+        <div class="cs-gethelp-head">
+            <div class="cs-gethelp-head-left">
+                <div class="cs-gethelp-ico" aria-hidden="true">
+                    <x-icon name="shield-check" size="20"/>
+                </div>
+                <div>
+                    <h3 class="cs-gethelp-title">Gwarancja techniczna GetHelp <span class="info-i" title="Wybierz pakiet ochrony pojazdu po zakupie">i</span></h3>
+                    <p class="cs-gethelp-sub">Wybierz pakiet ochrony technicznej pojazdu po zakupie. Pakiet Classic jest w cenie samochodu, pozostałe można rozszerzyć.</p>
+                </div>
+            </div>
+            <a href="{{ url('/o-nas#gethelp') }}" class="cs-gethelp-more">
+                Dowiedz się więcej o gwarancji
+                <x-icon name="arrow-right" size="16"/>
+            </a>
+        </div>
+        <div class="cs-gethelp-grid">
+            @foreach($gethelpPackages as $pkg)
+            <div class="cs-gethelp-pkg{{ $pkg['key'] === $activePkg ? ' active' : '' }}">
+                <div class="cs-gethelp-pkg-head">
+                    <span class="cs-gethelp-pkg-name">{{ $pkg['name'] }}</span>
+                    <span class="cs-gethelp-pkg-badge">{{ $pkg['badge'] }}</span>
+                </div>
+                <div class="cs-gethelp-pkg-price">
+                    @if($pkg['price'] === 'W cenie')<span class="free">W cenie samochodu</span>@else{{ $pkg['price'] }}@endif
+                </div>
+                <p class="cs-gethelp-pkg-desc">{{ $pkg['desc'] }}</p>
+            </div>
+            @endforeach
+        </div>
+        <div class="cs-gethelp-foot">
+            <strong>Pełny zakres ochrony</strong> dostępny w wybranych ASO partnerskich. Szczegóły gwarancji można sprawdzić w umowie sprzedaży i regulaminie GetHelp.
+        </div>
+    </div>
 
     {{-- A. DANE POJAZDU — expanded by default on both desktop and mobile --}}
     <div class="cs-data-section cs-collapsible-mobile">
         <div class="cs-data-header open" onclick="csToggleAccordion(this)">
-            <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>Dane pojazdu</h2>
+            <h2><x-icon name="car" size="20"/>Dane pojazdu</h2>
             <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
         </div>
         <div class="cs-data-body">
@@ -1274,11 +1643,82 @@
         </div>
     </div>
 
+    {{-- =================== 3-CARD SUMMARY ROW (Historia / Dokumenty / Formalności) =================== --}}
+    @php
+        // Pull the same labelled values used by the deeper accordion sections so
+        // the summary row stays in sync without re-deriving anything. All helpers
+        // are null-safe; muted "—" placeholders appear only when the field is
+        // genuinely empty in admin.
+        $svc3      = CarLabels::bool($car->service_book) ?: CarLabels::bool($car->service_documentation);
+        $regCert3  = CarLabels::bool($car->registration_cert);
+        $manual3   = CarLabels::bool($car->owners_manual);
+        $bookSt3   = CarLabels::status($car->service_book_status) ?? $car->service_book_status;
+        $exciseSh  = match (strtolower((string) $car->taxation)) {
+            'paid', 'oplacona', 'opłacona' => 'Opłacona',
+            'unpaid', 'nieoplacona', 'nieopłacona' => 'Nieopłacona',
+            'na', 'nie_dotyczy', 'nie dotyczy' => 'Nie dotyczy',
+            default => $car->taxation ? ucfirst((string) $car->taxation) : null,
+        };
+        $hasMuted = fn($v) => $v ?: '—';
+    @endphp
+    <div class="cs-info-3row">
+        {{-- A. HISTORIA POJAZDU --}}
+        <div class="cs-info-3card">
+            <div class="cs-info-3card-head">
+                <div class="cs-info-3card-ico" aria-hidden="true">
+                    <x-icon name="history" size="18"/>
+                </div>
+                <h3 class="cs-info-3card-title">Historia pojazdu</h3>
+            </div>
+            <div class="cs-info-3card-rows">
+                <div class="cs-info-3row-line"><span class="lbl">Pochodzenie</span><span class="val {{ $dispCountry ? '' : 'muted' }}">{{ $hasMuted($dispCountry) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Importowany</span><span class="val">{{ $car->is_imported || $rowOk($car->imported_from) ? 'Tak' : 'Nie' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Liczba właścicieli</span><span class="val {{ $car->previous_owners === null ? 'muted' : '' }}">{{ $car->previous_owners === null ? '—' : ($car->previous_owners == 0 ? 'Pierwszy' : $car->previous_owners) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Historia serwisowa</span><span class="val {{ $svc3 ? '' : 'muted' }}">{{ $hasMuted($svc3) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Ostatni przegląd</span><span class="val {{ $rowOk($car->last_service) ? '' : 'muted' }}">{{ $hasMuted($car->last_service) }}</span></div>
+            </div>
+        </div>
+
+        {{-- B. DOKUMENTY --}}
+        <div class="cs-info-3card">
+            <div class="cs-info-3card-head">
+                <div class="cs-info-3card-ico" aria-hidden="true">
+                    <x-icon name="file-text" size="18"/>
+                </div>
+                <h3 class="cs-info-3card-title">Dokumenty</h3>
+            </div>
+            <div class="cs-info-3card-rows">
+                <div class="cs-info-3row-line"><span class="lbl">Faktura</span><span class="val ok">Tak, VAT-marża</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Dowód rejestracyjny</span><span class="val {{ $regCert3 ? '' : 'muted' }}">{{ $hasMuted($regCert3) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Liczba kluczyków</span><span class="val {{ $rowOk($car->number_of_keys) ? '' : 'muted' }}">{{ $hasMuted($car->number_of_keys) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Książka serwisowa</span><span class="val {{ $bookSt3 ? '' : 'muted' }}">{{ $hasMuted($bookSt3) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Instrukcja obsługi</span><span class="val {{ $manual3 ? '' : 'muted' }}">{{ $hasMuted($manual3) }}</span></div>
+            </div>
+        </div>
+
+        {{-- C. FORMALNOŚCI --}}
+        <div class="cs-info-3card">
+            <div class="cs-info-3card-head">
+                <div class="cs-info-3card-ico" aria-hidden="true">
+                    <x-icon name="shield-check" size="18"/>
+                </div>
+                <h3 class="cs-info-3card-title">Formalności</h3>
+            </div>
+            <div class="cs-info-3card-rows">
+                <div class="cs-info-3row-line"><span class="lbl">Akcyza</span><span class="val ok">{{ $exciseSh ?: 'Opłacona' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Przegląd techniczny</span><span class="val {{ $rowOk($car->next_inspection) ? '' : 'muted' }}">{{ $hasMuted($car->next_inspection) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Przygotowany do rejestracji</span><span class="val ok">Tak</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">PCC 2%</span><span class="val ok">Kupujący zwolniony</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Możliwość transportu</span><span class="val ok">Tak, w całej Polsce</span></div>
+            </div>
+        </div>
+    </div>
+
     {{-- B. HISTORIA POJAZDU — collapsed on mobile by default --}}
     @if($rowOk($dispCountry) || $rowOk($dispImportedFrom) || $rowOk($car->first_registration) || $car->previous_owners !== null || $rowOk($car->vehicle_history) || $rowOk(CarLabels::bool($car->service_book)))
     <div class="cs-data-section cs-collapsible-mobile">
         <div class="cs-data-header" onclick="csToggleAccordion(this)">
-            <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="m2 14 6-6 6 6 6-6"/></svg>Historia pojazdu</h2>
+            <h2><x-icon name="history" size="20"/>Historia pojazdu</h2>
             <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
         </div>
         <div class="cs-data-body">
@@ -1315,7 +1755,7 @@
     @if($rowOk($svcDoc) || $rowOk($asoSvc) || $rowOk($car->service_history) || $rowOk($car->last_service) || $rowOk($car->next_inspection))
     <div class="cs-data-section cs-collapsible-mobile">
         <div class="cs-data-header" onclick="csToggleAccordion(this)">
-            <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Serwisowanie</h2>
+            <h2><x-icon name="wrench" size="20"/>Serwisowanie</h2>
             <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
         </div>
         <div class="cs-data-body">
@@ -1352,7 +1792,7 @@
     @if($rowOk($cocDocs) || $rowOk($svcBookStatus) || $rowOk($regCert) || $rowOk($ownersManual) || $rowOk($vehicleFolder) || $rowOk($huAuReport))
     <div class="cs-data-section cs-collapsible-mobile">
         <div class="cs-data-header" onclick="csToggleAccordion(this)">
-            <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>Dokumenty</h2>
+            <h2><x-icon name="file-text" size="20"/>Dokumenty</h2>
             <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
         </div>
         <div class="cs-data-body">
@@ -1384,7 +1824,7 @@
     @if($rowOk($car->fuel_consumption) || $rowOk($car->co2_emission) || $rowOk($car->emission_class))
     <div class="cs-data-section cs-collapsible-mobile">
         <div class="cs-data-header" onclick="csToggleAccordion(this)">
-            <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>Zużycie paliwa</h2>
+            <h2><x-icon name="fuel" size="20"/>Zużycie paliwa</h2>
             <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
         </div>
         <div class="cs-data-body">
@@ -1804,161 +2244,223 @@
     </div>
     @endif
 
+    {{-- POMIARY LAKIERU + KOŁA I OPONY — two-card row directly below the 360 section.
+         Both cards use the same .cs-pt-card system (matches PR #25 tech+engine row).
+         Each card stays graceful with a "Brak danych" empty state. --}}
+    @php
+        $paintMeasurements = collect($car->paint_measurements ?? [])->filter(function ($v) {
+            $val = is_array($v) ? ($v['value'] ?? $v[0] ?? null) : $v;
+            return (int) preg_replace('/[^0-9]/', '', (string) $val) > 0;
+        });
+        $hasPaintData = $paintMeasurements->isNotEmpty();
+        $hasTireData  = $car->tireSets && $car->tireSets->count() > 0;
+    @endphp
+    @if($hasPaintData || $hasTireData)
+    <div class="cs-pt-row">
 
-
-    {{-- J. POMIARY GRUBOŚCI LAKIERU --}}
-    @if($car->paint_measurements && count($car->paint_measurements))
-    <div class="cs-data-section">
-        <div class="cs-data-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-            <h2><i data-lucide="paintbrush" aria-hidden="true"></i> Pomiary grubości lakieru</h2>
-            <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
-        </div>
-        <div class="cs-data-body open">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:8px">
-                <p style="font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:6px;margin:0">
-                    <i data-lucide="info" aria-hidden="true" style="width:14px;height:14px;flex-shrink:0"></i>
-                    Pomiary wykonane profesjonalnym czujnikiem lakieru. Normy fabryczne: 90–150 µm.
-                </p>
-                <a href="#" style="font-size:12px;font-weight:700;color:var(--blue);display:inline-flex;align-items:center;gap:4px;text-decoration:none;white-space:nowrap">Jak czytać pomiary? <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        {{-- LEFT — Pomiary grubości lakieru --}}
+        <div class="cs-pt-card">
+            <div class="cs-pt-card-head">
+                <div class="cs-pt-card-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5"/><path d="M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></svg>
+                </div>
+                <div>
+                    <h3 class="cs-pt-card-title">Pomiary grubości lakieru</h3>
+                    <p class="cs-pt-card-sub">Pomiary wykonane profesjonalnym czujnikiem podczas oględzin.</p>
+                </div>
             </div>
-            <div class="cs-paint-grid">
+            @if($hasPaintData)
                 @php
                     $paintPanelNames = [
                         0 => 'Dach', 1 => 'Maska', 2 => 'Błotnik P-L', 3 => 'Błotnik P-P',
                         4 => 'Drzwi P-L', 5 => 'Drzwi P-P', 6 => 'Błotnik T-L', 7 => 'Błotnik T-P',
                         8 => 'Drzwi T-L', 9 => 'Drzwi T-P', 10 => 'Klapa bagażnika',
-                        11 => 'Zderzak przód', 12 => 'Zderzak tył', 13 => 'Próg lewy', 14 => 'Próg prawy',
+                        11 => 'Zderzak P', 12 => 'Zderzak T', 13 => 'Próg lewy', 14 => 'Próg prawy',
                     ];
                 @endphp
-                @foreach($car->paint_measurements as $panel => $value)
-                @php
-                    $val = is_array($value) ? ($value['value'] ?? $value[0] ?? '') : $value;
-                    $numVal = (int) preg_replace('/[^0-9]/', '', $val);
-                    if($numVal <= 0) continue; // skip empty measurements
-                    $panelLabel = is_array($value) && isset($value['area']) ? $value['area'] : (is_numeric($panel) ? ($paintPanelNames[$panel] ?? 'Panel '.($panel + 1)) : $panel);
-                    $paintClass = $numVal > 300 ? 'paint-danger' : ($numVal > 150 ? 'paint-warn' : 'paint-ok');
-                    $dotColor = $numVal > 300 ? '#ef4444' : ($numVal > 150 ? '#f59e0b' : '#10b981');
-                @endphp
-                <div class="cs-paint-item {{ $paintClass }}">
-                    <div class="cs-paint-label">{{ $panelLabel }}</div>
-                    <div class="cs-paint-value"><span class="cs-paint-dot" style="background:{{ $dotColor }}"></span>{{ $val }} <span style="font-size:12px;font-weight:500;color:var(--text-3)">µm</span></div>
-                </div>
-                @endforeach
-            </div>
-            <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid #eeeef0;font-size:11px;font-weight:600">
-                <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#10b981"></span> Lakier fabryczny (90–150 µm)</span>
-                <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#f59e0b"></span> Ponownie lakierowany (150–300 µm)</span>
-                <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#ef4444"></span> Naprawa / szpachla (powyżej 300 µm)</span>
-            </div>
-        </div>
-    </div>
-    @endif
-
-        <!-- KOŁA I OPONY (CarOnSale style) -->
-    @if($car->tireSets->count())
-    <div class="cs-data-section">
-        <div class="cs-data-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-            <h2><i data-lucide="circle-dot" aria-hidden="true"></i> Koła i opony</h2>
-            <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
-        </div>
-        <div class="cs-data-body open">
-        @foreach($car->tireSets as $set)
-        @php
-            $setTires = $set->tires;
-            $positionLabels = [
-                'front_left' => 'Przednia lewa',
-                'front_right' => 'Przednia prawa',
-                'rear_left' => 'Tylna lewa',
-                'rear_right' => 'Tylna prawa',
-            ];
-        @endphp
-        <div class="cs-tire-set">
-            <h3 class="cs-tire-set-title">
-                {{ $set->set_number }}. Komplet @if($set->is_mounted)(zamontowane) <i data-lucide="info" aria-hidden="true"></i>@endif
-            </h3>
-            <div class="cs-tire-table">
-                <div class="cs-tire-th"></div>
-                @foreach($setTires as $t)
-                <div class="cs-tire-th" style="text-align:center">{{ $positionLabels[$t->position] ?? $t->position }}</div>
-                @endforeach
-                <div class="cs-tire-info">
-                    @if($set->tire_type)
-                    <div class="cs-tire-info-row"><div class="lbl">Rodzaj opon</div><div class="val">{{ $set->tire_type }}</div></div>
-                    @endif
-                    @if($set->rim)
-                    <div class="cs-tire-info-row"><div class="lbl">Felga</div><div class="val">{{ $set->rim }}</div></div>
-                    @endif
-                    <div class="cs-tire-info-row"><div class="lbl">Głębokość bieżnika</div></div>
-                    <div class="cs-tire-info-row"><div class="lbl">Stan</div></div>
-                </div>
-                @foreach($setTires as $t)
-                @php
-                    $depth = (float)($t->tread_depth ?? 0);
-                    $hasIssue = $t->condition && is_array($t->condition) && count($t->condition) > 0;
-                    $statusCls = $hasIssue ? 'warn' : 'ok';
-                @endphp
-                <div class="cs-tire-col">
-                    <div class="cs-tire-col-head">
-                        <div class="cs-tire-icon">
-                            <svg class="wheel" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="36" cy="36" r="33" stroke="#d4d4d8" stroke-width="2" fill="#f4f4f5"/>
-                                <circle cx="36" cy="36" r="24" stroke="#d4d4d8" stroke-width="1.5" fill="white"/>
-                                <circle cx="36" cy="36" r="6" fill="#e4e4e7" stroke="#d4d4d8" stroke-width="1"/>
-                                <line x1="36" y1="12" x2="36" y2="24" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="36" y1="48" x2="36" y2="60" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="12" y1="36" x2="24" y2="36" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="48" y1="36" x2="60" y2="36" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="19.8" y1="19.8" x2="27.5" y2="27.5" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="44.5" y1="44.5" x2="52.2" y2="52.2" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="52.2" y1="19.8" x2="44.5" y2="27.5" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="27.5" y1="44.5" x2="19.8" y2="52.2" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round"/>
-                            </svg>
-                            <span class="cs-tire-status-icon {{ $statusCls }}">
-                                @if($hasIssue)<i data-lucide="alert-triangle" aria-hidden="true"></i>
-                                @else<i data-lucide="check" aria-hidden="true"></i>@endif
-                            </span>
-                        </div>
-                        <div class="cs-tire-pos-name">{{ $positionLabels[$t->position] ?? $t->position }}</div>
+                <div class="cs-pt-paint-grid">
+                    @foreach($paintMeasurements as $panel => $value)
+                    @php
+                        $val = is_array($value) ? ($value['value'] ?? $value[0] ?? '') : $value;
+                        $numVal = (int) preg_replace('/[^0-9]/', '', (string) $val);
+                        $panelLabel = is_array($value) && isset($value['area'])
+                            ? $value['area']
+                            : (is_numeric($panel) ? ($paintPanelNames[$panel] ?? 'Panel '.($panel + 1)) : $panel);
+                        // Reference thresholds:
+                        //   90–150  µm → green  (fabryczna powłoka)
+                        //   150–300 µm → orange (ponownie lakierowany)
+                        //   >300    µm → red    (szpachla / naprawa)
+                        // Values below 90 µm are not in the reference colour map; treat
+                        // them as factory-range (green) since they represent an unusually
+                        // thin original coat rather than damage.
+                        $cls = $numVal > 300 ? 'bad' : ($numVal > 150 ? 'warn' : 'ok');
+                    @endphp
+                    <div class="cs-pt-paint-cell {{ $cls }}">
+                        <span class="cs-pt-paint-cell-label">{{ $panelLabel }}</span>
+                        <span class="cs-pt-paint-cell-value">
+                            <span class="dot" aria-hidden="true"></span>
+                            <span class="num">{{ $numVal }}<span class="unit">µm</span></span>
+                        </span>
                     </div>
-                    <div class="cs-tire-data-row" style="font-weight:700">{{ $t->tread_depth ?? '—' }}</div>
-                    <div class="cs-tire-data-row {{ $hasIssue ? 'warn-txt' : 'ok-txt' }}">
-                        @if($hasIssue)
-                            <i data-lucide="alert-triangle" aria-hidden="true" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:3px"></i>{{ implode(', ', $t->condition) }}
-                        @else
-                            <i data-lucide="check" aria-hidden="true" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:3px"></i>Brak nieprawidłowości
-                        @endif
-                    </div>
+                    @endforeach
                 </div>
-                @endforeach
-            </div>
-            @if($set->notes)
-            <div style="margin-top:12px;padding:10px 14px;background:var(--yellow-bg);border-radius:10px;font-size:12.5px;color:var(--yellow-dark);display:flex;align-items:center;gap:8px">
-                <i data-lucide="info" aria-hidden="true" style="width:14px;height:14px"></i> {{ $set->notes }}
-            </div>
+                <div class="cs-pt-paint-legend">
+                    <span class="cs-pt-paint-legend-item"><span class="sw" style="background:#16a34a"></span>Lakier fabryczny (90–150 µm)</span>
+                    <span class="cs-pt-paint-legend-item"><span class="sw" style="background:#f59e0b"></span>Ponownie lakierowany (150–300 µm)</span>
+                    <span class="cs-pt-paint-legend-item"><span class="sw" style="background:#dc2626"></span>Naprawa / szpachla (powyżej 300 µm)</span>
+                </div>
+                @if($car->has_certicheck)
+                <a href="{{ route('catalog.certicheck', $car->slug) }}" class="cs-pt-paint-cta">
+                    Zobacz szczegółowy raport
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </a>
+                @endif
+            @else
+                <div class="cs-pt-empty">Brak danych o pomiarach lakieru.</div>
             @endif
         </div>
-        @endforeach
+
+        {{-- RIGHT — Koła i opony --}}
+        <div class="cs-pt-card">
+            <div class="cs-pt-card-head">
+                <div class="cs-pt-card-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>
+                </div>
+                <div>
+                    <h3 class="cs-pt-card-title">Koła i opony</h3>
+                    <p class="cs-pt-card-sub">Informacje o stanie opon i felg.</p>
+                </div>
+            </div>
+            @if($hasTireData)
+                @php
+                    // Mounted set first, fall back to the first set otherwise.
+                    $primarySet = $car->tireSets->firstWhere('is_mounted', true) ?? $car->tireSets->first();
+                    $tiresByPos = $primarySet->tires->keyBy('position');
+                    $positions  = [
+                        'front_left'  => 'Przód lewy',
+                        'front_right' => 'Przód prawy',
+                        'rear_left'   => 'Tył lewy',
+                        'rear_right'  => 'Tył prawy',
+                    ];
+                    // Per-tire status from condition[] → ok / warn / bad enum.
+                    $resolveWheelStatus = function ($t) {
+                        if (!$t) return 'empty';
+                        $cond = is_array($t->condition) ? $t->condition : [];
+                        if (count($cond) === 0) return 'ok';
+                        $joined = mb_strtolower(implode(' ', $cond));
+                        if (str_contains($joined, 'zużyt') || str_contains($joined, 'uszkodz') || str_contains($joined, 'wymian') || str_contains($joined, 'pęknięt')) return 'bad';
+                        return 'warn';
+                    };
+                    $anyIssue = false;
+                    foreach ($tiresByPos as $t) {
+                        $s = $resolveWheelStatus($t);
+                        if ($s === 'warn' || $s === 'bad') { $anyIssue = true; break; }
+                    }
+                @endphp
+                <div class="cs-pt-tire-set">
+                    <div class="cs-pt-tire-set-head">
+                        <span>{{ $primarySet->set_number ?? 1 }}. Komplet</span>
+                        @if($primarySet->is_mounted)<span class="mount">(zamontowane)</span>@endif
+                        <span class="info" aria-hidden="true" title="Dane pomiarowe z inspekcji pojazdu">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        </span>
+                    </div>
+
+                    {{-- Four stacked rows — one per wheel position. No tire/wheel image. --}}
+                    @foreach($positions as $key => $label)
+                    @php
+                        $t = $tiresByPos->get($key);
+                        $statusKey = $resolveWheelStatus($t);
+                        // tread_depth is stored as a single numeric value; render with the
+                        // Polish decimal separator (6,0 mm) when there's a fractional part.
+                        $treadDisplay = null;
+                        if ($t && $t->tread_depth !== null) {
+                            $td = (float) $t->tread_depth;
+                            $treadDisplay = (floor($td) == $td)
+                                ? number_format($td, 1, ',', ' ') . ' mm'
+                                : number_format($td, 1, ',', ' ') . ' mm';
+                        }
+                    @endphp
+                    <div class="cs-pt-tire-row">
+                        <div class="cs-pt-tire-row-info">
+                            <div class="cs-pt-tire-row-pos">{{ $label }}</div>
+                            @if($t)
+                                @if($primarySet->tire_type)
+                                    <div class="cs-pt-tire-row-spec">{{ $primarySet->tire_type }}</div>
+                                @endif
+                                @if($t->condition && is_array($t->condition) && count($t->condition))
+                                    <div class="cs-pt-tire-row-model">{{ implode(', ', $t->condition) }}</div>
+                                @endif
+                            @else
+                                <div class="cs-pt-tire-row-empty">Brak danych</div>
+                            @endif
+                        </div>
+                        @if($treadDisplay !== null)
+                            <span class="cs-pt-tire-tread-pill {{ $statusKey === 'ok' || $statusKey === 'empty' ? '' : $statusKey }}">{{ $treadDisplay }}</span>
+                        @else
+                            <span class="cs-pt-tire-tread-pill empty">— mm</span>
+                        @endif
+                    </div>
+                    @endforeach
+
+                    {{-- Bottom summary: rim/felga left, overall status right --}}
+                    <div class="cs-pt-tire-summary">
+                        <span class="cs-pt-tire-summary-left">
+                            <span class="ico" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                            </span>
+                            {{ $primarySet->rim ?: 'Brak informacji o felgach' }}
+                        </span>
+                        <span class="cs-pt-tire-summary-right {{ $anyIssue ? 'warn' : '' }}">
+                            <span class="ico" aria-hidden="true">
+                                @if($anyIssue)
+                                    <svg viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                @else
+                                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                                @endif
+                            </span>
+                            {{ $anyIssue ? 'Wymaga uwagi' : 'Stan bardzo dobry' }}
+                        </span>
+                    </div>
+
+                    @if($primarySet->notes)
+                    <div style="margin-top:8px;padding:9px 12px;background:#fef3c7;border:1px solid #fde68a;color:#92400e;border-radius:8px;font-size:12px;line-height:1.5">{{ $primarySet->notes }}</div>
+                    @endif
+                </div>
+            @else
+                <div class="cs-pt-empty">Brak danych o stanie opon.</div>
+            @endif
         </div>
+
     </div>
     @endif
 
+    {{-- PODOBNE POJAZDY — wrapped in the same .cs-related-section card system as
+         the other redesigned sections (blue icon tile, title, subtitle, content
+         container). Cards use the global .vcard system + a new fuel badge. --}}
     @if($relatedCars->count())
-    <div style="margin-top:20px;padding:24px 24px 32px;border-top:1px solid var(--border-l);max-width:1200px;margin-left:auto;margin-right:auto">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
-            <div>
-                <h2 style="font-size:22px;font-weight:800;letter-spacing:-.4px;color:var(--text)">Podobne pojazdy</h2>
+    <div class="cs-related-section">
+        <div class="cs-related-head">
+            <div class="cs-related-head-left">
+                <div class="cs-related-head-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+                </div>
+                <div>
+                    <h3 class="cs-related-head-title">Podobne pojazdy</h3>
+                    <p class="cs-related-head-sub">Inne samochody, które mogą Cię zainteresować.</p>
+                </div>
             </div>
-            <div style="display:flex;align-items:center;gap:12px">
-                <a href="{{ route('catalog') }}" style="font-size:13px;font-weight:700;color:var(--blue);display:inline-flex;align-items:center;gap:5px;text-decoration:none">
+            <div class="cs-related-controls">
+                <a href="{{ route('catalog') }}" class="cs-related-all">
                     Zobacz wszystkie
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </a>
-                <div style="display:flex;gap:6px">
-                    <button type="button" onclick="csRelScroll(-1)" style="width:36px;height:36px;border-radius:50%;border:1.5px solid #e5e5e7;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#0066ff'" onmouseout="this.style.borderColor='#e5e5e7'">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                <div class="cs-related-nav">
+                    <button type="button" onclick="csRelScroll(-1)" aria-label="Przewiń w lewo">
+                        <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
                     </button>
-                    <button type="button" onclick="csRelScroll(1)" style="width:36px;height:36px;border-radius:50%;border:1.5px solid #e5e5e7;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#0066ff'" onmouseout="this.style.borderColor='#e5e5e7'">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    <button type="button" onclick="csRelScroll(1)" aria-label="Przewiń w prawo">
+                        <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
                     </button>
                 </div>
             </div>
@@ -1968,11 +2470,19 @@
             <a href="{{ route('catalog.show', $relCar) }}" class="vcard">
                 <div class="vcard-img">
                     @if($relCar->primaryImage)
-                        <img src="{{ $relCar->primaryImage->url }}" alt="{{ $relCar->primaryImage->alt }}" loading="lazy">
+                        <img src="{{ $relCar->primaryImage->url }}" alt="{{ $relCar->primaryImage->alt }}" loading="lazy" onerror="this.onerror=null;this.src='/images/placeholder-car.svg'">
                     @else
                         <div class="vcard-placeholder"><svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></div>
                     @endif
+                    {{-- Fuel badge top-left (matches reference layout) --}}
+                    @if($relCar->fuel_type)
+                    <span class="vcard-fuel-badge">
+                        <svg viewBox="0 0 24 24"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>
+                        {{ \App\Helpers\CarLabels::fuelType($relCar->fuel_type) ?? $relCar->fuel_type }}
+                    </span>
+                    @endif
                     @if($relCar->is_featured)<div class="vcard-badge">Wyróżnione</div>@endif
+                    {{-- Favorite heart (top-right) — same handler as the catalog --}}
                     <button class="lcard-fav" data-id="{{ $relCar->id }}" aria-label="Dodaj do ulubionych" onclick="event.preventDefault();event.stopPropagation();toggleFav(event,{{ $relCar->id }})">
                         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                     </button>
@@ -1981,14 +2491,13 @@
                     <div class="vcard-title">{{ $relCar->title }}</div>
                     <div class="vcard-specs">
                         @if($relCar->first_registration)<span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> {{ $relCar->first_registration }}</span>@endif
-                        @if($relCar->fuel_type)<span>{{ $relCar->fuel_type }}</span>@endif
-                        @if($relCar->transmission)<span>{{ $relCar->transmission }}</span>@endif
+                        @if($relCar->mileage)<span>{{ number_format((float) $relCar->mileage,0,'',' ') }} km</span>@endif
+                        @if($relCar->transmission)<span>{{ \App\Helpers\CarLabels::transmission($relCar->transmission) ?? $relCar->transmission }}</span>@endif
                         @if($relCar->power_hp)<span>{{ $relCar->power_hp }} KM</span>@endif
                     </div>
-                    @if($relCar->mileage)<div style="font-size:12px;color:#6b7280;margin-bottom:8px">{{ number_format((float) $relCar->mileage,0,'',' ') }} km</div>@endif
                     <div class="vcard-bottom">
                         <div class="vcard-price">{{ $relCar->formatted_price }}</div>
-                        <span class="vcard-link">Sprawdź <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+                        <span class="vcard-link">Zobacz szczegóły <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
                     </div>
                 </div>
             </a>
@@ -1996,6 +2505,17 @@
         </div>
     </div>
     @endif
+
+    {{-- Legal disclaimer bar — sits below all single-car content. --}}
+    <div class="cs-legal-bar">
+        <div class="cs-legal-bar-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+        </div>
+        <p>
+            <strong>Informacje zawarte na tej stronie</strong> zostały przygotowane z najwyższą starannością.
+            Nie stanowią jednak oferty handlowej w rozumieniu art. 66 §1 Kodeksu cywilnego.
+        </p>
+    </div>
 
 </div>
 </div>

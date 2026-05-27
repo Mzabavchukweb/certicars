@@ -535,6 +535,224 @@ class PublicPagesTest extends TestCase
         $this->assertStringNotContainsString('<h4 class="cs-pano360-card-title">360° wnętrza</h4>', $html);
     }
 
+    // ---------------------------------------------------------------------
+    // 'Pomiary grubości lakieru' + 'Koła i opony' two-card row
+    // ---------------------------------------------------------------------
+
+    public function test_paint_and_tires_cards_hidden_when_no_data(): void
+    {
+        $car = $this->activeCar();
+        $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
+
+        // Without paint_measurements OR tireSets, the .cs-pt-row container must not
+        // render (the section is fully optional). CSS class definition is in the
+        // <style> block regardless — we look for the actual element opener.
+        $this->assertStringNotContainsString('<div class="cs-pt-row">', $html);
+        $this->assertStringNotContainsString('>Pomiary grubości lakieru</h3>', $html);
+        $this->assertStringNotContainsString('>Koła i opony</h3>',              $html);
+    }
+
+    public function test_paint_card_renders_status_colours_from_real_measurements(): void
+    {
+        $car = $this->activeCar();
+        $car->update([
+            'paint_measurements' => [
+                ['area' => 'Dach',  'value' => 120],   // 90–150 → ok
+                ['area' => 'Maska', 'value' => 210],   // 150–300 → warn
+                ['area' => 'Drzwi', 'value' => 320],   // >300 → bad
+                ['area' => 'Próg',  'value' => 280],   // 150–300 still warn (just under 300)
+            ],
+        ]);
+        $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
+
+        $this->assertStringContainsString('Pomiary grubości lakieru', $html);
+        $this->assertStringContainsString('Pomiary wykonane profesjonalnym czujnikiem', $html);
+
+        // Each cell carries the threshold-driven CSS class.
+        $this->assertMatchesRegularExpression(
+            '/<div class="cs-pt-paint-cell ok">[\s\S]+?Dach[\s\S]+?120/',
+            $html,
+            'Dach 120µm must render as cs-pt-paint-cell.ok'
+        );
+        $this->assertMatchesRegularExpression(
+            '/<div class="cs-pt-paint-cell warn">[\s\S]+?Maska[\s\S]+?210/',
+            $html,
+            'Maska 210µm must render as cs-pt-paint-cell.warn (151–300 range)'
+        );
+        $this->assertMatchesRegularExpression(
+            '/<div class="cs-pt-paint-cell warn">[\s\S]+?Próg[\s\S]+?280/',
+            $html,
+            'Próg 280µm must still render as warn — the bad threshold is >300 per spec.'
+        );
+        $this->assertMatchesRegularExpression(
+            '/<div class="cs-pt-paint-cell bad">[\s\S]+?Drzwi[\s\S]+?320/',
+            $html,
+            'Drzwi 320µm must render as cs-pt-paint-cell.bad'
+        );
+        // Each cell renders the new status dot + value structure.
+        $this->assertStringContainsString('<span class="dot" aria-hidden="true"></span>', $html,
+            'Each paint cell must carry a colored status dot next to the value.');
+        // Legend renders all three states with the updated reference wording + ranges.
+        $this->assertStringContainsString('Lakier fabryczny (90–150 µm)',         $html);
+        $this->assertStringContainsString('Ponownie lakierowany (150–300 µm)',    $html);
+        $this->assertStringContainsString('Naprawa / szpachla (powyżej 300 µm)',  $html);
+    }
+
+    public function test_paint_card_empty_when_only_zero_measurements(): void
+    {
+        // Measurements that all resolve to 0 (or empty) should fall to the empty
+        // state, not show an empty grid.
+        $car = $this->activeCar();
+        $car->update([
+            'paint_measurements' => [['area' => 'Dach', 'value' => 0]],
+            'tireSets'           => [], // and tires absent so the whole row hides
+        ]);
+        $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
+
+        // Row hidden entirely (no paint AND no tires).
+        $this->assertStringNotContainsString('<div class="cs-pt-row">', $html);
+    }
+
+    public function test_tires_card_renders_stacked_rows_with_green_tread_pills(): void
+    {
+        $car = $this->activeCar();
+        $set = \App\Models\CarTireSet::create([
+            'car_id'     => $car->id,
+            'set_number' => 1,
+            'is_mounted' => true,
+            'tire_type'  => '215/55 R17 94V',
+            'rim'        => 'Felgi aluminiowe 17"',
+        ]);
+        foreach ([
+            'front_left'  => 6.0,
+            'front_right' => 6.0,
+            'rear_left'   => 5.5,
+            'rear_right'  => 5.5,
+        ] as $pos => $depth) {
+            \App\Models\CarTire::create([
+                'car_tire_set_id' => $set->id,
+                'position'        => $pos,
+                'tread_depth'     => $depth,
+            ]);
+        }
+
+        $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
+
+        // Stacked-rows layout markers.
+        $this->assertStringContainsString('cs-pt-tire-set',          $html);
+        $this->assertStringContainsString('cs-pt-tire-row',          $html);
+        $this->assertStringContainsString('cs-pt-tire-tread-pill',   $html);
+        // No more wheel SVG icons (we removed the per-position "wheel" graphic).
+        $this->assertStringNotContainsString('class="wheel"',        $html);
+        $this->assertStringNotContainsString('cs-pt-tire-wheel-ico', $html);
+        $this->assertStringNotContainsString('cs-pt-tire-divider',   $html,
+            'Old multi-row layout removed — no separate tread/divider/status blocks.');
+        // Set head: "1. Komplet (zamontowane)".
+        $this->assertStringContainsString('Komplet',                 $html);
+        $this->assertStringContainsString('(zamontowane)',           $html);
+        // Four position labels rendered in shortened form.
+        $this->assertStringContainsString('Przód lewy',              $html);
+        $this->assertStringContainsString('Przód prawy',             $html);
+        $this->assertStringContainsString('Tył lewy',                $html);
+        $this->assertStringContainsString('Tył prawy',               $html);
+        // Spec line on each row uses the set's tire_type.
+        $this->assertStringContainsString('215/55 R17 94V',          $html);
+        // Tread pill values rendered with Polish decimal comma + " mm".
+        $this->assertStringContainsString('6,0 mm',                  $html);
+        $this->assertStringContainsString('5,5 mm',                  $html);
+        // Bottom summary: rim on the left, "Stan bardzo dobry" on the right.
+        $this->assertStringContainsString('cs-pt-tire-summary',      $html);
+        $this->assertStringContainsString('Felgi aluminiowe 17',     $html);
+        $this->assertStringContainsString('Stan bardzo dobry',       $html);
+    }
+
+    public function test_tires_card_summary_flips_to_attention_when_any_tire_has_issue(): void
+    {
+        $car = $this->activeCar();
+        $set = \App\Models\CarTireSet::create([
+            'car_id' => $car->id, 'set_number' => 1, 'is_mounted' => true, 'tire_type' => '205/55 R16',
+        ]);
+        \App\Models\CarTire::create([
+            'car_tire_set_id' => $set->id, 'position' => 'front_left',  'tread_depth' => 6.0,
+        ]);
+        \App\Models\CarTire::create([
+            'car_tire_set_id' => $set->id, 'position' => 'rear_right',  'tread_depth' => 3.0,
+            'condition' => ['nierówny bieżnik'],
+        ]);
+
+        $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
+
+        // The affected tread pill carries the .warn class.
+        $this->assertMatchesRegularExpression('/cs-pt-tire-tread-pill warn">3,0 mm/', $html);
+        // Bottom summary flips to "Wymaga uwagi" with the .warn class on the right span.
+        $this->assertMatchesRegularExpression('/cs-pt-tire-summary-right warn[\s\S]+?Wymaga uwagi/', $html);
+        // The condition text surfaces on its row as a small model/condition line.
+        $this->assertStringContainsString('nierówny bieżnik', $html);
+    }
+
+    // ---------------------------------------------------------------------
+    // 'Podobne pojazdy' section + legal disclaimer bar
+    // ---------------------------------------------------------------------
+
+    public function test_related_cars_section_renders_with_brand_icon_and_subtitle(): void
+    {
+        // Create the current car + at least one related candidate of the same brand.
+        $brand = Brand::create(['name' => 'BMW', 'slug' => 'bmw']);
+        $current = Car::create([
+            'brand_id' => $brand->id, 'model' => 'X5 Current', 'slug' => 'bmw-x5-current',
+            'status' => 'active', 'is_sold' => false, 'price' => 80000, 'fuel_type' => 'Diesel',
+        ]);
+        Car::create([
+            'brand_id' => $brand->id, 'model' => 'X3 Related', 'slug' => 'bmw-x3-related',
+            'status' => 'active', 'is_sold' => false, 'price' => 70000, 'fuel_type' => 'Benzyna',
+        ]);
+
+        $html = $this->get('/samochody/'.$current->slug)->assertOk()->getContent();
+
+        $this->assertStringContainsString('cs-related-section',            $html);
+        $this->assertStringContainsString('cs-related-head-ico',           $html);
+        $this->assertStringContainsString('>Podobne pojazdy</h3>',         $html);
+        $this->assertStringContainsString('Inne samochody, które mogą Cię zainteresować.', $html);
+        // Related car appears, current car is not in its own related strip.
+        $this->assertStringContainsString('X3 Related', $html);
+        // Fuel badge on the related card.
+        $this->assertStringContainsString('vcard-fuel-badge', $html);
+        // CTA wording on the card was updated to "Zobacz szczegóły".
+        $this->assertStringContainsString('Zobacz szczegóły', $html);
+    }
+
+    public function test_related_cars_section_excludes_current_car(): void
+    {
+        $brand = Brand::create(['name' => 'Volvo', 'slug' => 'volvo']);
+        $current = Car::create([
+            'brand_id' => $brand->id, 'model' => 'XC60 Current', 'slug' => 'volvo-xc60-current',
+            'status' => 'active', 'is_sold' => false, 'price' => 90000,
+        ]);
+        Car::create([
+            'brand_id' => $brand->id, 'model' => 'V60 Sibling', 'slug' => 'volvo-v60-sibling',
+            'status' => 'active', 'is_sold' => false, 'price' => 70000,
+        ]);
+
+        $html = $this->get('/samochody/'.$current->slug)->assertOk()->getContent();
+
+        // The current car must never appear in its own Podobne pojazdy strip.
+        $this->assertStringNotContainsString(
+            '<a href="' . route('catalog.show', $current) . '" class="vcard">',
+            $html,
+            'Current car must be excluded from the related-cars strip.'
+        );
+        $this->assertStringContainsString('V60 Sibling', $html);
+    }
+
+    public function test_legal_disclaimer_bar_renders_below_related_cars(): void
+    {
+        $car = $this->activeCar();
+        $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
+
+        $this->assertStringContainsString('cs-legal-bar', $html);
+        $this->assertStringContainsString('Nie stanowią jednak oferty handlowej w rozumieniu art. 66 §1 Kodeksu cywilnego.', $html);
+    }
+
     public function test_pano360_card_image_urls_never_use_raw_storage_path(): void
     {
         // Source-grep regression guard mirroring the PR #7 pattern: card images
