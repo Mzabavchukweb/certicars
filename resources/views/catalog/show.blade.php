@@ -297,6 +297,61 @@
 .cs-tech-list-status.fail .check{background:#fee2e2;color:#dc2626}
 .cs-tech-list-status .check svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 
+/* ============ 360° CARDS SECTION ============ */
+.cs-pano360-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;max-width:calc(1200px - 48px);margin-left:auto;margin-right:auto;width:100%;box-sizing:border-box}
+.cs-pano360-row.single{grid-template-columns:1fr}
+.cs-pano360-section-card{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box}
+.cs-pano360-section-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
+.cs-pano360-section-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-pano360-section-ico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cs-pano360-section-title{font-size:17px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:0 0 6px;line-height:1.25}
+.cs-pano360-section-sub{font-size:12.5px;color:#6b7280;line-height:1.55;margin:0;max-width:640px}
+
+.cs-pano360-card{position:relative;display:block;height:280px;border-radius:14px;overflow:hidden;background:#0a0a0a;cursor:pointer;text-decoration:none;color:#fff;transition:transform .25s ease,box-shadow .25s ease;border:none;padding:0;font:inherit;text-align:left}
+.cs-pano360-card:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.18)}
+.cs-pano360-card-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+.cs-pano360-card:hover .cs-pano360-card-img{transform:scale(1.04)}
+.cs-pano360-card-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,.05) 0%,rgba(10,10,10,.5) 60%,rgba(10,10,10,.85) 100%)}
+.cs-pano360-card-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);font-size:13px;letter-spacing:.3px;background:linear-gradient(135deg,#1a1a2e,#0a0a0a)}
+.cs-pano360-card-mark{position:absolute;top:18px;left:18px;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.16);color:#fff;font-size:11px;font-weight:700;padding:6px 11px;border-radius:50px;letter-spacing:.4px;text-transform:uppercase;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.cs-pano360-card-mark svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.2}
+.cs-pano360-card-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:78px;height:78px;border-radius:50%;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;color:#fff;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:transform .25s ease,background .25s ease}
+.cs-pano360-card:hover .cs-pano360-card-play{transform:translate(-50%,-50%) scale(1.08);background:rgba(255,255,255,.28)}
+.cs-pano360-card-play svg{width:32px;height:32px;stroke:currentColor;fill:none;stroke-width:1.6}
+.cs-pano360-card-text{position:absolute;left:22px;right:22px;bottom:20px;z-index:2}
+.cs-pano360-card-title{font-size:18px;font-weight:800;letter-spacing:-.3px;line-height:1.2;margin:0 0 4px}
+.cs-pano360-card-sub{font-size:13px;color:rgba(255,255,255,.85);line-height:1.4;margin:0}
+.cs-pano360-card.disabled{cursor:not-allowed;opacity:.7}
+.cs-pano360-card.disabled:hover{transform:none;box-shadow:none}
+.cs-pano360-card.disabled:hover .cs-pano360-card-img{transform:none}
+.cs-pano360-card.disabled:hover .cs-pano360-card-play{transform:translate(-50%,-50%);background:rgba(255,255,255,.18)}
+
+@media(max-width:1024px){
+    .cs-pano360-row{grid-template-columns:1fr;gap:14px}
+    .cs-pano360-section-card{padding:20px}
+    .cs-pano360-section-title{font-size:16px}
+    .cs-pano360-section-sub{font-size:12px}
+    .cs-pano360-card{height:220px;border-radius:12px}
+    .cs-pano360-card-title{font-size:16px}
+    .cs-pano360-card-sub{font-size:12.5px}
+    .cs-pano360-card-play{width:64px;height:64px}
+    .cs-pano360-card-play svg{width:26px;height:26px}
+}
+@media(max-width:768px){
+    .cs-pano360-row{margin-left:14px!important;margin-right:14px!important;max-width:none!important}
+    .cs-pano360-section-card{margin-left:14px!important;margin-right:14px!important;max-width:none!important;padding:18px 16px;border-radius:14px}
+    .cs-pano360-card{height:200px}
+    .cs-pano360-card-text{left:16px;right:16px;bottom:16px}
+    .cs-pano360-card-mark{top:14px;left:14px;font-size:10px;padding:5px 9px}
+}
+@media(max-width:500px){
+    .cs-pano360-row{margin-left:12px!important;margin-right:12px!important}
+    .cs-pano360-section-card{margin-left:12px!important;margin-right:12px!important}
+    .cs-pano360-card{height:180px}
+    .cs-pano360-card-play{width:56px;height:56px}
+    .cs-pano360-card-play svg{width:22px;height:22px}
+}
+
 /* Engine video panel (inside right card) */
 .cs-engine-video-panel{position:relative;border-radius:14px;overflow:hidden;background:#0a0a0a;aspect-ratio:16/10;flex:1;min-height:280px}
 .cs-engine-video-panel iframe,.cs-engine-video-panel video{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000}
@@ -1686,42 +1741,65 @@
     </div>
 
 
-        <!-- WIDOK 360° (wnętrze + zewnętrze w jednej sekcji) -->
+    {{-- WIDOK 360° POJAZDU — two clickable cards that jump to the gallery's 360° tab.
+         Replaces the old in-place Pannellum embed; the interactive viewer still lives
+         in the main gallery (lines ~949+) so we reuse csFilterGallery + csScrollGalleryIntoView
+         instead of duplicating the iframe. --}}
     @if($car->pano360Image || $car->exteriorPano360Image)
-    <div class="cs-data-section">
-        <div class="cs-data-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-            <h2><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Widok 360°</h2>
-            <i data-lucide="chevron-up" class="chev" aria-hidden="true"></i>
-        </div>
-        <div class="cs-data-body open">
-            <p style="font-size:12.5px;color:var(--text-3);margin-bottom:16px;display:flex;align-items:center;gap:6px">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9l-3 3 3 3"/><path d="M2 12h20"/><path d="M19 15l3-3-3-3"/></svg>
-                Przeciągnij, aby rozejrzeć się w 360°. Scroll = zoom.
-            </p>
-            <div class="cs-pano360-grid" style="grid-template-columns:{{ ($car->pano360Image && $car->exteriorPano360Image) ? '1fr 1fr' : '1fr' }}">
-                @if($car->pano360Image)
-                <div>
-                    <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:8px;display:flex;align-items:center;gap:6px">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                        Wnętrze
-                    </div>
-                    <div class="cs-pano360-embed" style="position:relative;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden">
-                        <div id="csPano360Section" data-pano-src="{{ route('panorama.stream', $car->pano360Image) }}" style="width:100%;height:100%"></div>
-                    </div>
-                </div>
-                @endif
-                @if($car->exteriorPano360Image)
-                <div>
-                    <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:8px;display:flex;align-items:center;gap:6px">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                        Zewnętrze
-                    </div>
-                    <div class="cs-pano360-embed" style="position:relative;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden">
-                        <div id="csPano360ExtSection" data-pano-src="{{ route('panorama.stream', $car->exteriorPano360Image) }}" style="width:100%;height:100%"></div>
-                    </div>
-                </div>
-                @endif
+    <div class="cs-pano360-section-card">
+        <div class="cs-pano360-section-head">
+            <div class="cs-pano360-section-ico">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
             </div>
+            <div>
+                <h3 class="cs-pano360-section-title">Widok 360° pojazdu</h3>
+                <p class="cs-pano360-section-sub">Obejrzyj pojazd z każdej strony. Przesuwaj, obracaj i przybliżaj obraz, aby dokładnie zapoznać się z autem.</p>
+            </div>
+        </div>
+        @php $singleCard = !($car->pano360Image && $car->exteriorPano360Image); @endphp
+        <div class="cs-pano360-row{{ $singleCard ? ' single' : '' }}">
+            @if($car->exteriorPano360Image)
+            <button type="button" class="cs-pano360-card" onclick="csOpenPano360('pano360ext')" aria-label="Otwórz widok 360° z zewnątrz">
+                @if($car->exteriorPano360Image->url)
+                    <img class="cs-pano360-card-img" src="{{ $car->exteriorPano360Image->url }}" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/placeholder-car.svg'">
+                @else
+                    <div class="cs-pano360-card-empty">Podgląd niedostępny</div>
+                @endif
+                <div class="cs-pano360-card-overlay"></div>
+                <span class="cs-pano360-card-mark">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    360° · Z ZEWNĄTRZ
+                </span>
+                <span class="cs-pano360-card-play">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                </span>
+                <div class="cs-pano360-card-text">
+                    <h4 class="cs-pano360-card-title">360° z zewnątrz</h4>
+                    <p class="cs-pano360-card-sub">Obejrzyj auto dookoła</p>
+                </div>
+            </button>
+            @endif
+            @if($car->pano360Image)
+            <button type="button" class="cs-pano360-card" onclick="csOpenPano360('pano360')" aria-label="Otwórz widok 360° wnętrza">
+                @if($car->pano360Image->url)
+                    <img class="cs-pano360-card-img" src="{{ $car->pano360Image->url }}" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/placeholder-car.svg'">
+                @else
+                    <div class="cs-pano360-card-empty">Podgląd niedostępny</div>
+                @endif
+                <div class="cs-pano360-card-overlay"></div>
+                <span class="cs-pano360-card-mark">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    360° · WNĘTRZE
+                </span>
+                <span class="cs-pano360-card-play">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                </span>
+                <div class="cs-pano360-card-text">
+                    <h4 class="cs-pano360-card-title">360° wnętrza</h4>
+                    <p class="cs-pano360-card-sub">Zobacz kabinę kierowcy i przestrzeń pasażerską</p>
+                </div>
+            </button>
+            @endif
         </div>
     </div>
     @endif
@@ -2195,6 +2273,22 @@ function cs360InitPano(){
 }
 // Auto-init panorama on page load if 360 section is visible
 document.addEventListener('DOMContentLoaded', function(){ if(document.querySelector('.cs-pano360-embed')) cs360InitPano(); });
+
+// Cards in the "Widok 360° pojazdu" section: scroll up to the main gallery and
+// click the matching 360° tab. Reuses the existing csFilterGallery so the
+// Pannellum viewer lives in exactly one place.
+function csOpenPano360(filter){
+    var tab = document.querySelector('[data-gallery-filter="' + filter + '"]');
+    var gallery = document.querySelector('.cs-gallery-stage');
+    if (gallery) {
+        gallery.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    if (tab && typeof csFilterGallery === 'function') {
+        // Delay so the scroll has time to start before the tab swap (Pannellum
+        // initialises lazily and we want it visible when it boots).
+        setTimeout(function(){ csFilterGallery(tab, filter); }, 200);
+    }
+}
 
 // Gallery tab filtering (COS style)
 function csFilterGallery(btn,filter){
