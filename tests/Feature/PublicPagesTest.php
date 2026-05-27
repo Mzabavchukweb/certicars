@@ -481,4 +481,72 @@ class PublicPagesTest extends TestCase
 
         $this->assertStringContainsString('"BreadcrumbList"', $body);
     }
+
+    // ---------------------------------------------------------------------
+    // "Widok 360° pojazdu" cards section (single-car page)
+    // ---------------------------------------------------------------------
+
+    public function test_pano360_cards_section_hidden_when_no_360_assets(): void
+    {
+        $car = $this->activeCar();
+        // No CarImage of type pano360 / pano360ext seeded.
+        $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
+
+        // Card markup (button.cs-pano360-card) must not render when neither
+        // 360 asset exists. The CSS class + JS function live in the page
+        // regardless (style block + script block), so we assert the actual
+        // rendered button element + the section heading <h3>.
+        $this->assertStringNotContainsString('<button type="button" class="cs-pano360-card"', $html,
+            'No card button must render when neither pano360 nor pano360ext exists.');
+        $this->assertStringNotContainsString('>Widok 360° pojazdu</h3>', $html);
+    }
+
+    public function test_pano360_cards_section_renders_both_when_both_assets_exist(): void
+    {
+        $car = $this->activeCar();
+        \App\Models\CarImage::create(['car_id' => $car->id, 'type' => 'pano360',     'path' => 'https://cdn.example.test/cars/'.$car->id.'/pano-interior.jpg', 'sort_order' => 0]);
+        \App\Models\CarImage::create(['car_id' => $car->id, 'type' => 'pano360ext',  'path' => 'https://cdn.example.test/cars/'.$car->id.'/pano-exterior.jpg', 'sort_order' => 0]);
+
+        $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
+
+        $this->assertStringContainsString('Widok 360° pojazdu',     $html);
+        $this->assertStringContainsString('360° z zewnątrz',         $html);
+        $this->assertStringContainsString('360° wnętrza',            $html);
+        $this->assertStringContainsString('csOpenPano360(\'pano360ext\')',  $html);
+        $this->assertStringContainsString('csOpenPano360(\'pano360\')',     $html);
+        // Both card images must use the absolute https URL, never the /storage/... raw path.
+        $this->assertStringContainsString('pano-interior.jpg', $html);
+        $this->assertStringContainsString('pano-exterior.jpg', $html);
+    }
+
+    public function test_pano360_cards_section_renders_single_when_only_one_asset(): void
+    {
+        $car = $this->activeCar();
+        \App\Models\CarImage::create(['car_id' => $car->id, 'type' => 'pano360ext', 'path' => 'https://cdn.example.test/cars/'.$car->id.'/pano-exterior.jpg', 'sort_order' => 0]);
+
+        $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
+
+        $this->assertStringContainsString('Widok 360° pojazdu',     $html);
+        $this->assertStringContainsString('cs-pano360-row single',  $html, 'Grid must collapse to a single-column variant when only one 360 asset is present.');
+        // The card-title <h4> is unique to the new section; the gallery tab
+        // buttons up top carry the same text so we have to match the card
+        // markup specifically here.
+        $this->assertStringContainsString('<h4 class="cs-pano360-card-title">360° z zewnątrz</h4>', $html);
+        $this->assertStringNotContainsString('<h4 class="cs-pano360-card-title">360° wnętrza</h4>', $html);
+    }
+
+    public function test_pano360_card_image_urls_never_use_raw_storage_path(): void
+    {
+        // Source-grep regression guard mirroring the PR #7 pattern: card images
+        // must consume the R2-aware CarImage::url accessor, not asset('storage/'.path).
+        $source = file_get_contents(base_path('resources/views/catalog/show.blade.php'));
+
+        $this->assertDoesNotMatchRegularExpression(
+            "/cs-pano360-card-img.*asset\(\s*'storage\/'/",
+            $source,
+            "360 card backgrounds must use \$pano->url, never asset('storage/...')."
+        );
+        $this->assertStringContainsString('$car->exteriorPano360Image->url', $source);
+        $this->assertStringContainsString('$car->pano360Image->url',         $source);
+    }
 }
