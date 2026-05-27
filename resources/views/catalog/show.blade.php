@@ -94,8 +94,18 @@
 .cs-keyfact svg{width:15px;height:15px;stroke:#9ca3af;stroke-width:2;fill:none;flex-shrink:0}
 .cs-keyfact strong{color:#0a0a0a;font-weight:800}
 
-.cs-grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:24px;margin-bottom:8px;min-width:0;overflow:hidden}
+.cs-grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:24px;margin-bottom:8px;min-width:0;overflow:hidden;align-items:stretch}
 .cs-sidebar{position:sticky;top:92px;min-width:0;display:flex;flex-direction:column}
+/* Desktop hero alignment: gallery wrapper flexes vertically so its main image
+   shrinks to match the sidebar's height. Tabs and thumbs keep their natural
+   sizes; .cs-gallery-stage flexes to fill whatever vertical space remains.
+   This guarantees the gallery's bottom edge ends at the sidebar's bottom
+   regardless of how much spec data the car has. */
+@media(min-width:1025px){
+    .cs-grid > div:first-child{display:flex;flex-direction:column;min-height:0;height:100%}
+    .cs-grid > div:first-child > .cs-gallery{flex:1;min-height:0;display:flex;flex-direction:column}
+    .cs-grid > div:first-child > .cs-gallery > .cs-gallery-stage{flex:1;min-height:0;aspect-ratio:auto;height:auto}
+}
 
 /* SIDEBAR CERTICHECK BADGE (catalog card style) */
 .cs-sidebar-certi{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;padding:7px 14px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.3px;text-decoration:none;transition:all .18s;border:none;cursor:pointer}
