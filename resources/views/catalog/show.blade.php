@@ -147,7 +147,8 @@
 .cs-sidebar-summary{padding:0 22px;border-bottom:1px solid #f0f0f2}
 .cs-sidebar-summary-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #f5f5f5;font-size:13.5px}
 .cs-sidebar-summary-row:last-child{border-bottom:none}
-.cs-sidebar-summary-row .cs-row-icon{width:18px;height:18px;stroke:#9ca3af;fill:none;stroke-width:1.8;flex-shrink:0}
+.cs-sidebar-summary-row .cs-row-icon{display:inline-flex;align-items:center;justify-content:center;color:#9ca3af;flex-shrink:0}
+.cs-sidebar-summary-row .cs-row-icon svg{stroke:currentColor;fill:none;stroke-width:1.8}
 .cs-sidebar-summary-row .lbl{color:#6b7280;font-weight:400;flex:1}
 .cs-sidebar-summary-row .val{font-weight:700;color:#1a1a1a;text-align:right}
 
@@ -1208,39 +1209,39 @@
         <div class="cs-gallery-tabs-wrap" role="tablist">
         <div class="cs-gallery-tabs">
             <button type="button" class="cs-gallery-tab active" data-gallery-filter="all" onclick="csFilterGallery(this,'all')" role="tab" aria-selected="true">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                <x-icon name="image" size="14" :strokeWidth="1.8"/>
                 Wszystkie zdjęcia
             </button>
             <button type="button" class="cs-gallery-tab {{ $car->exteriorPano360Image ? '' : 'disabled' }}" data-gallery-filter="pano360ext" onclick="csFilterGallery(this,'pano360ext')" role="tab" aria-selected="false">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                <x-icon name="rotate-3d" size="14" :strokeWidth="1.8"/>
                 360° z zewnątrz
             </button>
             <button type="button" class="cs-gallery-tab {{ $car->pano360Image ? '' : 'disabled' }}" data-gallery-filter="pano360" onclick="csFilterGallery(this,'pano360')" role="tab" aria-selected="false">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                <x-icon name="rotate-3d" size="14" :strokeWidth="1.8"/>
                 360° wnętrza
             </button>
             <button type="button" class="cs-gallery-tab {{ $damageImgList->count() ? '' : 'disabled' }}" data-gallery-filter="damage" onclick="csFilterGallery(this,'damage')" role="tab" aria-selected="false">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                <x-icon name="search" size="14" :strokeWidth="1.8"/>
                 Zdjęcia stanu pojazdu
             </button>
             <button type="button" class="cs-gallery-tab" data-gallery-filter="documents" onclick="csFilterGallery(this,'documents')" role="tab" aria-selected="false">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
+                <x-icon name="file-text" size="14" :strokeWidth="1.8"/>
                 Dokumenty
             </button>
             <button type="button" class="cs-gallery-tab {{ $hasEngineVideo ? '' : 'disabled' }}" data-gallery-filter="video" onclick="csFilterGallery(this,'video')" role="tab" aria-selected="false">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <x-icon name="play" size="14" :strokeWidth="1.8"/>
                 Wideo pracy silnika
             </button>
             <button type="button" class="cs-gallery-tab" data-gallery-filter="paint" onclick="csFilterGallery(this,'paint')" role="tab" aria-selected="false">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5"/><path d="M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></svg>
+                <x-icon name="paintbrush" size="14" :strokeWidth="1.8"/>
                 Pomiary lakieru
             </button>
         </div>
         </div>{{-- /cs-gallery-tabs-wrap --}}
         <div class="cs-gallery">
             <div class="cs-gallery-stage">
-                <button type="button" class="cs-gallery-nav prev" onclick="csGalleryPrev()" aria-label="Poprzednie zdjęcie"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
-                <button type="button" class="cs-gallery-nav next" onclick="csGalleryNext()" aria-label="Następne zdjęcie"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
+                <button type="button" class="cs-gallery-nav prev" onclick="csGalleryPrev()" aria-label="Poprzednie zdjęcie"><x-icon name="chevron-left" size="24"/></button>
+                <button type="button" class="cs-gallery-nav next" onclick="csGalleryNext()" aria-label="Następne zdjęcie"><x-icon name="chevron-right" size="24"/></button>
                 <div class="cs-gallery-main active" id="csGalleryStandard">
                     @if($galleryList->count())
                         <img src="{{ $galleryList->first()->url }}" id="csMainImg" alt="{{ $galleryList->first()->alt }}" style="cursor:zoom-in" onclick="openCarGallery(0)" fetchpriority="high" decoding="async">
@@ -1250,9 +1251,9 @@
                     @endif
                     @if($car->available_now || $car->home_delivery || $car->has_gethelp)
                     <div style="position:absolute;bottom:12px;left:12px;display:flex;flex-wrap:wrap;gap:5px;z-index:4">
-                        @if($car->available_now)<span style="background:rgba(16,185,129,.92);color:#fff;padding:5px 10px;border-radius:50px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;backdrop-filter:blur(6px)"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>Od ręki</span>@endif
-                        @if($car->home_delivery)<span style="background:rgba(99,102,241,.92);color:#fff;padding:5px 10px;border-radius:50px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;backdrop-filter:blur(6px)"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 13.52 9H12v9"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>Dostawa</span>@endif
-                        @if($car->has_gethelp)<span style="background:rgba(217,119,6,.92);color:#fff;padding:5px 10px;border-radius:50px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;backdrop-filter:blur(6px)"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>GetHelp {{ $car->gethelp_package ?? 'Classic' }} w cenie</span>@endif
+                        @if($car->available_now)<span style="background:rgba(16,185,129,.92);color:#fff;padding:5px 10px;border-radius:50px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;backdrop-filter:blur(6px)"><x-icon name="zap" size="12" :strokeWidth="2.5"/>Od ręki</span>@endif
+                        @if($car->home_delivery)<span style="background:rgba(99,102,241,.92);color:#fff;padding:5px 10px;border-radius:50px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;backdrop-filter:blur(6px)"><x-icon name="truck" size="12" :strokeWidth="2.5"/>Dostawa</span>@endif
+                        @if($car->has_gethelp)<span style="background:rgba(217,119,6,.92);color:#fff;padding:5px 10px;border-radius:50px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;backdrop-filter:blur(6px)"><x-icon name="shield-check" size="12" :strokeWidth="2.5"/>GetHelp {{ $car->gethelp_package ?? 'Classic' }} w cenie</span>@endif
                     </div>
                     @endif
                 </div>
@@ -1350,7 +1351,7 @@
                     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
                         <h2 style="font-size:22px;font-weight:900;color:#0a0a0a;letter-spacing:-.4px;line-height:1.2;margin:0">{{ $car->title }}</h2>
                         <button type="button" id="csMobFav" data-id="{{ $car->id }}" onclick="toggleFav(event,{{ $car->id }});csSidebarFavUpdate()" style="width:40px;height:40px;border-radius:10px;border:1.5px solid #e5e7eb;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
-                            <svg id="csMobFavIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            <x-icon name="heart" size="20" id="csMobFavIcon" style="color:#9ca3af"/>
                         </button>
                     </div>
                     <div class="cs-mob-pills" style="display:none;flex-wrap:wrap;gap:6px;margin-top:12px">
@@ -1370,42 +1371,42 @@
                 <div class="cs-sidebar-summary">
                     @if($car->mileage)
                     <div class="cs-sidebar-summary-row">
-                        <svg class="cs-row-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
+                        <span class="cs-row-icon"><x-icon name="gauge" size="16"/></span>
                         <span class="lbl">Przebieg</span>
                         <span class="val">{{ number_format((float) $car->mileage,0,'',' ') }} km</span>
                     </div>
                     @endif
                     @if($car->first_registration)
                     <div class="cs-sidebar-summary-row">
-                        <svg class="cs-row-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                        <span class="cs-row-icon"><x-icon name="calendar" size="16"/></span>
                         <span class="lbl">Rok produkcji</span>
                         <span class="val">{{ $car->first_registration }}</span>
                     </div>
                     @endif
                     @if($car->fuel_type)
                     <div class="cs-sidebar-summary-row">
-                        <svg class="cs-row-icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>
+                        <span class="cs-row-icon"><x-icon name="fuel" size="16"/></span>
                         <span class="lbl">Paliwo</span>
                         <span class="val">{{ \App\Helpers\CarLabels::fuelType($car->fuel_type) }}</span>
                     </div>
                     @endif
                     @if($car->transmission)
                     <div class="cs-sidebar-summary-row">
-                        <svg class="cs-row-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22V8"/><path d="m5 12-3 3 3 3"/><path d="m19 12 3 3-3 3"/><path d="M2 15h20"/></svg>
+                        <span class="cs-row-icon"><x-icon name="settings-2" size="16"/></span>
                         <span class="lbl">Skrzynia biegów</span>
                         <span class="val">{{ \App\Helpers\CarLabels::transmission($car->transmission) }}</span>
                     </div>
                     @endif
                     @if($car->power_hp)
                     <div class="cs-sidebar-summary-row">
-                        <svg class="cs-row-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+                        <span class="cs-row-icon"><x-icon name="zap" size="16"/></span>
                         <span class="lbl">Moc</span>
                         <span class="val">{{ $car->power_hp }} KM</span>
                     </div>
                     @endif
                     @if($car->body_type ?? $car->category)
                     <div class="cs-sidebar-summary-row">
-                        <svg class="cs-row-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+                        <span class="cs-row-icon"><x-icon name="car" size="16"/></span>
                         <span class="lbl">Nadwozie</span>
                         <span class="val">{{ \App\Helpers\CarLabels::bodyType($car->body_type ?? $car->category) }}</span>
                     </div>
@@ -1414,12 +1415,12 @@
                 <!-- CTA BUTTONS (desktop) -->
                 <div class="cs-price-actions">
                     <a href="tel:+48585586090" class="cs-btn-phone">
-                        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        <x-icon name="phone" size="18"/>
                         Zadzwoń
                         <span style="font-weight:400;opacity:.85">+48 58 558 60 90</span>
                     </a>
                     <button type="button" class="cs-btn-message" onclick="csOpenInquiry('general','main_car_cta')">
-                        <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        <x-icon name="mail" size="18"/>
                         <span class="cs-msg-text">
                             <strong>Napisz wiadomość</strong>
                             <small>Odpowiadamy na każde pytanie</small>
@@ -1427,7 +1428,7 @@
                     </button>
                     <div style="display:flex;gap:8px;margin-top:4px">
                         <button type="button" class="cs-btn-secondary" id="csSidebarFav" data-id="{{ $car->id }}" onclick="toggleFav(event,{{ $car->id }});csSidebarFavUpdate()" style="flex:1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="csFavIcon"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            <x-icon name="heart" size="16" id="csFavIcon"/>
                             <span id="csFavLabel" style="visibility:hidden">Dodaj do ulubionych</span>
                         </button>
                         @if($car->has_certicheck)
@@ -1452,18 +1453,18 @@
             <div class="cs-info-tiles">
                 <div class="cs-info-tile">
                     <div class="cs-info-tile-icon">
-                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0066ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                        <x-icon name="check" size="22" tone="blue" :strokeWidth="2"/>
                     </div>
                     <div class="cs-info-tile-title">Dostępny od ręki</div>
                     <div class="cs-info-tile-body">Auto gotowe do odbioru<br>Możliwa jazda próbna</div>
                 </div>
                 <div class="cs-info-tile">
                     <div class="cs-info-tile-icon">
-                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0066ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+                        <x-icon name="truck" size="22" tone="blue" :strokeWidth="2"/>
                     </div>
                     <div class="cs-info-tile-title">Dostawa pod dom</div>
                     <div class="cs-info-tile-body">Po wcześniejszych oględzinach<br>Cena do ustalenia</div>
-                    <a href="{{ route('contact') }}" class="cs-info-tile-link">Dowiedz się więcej <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                    <a href="{{ route('contact') }}" class="cs-info-tile-link">Dowiedz się więcej <x-icon name="arrow-right" size="11" :strokeWidth="2.5"/></a>
                 </div>
             </div>
         </div>
