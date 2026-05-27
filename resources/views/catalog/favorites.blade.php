@@ -64,7 +64,7 @@
     <div class="fav-header-in">
         <nav class="fav-breadcrumb" aria-label="Breadcrumb">
             <a href="{{ route('home') }}">Strona główna</a>
-            <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+            <x-icon name="chevron-right" size="14"/>
             <span>Obserwowane</span>
         </nav>
         <div class="fav-title-row">
@@ -84,17 +84,17 @@
                     <img src="{{ $car->primaryImage->url }}" alt="{{ $car->title }}" loading="lazy">
                 @else
                     <div class="fav-lcard-img-placeholder">
-                        <svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+                        <x-icon name="car" size="32"/>
                     </div>
                 @endif
                 @if($car->has_certicheck)
                 <div class="fav-lcard-certi">
-                    <svg viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+                    <x-icon name="shield-check" size="14"/>
                     CertiCheck
                 </div>
                 @endif
                 <button class="fav-remove" data-id="{{ $car->id }}" aria-label="Usuń z obserwowanych" onclick="removeFav(event, {{ $car->id }})">
-                    <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <x-icon name="heart" size="16"/>
                 </button>
             </div>
             <div class="fav-lcard-content">
@@ -104,25 +104,25 @@
                     <div class="fav-lcard-specs">
                         @if($car->mileage)
                         <div class="fav-lcard-spec">
-                            <svg viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
+                            <x-icon name="gauge" size="14"/>
                             {{ number_format($car->mileage, 0, '.', ' ') }} km
                         </div>
                         @endif
                         @if($car->fuel_type)
                         <div class="fav-lcard-spec">
-                            <svg viewBox="0 0 24 24"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/></svg>
+                            <x-icon name="fuel" size="14"/>
                             {{ $car->fuel_type }}
                         </div>
                         @endif
                         @if($car->power_hp)
                         <div class="fav-lcard-spec">
-                            <svg viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+                            <x-icon name="zap" size="14"/>
                             {{ $car->power_hp }} KM
                         </div>
                         @endif
                         @if($car->first_registration)
                         <div class="fav-lcard-spec">
-                            <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                            <x-icon name="calendar" size="14"/>
                             {{ $car->first_registration }}
                         </div>
                         @endif
@@ -136,7 +136,7 @@
                     </div>
                     <span class="fav-lcard-btn">
                         Szczegóły
-                        <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                        <x-icon name="arrow-right" size="14"/>
                     </span>
                 </div>
             </div>
@@ -146,12 +146,12 @@
     @else
     <div class="fav-empty" id="favEmpty">
         <div class="fav-empty-icon">
-            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <x-icon name="heart" size="16"/>
         </div>
         <h2>Brak obserwowanych pojazdów</h2>
         <p>Kliknij serduszko przy dowolnym aucie, aby dodać je do listy obserwowanych. Wróć tu kiedy chcesz — lista czeka.</p>
         <a href="{{ route('catalog') }}" class="btn btn-blue btn-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <x-icon name="search" size="14"/>
             Przeglądaj ofertę
         </a>
     </div>
@@ -236,7 +236,7 @@ function showEmpty() {
     if (listings && wrap) {
         listings.remove();
         wrap.innerHTML = `<div class="fav-empty">
-            <div class="fav-empty-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+            <div class="fav-empty-icon"><x-icon name="heart" size="16"/></div>
             <h2>Brak obserwowanych pojazdów</h2>
             <p>Usunąłeś wszystkie pojazdy z listy obserwowanych.</p>
             <a href="/samochody" class="btn btn-blue btn-pill">Przeglądaj ofertę</a>

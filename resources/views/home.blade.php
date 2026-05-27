@@ -314,12 +314,12 @@
                 <p class="lead">Znajdź samochód z jasnym opisem stanu, wyposażenia i pochodzenia. Wybrane auta sprawdzamy dodatkowo w ramach <a href="#certicheck">CertiCheck</a>.</p>
                 <div class="hero-ctas">
                     <a href="{{ route('catalog') }}" class="btn btn-blue">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <x-icon name="search" size="16" :strokeWidth="2.2"/>
                         Przeglądaj ofertę
                     </a>
                     <a href="#certicheck" class="hero-secondary-link">
                         Jak sprawdzamy auta?
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                        <x-icon name="arrow-right" size="16"/>
                     </a>
                 </div>
             </div>
@@ -369,7 +369,7 @@
             <div class="hero-search-bottom">
                 <a href="{{ route('catalog') }}" class="hero-search-reset">Wyczyść filtry</a>
                 <button type="submit" class="hero-search-submit">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    <x-icon name="search" size="18"/>
                     Szukaj samochodów
                 </button>
             </div>
@@ -387,7 +387,7 @@
                     <h2>Przeglądaj auta według nadwozia</h2>
                     <p>Wybierz typ samochodu, który najlepiej pasuje do Twoich potrzeb</p>
                 </div>
-                <a href="{{ route('catalog') }}" class="body-types-head-link">Pokaż wszystkie <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+                <a href="{{ route('catalog') }}" class="body-types-head-link">Pokaż wszystkie <x-icon name="arrow-right" size="14"/></a>
             </div>
             @php
                 $plCars = function ($n) {
@@ -432,7 +432,7 @@
                 <h2>Wyróżnione pojazdy</h2>
                 <p>Starannie dobrane auta — sprawdzone, wyszukane, gotowe do odbioru</p>
             </div>
-            <a href="{{ route('catalog') }}" class="body-types-head-link">Pełna oferta ({{ $totalCars }}) <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+            <a href="{{ route('catalog') }}" class="body-types-head-link">Pełna oferta ({{ $totalCars }}) <x-icon name="arrow-right" size="14"/></a>
         </div>
 
         <div class="home-listings">
@@ -447,19 +447,19 @@
                     @else
                         <div class="lcard-img-placeholder">
                     @endif
-                            <svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+                            <x-icon name="car" size="40"/>
                         </div>
                     @if($car->is_featured)<div class="lcard-badge-top">Wyróżnione</div>@endif
 
                     @php $imgCount = $car->images->count(); @endphp
                     @if($imgCount > 1)
                     <div class="lcard-photo-count">
-                        <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                        <x-icon name="image" size="14"/>
                         {{ $imgCount }}
                     </div>
                     @endif
                     <button class="lcard-fav" data-id="{{ $car->id }}" aria-label="Dodaj do ulubionych" onclick="toggleFav(event,{{ $car->id }})">
-                        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        <x-icon name="heart" size="16"/>
                     </button>
                 </div>
 
@@ -474,25 +474,25 @@
                         <div class="lcard-specs">
                             @if($car->mileage)
                             <div class="lcard-spec">
-                                <svg viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
+                                <x-icon name="gauge" size="14"/>
                                 {{ number_format((float) $car->mileage, 0, '.', ' ') }} km
                             </div>
                             @endif
                             @if($car->fuel_type)
                             <div class="lcard-spec">
-                                <svg viewBox="0 0 24 24"><line x1="3" x2="15" y1="22" y2="22"/><line x1="4" x2="14" y1="9" y2="9"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>
+                                <x-icon name="fuel" size="14"/>
                                 {{ $car->fuel_type }}
                             </div>
                             @endif
                             @if($car->power_hp)
                             <div class="lcard-spec">
-                                <svg viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+                                <x-icon name="zap" size="14"/>
                                 {{ $car->power_hp }} KM
                             </div>
                             @endif
                             @if($car->first_registration)
                             <div class="lcard-spec">
-                                <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                                <x-icon name="calendar" size="14"/>
                                 {{ $car->first_registration }}
                             </div>
                             @endif
@@ -502,7 +502,7 @@
                         <div class="lcard-meta">
                             <span class="cc-badge" onclick="event.preventDefault();event.stopPropagation();var a=document.createElement('a');a.href='/samochody/{{ $car->slug }}/pdf';a.download='';document.body.appendChild(a);a.click();a.remove()">
                                 <span class="cc-badge-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="#0066ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
+                                    <x-icon name="clipboard-check" size="16" tone="blue" :strokeWidth="2.2"/>
                                 </span>
                                 <span class="cc-badge-text"><em>Certi</em>Check</span>
                             </span>
@@ -523,7 +523,7 @@
 
         <div class="home-listings-cta">
             <a href="{{ route('catalog') }}" class="home-listings-cta-btn">
-                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <x-icon name="search" size="16"/>
                 Zobacz wszystkie {{ $totalCars }} oferty
             </a>
         </div>
@@ -540,43 +540,43 @@
                 <p class="cc-desc-main">Przy wybranych autach przygotowujemy rozszerzony opis CertiCheck z dodatkowymi informacjami o stanie pojazdu, lakierze, śladach użytkowania i dokumentach. Dzięki temu łatwiej oceniasz auto jeszcze przed wizytą.</p>
                 <div class="certicheck-ctas">
                     <a href="{{ route('catalog') }}" class="certicheck-cta">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <x-icon name="search" size="16"/>
                         Zobacz auta z CertiCheck
                     </a>
                     <a href="{{ route('about') }}" class="certicheck-cta-ghost">
                         Jak działa CertiCheck?
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                        <x-icon name="arrow-right" size="14"/>
                     </a>
                 </div>
                 <div class="cc-foot">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+                    <x-icon name="shield-check" size="14"/>
                     CertiCheck dotyczy wybranych pojazdów w naszej ofercie.
                 </div>
             </div>
             <div class="certicheck-cards">
                 <a href="{{ route('catalog') }}" class="cc-card">
-                    <div class="cc-ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 11a3 3 0 1 0 0 6v0a3 3 0 0 0 0-6"/><path d="M12 2v2"/><path d="M5 5l2 2"/><path d="M2 12h2"/><path d="M17 7l2-2"/><path d="M22 12h-2"/><path d="M19 19l-2-2"/><path d="M12 22v-2"/></svg></div>
+                    <div class="cc-ico"><x-icon name="paintbrush" size="22"/></div>
                     <div class="cc-title">Pomiary lakieru</div>
                     <div class="cc-desc">Wykryjemy ponowne malowania i grubsze powłoki w punktach kontrolnych.</div>
-                    <div class="cc-arrow"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+                    <div class="cc-arrow"><x-icon name="chevron-right" size="16"/></div>
                 </a>
                 <a href="{{ route('catalog') }}" class="cc-card">
-                    <div class="cc-ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+                    <div class="cc-ico"><x-icon name="wrench" size="22"/></div>
                     <div class="cc-title">Stan techniczny</div>
                     <div class="cc-desc">Sprawdzamy kluczowe elementy mechaniczne i eksploatacyjne pojazdu.</div>
-                    <div class="cc-arrow"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+                    <div class="cc-arrow"><x-icon name="chevron-right" size="16"/></div>
                 </a>
                 <a href="{{ route('catalog') }}" class="cc-card">
-                    <div class="cc-ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12c1.5-1 2.5-1 4 0s2.5 1 4 0"/><circle cx="9" cy="9" r=".5" fill="currentColor"/><circle cx="15" cy="9" r=".5" fill="currentColor"/></svg></div>
+                    <div class="cc-ico"><x-icon name="search" size="22"/></div>
                     <div class="cc-title">Ślady użytkowania</div>
                     <div class="cc-desc">Wskazujemy widoczne ślady eksploatacji i ich dokładną lokalizację.</div>
-                    <div class="cc-arrow"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+                    <div class="cc-arrow"><x-icon name="chevron-right" size="16"/></div>
                 </a>
                 <a href="{{ route('catalog') }}" class="cc-card">
-                    <div class="cc-ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></div>
+                    <div class="cc-ico"><x-icon name="file-text" size="22"/></div>
                     <div class="cc-title">Raport PDF</div>
                     <div class="cc-desc">Czytelne podsumowanie ze zdjęciami i danymi do pobrania.</div>
-                    <div class="cc-arrow"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+                    <div class="cc-arrow"><x-icon name="chevron-right" size="16"/></div>
                 </a>
             </div>
         </div>

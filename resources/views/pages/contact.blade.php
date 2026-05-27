@@ -96,7 +96,7 @@
     <div class="contact-hero-in">
         <nav class="contact-breadcrumb">
             <a href="{{ route('home') }}">Strona główna</a>
-            <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+            <x-icon name="chevron-right" size="14"/>
             <span>Kontakt</span>
         </nav>
         <div class="contact-hero-label">Skontaktuj się</div>
@@ -104,15 +104,15 @@
         <p class="contact-hero-sub">Napisz, zadzwoń lub odwiedź nasz salon. Odpowiadamy szybko i bez zbędnych formalności.</p>
         <div class="contact-trust">
             <span class="contact-trust-pill">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <x-icon name="clock" size="16"/>
                 Odpowiedź w ciągu <b>24h</b>
             </span>
             <span class="contact-trust-pill">
-                <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                <x-icon name="map-pin" size="16"/>
                 Salon w <b>Warszawie</b>
             </span>
             <span class="contact-trust-pill">
-                <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.21 12"/><path d="M4 4h16v8H4z"/></svg>
+                <x-icon name="calendar" size="16"/>
                 Pon–Sob <b>9:00–18:00</b>
             </span>
         </div>
@@ -129,7 +129,7 @@
 
         @if(session('success'))
         <div class="cf-success">
-            <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+            <x-icon name="check" size="18"/>
             {{ session('success') }}
         </div>
         @endif
@@ -158,7 +158,7 @@
                 @error('message')<span style="font-size:12px;color:#dc2626">{{ $message }}</span>@enderror
             </div>
             <button type="submit" class="cf-submit">
-                <svg viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></svg>
+                <x-icon name="send" size="16"/>
                 Wyślij wiadomość
             </button>
         </form>
@@ -168,7 +168,7 @@
     <div class="contact-info">
         <a href="tel:+48123456789" class="ci-card">
             <div class="ci-icon">
-                <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>
+                <x-icon name="phone" size="22"/>
             </div>
             <div class="ci-body">
                 <strong>Zadzwoń do nas</strong>
@@ -179,7 +179,7 @@
 
         <a href="mailto:kontakt@certicars.pl" class="ci-card">
             <div class="ci-icon">
-                <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <x-icon name="mail" size="22"/>
             </div>
             <div class="ci-body">
                 <strong>Napisz e-mail</strong>
@@ -190,7 +190,7 @@
 
         <div class="ci-card" style="cursor:default">
             <div class="ci-icon">
-                <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                <x-icon name="map-pin" size="16"/>
             </div>
             <div class="ci-body">
                 <strong>Nasz salon</strong>
@@ -201,14 +201,14 @@
 
         <div class="ci-map">
             <div class="ci-map-pin">
-                <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="3"/></svg>
+                <x-icon name="map-pin" size="16"/>
                 <span>ul. Przykładowa 15, Warszawa</span>
             </div>
         </div>
 
         <div class="ci-hours">
             <h3>
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <x-icon name="clock" size="16"/>
                 Godziny otwarcia
             </h3>
             <div class="ci-hours-row"><span class="day">Poniedziałek – Piątek</span><span class="time">9:00 – 18:00</span></div>
@@ -224,7 +224,7 @@
         <h2>Wolisz porozmawiać?</h2>
         <p>Dzwoń bezpośrednio — nasz konsultant chętnie odpowie na wszystkie pytania.</p>
         <a href="tel:+48123456789">
-            <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>
+            <x-icon name="phone" size="22"/>
             +48 123 456 789
         </a>
     </div>

@@ -106,7 +106,7 @@
 <div style="background:#f5f5f7;min-height:100vh;padding:24px 0 60px">
 <div class="container no-print" style="max-width:900px;margin-bottom:16px">
     <a href="{{ route('catalog.show', $car->slug) }}" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#6b7280;text-decoration:none">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <x-icon name="chevron-left" size="14" :strokeWidth="2.2"/>
         Powrót do oferty
     </a>
 </div>
@@ -139,11 +139,11 @@
     {{-- ACTION BUTTONS --}}
     <div class="cc-actions no-print">
         <a href="{{ route('car.pdf', $car->slug) }}" class="btn btn-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            <x-icon name="download" size="16"/>
             Pobierz PDF
         </a>
         <button onclick="window.print()" class="btn btn-secondary">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+            <x-icon name="printer" size="16"/>
             Drukuj raport
         </button>
     </div>
@@ -152,7 +152,7 @@
         {{-- SPECYFIKACJA --}}
         <div class="cc-section">
             <div class="cc-section-title">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                <x-icon name="layout-grid" size="18"/>
                 Specyfikacja techniczna
             </div>
             <div class="cc-grid-2">
@@ -183,7 +183,7 @@
         @if($car->service_book || $car->last_service || $car->next_inspection || $car->coc_documents || $car->service_documentation || $car->vehicle_folder || $car->hu_au_report || $car->service_book_status || $car->registration_cert || $car->owners_manual || $car->aso_serviced || $car->service_history)
         <div class="cc-section">
             <div class="cc-section-title">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
+                <x-icon name="file-text" size="18"/>
                 Serwis i dokumentacja
             </div>
             <div class="cc-grid-2">
@@ -212,7 +212,7 @@
         @if($car->co2_emission || $car->emission_class || $car->fuel_consumption)
         <div class="cc-section">
             <div class="cc-section-title">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v17"/><path d="M15 11h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 4"/></svg>
+                <x-icon name="fuel" size="18"/>
                 Emisje i zużycie paliwa
             </div>
             @php
@@ -243,7 +243,7 @@
         @if($car->paint_measurements && count($car->paint_measurements))
         <div class="cc-section">
             <div class="cc-section-title">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><path d="M17.78 10.22a2.5 2.5 0 0 1 0 3.56L12 19.56a2.5 2.5 0 0 1-3.56 0l-5.78-5.78a2.5 2.5 0 0 1 0-3.56L8.44 4.44a2.5 2.5 0 0 1 3.56 0z"/></svg>
+                <x-icon name="paintbrush" size="18"/>
                 Pomiary grubości lakieru
             </div>
             <p style="font-size:12px;color:#9ca3af;margin:-8px 0 14px">Norma fabryczna: 80–150 µm. Wartości powyżej 200 µm mogą wskazywać na naprawę lakierniczą.</p>
@@ -278,7 +278,7 @@
         @if($car->technical_conditions && count($car->technical_conditions))
         <div class="cc-section">
             <div class="cc-section-title">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+                <x-icon name="shield-check" size="18"/>
                 Ocena stanu technicznego
             </div>
             @php
@@ -313,7 +313,7 @@
         @if($car->damages->count())
         <div class="cc-section">
             <div class="cc-section-title">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                <x-icon name="alert-triangle" size="18"/>
                 Stan wizualny i ślady użytkowania ({{ $car->damages->count() }})
             </div>
             @foreach($car->damages as $d)
@@ -348,7 +348,7 @@
         @if($car->galleryImages && $car->galleryImages->count())
         <div class="cc-section">
             <div class="cc-section-title">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                <x-icon name="image" size="18"/>
                 Dokumentacja fotograficzna ({{ $car->galleryImages->count() }})
             </div>
             <div class="cc-photo-grid">
@@ -365,7 +365,7 @@
         @if($car->tireSets && $car->tireSets->count())
         <div class="cc-section">
             <div class="cc-section-title">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+                <x-icon name="circle-dot" size="18"/>
                 Opony
             </div>
             @foreach($car->tireSets as $set)
@@ -391,7 +391,7 @@
         @if($car->equipment && count($car->equipment))
         <div class="cc-section">
             <div class="cc-section-title">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <x-icon name="check-circle" size="18"/>
                 Wyposażenie pojazdu
             </div>
             @php
@@ -408,7 +408,7 @@
                     <div class="cc-eq-cat-title">{{ $equipLabels[$cat] ?? ucfirst($cat) }}</div>
                     @foreach($items as $item)
                     <div class="cc-eq-item">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        <x-icon name="check" size="14" :strokeWidth="2.5"/>
                         {{ $item }}
                     </div>
                     @endforeach
