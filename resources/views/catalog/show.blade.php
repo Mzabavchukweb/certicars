@@ -104,7 +104,7 @@
 
 /* GALLERY — edge-to-edge, no frame */
 .cs-gallery{background:#e8e8ea;border-radius:14px;overflow:hidden;border:1px solid #e5e5e7;width:100%;max-width:100%;box-sizing:border-box}
-.cs-gallery-stage{position:relative;width:100%;aspect-ratio:16/9;background:#e8e8ea;overflow:hidden}
+.cs-gallery-stage{position:relative;width:100%;aspect-ratio:3/2;background:#e8e8ea;overflow:hidden}
 .cs-gallery-main{position:absolute;inset:0;background:#e8e8ea;display:flex;align-items:center;justify-content:center;width:100%;height:100%;box-sizing:border-box}
 .cs-gallery-main:not(.active){display:none!important}
 .cs-gallery-main img{width:100%;height:100%;object-fit:cover}
@@ -163,10 +163,10 @@
 .cs-btn-phone{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:15px 24px;background:#0066ff;color:#fff;border:none;border-radius:50px;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;box-shadow:0 4px 14px rgba(0,102,255,.35)}
 .cs-btn-phone:hover{background:#0052cc;color:#fff;box-shadow:0 8px 24px rgba(0,102,255,.45);transform:translateY(-1px)}
 .cs-btn-phone svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2;flex-shrink:0}
-.cs-btn-message{width:100%;display:flex;align-items:center;gap:10px;padding:14px 20px;background:#f8f9fa;border:1.5px solid #e5e7eb;border-radius:12px;cursor:pointer;transition:all .15s;text-decoration:none;color:#1a1a1a}
+.cs-btn-message{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 20px;background:#f8f9fa;border:1.5px solid #e5e7eb;border-radius:12px;cursor:pointer;transition:all .15s;text-decoration:none;color:#1a1a1a}
 .cs-btn-message:hover{background:#f0f1f3;border-color:#d1d5db}
 .cs-btn-message svg{width:20px;height:20px;stroke:#0066ff;fill:none;stroke-width:1.8;flex-shrink:0}
-.cs-btn-message .cs-msg-text{text-align:left}
+.cs-btn-message .cs-msg-text{text-align:center}
 .cs-btn-message .cs-msg-text strong{display:block;font-size:14px;font-weight:700;color:#1a1a1a}
 .cs-btn-message .cs-msg-text small{display:block;font-size:11px;font-weight:400;color:#9ca3af;margin-top:2px}
 
@@ -328,11 +328,11 @@
 .cs-finance-input-wrap span{position:absolute;right:12px;font-size:12px;font-weight:600;color:#6b7280;pointer-events:none}
 .cs-finance-field select{width:100%;height:38px;background:#fff;border:1.5px solid #d1d5db;border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:#1a1a1a;cursor:pointer;outline:none;appearance:auto;transition:border-color .15s}
 .cs-finance-field select:focus{border-color:#0066ff;box-shadow:0 0 0 3px rgba(0,102,255,.08)}
-.cs-finance-result{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 14px;background:#f7faff;border:1px solid #dbe6ff;border-radius:12px;margin-bottom:10px;flex-wrap:wrap}
+.cs-finance-result{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 14px;background:#eef4ff;border:1px solid #c7d8ff;border-radius:12px;margin-bottom:10px;flex-wrap:wrap}
 .cs-finance-result-left{display:flex;flex-direction:column;min-width:0}
-.cs-finance-result-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:#0052cc;margin-bottom:2px}
-.cs-finance-result-value{font-size:22px;font-weight:900;color:#0a0a0a;letter-spacing:-.4px;line-height:1.1}
-.cs-finance-result-value .suffix{font-size:12px;font-weight:600;color:#6b7280;letter-spacing:0}
+.cs-finance-result-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#0066ff;margin-bottom:3px}
+.cs-finance-result-value{font-size:22px;font-weight:900;color:#0066ff;letter-spacing:-.4px;line-height:1.1}
+.cs-finance-result-value .suffix{font-size:12px;font-weight:700;color:#0066ff;letter-spacing:0;opacity:.85}
 .cs-finance-cta{height:40px;padding:0 18px;background:#0066ff;color:#fff;border:none;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,102,255,.25);transition:all .15s;flex-shrink:0}
 .cs-finance-cta:hover{background:#0052cc;box-shadow:0 4px 14px rgba(0,102,255,.35);transform:translateY(-1px)}
 .cs-finance-foot{font-size:10.5px;color:#9ca3af;line-height:1.5;margin-top:auto;padding-top:6px}
