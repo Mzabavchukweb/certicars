@@ -1548,9 +1548,9 @@
     @php
         $activePkg = strtolower((string) ($car->gethelp_package ?? 'classic'));
         $gethelpPackages = [
-            ['key' => 'classic', 'name' => 'GetHelp Classic', 'badge' => '12 mies.', 'price' => 'W cenie',         'desc' => 'Podstawowa ochrona układu napędowego oraz wsparcie assistance 24/7.'],
-            ['key' => 'optimum', 'name' => 'GetHelp Optimum', 'badge' => '24 mies.', 'price' => '+ 2 900 zł',      'desc' => 'Rozszerzony zakres ochrony, w tym elektronika, klimatyzacja i komfort jazdy.'],
-            ['key' => 'grand',   'name' => 'GetHelp Grand',   'badge' => '36 mies.', 'price' => '+ 5 900 zł',      'desc' => 'Najszersza ochrona z assistance, autem zastępczym i zakresem niemal pełnym.'],
+            ['key' => 'classic', 'name' => 'GetHelp Classic', 'badge' => '12 mies.', 'price' => '1 000 zł / rok', 'desc' => 'Podstawowa ochrona układu napędowego oraz wsparcie assistance 24/7.'],
+            ['key' => 'optimum', 'name' => 'GetHelp Optimum', 'badge' => '24 mies.', 'price' => '1 495 zł / rok', 'desc' => 'Rozszerzony zakres ochrony, w tym elektronika, klimatyzacja i komfort jazdy.'],
+            ['key' => 'grand',   'name' => 'GetHelp Grand',   'badge' => '36 mies.', 'price' => '1 995 zł / rok', 'desc' => 'Najszersza ochrona z assistance, autem zastępczym i zakresem niemal pełnym.'],
         ];
     @endphp
     <div class="cs-finance-row">
@@ -1621,7 +1621,7 @@
                         <x-icon name="shield-check" size="18"/>
                     </div>
                     <div class="cs-gethelp-mini-name">{{ $pkg['name'] }}</div>
-                    <div class="cs-gethelp-mini-price {{ $pkg['price'] === 'W cenie' ? 'free' : '' }}">{{ $pkg['price'] === 'W cenie' ? 'W cenie' : $pkg['price'] }}</div>
+                    <div class="cs-gethelp-mini-price">{{ $pkg['price'] }}</div>
                 </div>
                 @endforeach
             </div>
