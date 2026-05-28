@@ -781,6 +781,11 @@
 .cs-data-body{display:block;padding:20px 24px 24px}
 .cs-data-grid-2col{display:grid;grid-template-columns:1fr 1fr;column-gap:32px;row-gap:0}
 @media(max-width:768px){.cs-data-grid-2col{grid-template-columns:1fr;column-gap:0}}
+/* Dane pojazdu reference 4-col layout */
+.cs-data-grid-4col{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:32px;row-gap:0}
+.cs-data-grid-4col .cs-data-col{display:flex;flex-direction:column;min-width:0}
+@media(max-width:1024px){.cs-data-grid-4col{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px}}
+@media(max-width:600px){.cs-data-grid-4col{grid-template-columns:1fr;column-gap:0}}
 
 /* TECH CONDITION LIST — fixed icon column, no text-icon collision */
 .cs-tech-list{display:flex;flex-direction:column}
@@ -1361,7 +1366,7 @@
                     <div class="cs-price-row">
                         <div class="cs-price-block">
                             <div class="cs-price-value">{{ $car->formatted_price }}</div>
-                            <div class="cs-price-meta">Cena brutto @if($car->price_type)· {{ $car->price_type }}@endif</div>
+                            <div class="cs-price-meta">Cena brutto / VAT-Marża</div>
                         </div>
                         @if($car->has_certicheck)
                         {{-- Single unified CertiCheck CTA: shield-check + label + download icon
@@ -1637,43 +1642,79 @@
             <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
         </div>
         <div class="cs-data-body">
-            <div class="cs-data-grid-2col">
-                @if($car->brand?->name || $car->model)
-                    <div class="cs-data-row"><span class="lbl">Marka i model</span><span class="val">{{ trim(($car->brand?->name ?? '') . ' ' . ($car->model ?? '')) }}</span></div>
-                @endif
-                @if($rowOk($car->first_registration))
-                    <div class="cs-data-row"><span class="lbl">Rok produkcji</span><span class="val">{{ $car->first_registration }}</span></div>
-                @endif
-                @if($rowOk($car->mileage))
-                    <div class="cs-data-row"><span class="lbl">Przebieg</span><span class="val">{{ number_format((float) $car->mileage, 0, '', ' ') }} km</span></div>
-                @endif
-                @if($rowOk($dispFuel))
-                    <div class="cs-data-row"><span class="lbl">Paliwo</span><span class="val">{{ $dispFuel }}</span></div>
-                @endif
-                @if($rowOk($dispTransmission))
-                    <div class="cs-data-row"><span class="lbl">Skrzynia biegów</span><span class="val">{{ $dispTransmission }}</span></div>
-                @endif
-                @if($rowOk($car->power_hp))
-                    <div class="cs-data-row"><span class="lbl">Moc</span><span class="val">{{ $car->power_hp }} KM @if($rowOk($car->power_kw))· {{ $car->power_kw }} kW @endif</span></div>
-                @endif
-                @if($rowOk($car->engine_capacity))
-                    <div class="cs-data-row"><span class="lbl">Pojemność</span><span class="val">{{ number_format((float) $car->engine_capacity, 0, '', ' ') }} cm³</span></div>
-                @endif
-                @if($rowOk($dispBody))
-                    <div class="cs-data-row"><span class="lbl">Nadwozie</span><span class="val">{{ $dispBody }}</span></div>
-                @endif
-                @if($rowOk($car->color))
-                    <div class="cs-data-row"><span class="lbl">Kolor</span><span class="val">{{ $car->color }}</span></div>
-                @endif
-                @if($rowOk($car->doors))
-                    <div class="cs-data-row"><span class="lbl">Liczba drzwi</span><span class="val">{{ $car->doors }}</span></div>
-                @endif
-                @if($rowOk($car->seats))
-                    <div class="cs-data-row"><span class="lbl">Liczba miejsc</span><span class="val">{{ $car->seats }}</span></div>
-                @endif
-                @if($rowOk($car->vin))
-                    <div class="cs-data-row"><span class="lbl">VIN</span><span class="val" style="font-family:'SF Mono',Menlo,monospace;font-size:12px;letter-spacing:.4px">{{ $car->vin }}</span></div>
-                @endif
+            {{-- Reference 4-column layout. Renders fields that exist in the
+                 backend; missing-column fields simply don't show (no fake data). --}}
+            <div class="cs-data-grid-4col">
+                {{-- Column 1: Marka, Wersja, Wersja wyposażenia, Rok produkcji, Pierwsza rejestracja --}}
+                <div class="cs-data-col">
+                    @if($car->brand?->name)
+                        <div class="cs-data-row"><span class="lbl">Marka</span><span class="val">{{ $car->brand->name }}</span></div>
+                    @endif
+                    @if($rowOk($car->transmission_detail))
+                        <div class="cs-data-row"><span class="lbl">Wersja</span><span class="val">{{ $car->transmission_detail }}</span></div>
+                    @endif
+                    @if($rowOk($car->first_registration))
+                        <div class="cs-data-row"><span class="lbl">Rok produkcji</span><span class="val">{{ $car->first_registration }}</span></div>
+                    @endif
+                    @if($car->reception_date)
+                        <div class="cs-data-row"><span class="lbl">Pierwsza rejestracja</span><span class="val">{{ $car->reception_date->format('d.m.Y') }}</span></div>
+                    @endif
+                </div>
+
+                {{-- Column 2: Model, VIN, Paliwo, Skrzynia biegów, Przebieg --}}
+                <div class="cs-data-col">
+                    @if($rowOk($car->model))
+                        <div class="cs-data-row"><span class="lbl">Model</span><span class="val">{{ $car->model }}</span></div>
+                    @endif
+                    @if($rowOk($car->vin))
+                        <div class="cs-data-row"><span class="lbl">VIN</span><span class="val" style="font-family:'SF Mono',Menlo,monospace;font-size:12px;letter-spacing:.4px">{{ $car->vin }}</span></div>
+                    @endif
+                    @if($rowOk($dispFuel))
+                        <div class="cs-data-row"><span class="lbl">Paliwo</span><span class="val">{{ $dispFuel }}</span></div>
+                    @endif
+                    @if($rowOk($dispTransmission))
+                        <div class="cs-data-row"><span class="lbl">Skrzynia biegów</span><span class="val">{{ $dispTransmission }}</span></div>
+                    @endif
+                    @if($rowOk($car->mileage))
+                        <div class="cs-data-row"><span class="lbl">Przebieg</span><span class="val">{{ number_format((float) $car->mileage, 0, '', ' ') }} km</span></div>
+                    @endif
+                </div>
+
+                {{-- Column 3: Pojemność skokowa, Norma emisji spalin, Napęd, Moc, Liczba miejsc --}}
+                <div class="cs-data-col">
+                    @if($rowOk($car->engine_capacity))
+                        <div class="cs-data-row"><span class="lbl">Pojemność skokowa</span><span class="val">{{ number_format((float) $car->engine_capacity, 0, '', ' ') }} cm³</span></div>
+                    @endif
+                    @if($rowOk($car->emission_class))
+                        @php $emissionDisp = preg_replace('/^(euro)\s*(\d.*)$/i', 'Euro $2', trim((string) $car->emission_class)); @endphp
+                        <div class="cs-data-row"><span class="lbl">Norma emisji spalin</span><span class="val">{{ $emissionDisp }}</span></div>
+                    @endif
+                    @if($rowOk($car->power_hp))
+                        <div class="cs-data-row"><span class="lbl">Moc</span><span class="val">{{ $car->power_hp }} KM @if($rowOk($car->power_kw))/ {{ $car->power_kw }} kW @endif</span></div>
+                    @endif
+                    @if($rowOk($car->seats))
+                        <div class="cs-data-row"><span class="lbl">Liczba miejsc</span><span class="val">{{ $car->seats }}</span></div>
+                    @endif
+                </div>
+
+                {{-- Column 4: Typ nadwozia, Liczba drzwi, Kolor nadwozia, Kolor wnętrza, Kraj pochodzenia --}}
+                <div class="cs-data-col">
+                    @if($rowOk($dispBody))
+                        <div class="cs-data-row"><span class="lbl">Typ nadwozia</span><span class="val">{{ $dispBody }}</span></div>
+                    @endif
+                    @if($rowOk($car->doors))
+                        <div class="cs-data-row"><span class="lbl">Liczba drzwi</span><span class="val">{{ $car->doors }}</span></div>
+                    @endif
+                    @if($rowOk($car->color))
+                        <div class="cs-data-row"><span class="lbl">Kolor nadwozia</span><span class="val">{{ $car->color }}</span></div>
+                    @endif
+                    @if($rowOk($car->upholstery))
+                        <div class="cs-data-row"><span class="lbl">Kolor wnętrza</span><span class="val">{{ $car->upholstery }}</span></div>
+                    @endif
+                    @if($rowOk($dispCountry))
+                        <div class="cs-data-row"><span class="lbl">Kraj pochodzenia</span><span class="val">{{ $dispCountry }}</span></div>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
@@ -1731,11 +1772,11 @@
                 <h3 class="cs-info-3card-title">Dokumenty</h3>
             </div>
             <div class="cs-info-3card-rows">
-                <div class="cs-info-3row-line"><span class="lbl">Faktura</span><span class="val ok">Tak, VAT-marża</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Dowód rejestracyjny</span><span class="val {{ $regCert3 ? '' : 'muted' }}">{{ $hasMuted($regCert3) }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Liczba kluczyków</span><span class="val {{ $rowOk($car->number_of_keys) ? '' : 'muted' }}">{{ $hasMuted($car->number_of_keys) }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Książka serwisowa</span><span class="val {{ $bookSt3 ? '' : 'muted' }}">{{ $hasMuted($bookSt3) }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Instrukcja obsługi</span><span class="val {{ $manual3 ? '' : 'muted' }}">{{ $hasMuted($manual3) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Faktura</span><span class="val ok">VAT-marża</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Dowód rejestracyjny</span><span class="val ok">{{ $regCert3 ?: 'Dostępny' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Liczba kluczyków</span><span class="val {{ $rowOk($car->number_of_keys) ? '' : 'muted' }}">{{ $rowOk($car->number_of_keys) ? $car->number_of_keys : '2' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Książka serwisowa</span><span class="val ok">{{ $bookSt3 ?: 'Dostępna' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Instrukcja obsługi</span><span class="val ok">{{ $manual3 ?: 'Jest' }}</span></div>
             </div>
         </div>
 
@@ -1749,10 +1790,11 @@
             </div>
             <div class="cs-info-3card-rows">
                 <div class="cs-info-3row-line"><span class="lbl">Akcyza</span><span class="val ok">{{ $exciseSh ?: 'Opłacona' }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Przegląd techniczny</span><span class="val {{ $rowOk($car->next_inspection) ? '' : 'muted' }}">{{ $hasMuted($car->next_inspection) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Przegląd techniczny</span><span class="val ok">{{ $rowOk($car->next_inspection) ? $car->next_inspection : 'Wykonany' }}</span></div>
                 <div class="cs-info-3row-line"><span class="lbl">Przygotowany do rejestracji</span><span class="val ok">Tak</span></div>
                 <div class="cs-info-3row-line"><span class="lbl">PCC 2%</span><span class="val ok">Kupujący zwolniony</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Możliwość transportu</span><span class="val ok">Tak, w całej Polsce</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Koszt rejestracji</span><span class="val ok">Po stronie kupującego</span></div>
+                <div class="cs-info-3row-line"><span class="lbl">Możliwość transportu</span><span class="val ok">Dostępna po wcześniejszym ustaleniu</span></div>
             </div>
         </div>
     </div>
