@@ -623,6 +623,8 @@ class CarController extends Controller
             'engine_capacity' => 'nullable|integer|min:0',
             'transmission' => 'nullable|string|max:100',
             'transmission_detail' => 'nullable|string|max:100',
+            'equipment_version'   => 'nullable|string|max:120',
+            'drivetrain'          => 'nullable|string|max:80',
             'location' => 'nullable|string|max:255',
             'location_distance' => 'nullable|string|max:100',
             'source' => 'nullable|string|max:255',

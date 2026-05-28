@@ -15,7 +15,7 @@ class Car extends Model
         'seller_name', 'seller_phone', 'seller_email', 'commission_note', 'reception_date',
         'color', 'color_code', 'doors', 'seats', 'weight', 'upholstery', 'vin', 'body_type',
         'first_registration', 'mileage', 'previous_owners', 'business_use', 'number_of_keys',
-        'fuel_type', 'power_hp', 'power_kw', 'engine_capacity', 'transmission', 'transmission_detail',
+        'fuel_type', 'power_hp', 'power_kw', 'engine_capacity', 'transmission', 'transmission_detail', 'equipment_version', 'drivetrain',
         'location', 'location_distance', 'source', 'is_imported', 'country_registration', 'taxation', 'imported_from', 'vehicle_history',
         'last_service', 'last_service_mileage', 'next_inspection', 'service_documentation',
         'fuel_consumption', 'fuel_procedure', 'co2_emission', 'emission_class',
