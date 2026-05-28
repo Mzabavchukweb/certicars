@@ -746,6 +746,17 @@
             </div>
         </div>
 
+        <div class="wz-grid-2" style="margin-bottom:14px">
+            <div class="wz-field">
+                <label>Wersja wyposażenia</label>
+                <input type="text" name="equipment_version" value="{{ old('equipment_version',$car?->equipment_version) }}" maxlength="120" placeholder="np. Initiale Paris">
+            </div>
+            <div class="wz-field">
+                <label>Napęd</label>
+                <input type="text" name="drivetrain" value="{{ old('drivetrain',$car?->drivetrain) }}" maxlength="80" placeholder="np. Na przednie koła (FWD)">
+            </div>
+        </div>
+
         <div class="wz-grid-3" style="margin-bottom:14px">
             <div class="wz-field">
                 <label>VIN</label>

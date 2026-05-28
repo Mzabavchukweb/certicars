@@ -739,6 +739,14 @@
 .cs-equip-cat-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .cs-equip-cat-list li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#374151;line-height:1.4}
 .cs-equip-cat-list li svg{flex-shrink:0;margin-top:2px;color:#0066ff!important}
+/* Collapsed: items 7+ hidden; expanded class on .cs-equip-section reveals them */
+.cs-equip-cat-list li.cs-equip-extra{display:none}
+.cs-equip-section.expanded .cs-equip-cat-list li.cs-equip-extra{display:flex}
+/* "Pokaż pełne wyposażenie" toggle button */
+.cs-equip-show-all{display:flex;align-items:center;justify-content:center;gap:8px;margin:18px auto 0;padding:13px 28px;background:transparent;border:1.5px solid #0066ff;color:#0066ff;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s,color .15s,box-shadow .15s;font-family:inherit;min-height:46px}
+.cs-equip-show-all:hover{background:#0066ff;color:#fff;box-shadow:0 6px 18px rgba(0,102,255,.25)}
+.cs-equip-show-all .cs-equip-show-all-chev{transition:transform .2s}
+.cs-equip-section.expanded .cs-equip-show-all .cs-equip-show-all-chev{transform:rotate(180deg)}
 
 /* Tablet: 4-col top tiles, 2-col category cards */
 @media(max-width:1024px){
@@ -1425,6 +1433,13 @@
                         <span class="val">{{ \App\Helpers\CarLabels::bodyType($car->body_type ?? $car->category) }}</span>
                     </div>
                     @endif
+                    @if($car->seats)
+                    <div class="cs-sidebar-summary-row">
+                        <span class="cs-row-icon"><x-icon name="users" size="16"/></span>
+                        <span class="lbl">Liczba miejsc</span>
+                        <span class="val">{{ $car->seats }}</span>
+                    </div>
+                    @endif
                 </div>
                 <!-- CTA BUTTONS (desktop) -->
                 <div class="cs-price-actions">
@@ -1653,6 +1668,9 @@
                     @if($rowOk($car->transmission_detail))
                         <div class="cs-data-row"><span class="lbl">Wersja</span><span class="val">{{ $car->transmission_detail }}</span></div>
                     @endif
+                    @if($rowOk($car->equipment_version))
+                        <div class="cs-data-row"><span class="lbl">Wersja wyposażenia</span><span class="val">{{ $car->equipment_version }}</span></div>
+                    @endif
                     @if($rowOk($car->first_registration))
                         <div class="cs-data-row"><span class="lbl">Rok produkcji</span><span class="val">{{ $car->first_registration }}</span></div>
                     @endif
@@ -1688,6 +1706,9 @@
                     @if($rowOk($car->emission_class))
                         @php $emissionDisp = preg_replace('/^(euro)\s*(\d.*)$/i', 'Euro $2', trim((string) $car->emission_class)); @endphp
                         <div class="cs-data-row"><span class="lbl">Norma emisji spalin</span><span class="val">{{ $emissionDisp }}</span></div>
+                    @endif
+                    @if($rowOk($car->drivetrain))
+                        <div class="cs-data-row"><span class="lbl">Napęd</span><span class="val">{{ $car->drivetrain }}</span></div>
                     @endif
                     @if($rowOk($car->power_hp))
                         <div class="cs-data-row"><span class="lbl">Moc</span><span class="val">{{ $car->power_hp }} KM @if($rowOk($car->power_kw))/ {{ $car->power_kw }} kW @endif</span></div>
@@ -1941,7 +1962,13 @@
         {{-- Category cards. Items are real equipment data grouped/categorized via
              EquipmentCatalog::groupEquipmentForDisplay. Empty categories are
              dropped by the helper. --}}
-        <div class="cs-equip-cats">
+        @php
+            // Show first 6 items per category in the collapsed view. If any
+            // category exceeds 6 items the "Pokaż pełne wyposażenie" button
+            // toggles the rest into view.
+            $eqHasOverflow = collect($eqGrouped)->contains(fn($items) => count($items) > 6);
+        @endphp
+        <div class="cs-equip-cats" id="csEquipCats">
             @foreach($eqGrouped as $catKey => $items)
             @php $catMeta = \App\Helpers\EquipmentCatalog::CATEGORIES[$catKey] ?? null; @endphp
             @if($catMeta)
@@ -1953,14 +1980,29 @@
                     <h3 class="cs-equip-cat-title">{{ $catMeta['label'] }}</h3>
                 </div>
                 <ul class="cs-equip-cat-list">
-                    @foreach($items as $item)
-                    <li><x-icon name="check" size="14" tone="blue" :strokeWidth="2.5"/><span>{{ $item }}</span></li>
+                    @foreach($items as $idx => $item)
+                    <li @if($idx >= 6) class="cs-equip-extra" @endif><x-icon name="check" size="14" tone="blue" :strokeWidth="2.5"/><span>{{ $item }}</span></li>
                     @endforeach
                 </ul>
             </div>
             @endif
             @endforeach
         </div>
+        @if($eqHasOverflow)
+        <button type="button" class="cs-equip-show-all" id="csEquipShowAll" onclick="csEquipToggle(this)" aria-controls="csEquipCats" aria-expanded="false">
+            <span class="cs-equip-show-all-text">Pokaż pełne wyposażenie</span>
+            <x-icon name="chevron-down" size="16" :strokeWidth="2.4" class="cs-equip-show-all-chev"/>
+        </button>
+        <script>
+        function csEquipToggle(btn){
+            const sec = btn.closest('.cs-equip-section');
+            if(!sec) return;
+            const expanded = sec.classList.toggle('expanded');
+            btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            btn.querySelector('.cs-equip-show-all-text').textContent = expanded ? 'Pokaż mniej' : 'Pokaż pełne wyposażenie';
+        }
+        </script>
+        @endif
         @endif
     </div>
     @endif
