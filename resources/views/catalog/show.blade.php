@@ -164,9 +164,25 @@
 
 /* PRICE SECTION (inside card) */
 .cs-price-section{padding:22px 22px 14px;border-bottom:1px solid #f0f0f2}
+.cs-price-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.cs-price-block{min-width:0;flex:1 1 auto}
 .cs-price-label{font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
 .cs-price-value{font-size:36px;font-weight:900;letter-spacing:-1px;color:#1a1a1a;line-height:1}
 .cs-price-value small{display:block;font-size:12px;font-weight:500;color:#9ca3af;letter-spacing:0;margin-top:4px}
+.cs-price-meta{font-size:12px;color:#6b7280;font-weight:500;margin-top:6px}
+/* CertiCheck badge + download — sits next to the price value */
+.cs-price-certi-group{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;margin-top:4px}
+.cs-certi-badge{display:inline-flex;align-items:center;gap:5px;background:#0a0a0a;color:#fff;font-size:11.5px;font-weight:800;letter-spacing:.2px;padding:7px 12px;border-radius:50px;text-decoration:none;transition:transform .15s,box-shadow .15s,background .15s;line-height:1}
+.cs-certi-badge:hover{background:#1a1a1a;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.18)}
+.cs-certi-badge svg{stroke:#4ea3ff;color:#4ea3ff}
+.cs-certi-dl{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:#eff6ff;color:#0066ff;border:1px solid #c7d8ff;text-decoration:none;transition:background .15s,color .15s,transform .15s}
+.cs-certi-dl:hover{background:#0066ff;color:#fff;transform:translateY(-1px)}
+.cs-certi-dl svg{stroke:currentColor}
+@media(max-width:520px){
+    .cs-price-row{gap:10px}
+    .cs-price-certi-group{margin-top:0;width:100%;justify-content:flex-start}
+    .cs-certi-badge{font-size:12px;padding:7px 14px}
+}
 
 /* CTA BUTTONS (inside card) */
 .cs-price-actions{padding:18px 22px 22px;display:flex;flex-direction:column;gap:8px}
@@ -1339,13 +1355,28 @@
                         @if($car->first_registration)<span style="display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:#1f2937"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>{{ $car->first_registration }}</span>@endif
                         @if($car->fuel_type)<span style="display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:#1f2937"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/></svg>{{ \App\Helpers\CarLabels::fuelType($car->fuel_type) }}</span>@endif
                         @if($car->power_hp)<span style="display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:#1f2937"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>{{ $car->power_hp }} KM</span>@endif
-                        @if($car->has_certicheck)<a href="{{ route('catalog.certicheck', $car->slug) }}" class="cs-sidebar-certi" title="Sprawdź raport CertiCheck"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" fill="#0066ff"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>CertiCheck</a>@endif
+                        {{-- CertiCheck moved to the price row (cs-price-section) so it sits next to the price on both desktop and mobile. --}}
                     </div>
                 </div>
-                <!-- PRICE -->
+                <!-- PRICE + CertiCheck action -->
                 <div class="cs-price-section">
-                    <div class="cs-price-value">{{ $car->formatted_price }}</div>
-                    <div style="font-size:12px;color:#6b7280;font-weight:500;margin-top:6px">Cena brutto @if($car->price_type)· {{ $car->price_type }}@endif</div>
+                    <div class="cs-price-row">
+                        <div class="cs-price-block">
+                            <div class="cs-price-value">{{ $car->formatted_price }}</div>
+                            <div class="cs-price-meta">Cena brutto @if($car->price_type)· {{ $car->price_type }}@endif</div>
+                        </div>
+                        @if($car->has_certicheck)
+                        <div class="cs-price-certi-group">
+                            <a href="{{ route('catalog.certicheck', $car->slug) }}" class="cs-certi-badge" title="Zobacz raport CertiCheck">
+                                <x-icon name="badge-check" size="14" :strokeWidth="2.4"/>
+                                CertiCheck
+                            </a>
+                            <a href="{{ route('car.pdf', $car->slug) }}" class="cs-certi-dl" download title="Pobierz raport CertiCheck (PDF)" aria-label="Pobierz raport CertiCheck">
+                                <x-icon name="download" size="16" :strokeWidth="2.2"/>
+                            </a>
+                        </div>
+                        @endif
+                    </div>
                 </div>
                 <!-- VEHICLE SUMMARY with icons -->
                 <div class="cs-sidebar-summary">
@@ -1411,12 +1442,6 @@
                             <x-icon name="heart" size="16" id="csFavIcon"/>
                             <span id="csFavLabel" style="visibility:hidden">Dodaj do ulubionych</span>
                         </button>
-                        @if($car->has_certicheck)
-                        <a href="{{ route('catalog.certicheck', $car->slug) }}" class="cs-sidebar-certi" title="Sprawdź raport CertiCheck">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" fill="#0066ff"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            CertiCheck
-                        </a>
-                        @endif
                     </div>
                 </div>
                 <!-- CTA BUTTONS (mobile) -->
