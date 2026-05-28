@@ -170,18 +170,16 @@
 .cs-price-value{font-size:36px;font-weight:900;letter-spacing:-1px;color:#1a1a1a;line-height:1}
 .cs-price-value small{display:block;font-size:12px;font-weight:500;color:#9ca3af;letter-spacing:0;margin-top:4px}
 .cs-price-meta{font-size:12px;color:#6b7280;font-weight:500;margin-top:6px}
-/* CertiCheck badge + download — sits next to the price value */
-.cs-price-certi-group{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;margin-top:4px}
-.cs-certi-badge{display:inline-flex;align-items:center;gap:5px;background:#0a0a0a;color:#fff;font-size:11.5px;font-weight:800;letter-spacing:.2px;padding:7px 12px;border-radius:50px;text-decoration:none;transition:transform .15s,box-shadow .15s,background .15s;line-height:1}
-.cs-certi-badge:hover{background:#1a1a1a;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.18)}
-.cs-certi-badge svg{stroke:#4ea3ff;color:#4ea3ff}
-.cs-certi-dl{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:#eff6ff;color:#0066ff;border:1px solid #c7d8ff;text-decoration:none;transition:background .15s,color .15s,transform .15s}
-.cs-certi-dl:hover{background:#0066ff;color:#fff;transform:translateY(-1px)}
-.cs-certi-dl svg{stroke:currentColor}
+/* Single CertiCheck download CTA — one black pill containing shield + label + download arrow */
+.cs-certi-cta{display:inline-flex;align-items:center;gap:8px;background:#0a0a0a;color:#fff;font-size:12px;font-weight:800;letter-spacing:.2px;padding:8px 14px;border-radius:50px;text-decoration:none;transition:transform .15s,box-shadow .15s,background .15s;line-height:1;flex-shrink:0;min-height:36px;box-sizing:border-box}
+.cs-certi-cta:hover{background:#1a1a1a;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.22)}
+.cs-certi-cta .cs-certi-cta-leading{stroke:#4ea3ff!important;color:#4ea3ff}
+.cs-certi-cta .cs-certi-cta-trailing{stroke:#fff!important;color:#fff}
+.cs-certi-cta .cs-certi-cta-sep{display:inline-block;width:1px;height:14px;background:rgba(255,255,255,.22);margin:0 -2px}
 @media(max-width:520px){
     .cs-price-row{gap:10px}
-    .cs-price-certi-group{margin-top:0;width:100%;justify-content:flex-start}
-    .cs-certi-badge{font-size:12px;padding:7px 14px}
+    .cs-price-block{flex-basis:100%}
+    .cs-certi-cta{font-size:12.5px;padding:9px 16px;min-height:40px;align-self:flex-start}
 }
 
 /* CTA BUTTONS (inside card) */
@@ -1366,15 +1364,15 @@
                             <div class="cs-price-meta">Cena brutto @if($car->price_type)· {{ $car->price_type }}@endif</div>
                         </div>
                         @if($car->has_certicheck)
-                        <div class="cs-price-certi-group">
-                            <a href="{{ route('catalog.certicheck', $car->slug) }}" class="cs-certi-badge" title="Zobacz raport CertiCheck">
-                                <x-icon name="badge-check" size="14" :strokeWidth="2.4"/>
-                                CertiCheck
-                            </a>
-                            <a href="{{ route('car.pdf', $car->slug) }}" class="cs-certi-dl" download title="Pobierz raport CertiCheck (PDF)" aria-label="Pobierz raport CertiCheck">
-                                <x-icon name="download" size="16" :strokeWidth="2.2"/>
-                            </a>
-                        </div>
+                        {{-- Single unified CertiCheck CTA: shield-check + label + download icon
+                             all inside one black pill. Links straight to the PDF download
+                             (existing route('car.pdf')) so a single tap downloads the report. --}}
+                        <a href="{{ route('car.pdf', $car->slug) }}" class="cs-certi-cta" download title="Pobierz raport CertiCheck (PDF)" aria-label="Pobierz raport CertiCheck (PDF)">
+                            <x-icon name="badge-check" size="14" :strokeWidth="2.4" class="cs-certi-cta-leading"/>
+                            <span>CertiCheck</span>
+                            <span class="cs-certi-cta-sep" aria-hidden="true"></span>
+                            <x-icon name="download" size="15" :strokeWidth="2.4" class="cs-certi-cta-trailing"/>
+                        </a>
                         @endif
                     </div>
                 </div>
