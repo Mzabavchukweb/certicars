@@ -150,14 +150,14 @@
         </div>
     </div>
 
-    {{-- HERO IMAGE — primary car photo, full width, prominent. Placeholder only when no gallery exists. --}}
+    {{-- HERO IMAGE — only renders when a real image was embedded by the
+         PdfImageEmbedder. Skipping cleanly is FAR better than rendering a
+         330px-tall gray "Brak zdjęcia" block on the cover page. --}}
+    @if($car->primaryImage && !empty($car->primaryImage->pdf_src))
     <div class="cover-hero">
-        @if($car->primaryImage && ($car->primaryImage->pdf_src ?? null))
-            <img src="{{ $car->primaryImage->pdf_src }}" alt="{{ $car->title }}">
-        @else
-            <div class="cover-hero-placeholder"><span>Brak zdjęcia pojazdu</span></div>
-        @endif
+        <img src="{{ $car->primaryImage->pdf_src }}" alt="{{ $car->title }}">
     </div>
+    @endif
 
     <div class="cover-title">{{ $car->title }}</div>
     <div class="cover-meta">
@@ -383,17 +383,52 @@
         <th>Bieżnik</th>
         <th>Stan</th>
     </tr>
+    @php
+        // DB stores wheel position as a raw enum key (front_left / rear_right /
+        // top / spare …). Print human-readable Polish in the PDF, NEVER the
+        // raw key. Unknown keys fall back to a cleaned-up display string so
+        // an admin typo doesn't leak as e.g. "zajebiste".
+        $tirePositionLabel = function ($k) {
+            $map = [
+                'front_left'  => 'Przednia lewa',
+                'front_right' => 'Przednia prawa',
+                'rear_left'   => 'Tylna lewa',
+                'rear_right'  => 'Tylna prawa',
+                'spare'       => 'Zapasowe',
+                'top'         => 'Górna',
+            ];
+            if (!is_string($k) || $k === '') return '—';
+            return $map[$k] ?? mb_convert_case(str_replace('_', ' ', $k), MB_CASE_TITLE, 'UTF-8');
+        };
+        // PDF tire status is strictly one of four labels: "Bez
+        // nieprawidłowości" / "Wymaga uwagi" / "Zużyta" / "Do wymiany". Raw
+        // admin input (including typos / slang like "zajebiste") never reaches
+        // the client PDF. We classify the condition array by keyword sniff.
+        $tireStatusLabel = function ($cond) {
+            if (!is_array($cond) || count($cond) === 0) {
+                return ['label' => 'Bez nieprawidłowości', 'class' => 'cond-ok'];
+            }
+            $joined = mb_strtolower(implode(' ', array_filter($cond, 'is_string')));
+            // Hardest first — anything signaling damage / replacement.
+            if (preg_match('/wymian|p[eę]kni|uszkodz|do_wymiany|bad|zniszcz/u', $joined)) {
+                return ['label' => 'Do wymiany', 'class' => 'cond-warn'];
+            }
+            if (str_contains($joined, 'zuży') || str_contains($joined, 'zużyt')) {
+                return ['label' => 'Zużyta', 'class' => 'cond-warn'];
+            }
+            if (str_contains($joined, 'ok')) {
+                return ['label' => 'Bez nieprawidłowości', 'class' => 'cond-ok'];
+            }
+            // Unknown text (typo / admin slang) → generic warning, never raw.
+            return ['label' => 'Wymaga uwagi', 'class' => 'cond-warn'];
+        };
+    @endphp
     @foreach($set->tires as $tire)
+    @php $status = $tireStatusLabel($tire->condition); @endphp
     <tr>
-        <td>{{ $tire->position ?? '—' }}</td>
-        <td style="font-weight:bold">{{ $tire->tread_depth !== null ? $tire->tread_depth . ' mm' : '—' }}</td>
-        <td>
-            @if($tire->condition && count($tire->condition))
-                <span class="cond-warn">{{ implode(', ', $tire->condition) }}</span>
-            @else
-                <span class="cond-ok">Brak nieprawidłowości</span>
-            @endif
-        </td>
+        <td>{{ $tirePositionLabel($tire->position) }}</td>
+        <td style="font-weight:bold">{{ $tire->tread_depth !== null ? number_format((float) $tire->tread_depth, 1, ',', ' ') . ' mm' : '—' }}</td>
+        <td><span class="{{ $status['class'] }}">{{ $status['label'] }}</span></td>
     </tr>
     @endforeach
 </table>
