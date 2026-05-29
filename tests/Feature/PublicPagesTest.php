@@ -23,6 +23,7 @@ class PublicPagesTest extends TestCase
     private function stubChromium(): void
     {
         $mock = Mockery::mock(ChromiumRenderer::class);
+        $mock->shouldReceive('assertReady')->andReturn(null);
         $mock->shouldReceive('render')->andReturn("%PDF-1.4\n%stub\n%%EOF");
         $this->app->instance(ChromiumRenderer::class, $mock);
     }
