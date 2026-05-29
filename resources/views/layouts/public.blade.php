@@ -152,25 +152,13 @@
         .footer::after{content:'';position:absolute;top:-220px;right:-180px;width:760px;height:520px;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(30,80,180,.45) 0%,rgba(30,80,180,.15) 40%,rgba(30,80,180,0) 70%);pointer-events:none;z-index:-1}
         .footer > *{position:relative;z-index:1}
 
-        /* Brand row — logo on the left, short reassurance line on the
-           right, thin divider underneath. */
-        .footer-top{max-width:1200px;margin:0 auto;padding:48px 24px 26px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+        /* Brand row — logo only. Tagline + trust strip removed; their
+           CSS rules went with them. */
+        .footer-top{max-width:1200px;margin:0 auto;padding:40px 24px 24px;border-bottom:1px solid rgba(255,255,255,.08)}
         .footer-logo{display:inline-flex;align-items:center;gap:11px;text-decoration:none}
         .footer-logo-badge{width:34px;height:34px;flex-shrink:0}
         .footer-logo-text{font-family:'Inter',sans-serif;font-size:24px;font-weight:900;letter-spacing:-.6px;color:#fff;line-height:1}
         .footer-logo-text span{color:#4ea3ff}
-        .footer-tagline{font-size:12.5px;color:rgba(255,255,255,.6);font-weight:500;letter-spacing:.1px;text-align:right;max-width:300px;line-height:1.5}
-        .footer-tagline strong{color:#fff;font-weight:700}
-
-        /* Trust badge strip — three small reassurance pills between the
-           brand row and the main grid. */
-        .footer-trust{max-width:1200px;margin:0 auto;padding:22px 24px 8px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-        .footer-trust-item{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:12px}
-        .footer-trust-ico{width:30px;height:30px;border-radius:8px;background:rgba(78,163,255,.14);border:1px solid rgba(78,163,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-        .footer-trust-ico svg{width:13px;height:13px;stroke:#7eb3ff;fill:none;stroke-width:2}
-        .footer-trust-text{display:flex;flex-direction:column;gap:1px;min-width:0}
-        .footer-trust-title{font-size:12px;font-weight:800;color:#fff;letter-spacing:.1px}
-        .footer-trust-sub{font-size:10.5px;color:rgba(255,255,255,.5);letter-spacing:.1px}
 
         /* Main grid — 4 balanced columns on desktop. */
         .footer-in{max-width:1200px;margin:0 auto;padding:30px 24px 36px;display:grid;grid-template-columns:1.5fr 1.1fr 1fr 1fr;gap:40px;align-items:start}
@@ -211,17 +199,14 @@
         .footer-btm-verified{display:inline-flex;align-items:center;gap:6px;color:#4ea3ff;font-weight:700;letter-spacing:.1px}
         .footer-btm-verified svg{width:13px;height:13px;stroke:#4ea3ff;fill:none;stroke-width:2.2}
 
-        /* Tablet: collapse to 2-col + trust badges drop to 3-up still. */
+        /* Tablet: collapse to 2-col. */
         @media(max-width:900px){
-            .footer-top{padding:36px 24px 22px}
-            .footer-tagline{text-align:left;max-width:none;flex-basis:100%}
+            .footer-top{padding:32px 24px 20px}
             .footer-in{grid-template-columns:1fr 1fr;gap:32px;padding:26px 24px 32px}
         }
         /* Mobile: stack everything, match the 20px gutter used elsewhere. */
         @media(max-width:600px){
-            .footer-top{padding:28px 20px 18px}
-            .footer-tagline{font-size:12px}
-            .footer-trust{grid-template-columns:1fr;gap:8px;padding:18px 20px 6px}
+            .footer-top{padding:24px 20px 16px}
             .footer-in{grid-template-columns:1fr;gap:28px;padding:22px 20px 28px}
             .footer-brand p{max-width:none}
             .footer-btm{flex-direction:column;text-align:center;padding:16px 20px 18px;gap:8px}
@@ -435,40 +420,14 @@
 
 
     <footer class="footer" id="kontakt">
-        {{-- Brand row: logo on the left, short reassurance tagline on the
-             right. No social buttons (no real URLs to link to). --}}
+        {{-- Brand row: logo only. Tagline + trust strip removed per
+             product decision — marketing claims belong in the
+             homepage hero, not the global footer. --}}
         <div class="footer-top">
             <a href="{{ route('home') }}" class="footer-logo">
                 <svg class="footer-logo-badge" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" fill="#0066ff"/><path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 <span class="footer-logo-text">Certi<span>Cars</span></span>
             </a>
-            <p class="footer-tagline"><strong>Zaufany komis premium.</strong><br>Certyfikowane samochody z pełną inspekcją techniczną.</p>
-        </div>
-
-        {{-- Trust strip — three short reassurance pills that establish
-             credibility before the main navigation block. --}}
-        <div class="footer-trust">
-            <div class="footer-trust-item">
-                <span class="footer-trust-ico"><x-icon name="badge-check" size="13"/></span>
-                <div class="footer-trust-text">
-                    <span class="footer-trust-title">Pełna inspekcja techniczna</span>
-                    <span class="footer-trust-sub">Każde auto sprawdzone w 200+ punktach</span>
-                </div>
-            </div>
-            <div class="footer-trust-item">
-                <span class="footer-trust-ico"><x-icon name="shield" size="13"/></span>
-                <div class="footer-trust-text">
-                    <span class="footer-trust-title">Weryfikacja historii</span>
-                    <span class="footer-trust-sub">VIN, dokumenty i serwis potwierdzone</span>
-                </div>
-            </div>
-            <div class="footer-trust-item">
-                <span class="footer-trust-ico"><x-icon name="file-text" size="13"/></span>
-                <div class="footer-trust-text">
-                    <span class="footer-trust-title">Raport CertiCheck</span>
-                    <span class="footer-trust-sub">PDF z pełną dokumentacją inspekcji</span>
-                </div>
-            </div>
         </div>
 
         <div class="footer-in">
