@@ -138,26 +138,44 @@
 
         /* ============ FOOTER ============ */
         /* ============ FOOTER ============
-           Layout: top brand row → 4-column main grid → bottom bar.
-           - Social buttons removed (no real URLs were ever wired up)
-           - Map iframe replaced with a "Zobacz na mapie" link button
-           - Opening hours card sits inside the O CertiCars column
-           - All icons go through the shared icon component (no random
-             inline SVGs except the brand badge itself, which is the
-             logo not an icon)                                              */
-        .footer{background:#0d1b3e;color:rgba(255,255,255,.6);padding:0;margin-top:0;position:relative}
+           Premium polish pass: ambient blue glow at the top, larger brand
+           wordmark balanced with a short trust tagline on the right, a
+           four-up trust badge strip under the brand row, and a refined
+           hours card with subtle inner highlight. Same 4-column main grid
+           and bottom bar as before. */
+        .footer{background:#0d1b3e;color:rgba(255,255,255,.6);padding:0;margin-top:0;position:relative;overflow:hidden;isolation:isolate}
+        /* Top gradient hairline that already existed — kept. */
         .footer::before{content:'';display:block;height:2px;background:linear-gradient(90deg,rgba(0,102,255,.25) 0%,#0066ff 40%,rgba(0,102,255,.25) 100%)}
+        /* Ambient blue glow anchored top-right. Pointer-events disabled so
+           it never interferes with clicks. z-index:-1 keeps it behind
+           everything. */
+        .footer::after{content:'';position:absolute;top:-220px;right:-180px;width:760px;height:520px;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(30,80,180,.45) 0%,rgba(30,80,180,.15) 40%,rgba(30,80,180,0) 70%);pointer-events:none;z-index:-1}
+        .footer > *{position:relative;z-index:1}
 
-        /* Brand row — just the logo on the left, thin divider below. */
-        .footer-top{max-width:1200px;margin:0 auto;padding:40px 24px 28px;border-bottom:1px solid rgba(255,255,255,.08)}
-        .footer-logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
-        .footer-logo-badge{width:30px;height:30px;flex-shrink:0}
-        .footer-logo-text{font-family:'Inter',sans-serif;font-size:22px;font-weight:900;letter-spacing:-.6px;color:#fff;line-height:1}
+        /* Brand row — logo on the left, short reassurance line on the
+           right, thin divider underneath. */
+        .footer-top{max-width:1200px;margin:0 auto;padding:48px 24px 26px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+        .footer-logo{display:inline-flex;align-items:center;gap:11px;text-decoration:none}
+        .footer-logo-badge{width:34px;height:34px;flex-shrink:0}
+        .footer-logo-text{font-family:'Inter',sans-serif;font-size:24px;font-weight:900;letter-spacing:-.6px;color:#fff;line-height:1}
         .footer-logo-text span{color:#4ea3ff}
+        .footer-tagline{font-size:12.5px;color:rgba(255,255,255,.6);font-weight:500;letter-spacing:.1px;text-align:right;max-width:300px;line-height:1.5}
+        .footer-tagline strong{color:#fff;font-weight:700}
+
+        /* Trust badge strip — three small reassurance pills between the
+           brand row and the main grid. */
+        .footer-trust{max-width:1200px;margin:0 auto;padding:22px 24px 8px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+        .footer-trust-item{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:12px}
+        .footer-trust-ico{width:30px;height:30px;border-radius:8px;background:rgba(78,163,255,.14);border:1px solid rgba(78,163,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .footer-trust-ico svg{width:13px;height:13px;stroke:#7eb3ff;fill:none;stroke-width:2}
+        .footer-trust-text{display:flex;flex-direction:column;gap:1px;min-width:0}
+        .footer-trust-title{font-size:12px;font-weight:800;color:#fff;letter-spacing:.1px}
+        .footer-trust-sub{font-size:10.5px;color:rgba(255,255,255,.5);letter-spacing:.1px}
 
         /* Main grid — 4 balanced columns on desktop. */
-        .footer-in{max-width:1200px;margin:0 auto;padding:36px 24px 36px;display:grid;grid-template-columns:1.5fr 1.1fr 1fr 1fr;gap:40px;align-items:start}
-        .footer h3{color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.7px;font-weight:800;margin-bottom:14px}
+        .footer-in{max-width:1200px;margin:0 auto;padding:30px 24px 36px;display:grid;grid-template-columns:1.5fr 1.1fr 1fr 1fr;gap:40px;align-items:start}
+        .footer h3{position:relative;color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.8px;font-weight:800;margin:0 0 16px;padding-bottom:10px}
+        .footer h3::after{content:'';position:absolute;bottom:0;left:0;width:22px;height:2px;background:#4ea3ff;border-radius:2px}
         .footer p,.footer li{font-size:13px;line-height:1.7;color:rgba(255,255,255,.55)}
         .footer a{font-size:13px;line-height:1.7;color:rgba(255,255,255,.6);text-decoration:none;transition:color .15s}
         .footer a:hover{color:#fff}
@@ -165,44 +183,48 @@
         .footer li{padding:4px 0}
 
         /* Col 1 — O CertiCars + opening hours card. */
-        .footer-brand p{font-size:13px;color:rgba(255,255,255,.55);line-height:1.7;margin:0 0 18px;max-width:340px}
-        .footer-hours-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:14px 16px}
-        .footer-hours-head{display:flex;align-items:center;gap:7px;color:#7eb3ff;font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;margin-bottom:10px}
+        .footer-brand p{font-size:13px;color:rgba(255,255,255,.6);line-height:1.7;margin:0 0 20px;max-width:340px}
+        .footer-hours-card{position:relative;background:linear-gradient(180deg,rgba(255,255,255,.05) 0%,rgba(255,255,255,.025) 100%);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:16px 18px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+        .footer-hours-head{display:flex;align-items:center;gap:8px;color:#7eb3ff;font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px}
         .footer-hours-head svg{width:13px;height:13px;stroke:#7eb3ff;fill:none;stroke-width:2}
         .footer-hours-head span{color:#fff}
         .footer-hours{font-size:12.5px;color:rgba(255,255,255,.55);line-height:1}
-        .footer-hours-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+        .footer-hours-row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)}
         .footer-hours-row:last-child{border-bottom:none}
-        .footer-hours-row .val{color:#fff;font-weight:700}
-        .footer-hours-row .closed{color:rgba(255,255,255,.3);font-weight:500}
+        .footer-hours-row .val{color:#fff;font-weight:700;font-variant-numeric:tabular-nums}
+        .footer-hours-row .closed{color:rgba(255,255,255,.32);font-weight:500}
 
         /* Col 2 — Kontakt: phone/email/address rows + map button. */
-        .footer-contact-item{display:flex;align-items:center;gap:11px;margin-bottom:12px}
-        .footer-contact-icon{width:32px;height:32px;border-radius:8px;background:rgba(78,163,255,.12);border:1px solid rgba(78,163,255,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .footer-contact-item{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+        .footer-contact-icon{width:34px;height:34px;border-radius:9px;background:linear-gradient(180deg,rgba(78,163,255,.16) 0%,rgba(78,163,255,.08) 100%);border:1px solid rgba(78,163,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0}
         .footer-contact-icon svg{width:14px;height:14px;stroke:#7eb3ff;fill:none;stroke-width:2}
-        .footer-contact-body{display:flex;flex-direction:column;gap:1px;min-width:0}
-        .footer-contact-label{font-size:10.5px;font-weight:600;color:rgba(255,255,255,.4);letter-spacing:.3px;text-transform:uppercase}
-        .footer-contact-value{font-size:13px;font-weight:700;color:#fff;line-height:1.35;word-break:break-word}
-        .footer-contact-value:hover{color:#fff}
-        .footer-map-link{margin-top:14px;display:inline-flex;align-items:center;gap:7px;background:rgba(78,163,255,.1);border:1px solid rgba(78,163,255,.2);color:#7eb3ff;font-size:12px;font-weight:700;padding:9px 14px;border-radius:8px;letter-spacing:.1px;transition:background .15s,color .15s,border-color .15s}
-        .footer-map-link:hover{background:rgba(78,163,255,.18);color:#fff;border-color:rgba(78,163,255,.35)}
+        .footer-contact-body{display:flex;flex-direction:column;gap:2px;min-width:0}
+        .footer-contact-label{font-size:10.5px;font-weight:700;color:rgba(255,255,255,.42);letter-spacing:.4px;text-transform:uppercase}
+        .footer-contact-value{font-size:13.5px;font-weight:700;color:#fff;line-height:1.35;word-break:break-word;transition:color .15s}
+        a.footer-contact-value:hover{color:#7eb3ff}
+        .footer-map-link{margin-top:16px;display:inline-flex;align-items:center;gap:7px;background:rgba(78,163,255,.1);border:1px solid rgba(78,163,255,.22);color:#7eb3ff;font-size:12px;font-weight:700;padding:10px 16px;border-radius:9px;letter-spacing:.1px;transition:background .15s,color .15s,border-color .15s}
+        .footer-map-link:hover{background:rgba(78,163,255,.2);color:#fff;border-color:rgba(78,163,255,.38)}
         .footer-map-link svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2}
 
         /* Bottom bar. */
-        .footer-btm{max-width:1200px;margin:0 auto;padding:20px 24px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(255,255,255,.4);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-        .footer-btm-verified{display:inline-flex;align-items:center;gap:6px;color:#4ea3ff;font-weight:600}
+        .footer-btm{max-width:1200px;margin:0 auto;padding:18px 24px 22px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(255,255,255,.45);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+        .footer-btm-verified{display:inline-flex;align-items:center;gap:6px;color:#4ea3ff;font-weight:700;letter-spacing:.1px}
         .footer-btm-verified svg{width:13px;height:13px;stroke:#4ea3ff;fill:none;stroke-width:2.2}
 
-        /* Tablet: collapse to 2-col. */
+        /* Tablet: collapse to 2-col + trust badges drop to 3-up still. */
         @media(max-width:900px){
-            .footer-in{grid-template-columns:1fr 1fr;gap:32px;padding:32px 24px}
+            .footer-top{padding:36px 24px 22px}
+            .footer-tagline{text-align:left;max-width:none;flex-basis:100%}
+            .footer-in{grid-template-columns:1fr 1fr;gap:32px;padding:26px 24px 32px}
         }
         /* Mobile: stack everything, match the 20px gutter used elsewhere. */
         @media(max-width:600px){
-            .footer-top{padding:28px 20px 20px}
-            .footer-in{grid-template-columns:1fr;gap:28px;padding:28px 20px}
+            .footer-top{padding:28px 20px 18px}
+            .footer-tagline{font-size:12px}
+            .footer-trust{grid-template-columns:1fr;gap:8px;padding:18px 20px 6px}
+            .footer-in{grid-template-columns:1fr;gap:28px;padding:22px 20px 28px}
             .footer-brand p{max-width:none}
-            .footer-btm{flex-direction:column;text-align:center;padding:18px 20px;gap:8px}
+            .footer-btm{flex-direction:column;text-align:center;padding:16px 20px 18px;gap:8px}
         }
 
         /* ============ COMPONENTS ============ */
@@ -413,14 +435,40 @@
 
 
     <footer class="footer" id="kontakt">
-        {{-- Brand row: just the logo. No social buttons until there are
-             actual social URLs to link to (empty href="#" squares read as
-             unfinished placeholder UI). --}}
+        {{-- Brand row: logo on the left, short reassurance tagline on the
+             right. No social buttons (no real URLs to link to). --}}
         <div class="footer-top">
             <a href="{{ route('home') }}" class="footer-logo">
                 <svg class="footer-logo-badge" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" fill="#0066ff"/><path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 <span class="footer-logo-text">Certi<span>Cars</span></span>
             </a>
+            <p class="footer-tagline"><strong>Zaufany komis premium.</strong><br>Certyfikowane samochody z pełną inspekcją techniczną.</p>
+        </div>
+
+        {{-- Trust strip — three short reassurance pills that establish
+             credibility before the main navigation block. --}}
+        <div class="footer-trust">
+            <div class="footer-trust-item">
+                <span class="footer-trust-ico"><x-icon name="badge-check" size="13"/></span>
+                <div class="footer-trust-text">
+                    <span class="footer-trust-title">Pełna inspekcja techniczna</span>
+                    <span class="footer-trust-sub">Każde auto sprawdzone w 200+ punktach</span>
+                </div>
+            </div>
+            <div class="footer-trust-item">
+                <span class="footer-trust-ico"><x-icon name="shield" size="13"/></span>
+                <div class="footer-trust-text">
+                    <span class="footer-trust-title">Weryfikacja historii</span>
+                    <span class="footer-trust-sub">VIN, dokumenty i serwis potwierdzone</span>
+                </div>
+            </div>
+            <div class="footer-trust-item">
+                <span class="footer-trust-ico"><x-icon name="file-text" size="13"/></span>
+                <div class="footer-trust-text">
+                    <span class="footer-trust-title">Raport CertiCheck</span>
+                    <span class="footer-trust-sub">PDF z pełną dokumentacją inspekcji</span>
+                </div>
+            </div>
         </div>
 
         <div class="footer-in">
