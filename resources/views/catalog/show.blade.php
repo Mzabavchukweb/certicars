@@ -402,6 +402,20 @@
     .cs-info-3card{border-radius:14px;border-color:#e5e7eb;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:18px 20px}
 }
 
+/* ============ DETAIL 3-CARD ROW (Serwisowanie / Dokumenty / Zużycie) ============ */
+/* Wraps the detail blocks so they sit as equal sibling cards on desktop.
+   Track count adapts to how many cards actually rendered (no awkward
+   empty 3rd column when one section's data is missing). Inner 2-col
+   grids collapse to 1-col since each card holds less horizontal room. */
+.cs-detail-3row{display:grid;gap:16px;align-items:stretch;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box;grid-template-columns:repeat(3,minmax(0,1fr))}
+.cs-detail-3row--n2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cs-detail-3row--n1{grid-template-columns:1fr}
+.cs-detail-3row > .cs-data-section{margin-bottom:0;max-width:100%;width:100%;height:100%}
+.cs-detail-3row > .cs-data-section .cs-data-grid-2col{grid-template-columns:1fr;column-gap:0}
+@media(max-width:1024px){
+    .cs-detail-3row,.cs-detail-3row--n2,.cs-detail-3row--n1{grid-template-columns:1fr;width:auto;max-width:none;gap:14px}
+}
+
 /* ============ TECH + ENGINE-VIDEO TWO-COLUMN ROW ============ */
 .cs-tech-engine-row{display:grid;grid-template-columns:1.15fr 1fr;gap:20px;margin-bottom:16px;align-items:stretch;max-width:calc(1200px - 48px);margin-left:auto;margin-right:auto;width:100%;box-sizing:border-box}
 .cs-tech-engine-card{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;display:flex;flex-direction:column;min-width:0;height:100%}
@@ -716,16 +730,21 @@
 .cs-equip-title{font-size:22px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:0 0 4px;line-height:1.2}
 .cs-equip-sub{font-size:13.5px;color:#6b7280;line-height:1.5;margin:0}
 /* Top 8 highlighted tiles */
-.cs-equip-tiles{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px;margin-bottom:20px}
-.cs-equip-tile{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px 10px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;min-width:0;transition:border-color .15s,box-shadow .15s}
+/* 8 top highlight tiles — uniform min-height so multi-line labels don't
+   leave row-to-row gaps on mobile (2- and 4-col grids). */
+.cs-equip-tiles{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px;margin-bottom:20px;align-items:stretch}
+.cs-equip-tile{background:#fff;border:1px solid #eeeef0;border-radius:14px;padding:18px 10px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;gap:10px;min-width:0;min-height:112px;transition:border-color .15s,box-shadow .15s}
 .cs-equip-tile:hover{border-color:#cbd5e1;box-shadow:0 4px 12px rgba(0,0,0,.06)}
 .cs-equip-tile-ico{width:46px;height:46px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .cs-equip-tile-label{font-size:12px;font-weight:700;color:#1a1a1a;letter-spacing:-.1px;line-height:1.3;word-break:break-word}
 /* Category cards */
-.cs-equip-cats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.cs-equip-cat{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;min-width:0}
-.cs-equip-cat-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #f0f0f2}
-.cs-equip-cat-ico{flex-shrink:0;width:34px;height:34px;border-radius:9px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+/* 2-column desktop grid — "Komfort | Bezpieczeństwo" row 1,
+   "Światła i nadwozie | Inne" row 2. Removes the 3+1 awkward layout. */
+.cs-equip-cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
+/* Outer card unified with cs-info-3card / cs-data-section */
+.cs-equip-cat{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:22px 24px;display:flex;flex-direction:column;min-width:0}
+.cs-equip-cat-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #f0f0f2}
+.cs-equip-cat-ico{flex-shrink:0;width:38px;height:38px;border-radius:10px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
 .cs-equip-cat-title{font-size:15px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0;line-height:1.2}
 .cs-equip-cat-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .cs-equip-cat-list li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#374151;line-height:1.4}
@@ -762,12 +781,15 @@
 @media(max-width:900px){.cs-sections-2col{grid-template-columns:1fr}}
 .cs-sections-2col .cs-data-section{margin-bottom:0}
 .cs-col-left,.cs-col-right{display:flex;flex-direction:column;gap:16px;min-width:0;align-content:start;overflow:hidden}
-.cs-data-section{background:#fff;border:none;border-radius:16px;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.04);max-width:100%}
+/* Unified section card — matches cs-info-3card and cs-equip-cat so every
+   detail block on the page shares the same border/radius/shadow language. */
+.cs-data-section{background:#fff;border:1px solid #eeeef0;border-radius:18px;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);max-width:100%}
 .cs-wrap > .cs-data-section,.cs-wrap > div:not(.container) > .cs-data-section{max-width:calc(1200px - 48px);margin-left:auto;margin-right:auto}
-.cs-data-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;user-select:none;border-bottom:1px solid #eeeef0}
-.cs-data-header h2{font-size:17px;font-weight:700;color:#1a1a1a;letter-spacing:-.2px;display:flex;align-items:center;gap:8px;margin:0;line-height:1.3;font-family:'Inter',sans-serif}
+.cs-data-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;user-select:none;border-bottom:1px solid #f0f0f2;background:#fff}
+.cs-data-header h2{font-size:16px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;display:flex;align-items:center;gap:12px;margin:0;line-height:1.3;font-family:'Inter',sans-serif}
 .cs-data-header h2 i,.cs-data-header h2 svg{display:inline-flex;align-items:center;justify-content:center}
-.cs-data-header h2 svg,.cs-data-header h2 i[data-lucide],.cs-data-header h2 i.cs-icon{width:18px;height:18px;flex-shrink:0;color:#0066ff;stroke-width:2}
+/* Header icon: 38x38 contained pill (matches cs-info-3card-ico / cs-equip-cat-ico) */
+.cs-data-header h2 svg,.cs-data-header h2 i[data-lucide],.cs-data-header h2 i.cs-icon{width:18px;height:18px;flex-shrink:0;color:#0066ff;stroke-width:2;box-sizing:content-box;padding:10px;background:#eff6ff;border-radius:10px}
 .cs-data-header .chev{display:none}
 /* Collapsible accordion behavior — applied only at mobile breakpoint */
 @media(max-width:1024px){
@@ -778,10 +800,11 @@
     .cs-collapsible-mobile .cs-data-header.open + .cs-data-body{display:block}
 }
 .cs-data-body{display:block;padding:20px 24px 24px}
-.cs-data-grid-2col{display:grid;grid-template-columns:1fr 1fr;column-gap:32px;row-gap:0}
+.cs-data-grid-2col{display:grid;grid-template-columns:1fr 1fr;column-gap:28px;row-gap:0}
 @media(max-width:768px){.cs-data-grid-2col{grid-template-columns:1fr;column-gap:0}}
-/* Dane pojazdu reference 4-col layout */
-.cs-data-grid-4col{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:32px;row-gap:0}
+/* Dane pojazdu reference 4-col layout. Tighter column-gap so the section
+   reads as one structured card rather than a wide spread-out table. */
+.cs-data-grid-4col{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:28px;row-gap:0}
 .cs-data-grid-4col .cs-data-col{display:flex;flex-direction:column;min-width:0}
 @media(max-width:1024px){.cs-data-grid-4col{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px}}
 @media(max-width:600px){.cs-data-grid-4col{grid-template-columns:1fr;column-gap:0}}
@@ -802,11 +825,14 @@
 .cs-data-2col{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
 .cs-data-block{background:#fff;border:1px solid #eeeef0;border-radius:12px;padding:22px 22px 14px}
 .cs-data-block-title{font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:14px;letter-spacing:-.2px;line-height:1.3;padding-bottom:12px;border-bottom:1px solid #eeeef0}
-.cs-data-row{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;font-size:13.5px;border-bottom:1px solid #f0f0f2;gap:8px}
+/* Row typography unified with .cs-info-3row-line — same separator, same
+   font, same colour scheme. Lets every detail block read as part of the
+   same component system. */
+.cs-data-row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;font-size:13px;line-height:1.4;border-bottom:1px solid #f5f5f7;gap:12px}
 .cs-data-row:first-child{padding-top:0}
-.cs-data-row:last-child{border-bottom:none;padding-bottom:4px}
-.cs-data-row .lbl{color:#6b7280;font-weight:400;line-height:1.5;flex-shrink:0;margin-right:4px}
-.cs-data-row .val{font-weight:600;color:#1a1a1a;text-align:right;line-height:1.5;overflow:hidden;text-overflow:ellipsis;word-break:break-word;min-width:0;flex-shrink:1;max-width:60%}
+.cs-data-row:last-child{border-bottom:none;padding-bottom:0}
+.cs-data-row .lbl{color:#6b7280;font-weight:500;line-height:1.4;flex-shrink:1;min-width:0}
+.cs-data-row .val{font-weight:700;color:#0a0a0a;text-align:right;line-height:1.4;overflow:hidden;text-overflow:ellipsis;word-break:break-word;min-width:0;flex-shrink:0;max-width:60%}
 @media(max-width:768px){.cs-data-2col{grid-template-columns:1fr}.cs-data-block+.cs-data-block{margin-top:12px}}
 
 /* DATA COLUMNS (5-col horizontal layout) */
@@ -943,15 +969,18 @@
     .cs-sidebar-summary{padding:0 16px}
     .cs-sidebar-summary-row{font-size:12.5px;padding:10px 0}
     .cs-calc-trigger{padding:12px 14px;font-size:12px}
-    /* DATA SECTIONS — rounded card */
-    .cs-data-section{border-radius:16px;border:none;box-shadow:0 1px 8px rgba(0,0,0,.06);overflow:hidden;margin-bottom:22px}
-    .cs-data-header{padding:22px 22px 14px;text-align:left}
-    .cs-data-header h2{font-size:18px;font-weight:900;letter-spacing:-.3px;text-align:left}
-    .cs-data-body{padding:4px 22px 22px}
-    .cs-data-row{font-size:14px;padding:16px 0;border-bottom:1px solid #f0f0f2;gap:16px;align-items:flex-start}
-    .cs-data-row:last-child{border-bottom:none}
-    .cs-data-row .lbl{font-weight:700;color:#1a1a1a;min-width:0;flex:1 1 auto;line-height:1.45;word-break:normal;overflow-wrap:break-word}
-    .cs-data-row .val{font-weight:700;color:#1a1a1a;font-size:14px;max-width:58%;text-align:right;line-height:1.45;word-break:break-word;overflow-wrap:break-word;white-space:normal;overflow:visible;text-overflow:clip;flex-shrink:0}
+    /* DATA SECTIONS — rounded card. Mobile keeps the same border/shadow
+       language as desktop so the visual system stays coherent. */
+    .cs-data-section{border-radius:16px;border:1px solid #eeeef0;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.04);overflow:hidden;margin-bottom:16px}
+    .cs-data-header{padding:18px 20px;text-align:left;border-bottom:1px solid #f0f0f2}
+    .cs-data-header h2{font-size:16px;font-weight:800;letter-spacing:-.2px;text-align:left;gap:12px}
+    .cs-data-body{padding:14px 20px 18px}
+    /* Row pattern matches cs-info-3row-line so mobile rows feel like the
+       same component family as the 3-card summary row above. */
+    .cs-data-row{font-size:13.5px;padding:11px 0;border-bottom:1px solid #f5f5f7;gap:14px;align-items:baseline;line-height:1.45}
+    .cs-data-row:last-child{border-bottom:none;padding-bottom:0}
+    .cs-data-row .lbl{font-weight:500;color:#6b7280;min-width:0;flex:1 1 auto;line-height:1.45;word-break:normal;overflow-wrap:break-word}
+    .cs-data-row .val{font-weight:700;color:#0a0a0a;font-size:13.5px;max-width:58%;text-align:right;line-height:1.45;word-break:break-word;overflow-wrap:break-word;white-space:normal;overflow:visible;text-overflow:clip;flex-shrink:0}
     .cs-sections-2col{gap:22px}
     /* STAN TECHNICZNY — separate blocks stacked */
     .cs-data-2col{grid-template-columns:1fr!important;gap:28px}
@@ -1039,8 +1068,8 @@
     .cs-head h1{font-size:19px}
     .cs-gallery{border-radius:10px}
     .cs-sidebar-card{border-radius:14px}
-    .cs-data-section{border-radius:14px;margin-bottom:18px}
-    .cs-data-row{padding:15px 0;gap:14px}
+    .cs-data-section{border-radius:14px;margin-bottom:14px}
+    .cs-data-row{padding:10px 0;gap:12px}
     .cs-data-row .val{max-width:55%}
     .cs-price-value{font-size:26px}
     .cs-sections-2col{padding:0}
@@ -1055,8 +1084,8 @@
     .cs-tire-icon{width:40px!important;height:40px!important}
     .cs-tire-col{padding:14px 10px!important}
     .cs-tire-data-row:first-of-type{font-size:16px!important}
-    .cs-data-body{padding:4px 18px 18px}
-    .cs-data-header{padding:18px 18px 12px}
+    .cs-data-body{padding:12px 18px 16px}
+    .cs-data-header{padding:16px 18px}
     .cs-gallery-tabs{gap:4px;padding:8px 0 6px}
     .cs-gallery-tab{font-size:10px;padding:4px 8px;gap:3px}
     .cs-gallery-tab svg,.cs-gallery-tab i{width:11px;height:11px}
@@ -1824,105 +1853,124 @@
          summary card's "Historia pojazdu" tile (free-text + specific import
          country). Removed at render source, not hidden with CSS. --}}
 
-    {{-- C. SERWISOWANIE — collapsed on mobile by default --}}
+    {{-- =================== DETAIL 3-CARD ROW =================== --}}
+    {{-- Serwisowanie · Dokumenty · Zużycie paliwa as 3 equal sibling cards
+         on desktop (1·1·1) instead of stacked full-width strips.
+         Each remains a collapsible accordion on mobile. --}}
     @php
+        // SERWISOWANIE visibility
         $svcDoc = CarLabels::bool($car->service_documentation);
         $asoSvc = CarLabels::bool($car->aso_serviced);
-    @endphp
-    @if($rowOk($svcDoc) || $rowOk($asoSvc) || $rowOk($car->service_history) || $rowOk($car->last_service) || $rowOk($car->next_inspection))
-    <div class="cs-data-section cs-collapsible-mobile">
-        <div class="cs-data-header" onclick="csToggleAccordion(this)">
-            <h2><x-icon name="wrench" size="20"/>Serwisowanie</h2>
-            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
-        </div>
-        <div class="cs-data-body">
-            <div class="cs-data-grid-2col">
-                @if($rowOk($asoSvc))
-                    <div class="cs-data-row"><span class="lbl">Serwis ASO</span><span class="val">{{ $asoSvc }}</span></div>
-                @endif
-                @if($rowOk($svcDoc))
-                    <div class="cs-data-row"><span class="lbl">Dokumentacja serwisowa</span><span class="val">{{ $svcDoc }}</span></div>
-                @endif
-                @if($rowOk($car->service_history))
-                    <div class="cs-data-row"><span class="lbl">Historia serwisowa</span><span class="val">{{ $car->service_history }}</span></div>
-                @endif
-                @if($rowOk($car->last_service))
-                    <div class="cs-data-row"><span class="lbl">Ostatni przegląd</span><span class="val">{{ $car->last_service }}@if($rowOk($car->last_service_mileage)) · {{ number_format((float) $car->last_service_mileage, 0, '', ' ') }} km @endif</span></div>
-                @endif
-                @if($rowOk($car->next_inspection))
-                    <div class="cs-data-row"><span class="lbl">Następny przegląd</span><span class="val">{{ $car->next_inspection }}</span></div>
-                @endif
-            </div>
-        </div>
-    </div>
-    @endif
+        $showSvc = $rowOk($svcDoc) || $rowOk($asoSvc) || $rowOk($car->service_history) || $rowOk($car->last_service) || $rowOk($car->next_inspection);
 
-    {{-- D. DOKUMENTY — collapsed on mobile by default --}}
-    @php
-        $cocDocs = CarLabels::bool($car->coc_documents);
-        $svcBookStatus = CarLabels::status($car->service_book_status) ?? $car->service_book_status;
-        $regCert = CarLabels::bool($car->registration_cert);
-        $ownersManual = CarLabels::bool($car->owners_manual);
-        $vehicleFolder = CarLabels::bool($car->vehicle_folder);
-        $huAuReport = CarLabels::bool($car->hu_au_report);
-    @endphp
-    @if($rowOk($cocDocs) || $rowOk($svcBookStatus) || $rowOk($regCert) || $rowOk($ownersManual) || $rowOk($vehicleFolder) || $rowOk($huAuReport))
-    <div class="cs-data-section cs-collapsible-mobile">
-        <div class="cs-data-header" onclick="csToggleAccordion(this)">
-            <h2><x-icon name="file-text" size="20"/>Dokumenty</h2>
-            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
-        </div>
-        <div class="cs-data-body">
-            <div class="cs-data-grid-2col">
-                @if($rowOk($cocDocs))
-                    <div class="cs-data-row"><span class="lbl">Komplet dokumentów</span><span class="val">{{ $cocDocs }}</span></div>
-                @endif
-                @if($rowOk($svcBookStatus))
-                    <div class="cs-data-row"><span class="lbl">Książka serwisowa</span><span class="val">{{ $svcBookStatus }}</span></div>
-                @endif
-                @if($rowOk($regCert))
-                    <div class="cs-data-row"><span class="lbl">Dowód rejestracyjny</span><span class="val">{{ $regCert }}</span></div>
-                @endif
-                @if($rowOk($ownersManual))
-                    <div class="cs-data-row"><span class="lbl">Instrukcja obsługi</span><span class="val">{{ $ownersManual }}</span></div>
-                @endif
-                @if($rowOk($vehicleFolder))
-                    <div class="cs-data-row"><span class="lbl">Teczka pojazdu</span><span class="val">{{ $vehicleFolder }}</span></div>
-                @endif
-                @if($rowOk($huAuReport))
-                    <div class="cs-data-row"><span class="lbl">Raport HU/AU</span><span class="val">{{ $huAuReport }}</span></div>
-                @endif
-            </div>
-        </div>
-    </div>
-    @endif
+        // DOKUMENTY visibility
+        $cocDocs        = CarLabels::bool($car->coc_documents);
+        $svcBookStatus  = CarLabels::status($car->service_book_status) ?? $car->service_book_status;
+        $regCert        = CarLabels::bool($car->registration_cert);
+        $ownersManual   = CarLabels::bool($car->owners_manual);
+        $vehicleFolder  = CarLabels::bool($car->vehicle_folder);
+        $huAuReport     = CarLabels::bool($car->hu_au_report);
+        $showDocs       = $rowOk($cocDocs) || $rowOk($svcBookStatus) || $rowOk($regCert) || $rowOk($ownersManual) || $rowOk($vehicleFolder) || $rowOk($huAuReport);
 
-    {{-- Zużycie paliwa — collapsed on mobile by default --}}
-    @if($rowOk($car->fuel_consumption) || $rowOk($car->co2_emission) || $rowOk($car->emission_class))
-    <div class="cs-data-section cs-collapsible-mobile">
-        <div class="cs-data-header" onclick="csToggleAccordion(this)">
-            <h2><x-icon name="fuel" size="20"/>Zużycie paliwa</h2>
-            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
-        </div>
-        <div class="cs-data-body">
-            <div class="cs-data-grid-2col">
-                @if($rowOk($car->fuel_consumption))
-                    @php
-                        // Strip any embedded "l/100 km" / "L/100km" the admin may have already typed,
-                        // and normalise decimal separator. Render the unit exactly once below.
-                        $fcRaw = trim(preg_replace('/\s*[lL]\s*\/\s*100\s*km\.?/u', '', (string) $car->fuel_consumption));
-                        $fcRaw = trim(str_replace(',', '.', $fcRaw));
-                    @endphp
-                    <div class="cs-data-row"><span class="lbl">Średnie zużycie</span><span class="val">{{ $fcRaw }} l/100 km</span></div>
-                @endif
-                @if($rowOk($car->co2_emission))
-                    <div class="cs-data-row"><span class="lbl">Emisja CO₂</span><span class="val">{{ $car->co2_emission }} g/km</span></div>
-                @endif
-                @if($rowOk($car->emission_class))
-                    <div class="cs-data-row"><span class="lbl">Norma emisji</span><span class="val">{{ $car->emission_class }}</span></div>
-                @endif
+        // ZUŻYCIE PALIWA visibility
+        $showFuel = $rowOk($car->fuel_consumption) || $rowOk($car->co2_emission) || $rowOk($car->emission_class);
+
+        // Visible-card count drives the grid track count so missing data
+        // never leaves an awkward empty column. 3 = three even cards,
+        // 2 = two half-width cards, 1 = full-width card.
+        $detailCount = ($showSvc ? 1 : 0) + ($showDocs ? 1 : 0) + ($showFuel ? 1 : 0);
+    @endphp
+    @if($detailCount > 0)
+    <div class="cs-detail-3row cs-detail-3row--n{{ $detailCount }}">
+        @if($showSvc)
+        {{-- C. SERWISOWANIE --}}
+        <div class="cs-data-section cs-collapsible-mobile">
+            <div class="cs-data-header" onclick="csToggleAccordion(this)">
+                <h2><x-icon name="wrench" size="20"/>Serwisowanie</h2>
+                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+            <div class="cs-data-body">
+                <div class="cs-data-grid-2col">
+                    @if($rowOk($asoSvc))
+                        <div class="cs-data-row"><span class="lbl">Serwis ASO</span><span class="val">{{ $asoSvc }}</span></div>
+                    @endif
+                    @if($rowOk($svcDoc))
+                        <div class="cs-data-row"><span class="lbl">Dokumentacja serwisowa</span><span class="val">{{ $svcDoc }}</span></div>
+                    @endif
+                    @if($rowOk($car->service_history))
+                        <div class="cs-data-row"><span class="lbl">Historia serwisowa</span><span class="val">{{ $car->service_history }}</span></div>
+                    @endif
+                    @if($rowOk($car->last_service))
+                        <div class="cs-data-row"><span class="lbl">Ostatni przegląd</span><span class="val">{{ $car->last_service }}@if($rowOk($car->last_service_mileage)) · {{ number_format((float) $car->last_service_mileage, 0, '', ' ') }} km @endif</span></div>
+                    @endif
+                    @if($rowOk($car->next_inspection))
+                        <div class="cs-data-row"><span class="lbl">Następny przegląd</span><span class="val">{{ $car->next_inspection }}</span></div>
+                    @endif
+                </div>
             </div>
         </div>
+        @endif
+
+        @if($showDocs)
+        {{-- D. DOKUMENTY --}}
+        <div class="cs-data-section cs-collapsible-mobile">
+            <div class="cs-data-header" onclick="csToggleAccordion(this)">
+                <h2><x-icon name="file-text" size="20"/>Dokumenty</h2>
+                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+            <div class="cs-data-body">
+                <div class="cs-data-grid-2col">
+                    @if($rowOk($cocDocs))
+                        <div class="cs-data-row"><span class="lbl">Komplet dokumentów</span><span class="val">{{ $cocDocs }}</span></div>
+                    @endif
+                    @if($rowOk($svcBookStatus))
+                        <div class="cs-data-row"><span class="lbl">Książka serwisowa</span><span class="val">{{ $svcBookStatus }}</span></div>
+                    @endif
+                    @if($rowOk($regCert))
+                        <div class="cs-data-row"><span class="lbl">Dowód rejestracyjny</span><span class="val">{{ $regCert }}</span></div>
+                    @endif
+                    @if($rowOk($ownersManual))
+                        <div class="cs-data-row"><span class="lbl">Instrukcja obsługi</span><span class="val">{{ $ownersManual }}</span></div>
+                    @endif
+                    @if($rowOk($vehicleFolder))
+                        <div class="cs-data-row"><span class="lbl">Teczka pojazdu</span><span class="val">{{ $vehicleFolder }}</span></div>
+                    @endif
+                    @if($rowOk($huAuReport))
+                        <div class="cs-data-row"><span class="lbl">Raport HU/AU</span><span class="val">{{ $huAuReport }}</span></div>
+                    @endif
+                </div>
+            </div>
+        </div>
+        @endif
+
+        @if($showFuel)
+        {{-- E. ZUŻYCIE PALIWA --}}
+        <div class="cs-data-section cs-collapsible-mobile">
+            <div class="cs-data-header" onclick="csToggleAccordion(this)">
+                <h2><x-icon name="fuel" size="20"/>Zużycie paliwa</h2>
+                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+            <div class="cs-data-body">
+                <div class="cs-data-grid-2col">
+                    @if($rowOk($car->fuel_consumption))
+                        @php
+                            // Strip any embedded "l/100 km" / "L/100km" the admin may have already typed,
+                            // and normalise decimal separator. Render the unit exactly once below.
+                            $fcRaw = trim(preg_replace('/\s*[lL]\s*\/\s*100\s*km\.?/u', '', (string) $car->fuel_consumption));
+                            $fcRaw = trim(str_replace(',', '.', $fcRaw));
+                        @endphp
+                        <div class="cs-data-row"><span class="lbl">Średnie zużycie</span><span class="val">{{ $fcRaw }} l/100 km</span></div>
+                    @endif
+                    @if($rowOk($car->co2_emission))
+                        <div class="cs-data-row"><span class="lbl">Emisja CO₂</span><span class="val">{{ $car->co2_emission }} g/km</span></div>
+                    @endif
+                    @if($rowOk($car->emission_class))
+                        <div class="cs-data-row"><span class="lbl">Norma emisji</span><span class="val">{{ $car->emission_class }}</span></div>
+                    @endif
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
     @endif
 
