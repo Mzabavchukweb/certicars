@@ -24,8 +24,11 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/samochody', [CatalogController::class, 'index'])->name('catalog');
 Route::get('/samochody/{car:slug}', [CatalogController::class, 'show'])->name('catalog.show');
 Route::get('/samochody/{car:slug}/certicheck', [CatalogController::class, 'certicheck'])->name('catalog.certicheck');
-Route::get('/samochody/{car:slug}/pdf', [BrochurePdfController::class, 'generate'])
-    ->middleware('throttle:10,1')
+// Public download — serves the CACHED brochure file only. Returns 404 (no
+// attachment header) when the brochure isn't ready. No synchronous render
+// happens here — that's the architectural fix for download.html/.json.
+Route::get('/samochody/{car:slug}/pdf', [BrochurePdfController::class, 'download'])
+    ->middleware('throttle:30,1')
     ->name('car.pdf');
 Route::get('/o-nas', [PageController::class, 'about'])->name('about');
 Route::get('/kontakt', [PageController::class, 'contact'])->name('contact');
@@ -55,7 +58,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::patch('cars/{car}/toggle-featured', [AdminCarController::class, 'toggleFeatured'])->name('admin.cars.toggle-featured');
     Route::patch('cars/{car}/toggle-sold', [AdminCarController::class, 'toggleSold'])->name('admin.cars.toggle-sold');
     Route::post('cars/{car}/upload-image', [AdminCarController::class, 'uploadImage'])->name('admin.cars.upload-image');
-    Route::get('cars/{car}/pdf', [BrochurePdfController::class, 'generate'])->name('admin.cars.pdf');
+    Route::get('cars/{car}/pdf', [BrochurePdfController::class, 'download'])->name('admin.cars.pdf');
+    // Synchronously regenerate one car's cached brochure. Admin waits.
+    Route::post('cars/{car}/pdf/regenerate', [BrochurePdfController::class, 'regenerate'])->name('admin.cars.pdf.regenerate');
     // Diagnostic: returns JSON manifest of what would be embedded without
     // invoking Chromium. Useful for figuring out why a production brochure
     // shipped empty (skipped image reasons are recorded per-path).

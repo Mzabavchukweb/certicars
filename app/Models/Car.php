@@ -24,6 +24,8 @@ class Car extends Model
         'paint_measurements', 'technical_conditions', 'equipment', 'highlighted_equipment', 'engine_video_url', 'engine_video_path',
         'is_featured', 'is_sold', 'has_certicheck', 'available_now', 'home_delivery', 'has_gethelp', 'gethelp_package', 'status',
         'meta_title', 'meta_description', 'focus_keyword', 'noindex',
+        // Cached-brochure state — see migration add_brochure_columns_to_cars_table.
+        'brochure_path', 'brochure_status', 'brochure_generated_at', 'brochure_size', 'brochure_error',
     ];
 
     protected $casts = [
@@ -41,7 +43,16 @@ class Car extends Model
         'noindex' => 'boolean',
         'price' => 'decimal:2',
         'reception_date' => 'date',
+        'brochure_generated_at' => 'datetime',
     ];
+
+    /** True iff the public download endpoint is allowed to serve a PDF. */
+    public function brochureIsReady(): bool
+    {
+        return $this->has_certicheck
+            && $this->brochure_status === 'ready'
+            && !empty($this->brochure_path);
+    }
 
     protected static function booted(): void
     {

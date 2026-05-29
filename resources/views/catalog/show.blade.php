@@ -1368,7 +1368,7 @@
                             <div class="cs-price-meta">Cena brutto / VAT-Marża</div>
                         </div>
                         @if($car->has_certicheck)
-                            <x-certicheck-cta :slug="$car->slug"/>
+                            <x-certicheck-cta :slug="$car->slug" :ready="$car->brochureIsReady()"/>
                         @endif
                     </div>
                 </div>
