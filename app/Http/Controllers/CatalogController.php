@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CarLabels;
 use App\Models\Brand;
 use App\Models\Car;
 use Illuminate\Http\Request;
@@ -40,7 +41,18 @@ class CatalogController extends Controller
         if (isset($filters['mileage_max']))   $query->where('mileage', '<=', $filters['mileage_max']);
         if (isset($filters['power_min']))     $query->where('power_hp', '>=', $filters['power_min']);
         if (isset($filters['power_max']))     $query->where('power_hp', '<=', $filters['power_max']);
-        if (!empty($filters['category']))     $query->where('category', $filters['category']);
+        if (!empty($filters['category'])) {
+            // Body-type filter. Match either column (admin fills `body_type`
+            // for new cars; legacy rows may only have `category` set) and
+            // ignore casing so "?category=SUV" hits rows with body_type="suv".
+            // CarLabels::bodyType normalises both sides to one canonical
+            // Polish display label, then we lower-compare.
+            $canon = mb_strtolower((string) (CarLabels::bodyType($filters['category']) ?? $filters['category']));
+            $query->where(function ($q) use ($canon) {
+                $q->whereRaw('LOWER(TRIM(body_type)) = ?', [$canon])
+                  ->orWhereRaw('LOWER(TRIM(category)) = ?', [$canon]);
+            });
+        }
         if (!empty($filters['transmission'])) $query->where('transmission', 'like', '%' . $filters['transmission'] . '%');
 
         $sortField = $filters['sort'] ?? 'created_at';

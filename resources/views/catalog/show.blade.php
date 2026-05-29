@@ -2815,6 +2815,13 @@ window.openCarGallery=(i)=>{csOpenLb(i||0)};
 // body at its current scroll position with position:fixed + negative top, then
 // restore the exact scroll position on unlock. The lock counter lets multiple
 // modals (e.g. inquiry + lightbox) stack without one closing unlocking the other.
+//
+// CRITICAL: every csLockBody() MUST be paired with exactly one csUnlockBody().
+// A double-tap on the gallery image used to fire two open paths, locking the
+// depth to 2; one close left it at 1 and the page stayed frozen. The open
+// functions below now guard against that by only locking when the lightbox
+// transitions from closed → open. csForceReleaseLock() is the emergency exit
+// for any path we haven't anticipated (bfcache restore, leftover state).
 var _csLockY=0, _csLockDepth=0, _csLockPrev={};
 function csLockBody(){
     if(_csLockDepth++>0)return;
@@ -2831,6 +2838,9 @@ function csLockBody(){
 function csUnlockBody(){
     if(_csLockDepth<=0)return;
     if(--_csLockDepth>0)return;
+    csRestoreBodyStyles();
+}
+function csRestoreBodyStyles(){
     var b=document.body, s=b.style;
     s.position=_csLockPrev.position||'';
     s.top=_csLockPrev.top||'';
@@ -2839,6 +2849,14 @@ function csUnlockBody(){
     s.width=_csLockPrev.width||'';
     s.overflow=_csLockPrev.overflow||'';
     window.scrollTo(0,_csLockY);
+}
+// Emergency cleanup: nukes the lock state regardless of how many times
+// csLockBody was called. Used by csCloseLb defensively + by the pageshow
+// handler so a back/forward navigation never leaves the page frozen.
+function csForceReleaseLock(){
+    if(_csLockDepth<=0)return;
+    _csLockDepth=0;
+    csRestoreBodyStyles();
 }
 
 // ==== FULLSCREEN LIGHTBOX ====
@@ -2851,12 +2869,26 @@ function csOpenLb(idx){
     img.src=CAR_ALL_GALLERY[_lbIdx].src;
     img.alt=CAR_ALL_GALLERY[_lbIdx].caption||'';
     document.getElementById('csLbCounter').textContent=(_lbIdx+1)+' / '+CAR_ALL_GALLERY.length;
-    lb.classList.add('open');
-    csLockBody();
+    // Idempotent: only acquire a body lock on the closed→open transition.
+    // Mobile double-tap + delayed-click can fire this twice in a row; the
+    // second call must be a no-op for scroll-lock accounting, otherwise
+    // a single close leaves depth=1 and the body stays frozen.
+    if(!lb.classList.contains('open')){
+        lb.classList.add('open');
+        csLockBody();
+    }
 }
 function csCloseLb(){
-    document.getElementById('csLightbox').classList.remove('open');
-    csUnlockBody();
+    const lb=document.getElementById('csLightbox');
+    if(lb && lb.classList.contains('open')){
+        lb.classList.remove('open');
+        csUnlockBody();
+    } else {
+        // Lightbox already closed but we may still hold a stale lock from a
+        // previous mis-paired open. Release everything so the page is
+        // guaranteed scrollable.
+        csForceReleaseLock();
+    }
 }
 function csLbNav(dir){
     _lbIdx=(_lbIdx+dir+CAR_ALL_GALLERY.length)%CAR_ALL_GALLERY.length;
@@ -2869,6 +2901,15 @@ document.addEventListener('keydown',function(e){
     if(e.key==='Escape')csCloseLb();
     if(e.key==='ArrowLeft')csLbNav(-1);
     if(e.key==='ArrowRight')csLbNav(1);
+});
+// bfcache restore safety: if a user opens the lightbox, leaves the tab or
+// navigates away, then comes back, the browser may restore the DOM with the
+// body still position:fixed from the prior lock. Force-release on pageshow
+// so the page is always scrollable when it becomes visible again.
+window.addEventListener('pageshow',function(){
+    csForceReleaseLock();
+    var lb=document.getElementById('csLightbox');
+    if(lb) lb.classList.remove('open');
 });
 // Click main image → open lightbox
 document.addEventListener('DOMContentLoaded',function(){
