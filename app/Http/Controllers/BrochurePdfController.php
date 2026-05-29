@@ -4,141 +4,156 @@ namespace App\Http\Controllers;
 
 use App\Models\Car;
 use App\PdfBrochure\BrochureBuilder;
+use App\PdfBrochure\BrochureGenerationService;
 use App\PdfBrochure\ChromiumRenderer;
 use App\PdfBrochure\ImageEmbedder;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
- * Public + admin endpoints for the CertiCheck brochure.
+ * Endpoints for the cached CertiCheck brochure.
  *
- *  GET /samochody/{car:slug}/pdf       — public download
- *  GET /admin/cars/{car}/pdf           — admin gate
- *  GET /admin/cars/{car}/pdf/diagnostic — JSON manifest, no Chromium
+ *  GET  /samochody/{car:slug}/pdf       — public download (CACHED ONLY)
+ *  GET  /admin/cars/{car}/pdf           — same download, admin gate
+ *  POST /admin/cars/{car}/pdf/regenerate — admin trigger regen
+ *  GET  /admin/cars/{car}/pdf/diagnostic — image manifest, no Chromium
+ *  GET  /admin/cars/pdf/health           — Chromium liveness ping
  *
- * Failure model (rewritten after the "download.html" production incident):
- *  - Every step (auth, build, view, render) is wrapped in one master
- *    try/catch that converts ANY throwable into a clean JSON 500 with the
- *    report_id baked in. The response NEVER carries a
- *    Content-Disposition: attachment header on the error path, so the
- *    browser shows the JSON in-tab instead of saving it as `download.html`.
- *  - assertReady() pre-checks the Chromium binary so we fail in ~1 ms
- *    instead of after the 60-second Browsershot timeout.
- *  - Each step emits a structured Log::info so a Railway log filter on
- *    the report_id gives a complete timeline of one request.
+ * The public download endpoint serves a pre-generated file from storage
+ * ONLY. It never runs Chromium, never renders HTML, never makes a network
+ * fetch. If the brochure isn't ready, the route returns a plain 404 with
+ * NO attachment header so the browser surfaces a normal "Not Found" page
+ * instead of saving the response body as `download.json`. This is the
+ * fundamental architectural change that eliminates the failure modes
+ * that produced `download.html` and `download.json` in production.
+ *
+ * Generation lives in BrochureGenerationService, called from:
+ *   - the CarObserver, on admin save
+ *   - the regenerate() admin route
+ *   - the brochures:rebuild artisan command
  */
 class BrochurePdfController extends Controller
 {
-    public function generate(Car $car, ChromiumRenderer $renderer)
+    /**
+     * Public download. Reads the cached file from the public disk and
+     * streams it. Returns 404 (no attachment header) when the brochure
+     * is not in 'ready' state.
+     */
+    public function download(Car $car)
     {
-        $reportId = (string) Str::uuid();
+        $reportId  = (string) Str::uuid();
         $routeName = optional(request()->route())->getName() ?? 'unknown';
-        $tStart = microtime(true);
 
-        Log::info('pdf_brochure.request', [
-            'report_id'  => $reportId,
-            'car_id'     => $car->id,
-            'route'      => $routeName,
-            'user_admin' => (bool) auth()->user()?->is_admin,
+        $this->authorize($car);
+
+        $ready   = $car->brochure_status === 'ready' && !empty($car->brochure_path);
+        $exists  = $ready && Storage::disk('public')->exists($car->brochure_path);
+        $size    = $exists ? (int) Storage::disk('public')->size($car->brochure_path) : null;
+
+        Log::info('pdf_brochure.download.request', [
+            'report_id'   => $reportId,
+            'car_id'      => $car->id,
+            'route'       => $routeName,
+            'requested'   => request()->fullUrl(),
+            'pdf_status'  => $car->brochure_status,
+            'pdf_path'    => $car->brochure_path,
+            'file_exists' => $exists,
+            'file_size'   => $size,
+            'user_admin'  => (bool) auth()->user()?->is_admin,
         ]);
 
+        if (!$ready) {
+            // Brochure is missing / generating / failed. Return a clean
+            // 404 with NO Content-Disposition: attachment header. The
+            // browser shows its standard "Not Found" page; the customer
+            // does NOT get a saved file. This is the single root-cause
+            // fix for `download.html` and `download.json`.
+            abort(404);
+        }
+
+        if (!$exists) {
+            // DB says ready but the file vanished — flag the car so admin
+            // sees the discrepancy in the diagnostic endpoint, and return
+            // 404 to the customer.
+            $car->forceFill([
+                'brochure_status' => 'missing',
+                'brochure_path'   => null,
+                'brochure_error'  => 'file missing on disk',
+            ])->saveQuietly();
+            Log::warning('pdf_brochure.download.file_missing_on_disk', [
+                'report_id' => $reportId,
+                'car_id'    => $car->id,
+                'path'      => $car->brochure_path,
+            ]);
+            abort(404);
+        }
+
+        $pdf = Storage::disk('public')->get($car->brochure_path);
+        if (!is_string($pdf) || substr($pdf, 0, 4) !== '%PDF') {
+            // Cached file is corrupt. Mark and 404; admin will regen.
+            $car->forceFill([
+                'brochure_status' => 'failed',
+                'brochure_error'  => 'cached file did not start with %PDF',
+            ])->saveQuietly();
+            Log::error('pdf_brochure.download.cached_bytes_invalid', [
+                'report_id' => $reportId,
+                'car_id'    => $car->id,
+                'path'      => $car->brochure_path,
+            ]);
+            abort(404);
+        }
+
+        $filename = 'CertiCars-' . ($car->identifier ?? 'brochure') . '-' . $car->slug . '.pdf';
+
+        Log::info('pdf_brochure.download.served', [
+            'report_id'    => $reportId,
+            'car_id'       => $car->id,
+            'pdf_size'     => strlen($pdf),
+            'content_type' => 'application/pdf',
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Length'      => (string) strlen($pdf),
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'X-PDF-Report-Id'     => $reportId,
+            'Cache-Control'       => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma'              => 'no-cache',
+        ]);
+    }
+
+    /**
+     * Admin-only: kick off a regenerate for one car. Synchronous — admin
+     * accepts a few seconds wait so the page comes back with the new
+     * state immediately. On success: redirect back with flash; on failure:
+     * 500 JSON with the exception class.
+     */
+    public function regenerate(Car $car, BrochureGenerationService $svc)
+    {
+        if (!auth()->user()?->is_admin) {
+            abort(403);
+        }
         try {
-            $this->authorize($car);
-
-            // Pre-flight: confirm Chromium can be spawned before we burn 30
-            // seconds on image fetches. Fails in single-digit milliseconds
-            // if the binary is missing.
-            $renderer->assertReady($reportId);
-
-            $builder = $this->newBuilder($reportId);
-
-            Log::info('pdf_brochure.build_start', ['report_id' => $reportId]);
-            [$data, $embedder] = $builder->build($car, $reportId);
-            Log::info('pdf_brochure.build_done', [
-                'report_id' => $reportId,
-            ] + $embedder->stats());
-
-            Log::info('pdf_brochure.view_start', ['report_id' => $reportId]);
-            $html = View::make('pdf-brochure.document', ['b' => $data])->render();
-            Log::info('pdf_brochure.view_done', [
-                'report_id'    => $reportId,
-                'html_length'  => strlen($html),
-            ]);
-
-            Log::info('pdf_brochure.chromium_start', ['report_id' => $reportId]);
-            $pdf = $renderer->render($html, $reportId);
-            // pdf_brochure.chromium_ok logged inside the renderer.
-
-            // Final guard: refuse to emit anything that doesn't actually
-            // start with %PDF, even if the renderer thought it succeeded.
-            if (!is_string($pdf) || substr($pdf, 0, 4) !== '%PDF') {
-                throw new \RuntimeException('PDF output did not start with %PDF — refusing to send.');
-            }
-
-            $filename = 'CertiCars-' . ($car->identifier ?? 'brochure') . '-' . $car->slug . '.pdf';
-            $durationMs = (int) ((microtime(true) - $tStart) * 1000);
-
-            Log::info('pdf_brochure.done', [
-                'report_id'   => $reportId,
-                'car_id'      => $car->id,
-                'pdf_size'    => strlen($pdf),
-                'duration_ms' => $durationMs,
-                'content_type'=> 'application/pdf',
-            ] + $embedder->stats());
-
-            return response($pdf, 200, [
-                'Content-Type'        => 'application/pdf',
-                'Content-Length'      => (string) strlen($pdf),
-                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-                'X-PDF-Report-Id'     => $reportId,
-                // Tell every proxy + browser cache to never cache this
-                // response — re-generating cheap, accidentally serving a
-                // stale broken PDF expensive.
-                'Cache-Control'       => 'no-store, no-cache, must-revalidate, max-age=0',
-                'Pragma'              => 'no-cache',
-            ]);
-        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
-            // 404 from authorize() is a legitimate not-found. Re-throw so
-            // Laravel returns the normal 404 page (NOT an attachment).
-            throw $e;
+            $svc->generate($car);
+            return back()->with('ok', 'Brochure regenerated for ' . $car->slug);
         } catch (\Throwable $e) {
-            $durationMs = (int) ((microtime(true) - $tStart) * 1000);
-
-            Log::error('pdf_brochure.failed', [
-                'report_id'   => $reportId,
-                'car_id'      => $car->id,
-                'route'       => $routeName,
-                'exception'   => get_class($e),
-                'message'     => $e->getMessage(),
-                'trace_head'  => $this->trimTrace($e),
-                'duration_ms' => $durationMs,
-            ]);
-
-            // CRITICAL: never send Content-Disposition: attachment on the
-            // error path. Browsers in download mode save the response body
-            // verbatim — that's how customers ended up with `download.html`
-            // files in production. JSON content-type + no attachment
-            // header → browser navigates to the response in a tab and the
-            // user can see the report_id to paste back to support.
             return response()->json([
-                'error'     => 'PDF generation failed.',
-                'message'   => 'Spróbuj ponownie za chwilę lub skontaktuj się z nami podając poniższy identyfikator.',
-                'report_id' => $reportId,
-            ], 500, [
-                'Content-Type'    => 'application/json; charset=utf-8',
-                'X-PDF-Report-Id' => $reportId,
-                'Cache-Control'   => 'no-store',
-            ]);
+                'error'     => 'regenerate_failed',
+                'exception' => get_class($e),
+                'message'   => $e->getMessage(),
+                'car_id'    => $car->id,
+                'status'    => $car->fresh()->brochure_status,
+                'last_error'=> $car->fresh()->brochure_error,
+            ], 500);
         }
     }
 
     /**
      * Admin-only: build BrochureData + return embedder manifest as JSON
-     * without invoking Chromium. Quickest way to determine which images
-     * were skipped and why for a specific car.
+     * without invoking Chromium. Use to debug why a regen produces an
+     * unexpected output.
      */
     public function diagnostic(Car $car): JsonResponse
     {
@@ -154,43 +169,52 @@ class BrochurePdfController extends Controller
             'report_id' => $reportId,
             'car_id'    => $car->id,
             'car_slug'  => $car->slug,
-            'stats'     => $embedder->stats(),
-            'summary'   => [
-                'hero_embedded'             => $data->heroImage !== null,
-                'gallery_embedded'          => count($data->galleryImages),
-                'damage_embedded'           => count($data->damageImages),
-                'damage_cards_with_photos'  => count(array_filter($data->damages, fn ($d) => count($d['photos']) > 0)),
-                'tire_set_count'            => count($data->tireSets),
-                'tech_condition_count'      => count($data->technicalConditions),
-                'paint_row_count'           => count($data->paintMeasurements),
-                'equipment_categories'      => count($data->equipment),
+            'brochure'  => [
+                'status'       => $car->brochure_status,
+                'path'         => $car->brochure_path,
+                'size'         => $car->brochure_size,
+                'generated_at' => optional($car->brochure_generated_at)->toIso8601String(),
+                'error'        => $car->brochure_error,
+                'file_exists'  => $car->brochure_path
+                    ? Storage::disk('public')->exists($car->brochure_path)
+                    : null,
+            ],
+            'stats'    => $embedder->stats(),
+            'summary'  => [
+                'hero_embedded'            => $data->heroImage !== null,
+                'gallery_embedded'         => count($data->galleryImages),
+                'damage_embedded'          => count($data->damageImages),
+                'damage_cards_with_photos' => count(array_filter($data->damages, fn ($d) => count($d['photos']) > 0)),
+                'tire_set_count'           => count($data->tireSets),
+                'tech_condition_count'     => count($data->technicalConditions),
+                'paint_row_count'          => count($data->paintMeasurements),
+                'equipment_categories'     => count($data->equipment),
             ],
             'manifest' => $embedder->manifest(),
         ]);
     }
 
     /**
-     * Admin-only Chromium liveness check. Useful when a deploy has
-     * shipped and you want to confirm the binary is actually present
-     * before customers start complaining about broken downloads.
+     * Admin-only Chromium liveness check. Hit after a deploy that touches
+     * the Dockerfile to confirm the binary is in place before customers
+     * report broken regens.
      */
     public function health(ChromiumRenderer $renderer): JsonResponse
     {
         if (!auth()->user()?->is_admin) {
             abort(403);
         }
-
         $reportId = (string) Str::uuid();
         try {
             $renderer->assertReady($reportId);
             return response()->json(['ok' => true, 'report_id' => $reportId]);
         } catch (\Throwable $e) {
             return response()->json([
-                'ok'         => false,
-                'report_id'  => $reportId,
-                'exception'  => get_class($e),
-                'message'    => $e->getMessage(),
-                'env_path'   => env('PUPPETEER_EXECUTABLE_PATH'),
+                'ok'        => false,
+                'report_id' => $reportId,
+                'exception' => get_class($e),
+                'message'   => $e->getMessage(),
+                'env_path'  => env('PUPPETEER_EXECUTABLE_PATH'),
             ], 503);
         }
     }
@@ -214,12 +238,5 @@ class BrochurePdfController extends Controller
         if (!$car->has_certicheck && !$isAdmin) {
             abort(404);
         }
-    }
-
-    /** First few frames of the stack trace — full trace is too large for log. */
-    private function trimTrace(\Throwable $e): array
-    {
-        $frames = explode("\n", $e->getTraceAsString());
-        return array_slice($frames, 0, 8);
     }
 }

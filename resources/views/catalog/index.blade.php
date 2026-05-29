@@ -533,7 +533,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     @if($car->has_certicheck)
                     <div class="lcard-footer">
-                        <x-certicheck-cta :slug="$car->slug" size="sm"/>
+                        <x-certicheck-cta :slug="$car->slug" :ready="$car->brochureIsReady()" size="sm"/>
                     </div>
                     @endif
                 </div>
