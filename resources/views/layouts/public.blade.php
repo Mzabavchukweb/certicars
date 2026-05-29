@@ -137,36 +137,73 @@
 
 
         /* ============ FOOTER ============ */
+        /* ============ FOOTER ============
+           Layout: top brand row → 4-column main grid → bottom bar.
+           - Social buttons removed (no real URLs were ever wired up)
+           - Map iframe replaced with a "Zobacz na mapie" link button
+           - Opening hours card sits inside the O CertiCars column
+           - All icons go through the shared icon component (no random
+             inline SVGs except the brand badge itself, which is the
+             logo not an icon)                                              */
         .footer{background:#0d1b3e;color:rgba(255,255,255,.6);padding:0;margin-top:0;position:relative}
         .footer::before{content:'';display:block;height:2px;background:linear-gradient(90deg,rgba(0,102,255,.25) 0%,#0066ff 40%,rgba(0,102,255,.25) 100%)}
-        .footer-top{max-width:1200px;margin:0 auto;padding:48px 24px 40px;display:flex;align-items:center;justify-content:space-between;gap:24px;border-bottom:1px solid rgba(255,255,255,.08)}
-        .footer-top-brand{display:flex;align-items:center;gap:10px}
-        .footer-logo{display:inline-flex;align-items:center;gap:9px;text-decoration:none}
+
+        /* Brand row — just the logo on the left, thin divider below. */
+        .footer-top{max-width:1200px;margin:0 auto;padding:40px 24px 28px;border-bottom:1px solid rgba(255,255,255,.08)}
+        .footer-logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
         .footer-logo-badge{width:30px;height:30px;flex-shrink:0}
-        .footer-logo span{font-family:'Inter',sans-serif;font-size:24px;font-weight:900;letter-spacing:-.6px;color:#fff;line-height:1}
-        .footer-logo span span{color:#4ea3ff}
-        .footer-top-socials{display:flex;gap:8px}
-        .footer-social{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;transition:all .2s;text-decoration:none;border:1px solid rgba(255,255,255,.12)}
-        .footer-social:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.25);transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.3)}
-        .footer-in{max-width:1200px;margin:0 auto;padding:40px 24px 0;display:grid;grid-template-columns:1.4fr 1.2fr 1fr;gap:48px}
-        .footer h3{color:#fff;font-size:13px;margin-bottom:16px;text-transform:none;letter-spacing:-.2px;font-weight:800}
-        .footer p,.footer li{font-size:13.5px;line-height:1.9;color:rgba(255,255,255,.55)}
-        .footer a{font-size:13.5px;line-height:1.9;color:rgba(255,255,255,.6);text-decoration:none;transition:all .15s}
-        .footer ul{list-style:none}
-        .footer li{padding:3px 0}
+        .footer-logo-text{font-family:'Inter',sans-serif;font-size:22px;font-weight:900;letter-spacing:-.6px;color:#fff;line-height:1}
+        .footer-logo-text span{color:#4ea3ff}
+
+        /* Main grid — 4 balanced columns on desktop. */
+        .footer-in{max-width:1200px;margin:0 auto;padding:36px 24px 36px;display:grid;grid-template-columns:1.5fr 1.1fr 1fr 1fr;gap:40px;align-items:start}
+        .footer h3{color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.7px;font-weight:800;margin-bottom:14px}
+        .footer p,.footer li{font-size:13px;line-height:1.7;color:rgba(255,255,255,.55)}
+        .footer a{font-size:13px;line-height:1.7;color:rgba(255,255,255,.6);text-decoration:none;transition:color .15s}
         .footer a:hover{color:#fff}
-        .footer-brand p{font-size:13.5px;color:rgba(255,255,255,.55);line-height:1.7;margin-top:0;max-width:340px}
-        .footer-contact-item{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-        .footer-contact-icon{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-        .footer-contact-icon svg{width:14px;height:14px;stroke:#7eb3ff}
-        .footer-hours{font-size:13px;color:rgba(255,255,255,.5);line-height:1}
-        .footer-hours div{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07)}
-        .footer-hours div:last-child{border-bottom:none}
-        .footer-hours .val{color:#fff;font-weight:700}
-        .footer-hours .closed{color:rgba(255,255,255,.25);font-weight:500}
-        .footer-btm{max-width:1200px;margin:0 auto;padding:20px 24px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(255,255,255,.3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-        @media(max-width:900px){.footer-in{grid-template-columns:1fr 1fr;gap:32px}}
-        @media(max-width:600px){.footer-top{flex-direction:column;align-items:flex-start;padding:32px 20px 28px}.footer-in{grid-template-columns:1fr;gap:28px;padding:32px 20px 0}.footer-btm{flex-direction:column;text-align:center;padding:20px}}
+        .footer ul{list-style:none;padding:0;margin:0}
+        .footer li{padding:4px 0}
+
+        /* Col 1 — O CertiCars + opening hours card. */
+        .footer-brand p{font-size:13px;color:rgba(255,255,255,.55);line-height:1.7;margin:0 0 18px;max-width:340px}
+        .footer-hours-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:14px 16px}
+        .footer-hours-head{display:flex;align-items:center;gap:7px;color:#7eb3ff;font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;margin-bottom:10px}
+        .footer-hours-head svg{width:13px;height:13px;stroke:#7eb3ff;fill:none;stroke-width:2}
+        .footer-hours-head span{color:#fff}
+        .footer-hours{font-size:12.5px;color:rgba(255,255,255,.55);line-height:1}
+        .footer-hours-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+        .footer-hours-row:last-child{border-bottom:none}
+        .footer-hours-row .val{color:#fff;font-weight:700}
+        .footer-hours-row .closed{color:rgba(255,255,255,.3);font-weight:500}
+
+        /* Col 2 — Kontakt: phone/email/address rows + map button. */
+        .footer-contact-item{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+        .footer-contact-icon{width:32px;height:32px;border-radius:8px;background:rgba(78,163,255,.12);border:1px solid rgba(78,163,255,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .footer-contact-icon svg{width:14px;height:14px;stroke:#7eb3ff;fill:none;stroke-width:2}
+        .footer-contact-body{display:flex;flex-direction:column;gap:1px;min-width:0}
+        .footer-contact-label{font-size:10.5px;font-weight:600;color:rgba(255,255,255,.4);letter-spacing:.3px;text-transform:uppercase}
+        .footer-contact-value{font-size:13px;font-weight:700;color:#fff;line-height:1.35;word-break:break-word}
+        .footer-contact-value:hover{color:#fff}
+        .footer-map-link{margin-top:14px;display:inline-flex;align-items:center;gap:7px;background:rgba(78,163,255,.1);border:1px solid rgba(78,163,255,.2);color:#7eb3ff;font-size:12px;font-weight:700;padding:9px 14px;border-radius:8px;letter-spacing:.1px;transition:background .15s,color .15s,border-color .15s}
+        .footer-map-link:hover{background:rgba(78,163,255,.18);color:#fff;border-color:rgba(78,163,255,.35)}
+        .footer-map-link svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2}
+
+        /* Bottom bar. */
+        .footer-btm{max-width:1200px;margin:0 auto;padding:20px 24px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(255,255,255,.4);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+        .footer-btm-verified{display:inline-flex;align-items:center;gap:6px;color:#4ea3ff;font-weight:600}
+        .footer-btm-verified svg{width:13px;height:13px;stroke:#4ea3ff;fill:none;stroke-width:2.2}
+
+        /* Tablet: collapse to 2-col. */
+        @media(max-width:900px){
+            .footer-in{grid-template-columns:1fr 1fr;gap:32px;padding:32px 24px}
+        }
+        /* Mobile: stack everything, match the 20px gutter used elsewhere. */
+        @media(max-width:600px){
+            .footer-top{padding:28px 20px 20px}
+            .footer-in{grid-template-columns:1fr;gap:28px;padding:28px 20px}
+            .footer-brand p{max-width:none}
+            .footer-btm{flex-direction:column;text-align:center;padding:18px 20px;gap:8px}
+        }
 
         /* ============ COMPONENTS ============ */
         .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;border:none;cursor:pointer;transition:all .15s;text-decoration:none;line-height:1}
@@ -248,9 +285,8 @@
             .nav-mobile-contact{margin-top:auto;padding-top:24px;border-top:1px solid var(--border-l);display:flex;flex-direction:column;gap:12px;font-size:14px;color:var(--text-2)}
             .nav-mobile-contact a{display:flex;align-items:center;gap:10px;color:var(--text-2)}
             .nav-mobile-contact i{width:16px;height:16px;color:var(--blue)}
-            /* Footer mobile */
-            .footer-in{grid-template-columns:1fr;gap:28px;padding:40px 20px 0}
-            .footer-btm{flex-direction:column;text-align:center;padding:20px}
+            /* Footer collapses to 2-col at 900px and to 1-col at 600px —
+               see the dedicated footer rules above; don't re-declare here. */
             .section{padding:48px 0}
             .section-title{font-size:24px}
             .container{padding:0 20px}
@@ -377,75 +413,94 @@
 
 
     <footer class="footer" id="kontakt">
-        {{-- Top bar: Logo + social --}}
+        {{-- Brand row: just the logo. No social buttons until there are
+             actual social URLs to link to (empty href="#" squares read as
+             unfinished placeholder UI). --}}
         <div class="footer-top">
             <a href="{{ route('home') }}" class="footer-logo">
-                <svg class="footer-logo-badge" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" fill="#0066ff"/><path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span>Certi<span>Cars</span></span>
+                <svg class="footer-logo-badge" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" fill="#0066ff"/><path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="footer-logo-text">Certi<span>Cars</span></span>
             </a>
-            <div class="footer-top-socials">
-                <a href="#" class="footer-social" aria-label="Facebook" style="color:#1877f2"><x-icon name="facebook" size="17"/></a>
-                <a href="#" class="footer-social" aria-label="Instagram" style="color:#e4405f"><x-icon name="instagram" size="17"/></a>
-            </div>
         </div>
 
         <div class="footer-in">
-            {{-- Col 1: O nas --}}
+            {{-- Col 1: O CertiCars (description + opening hours card). --}}
             <div class="footer-brand">
                 <h3>O CertiCars</h3>
                 <p>Każdy samochód w naszej ofercie przechodzi pełną inspekcję techniczną i weryfikację historii pojazdu. Kupujesz z pewnością.</p>
-                <div style="margin-top:20px;padding:16px 18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px">
-                    <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:8px;display:flex;align-items:center;gap:6px;color:#7eb3ff"><x-icon name="clock" size="14"/> <span style="color:#fff">Godziny otwarcia</span></div>
+                <div class="footer-hours-card">
+                    <div class="footer-hours-head">
+                        <x-icon name="clock" size="13"/>
+                        <span>Godziny otwarcia</span>
+                    </div>
                     <div class="footer-hours">
-                        <div><span>Poniedziałek – Piątek</span><span class="val">9:00 – 18:00</span></div>
-                        <div><span>Sobota</span><span class="val">10:00 – 14:00</span></div>
-                        <div><span>Niedziela</span><span class="closed">Zamknięte</span></div>
+                        <div class="footer-hours-row"><span>Poniedziałek – Piątek</span><span class="val">9:00 – 18:00</span></div>
+                        <div class="footer-hours-row"><span>Sobota</span><span class="val">10:00 – 14:00</span></div>
+                        <div class="footer-hours-row"><span>Niedziela</span><span class="closed">Zamknięte</span></div>
                     </div>
                 </div>
             </div>
 
-            {{-- Col 2: Kontakt --}}
+            {{-- Col 2: Kontakt — phone / email / address + map link. --}}
             <div>
                 <h3>Kontakt</h3>
                 <div class="footer-contact-item">
-                    <div class="footer-contact-icon"><x-icon name="phone" size="16"/></div>
-                    <div><div style="font-size:11px;color:rgba(255,255,255,.4);font-weight:500">Telefon</div><a href="tel:+48585586090" style="font-weight:700;color:#fff">+48 58 558 60 90</a></div>
+                    <div class="footer-contact-icon"><x-icon name="phone" size="14"/></div>
+                    <div class="footer-contact-body">
+                        <span class="footer-contact-label">Telefon</span>
+                        <a href="tel:+48585586090" class="footer-contact-value">+48 58 558 60 90</a>
+                    </div>
                 </div>
                 <div class="footer-contact-item">
-                    <div class="footer-contact-icon"><x-icon name="mail" size="16"/></div>
-                    <div><div style="font-size:11px;color:rgba(255,255,255,.4);font-weight:500">E-mail</div><a href="mailto:kontakt@certicars.pl" style="font-weight:700;color:#fff">kontakt@certicars.pl</a></div>
+                    <div class="footer-contact-icon"><x-icon name="mail" size="14"/></div>
+                    <div class="footer-contact-body">
+                        <span class="footer-contact-label">E-mail</span>
+                        <a href="mailto:kontakt@certicars.pl" class="footer-contact-value">kontakt@certicars.pl</a>
+                    </div>
                 </div>
                 <div class="footer-contact-item">
-                    <div class="footer-contact-icon"><x-icon name="map-pin" size="16"/></div>
-                    <div><div style="font-size:11px;color:rgba(255,255,255,.4);font-weight:500">Adres</div><span style="font-weight:700;color:#fff;font-size:13.5px">Warszawa, Polska</span></div>
+                    <div class="footer-contact-icon"><x-icon name="map-pin" size="14"/></div>
+                    <div class="footer-contact-body">
+                        <span class="footer-contact-label">Adres</span>
+                        <span class="footer-contact-value">Warszawa, Polska</span>
+                    </div>
                 </div>
-                {{-- Mini map --}}
-                <div style="margin-top:16px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.1);height:120px;background:#162040">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2443.8!2d18.638!3d54.371!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z!5e0!3m2!1spl!2spl!4v1" width="100%" height="100%" style="border:0" loading="lazy"></iframe>
-                </div>
+                {{-- Map link replaces the previous iframe — the embed had no
+                     real coordinates and rendered as a broken gray block. --}}
+                <a href="https://www.google.com/maps/search/?api=1&query=Warszawa%2C+Polska" target="_blank" rel="noopener" class="footer-map-link">
+                    <x-icon name="map-pin" size="13"/>
+                    Zobacz na mapie
+                </a>
             </div>
 
-            {{-- Col 3: Nawigacja + Informacje --}}
+            {{-- Col 3: Nawigacja. --}}
             <div>
                 <h3>Nawigacja</h3>
-                <ul style="margin-bottom:24px">
+                <ul>
                     <li><a href="{{ route('home') }}">Strona główna</a></li>
                     <li><a href="{{ route('catalog') }}">Oferta samochodów</a></li>
                     <li><a href="{{ route('favorites') }}">Obserwowane</a></li>
                     <li><a href="{{ route('about') }}">O nas</a></li>
                     <li><a href="{{ route('contact') }}">Kontakt</a></li>
                 </ul>
+            </div>
+
+            {{-- Col 4: Informacje. --}}
+            <div>
                 <h3>Informacje</h3>
                 <ul>
                     <li><a href="#">Polityka prywatności</a></li>
                     <li><a href="#">Regulamin</a></li>
                 </ul>
             </div>
-
         </div>
+
         <div class="footer-btm">
             <span>© {{ date('Y') }} CertiCars. Wszelkie prawa zastrzeżone.</span>
-            <span style="display:flex;align-items:center;gap:5px;color:#4ea3ff"><x-icon name="shield-check" size="12"/> <span style="color:inherit">Zweryfikowany dealer</span></span>
+            <span class="footer-btm-verified">
+                <x-icon name="shield-check" size="13"/>
+                Zweryfikowany dealer
+            </span>
         </div>
     </footer>
 
