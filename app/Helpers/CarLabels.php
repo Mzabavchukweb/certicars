@@ -230,6 +230,91 @@ class CarLabels
     }
 
     /**
+     * Tire wheel position → Polish display. The DB column is a raw enum key
+     * (front_left / rear_right / spare / top) that absolutely cannot appear
+     * verbatim in a client-facing PDF. Unknown keys (admin typos) fall back
+     * to a cleaned title-case string so e.g. "front_extra" reads as
+     * "Front Extra" instead of leaking the raw column value.
+     */
+    public static function tirePosition(?string $key): string
+    {
+        $map = [
+            'front_left'  => 'Przednia lewa',
+            'front_right' => 'Przednia prawa',
+            'rear_left'   => 'Tylna lewa',
+            'rear_right'  => 'Tylna prawa',
+            'spare'       => 'Zapasowe',
+            'top'         => 'Górna',
+        ];
+        if (!is_string($key) || $key === '') return '—';
+        return $map[$key] ?? mb_convert_case(str_replace('_', ' ', $key), MB_CASE_TITLE, 'UTF-8');
+    }
+
+    /**
+     * Tire condition (free-text array stored on CarTire::condition) → one of
+     * the four canonical client labels. Raw admin input (slang like
+     * "zajebiste", typos, English keys) never leaks through; unknowns fall
+     * back to "Wymaga uwagi" rather than the raw string. Returns the label
+     * plus a CSS class hint the views can use to colour the cell.
+     */
+    public static function tireCondition($cond): array
+    {
+        if (!is_array($cond) || count($cond) === 0) {
+            return ['label' => 'Stan bardzo dobry', 'class' => 'cond-ok'];
+        }
+        $joined = mb_strtolower(implode(' ', array_filter($cond, 'is_string')));
+        // Hard signals first — explicit replacement / damage tokens.
+        if (preg_match('/wymian|do_wymiany|p[eę]kni|uszkodz|zniszcz|bad|broken|replace/u', $joined)) {
+            return ['label' => 'Do wymiany', 'class' => 'cond-bad'];
+        }
+        if (str_contains($joined, 'zuży') || str_contains($joined, 'worn')) {
+            return ['label' => 'Wymaga uwagi', 'class' => 'cond-warn'];
+        }
+        if (preg_match('/bardzo dobr|very good|excellent/u', $joined)) {
+            return ['label' => 'Stan bardzo dobry', 'class' => 'cond-ok'];
+        }
+        if (preg_match('/\bok\b|dobry|good|sprawn/u', $joined)) {
+            return ['label' => 'Dobry', 'class' => 'cond-ok'];
+        }
+        // Unknown text (admin typo / slang) → generic warning, never raw.
+        return ['label' => 'Wymaga uwagi', 'class' => 'cond-warn'];
+    }
+
+    /**
+     * Damage location enum (free-text on CarDamage::location, often using
+     * the same front_left / rear_right family + body-panel names) → Polish
+     * display. Same safety net as tirePosition: unknown values get cleaned
+     * up rather than leaking raw.
+     */
+    public static function damageLocation(?string $key): string
+    {
+        if (!is_string($key) || $key === '') return '—';
+        $map = [
+            'front_left'   => 'Przód lewy',
+            'front_right'  => 'Przód prawy',
+            'rear_left'    => 'Tył lewy',
+            'rear_right'   => 'Tył prawy',
+            'front'        => 'Przód',
+            'rear'         => 'Tył',
+            'left'         => 'Lewy bok',
+            'right'        => 'Prawy bok',
+            'top'          => 'Dach',
+            'roof'         => 'Dach',
+            'hood'         => 'Maska',
+            'trunk'        => 'Klapa bagażnika',
+            'bumper_front' => 'Zderzak przedni',
+            'bumper_rear'  => 'Zderzak tylny',
+            'door_front_left'  => 'Drzwi przednie lewe',
+            'door_front_right' => 'Drzwi przednie prawe',
+            'door_rear_left'   => 'Drzwi tylne lewe',
+            'door_rear_right'  => 'Drzwi tylne prawe',
+            'interior'     => 'Wnętrze',
+            'underbody'    => 'Podwozie',
+        ];
+        return $map[$key] ?? mb_convert_case(str_replace('_', ' ', $key), MB_CASE_TITLE, 'UTF-8');
+    }
+
+    /**
      * Keyword-detect a status enum from a legacy free-text string.
      * Empty / unknown → 'ok' (so old data never falsely flags red).
      */
