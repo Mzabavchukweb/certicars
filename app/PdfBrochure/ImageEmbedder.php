@@ -75,11 +75,25 @@ final class ImageEmbedder
         'cached'     => 0,
     ];
 
+    /**
+     * Wall-clock start. Used to enforce a total time budget so the request
+     * never exceeds Railway/Cloudflare's ~100s gateway timeout — once
+     * embedding has been going for BUDGET_SECONDS we skip the remaining
+     * images rather than potentially blow the budget on a single slow
+     * fetch.
+     */
+    private readonly float $startedAt;
+
+    /** Hard cap on total time spent across ALL embed() calls (seconds). */
+    private const TOTAL_BUDGET_SECONDS = 30;
+
     public function __construct(
         private readonly string $reportId,
         private readonly ?string $publicBaseUrl,
         private readonly bool $isS3,
-    ) {}
+    ) {
+        $this->startedAt = microtime(true);
+    }
 
     /**
      * Resolve, validate, normalize, embed. Returns the EmbeddedImage on
@@ -93,6 +107,14 @@ final class ImageEmbedder
 
         if ($path === '') {
             return $this->skip($path, $context, 'empty_path');
+        }
+
+        // Drop out of the budget once we've spent ~30s embedding so the
+        // request never exceeds Railway's gateway timeout. Cached lookups
+        // still happen below (they're free); only fresh fetches stop.
+        if (!array_key_exists($path, $this->cache)
+            && (microtime(true) - $this->startedAt) > self::TOTAL_BUDGET_SECONDS) {
+            return $this->skip($path, $context, 'budget_exhausted');
         }
 
         if (array_key_exists($path, $this->cache)) {
@@ -189,8 +211,10 @@ final class ImageEmbedder
         $ch = curl_init($url);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER  => true,
-            CURLOPT_TIMEOUT         => 15,
-            CURLOPT_CONNECTTIMEOUT  => 6,
+            // Tighter per-image limits — previously 15s × N images could
+            // exceed Railway's gateway timeout if R2 was slow.
+            CURLOPT_TIMEOUT         => 6,
+            CURLOPT_CONNECTTIMEOUT  => 4,
             CURLOPT_FOLLOWLOCATION  => true,
             CURLOPT_MAXREDIRS       => 3,
             CURLOPT_USERAGENT       => 'CertiCarsBrochure/1.0',

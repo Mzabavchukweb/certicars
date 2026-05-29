@@ -60,6 +60,10 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     // invoking Chromium. Useful for figuring out why a production brochure
     // shipped empty (skipped image reasons are recorded per-path).
     Route::get('cars/{car}/pdf/diagnostic', [BrochurePdfController::class, 'diagnostic'])->name('admin.cars.pdf.diagnostic');
+    // Chromium liveness check. Hit after every deploy that touches the
+    // Dockerfile / runtime to confirm the binary is actually executable
+    // before customers report broken downloads.
+    Route::get('pdf/health', [BrochurePdfController::class, 'health'])->name('admin.pdf.health');
     Route::post('otomoto-import', [OtomotoImportController::class, 'scrape'])->name('admin.otomoto.import');
 
     Route::resource('brands', AdminBrandController::class)->names('admin.brands')->except(['create', 'show', 'edit']);
