@@ -25,8 +25,9 @@
 .fav-lcard:hover .fav-lcard-img img{transform:scale(1.03)}
 .fav-lcard-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
 .fav-lcard-img-placeholder svg{width:48px;height:48px;stroke:var(--text-4);stroke-width:1.2;fill:none}
-.fav-lcard-certi{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.7);color:#fff;font-size:10px;font-weight:700;padding:4px 8px;border-radius:6px;display:flex;align-items:center;gap:4px;backdrop-filter:blur(4px)}
-.fav-lcard-certi svg{width:10px;height:10px;stroke:#4ea3ff;fill:none;stroke-width:2.5}
+/* CertiCheck pill visuals owned by the shared component. The wrap below
+   positions the pill over the card image consistently with other variants. */
+.fav-lcard-certi-wrap{position:absolute;bottom:8px;left:8px;z-index:2}
 .fav-remove{position:absolute;top:8px;right:8px;width:32px;height:32px;background:rgba(255,255,255,.9);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.15)}
 .fav-remove:hover{background:#fff;transform:scale(1.1)}
 .fav-remove svg{width:14px;height:14px;stroke:var(--orange);fill:var(--orange);stroke-width:2}
@@ -88,9 +89,8 @@
                     </div>
                 @endif
                 @if($car->has_certicheck)
-                <div class="fav-lcard-certi">
-                    <x-icon name="shield-check" size="14"/>
-                    CertiCheck
+                <div class="fav-lcard-certi-wrap">
+                    <x-certicheck-cta :slug="$car->slug" size="sm"/>
                 </div>
                 @endif
                 <button class="fav-remove" data-id="{{ $car->id }}" aria-label="Usuń z obserwowanych" onclick="removeFav(event, {{ $car->id }})">
