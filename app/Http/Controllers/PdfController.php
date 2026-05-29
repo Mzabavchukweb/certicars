@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Car;
 use App\Models\CarImage;
-use App\Services\BrochureImageValidator;
+use App\Services\BrochureImageEmbedder;
 use App\Services\BrochurePdfRenderer;
 use App\Services\PdfImageEmbedder;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -68,74 +68,60 @@ class PdfController extends Controller
     }
 
     /**
-     * Render via Browsershot. Every image URL is HEAD-validated before being
-     * passed to the template — unreachable objects are silently dropped so
-     * the brochure HTML carries only confirmed-good <img> tags.
+     * Render via Browsershot. Every image is fetched server-side, byte-
+     * validated, resized, re-encoded as JPEG and embedded as a base64
+     * data: URI directly in the HTML. Chromium never makes a network
+     * request for an image at render time — that was the source of the
+     * "PDF says 42 photos but the pages are blank" production bug, where
+     * a HEAD-validated URL would silently fail on Chromium's actual GET.
+     *
+     * If an image fails to fetch / decode, pdf_src is left unset and the
+     * template skips that <img> entirely. Sections whose image lists end
+     * up empty are hidden by the view, so we never ship "X photos" text
+     * with blank pages underneath.
      */
     private function renderViaBrowser(Car $car, string $reportId, BrochurePdfRenderer $renderer): string
     {
         $isS3       = config('filesystems.disks.public.driver') === 's3';
         $publicBase = $isS3 ? rtrim((string) config('filesystems.disks.public.url'), '/') : null;
 
-        $validator = new BrochureImageValidator($reportId, $publicBase, $isS3);
+        $embedder = new BrochureImageEmbedder($reportId, $publicBase, $isS3);
 
-        // Local-disk dev fallback: emit data: URIs (base64-encoded image
-        // bytes) so Chromium can render the assets without needing any
-        // network round trip. Browsershot hardcodes a refusal to render
-        // HTML that references localhost/127.x/file:// URLs (security
-        // policy with no override). Data URIs slip past that check and
-        // also avoid the `php artisan serve` single-process deadlock where
-        // Chromium can't fetch storage URLs while the same PHP worker is
-        // blocked waiting for Chromium. In production this branch is
-        // never taken (isS3 == true), so the URLs that hit Chromium are
-        // R2 HTTPS URLs and no base64 encoding happens.
-        $resolveLocal = function (string $path): ?string {
-            if ($path === '') return null;
-            try {
-                $disk = \Illuminate\Support\Facades\Storage::disk('public');
-                if (!$disk->exists($path)) return null;
-                $full  = $disk->path($path);
-                $bytes = @file_get_contents($full);
-                if ($bytes === false || $bytes === '') return null;
-                $mime = @mime_content_type($full) ?: 'image/jpeg';
-                return 'data:' . $mime . ';base64,' . base64_encode($bytes);
-            } catch (\Throwable) {
-                return null;
-            }
-        };
-
-        $decorate = function (string $context) use ($validator, $resolveLocal, $isS3) {
-            return function (CarImage $img) use ($validator, $resolveLocal, $context, $isS3) {
-                $url = $validator->resolveToPublicUrl($img->path, $context);
-                if ($url === null && !$isS3) {
-                    $url = $resolveLocal((string) $img->path);
-                }
-                if ($url !== null) {
-                    $img->setAttribute('pdf_src', $url);
+        $decorate = function (string $context) use ($embedder) {
+            return function (CarImage $img) use ($embedder, $context) {
+                $dataUri = $embedder->resolveToDataUri($img->path, $context);
+                if ($dataUri !== null) {
+                    $img->setAttribute('pdf_src', $dataUri);
                 }
             };
         };
 
+        // Hero context for primaryImage: needs higher fidelity than gallery
+        // thumbnails because it renders at ~110 mm on the cover.
+        if ($car->primaryImage) {
+            $heroUri = $embedder->resolveToDataUri($car->primaryImage->path, 'hero');
+            if ($heroUri !== null) {
+                $car->primaryImage->setAttribute('pdf_src', $heroUri);
+            }
+        }
+
         $car->images->each($decorate('all_images'));
         $car->galleryImages->each($decorate('gallery'));
         $car->damageImages->each($decorate('damage_aggregate'));
-        $car->damages->each(function ($d) use ($decorate, $validator, $resolveLocal, $isS3) {
+        $car->damages->each(function ($d) use ($decorate, $embedder) {
             if ($d->photos) {
                 $d->photos->each($decorate('damage_photo'));
             }
-            $url = $validator->resolveToPublicUrl($d->image_path, 'damage_main');
-            if ($url === null && !$isS3) {
-                $url = $resolveLocal((string) $d->image_path);
-            }
-            if ($url !== null) {
-                $d->setAttribute('pdf_image_src', $url);
+            $dataUri = $embedder->resolveToDataUri($d->image_path, 'damage_main');
+            if ($dataUri !== null) {
+                $d->setAttribute('pdf_image_src', $dataUri);
             }
         });
 
-        Log::info('pdf.images_validated', [
+        Log::info('pdf.images_embedded', [
             'report_id' => $reportId,
             'car_id'    => $car->id,
-        ] + $validator->stats());
+        ] + $embedder->stats());
 
         $html = View::make('pdf.brochure-browser', compact('car'))->render();
 

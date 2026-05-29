@@ -256,8 +256,13 @@
             @if($car->mileage)<tr><td class="lbl">Przebieg</td><td class="val">{{ number_format($car->mileage, 0, '', ' ') }} km</td></tr>@endif
             @if($car->vin)<tr><td class="lbl">VIN</td><td class="val">{{ $car->vin }}</td></tr>@endif
             @if($car->body_type)<tr><td class="lbl">Typ nadwozia</td><td class="val">{{ \App\Helpers\CarLabels::bodyType($car->body_type) ?? $car->body_type }}</td></tr>@endif
-            @if($car->color)<tr><td class="lbl">Kolor</td><td class="val">{{ $car->color }}@if($car->color_code) ({{ $car->color_code }})@endif</td></tr>@endif
-            @if($car->upholstery)<tr><td class="lbl">Tapicerka</td><td class="val">{{ $car->upholstery }}</td></tr>@endif
+            @php
+                $colorClean      = \App\Services\BrochureTextScrubber::clean($car->color);
+                $colorCodeClean  = \App\Services\BrochureTextScrubber::clean($car->color_code);
+                $upholsteryClean = \App\Services\BrochureTextScrubber::clean($car->upholstery);
+            @endphp
+            @if($colorClean)<tr><td class="lbl">Kolor</td><td class="val">{{ $colorClean }}@if($colorCodeClean) ({{ $colorCodeClean }})@endif</td></tr>@endif
+            @if($upholsteryClean)<tr><td class="lbl">Tapicerka</td><td class="val">{{ $upholsteryClean }}</td></tr>@endif
         </table>
     </div>
     <div>
@@ -265,7 +270,14 @@
             @if($car->fuel_type)<tr><td class="lbl">Paliwo</td><td class="val">{{ \App\Helpers\CarLabels::fuelType($car->fuel_type) ?? $car->fuel_type }}</td></tr>@endif
             @if($car->engine_capacity)<tr><td class="lbl">Pojemność silnika</td><td class="val">{{ number_format($car->engine_capacity, 0, '', ' ') }} cm³</td></tr>@endif
             @if($car->power_hp)<tr><td class="lbl">Moc</td><td class="val">{{ $car->power_hp }} KM @if($car->power_kw)({{ $car->power_kw }} kW)@endif</td></tr>@endif
-            @if($car->transmission)<tr><td class="lbl">Skrzynia biegów</td><td class="val">{{ $car->transmission_detail ?? \App\Helpers\CarLabels::transmission($car->transmission) ?? $car->transmission }}</td></tr>@endif
+            @if($car->transmission)
+                @php
+                    $transmissionLabel = \App\Services\BrochureTextScrubber::clean($car->transmission_detail)
+                        ?? \App\Helpers\CarLabels::transmission($car->transmission)
+                        ?? $car->transmission;
+                @endphp
+                <tr><td class="lbl">Skrzynia biegów</td><td class="val">{{ $transmissionLabel }}</td></tr>
+            @endif
             @if($car->drive_type)<tr><td class="lbl">Napęd</td><td class="val">{{ \App\Helpers\CarLabels::drive($car->drive_type) ?? $car->drive_type }}</td></tr>@endif
             @if($car->doors)<tr><td class="lbl">Drzwi / Miejsca</td><td class="val">{{ $car->doors }} / {{ $car->seats ?? '—' }}</td></tr>@endif
             @if($car->weight)<tr><td class="lbl">Masa własna</td><td class="val">{{ number_format($car->weight, 0, '', ' ') }} kg</td></tr>@endif
@@ -346,8 +358,10 @@
         $clsMap = ['ok' => 'cond-ok', 'attention' => 'cond-warn', 'bad' => 'cond-bad'];
         $cls = $clsMap[$resolved['status']] ?? '';
         $cellText = $resolved['label'];
-        if (!empty($resolved['note'])) {
-            $cellText .= ' — ' . $resolved['note'];
+        // techStatus note is admin free-text — scrub before appending.
+        $noteClean = \App\Services\BrochureTextScrubber::clean($resolved['note'] ?? null);
+        if ($noteClean) {
+            $cellText .= ' — ' . $noteClean;
         }
     @endphp
     <tr>
@@ -370,11 +384,18 @@
 <div class="sh">Koła i opony</div>
 <div class="sh-sub">Pomiar głębokości bieżnika i ocena stanu poszczególnych opon w każdym komplecie.</div>
 @foreach($car->tireSets as $set)
+@php
+    // tire_type / rim are admin free-text — historically have leaked slang
+    // ("zajebiste") and test placeholders into production brochures. Scrub
+    // before render; null = hide that segment entirely.
+    $tireTypeClean = \App\Services\BrochureTextScrubber::clean($set->tire_type);
+    $rimClean      = \App\Services\BrochureTextScrubber::clean($set->rim);
+@endphp
 <section class="section">
 <div class="tire-set-title">
     Komplet {{ $set->set_number ?? $loop->iteration }}
-    @if($set->tire_type) · {{ $set->tire_type }}@endif
-    @if($set->rim) · {{ $set->rim }}@endif
+    @if($tireTypeClean) · {{ $tireTypeClean }}@endif
+    @if($rimClean) · {{ $rimClean }}@endif
     @if($set->is_mounted) (zamontowane)@endif
 </div>
 <table class="tire-tbl">
@@ -420,25 +441,28 @@
         'repaired'  => 'Naprawione',
         default     => 'Uszkodzenie',
     };
-    // Damage location may be a raw enum (front_left) or a free-text panel name.
-    // Run it through CarLabels first; if the helper recognizes it, use the mapped
-    // label, otherwise pass the original through (free-text descriptions).
+    // Damage area / tags / description / severity are admin free-text. Scrub
+    // each before render so slang ("zajebiste") and test placeholders never
+    // reach the client PDF. Damage location enum keys (front_left) get the
+    // CarLabels helper; anything else passes through the scrubber.
     $rawArea = (string) $d->area;
     $areaMapped = \App\Helpers\CarLabels::damageLocation($rawArea);
-    // The helper returns a cleaned title-case fallback for unknowns; only swap
-    // to the mapped value when it differs meaningfully from the raw text.
-    $areaLabel = (str_contains($rawArea, '_') || ctype_lower($rawArea[0] ?? 'X'))
+    $areaCandidate = (str_contains($rawArea, '_') || ctype_lower($rawArea[0] ?? 'X'))
         ? $areaMapped
         : $rawArea;
+    $areaLabel    = \App\Services\BrochureTextScrubber::clean($areaCandidate) ?? '—';
+    $descClean    = \App\Services\BrochureTextScrubber::clean((string) $d->description);
+    $severity     = \App\Services\BrochureTextScrubber::clean((string) $d->severity);
+    $tagsClean    = \App\Services\BrochureTextScrubber::cleanArray(is_array($d->tags) ? $d->tags : null);
 @endphp
 @if(count($dmgPhotos))
 <div class="dmg-card">
     <div class="dmg-card-head">
         <span class="dmg-card-area">{{ $areaLabel }}</span>
-        <span class="dmg-card-type">{{ $typeLabel }}@if($d->severity) · {{ $d->severity }}@endif</span>
+        <span class="dmg-card-type">{{ $typeLabel }}@if($severity) · {{ $severity }}@endif</span>
     </div>
-    @if($d->tags && count($d->tags))<div class="dmg-card-tags">{{ implode(' · ', $d->tags) }}</div>@endif
-    @if($d->description)<p class="dmg-card-desc">{{ $d->description }}</p>@endif
+    @if(count($tagsClean))<div class="dmg-card-tags">{{ implode(' · ', $tagsClean) }}</div>@endif
+    @if($descClean)<p class="dmg-card-desc">{{ $descClean }}</p>@endif
     <div class="dmg-card-photos">
         @foreach(array_slice($dmgPhotos, 0, 3) as $pSrc)
             <img src="{{ $pSrc }}" alt="{{ $areaLabel }}">
@@ -449,8 +473,8 @@
 <div class="dmg-text">
     <strong>{{ $areaLabel }}</strong>
     <span style="color:#b45309;font-size:8.5px;text-transform:uppercase;letter-spacing:.3px;margin-left:6px">{{ $typeLabel }}</span>
-    @if($d->tags && count($d->tags)) — {{ implode(', ', $d->tags) }}@endif
-    @if($d->description)<p>{{ $d->description }}</p>@endif
+    @if(count($tagsClean)) — {{ implode(', ', $tagsClean) }}@endif
+    @if($descClean)<p>{{ $descClean }}</p>@endif
 </div>
 @endif
 @endforeach
@@ -473,9 +497,13 @@
     ];
     $categories = [];
     foreach ($car->equipment as $cat => $items) {
-        if (is_array($items) && count($items)) {
-            $categories[] = ['title' => $equipLabels[$cat] ?? ucfirst((string) $cat), 'items' => $items];
-        }
+        if (!is_array($items)) continue;
+        // Equipment items are free-text typed by admin — scrub each line so
+        // slang / test placeholders never reach the client PDF. Drop the
+        // whole category if nothing usable is left.
+        $cleanItems = \App\Services\BrochureTextScrubber::cleanArray($items);
+        if (count($cleanItems) === 0) continue;
+        $categories[] = ['title' => $equipLabels[$cat] ?? ucfirst((string) $cat), 'items' => $cleanItems];
     }
     $halfMark = (int) ceil(count($categories) / 2);
 @endphp
