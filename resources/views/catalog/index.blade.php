@@ -89,60 +89,84 @@
 .cat-empty-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 .cat-empty-actions .btn{padding:11px 24px;font-size:13px}
 
-/* Cards gap — separated like Otomoto */
+/* Cards stack vertically (Otomoto-style listing rows). Each card is one
+   horizontal row: image on the left, content on the right. The content area
+   itself is a column so the CertiCheck pill can anchor to the bottom without
+   needing a divider line above it.
+
+   The outer .lcard is intentionally a <div>, NOT an <a>. The whole-card
+   click target is a separately-stacked .lcard-link overlay sitting at z-index 1.
+   This avoids the nested-<a> HTML5 violation that triggers when the
+   CertiCheck pill (itself an <a download>) sits inside the card — browsers
+   auto-close the outer anchor before the inner one and the card visually
+   breaks apart. Bumping .lcard-fav / .lcard-footer above z-index 1 lets
+   those controls receive their own clicks even though the overlay covers
+   the whole card. */
 .cat-cards{display:flex;flex-direction:column;gap:12px}
-.lcard{display:flex;background:#fff;border:1px solid var(--border-l);border-radius:12px;text-decoration:none;transition:all .18s;position:relative;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05)}
-.lcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform .2s;border-radius:2px 0 0 2px}
+.lcard{position:relative;display:flex;align-items:stretch;background:#fff;border:1px solid var(--border-l);border-radius:12px;transition:all .18s;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.lcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform .2s;border-radius:2px 0 0 2px;z-index:3;pointer-events:none}
 .lcard:hover{background:#fafafe;border-color:#c5c5cc;box-shadow:0 4px 20px rgba(0,0,0,.1);transform:translateY(-1px)}
 .lcard:hover::before{transform:scaleX(1)}
+.lcard-link{position:absolute;inset:0;z-index:1;text-decoration:none;color:inherit;border-radius:inherit}
+.lcard-link:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 
-/* Image */
-.lcard-img{width:260px;min-width:260px;height:190px;position:relative;overflow:hidden;flex-shrink:0;background:var(--bg)}
-.lcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+/* Image — fixed width on desktop, stretches to match content height so the
+   right side never floats over an empty image gutter. Placeholder uses a soft
+   gradient + larger icon so cars without photos don't render as a flat
+   featureless 260x190 white box. */
+.lcard-img{width:260px;min-width:260px;flex-shrink:0;align-self:stretch;min-height:190px;position:relative;overflow:hidden;background:linear-gradient(135deg,#eef4ff 0%,#e3ecfa 100%)}
+.lcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s;display:block}
 .lcard:hover .lcard-img img{transform:scale(1.03)}
-.lcard-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
-.lcard-img-placeholder svg{width:48px;height:48px;stroke:var(--text-4);stroke-width:1.2;fill:none}
-.lcard-badge-top{position:absolute;top:10px;left:10px;background:var(--orange);color:#fff;font-size:10px;font-weight:800;padding:4px 8px;border-radius:6px;letter-spacing:.5px}
-.lcard-certi{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.7);color:#fff;font-size:10px;font-weight:700;padding:4px 8px;border-radius:6px;display:flex;align-items:center;gap:4px;backdrop-filter:blur(4px)}
-.lcard-certi svg{width:10px;height:10px;stroke:#4ea3ff;fill:none;stroke-width:2.5}
-.lcard-fav{position:absolute;top:8px;right:8px;width:32px;height:32px;background:rgba(255,255,255,.9);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.lcard-img-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#eef4ff 0%,#e3ecfa 100%)}
+.lcard-img-placeholder svg{width:54px;height:54px;stroke:#94a3b8;stroke-width:1.4;fill:none;opacity:.55}
+.lcard-badge-top{position:absolute;top:10px;left:10px;background:var(--orange);color:#fff;font-size:10px;font-weight:800;padding:4px 8px;border-radius:6px;letter-spacing:.5px;z-index:2}
+.lcard-fav{position:absolute;top:8px;right:8px;width:32px;height:32px;background:rgba(255,255,255,.92);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.15);z-index:2}
 .lcard-fav:hover{background:#fff;transform:scale(1.1)}
 .lcard-fav svg{width:15px;height:15px;stroke:#bbb;fill:none;stroke-width:2;transition:stroke .2s}
 .lcard-fav.active svg{stroke:var(--orange);fill:var(--orange)}
-/* Photo count */
-.lcard-photo-count{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;font-weight:600;padding:3px 7px;border-radius:5px;display:flex;align-items:center;gap:4px}
+.lcard-photo-count{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;font-weight:600;padding:3px 7px;border-radius:5px;display:flex;align-items:center;gap:4px;z-index:2}
 .lcard-photo-count svg{width:11px;height:11px;stroke:#fff;fill:none;stroke-width:2}
 
-/* Content */
-.lcard-content{flex:1;padding:16px 20px;display:flex;gap:16px;min-width:0}
-.lcard-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:0}
+/* Content area — a flex COLUMN so the CertiCheck footer can sit at the
+   bottom while the main row (title + specs on left, price on right) takes
+   the rest of the space. Gap-based spacing (no margin-bottom on items)
+   guarantees title and subtitle always have whitespace between them. */
+.lcard-content{flex:1;padding:18px 22px;display:flex;flex-direction:column;gap:12px;min-width:0}
 
-/* Title row */
-.lcard-title{font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.3px;margin-bottom:6px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lcard-subtitle{font-size:12px;color:var(--text-3);margin-bottom:12px}
+/* Main row of the content area: info column (title/subtitle/specs) on the
+   left, price column on the right. Aligned to the top of the card so price
+   sits at the same baseline as the title — no orphan-price effect. */
+.lcard-main{display:flex;gap:20px;align-items:flex-start;min-width:0}
 
-/* Specs strip */
-.lcard-specs{display:flex;flex-wrap:wrap;gap:4px 0;margin-bottom:14px}
-.lcard-spec{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-2);font-weight:500;padding-right:14px;margin-right:10px;border-right:1px solid var(--border-l)}
+/* Info column — vertical stack of title / subtitle / specs with consistent
+   gap. Using gap instead of margin-bottom kills any chance of two adjacent
+   text nodes rendering without whitespace between them. */
+.lcard-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.lcard-title{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.3px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0}
+.lcard-subtitle{font-size:13px;color:var(--text-3);margin:0;line-height:1.3}
+
+.lcard-specs{display:flex;flex-wrap:wrap;gap:6px 0;margin-top:6px}
+.lcard-spec{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-2);font-weight:500;padding-right:14px;margin-right:10px;border-right:1px solid var(--border-l);white-space:nowrap}
 .lcard-spec:last-child{border-right:none;padding-right:0;margin-right:0}
-.lcard-spec svg{width:13px;height:13px;stroke:var(--text-3);fill:none;stroke-width:2;flex-shrink:0}
+.lcard-spec svg{width:14px;height:14px;stroke:var(--text-3);fill:none;stroke-width:2;flex-shrink:0}
 
-/* Meta */
-.lcard-meta{margin-top:auto;padding-top:12px;border-top:1px solid var(--border-l);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.lcard-meta-item{font-size:11px;color:var(--text-3);display:flex;align-items:center;gap:4px}
-.lcard-meta-item svg{width:11px;height:11px;stroke:var(--text-3);fill:none;stroke-width:2}
-.lcard-meta-dot{width:3px;height:3px;border-radius:50%;background:var(--border)}
-
-/* Price column */
-.lcard-price-col{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;min-width:160px;padding-top:2px}
+/* Price column — right-aligned, top-anchored. min-width keeps it from
+   collapsing when the title is long; no justify-content:space-between so a
+   single price item doesn't float by itself. */
+.lcard-price-col{flex-shrink:0;min-width:140px;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
 .lcard-price{font-size:24px;font-weight:900;color:#000;letter-spacing:-.5px;line-height:1;white-space:nowrap}
-.lcard-price-label{font-size:11px;color:var(--text-3);font-weight:500;margin-top:3px}
-.lcard-price-netto{font-size:12px;color:var(--text-3);font-weight:500;margin-top:2px}
-.lcard-btn{margin-top:auto;background:var(--blue);color:#fff;font-size:12px;font-weight:700;padding:9px 18px;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .18s;white-space:nowrap}
-.lcard-btn:hover{background:var(--blue-h);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,102,255,.3)}
-.lcard-btn svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.4}
+.lcard-price-label{font-size:11px;color:var(--text-3);font-weight:500}
 
-/* (legacy .cc-badge removed — CertiCheck CTA visuals owned by the shared component.) */
+/* Footer row — anchored to the bottom of the content column, used for the
+   CertiCheck pill. NO border-top divider (the old design left a horizontal
+   line across the card that read as visual disconnection). z-index:2
+   lifts it above the whole-card .lcard-link overlay so the pill stays
+   independently clickable (download CertiCheck PDF). */
+.lcard-footer{margin-top:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:32px;position:relative;z-index:2}
+
+/* Content area inherits the lifted stacking so title/specs/price are
+   selectable text and don't pass clicks through to the card link. */
+.lcard-content{position:relative}
 
 /* Wrap — transparent, no background (cards are self-contained) */
 .cat-cards-wrap{background:transparent}
@@ -153,17 +177,20 @@
     .cat-mob-toggle{display:flex}
     .cat-panel{display:none}
     .cat-panel.open{display:block;animation:slideDown .2s ease}
-    .lcard-img{width:180px;min-width:180px;height:160px}
+    .lcard-img{width:200px;min-width:200px;min-height:170px}
+    .lcard-title{font-size:17px}
     .lcard-price{font-size:20px}
-    .lcard-price-col{min-width:130px}
+    .lcard-price-col{min-width:120px}
     .cat-header-tabs{display:none}
 }
 @media(max-width:600px){
-    .lcard{flex-direction:column}
-    .lcard-img{width:100%;min-width:0;height:200px}
-    .lcard-content{flex-direction:column}
-    .lcard-price-col{flex-direction:row;align-items:center;min-width:0;width:100%}
-    .lcard-price-col .lcard-btn{margin-top:0;margin-left:auto}
+    .lcard{flex-direction:column;align-items:stretch}
+    .lcard-img{width:100%;min-width:0;height:200px;min-height:200px}
+    .lcard-content{padding:16px 18px;gap:10px}
+    .lcard-main{flex-direction:column;align-items:stretch;gap:10px}
+    .lcard-price-col{min-width:0;text-align:left;flex-direction:row;align-items:baseline;gap:8px}
+    .lcard-price{font-size:22px}
+    .lcard-footer{margin-top:4px}
     .cat-header-row h1{font-size:18px}
 }
 @endsection
@@ -426,7 +453,13 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
         <div class="cat-cards-wrap">
         <div class="cat-cards">
             @forelse($cars as $car)
-            <a href="{{ route('catalog.show',$car) }}" class="lcard">
+            {{-- Outer wrapper is intentionally a <div>, not an <a>. The CertiCheck
+                 download pill in the footer is itself an <a>, and nested anchors
+                 are illegal HTML — browsers auto-close the outer one and the card
+                 visually breaks apart. The .lcard-link span below is the actual
+                 click target for the whole card. --}}
+            <div class="lcard">
+                <a href="{{ route('catalog.show',$car) }}" class="lcard-link" aria-label="{{ $car->title }}"></a>
                 {{-- Image --}}
                 <div class="lcard-img">
                     @if($car->primaryImage)
@@ -452,56 +485,57 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
                     </button>
                 </div>
 
-                {{-- Content --}}
+                {{-- Content: main row (info + price) on top, optional CertiCheck
+                     footer at the bottom. The flex-column layout lets the
+                     footer anchor at the bottom edge without a divider line. --}}
                 <div class="lcard-content">
-                    <div class="lcard-info">
-                        <div class="lcard-title">{{ $car->title }}</div>
-                        @if($car->category || $car->transmission)
-                        <div class="lcard-subtitle">{{ implode(' · ', array_filter([$car->category, $car->transmission])) }}</div>
-                        @endif
+                    <div class="lcard-main">
+                        <div class="lcard-info">
+                            <div class="lcard-title">{{ $car->title }}</div>
+                            @if($car->category || $car->transmission)
+                            <div class="lcard-subtitle">{{ implode(' · ', array_filter([$car->category, $car->transmission])) }}</div>
+                            @endif
 
-                        <div class="lcard-specs">
-                            @if($car->mileage)
-                            <div class="lcard-spec">
-                                <x-icon name="gauge" size="14"/>
-                                {{ number_format((float) $car->mileage, 0, '.', ' ') }} km
+                            <div class="lcard-specs">
+                                @if($car->mileage)
+                                <div class="lcard-spec">
+                                    <x-icon name="gauge" size="14"/>
+                                    {{ number_format((float) $car->mileage, 0, '.', ' ') }} km
+                                </div>
+                                @endif
+                                @if($car->fuel_type)
+                                <div class="lcard-spec">
+                                    <x-icon name="fuel" size="14"/>
+                                    {{ $car->fuel_type }}
+                                </div>
+                                @endif
+                                @if($car->power_hp)
+                                <div class="lcard-spec">
+                                    <x-icon name="zap" size="14"/>
+                                    {{ $car->power_hp }} KM
+                                </div>
+                                @endif
+                                @if($car->first_registration)
+                                <div class="lcard-spec">
+                                    <x-icon name="calendar" size="14"/>
+                                    {{ $car->first_registration }}
+                                </div>
+                                @endif
                             </div>
-                            @endif
-                            @if($car->fuel_type)
-                            <div class="lcard-spec">
-                                <x-icon name="fuel" size="14"/>
-                                {{ $car->fuel_type }}
-                            </div>
-                            @endif
-                            @if($car->power_hp)
-                            <div class="lcard-spec">
-                                <x-icon name="zap" size="14"/>
-                                {{ $car->power_hp }} KM
-                            </div>
-                            @endif
-                            @if($car->first_registration)
-                            <div class="lcard-spec">
-                                <x-icon name="calendar" size="14"/>
-                                {{ $car->first_registration }}
-                            </div>
-                            @endif
                         </div>
 
-                        @if($car->has_certicheck)
-                        <div class="lcard-meta">
-                            <x-certicheck-cta :slug="$car->slug" size="sm"/>
-                        </div>
-                        @endif
-                    </div>
-
-                    {{-- Price + CTA --}}
-                    <div class="lcard-price-col">
-                        <div>
+                        <div class="lcard-price-col">
                             <div class="lcard-price">{{ $car->formatted_price }}</div>
                         </div>
                     </div>
+
+                    @if($car->has_certicheck)
+                    <div class="lcard-footer">
+                        <x-certicheck-cta :slug="$car->slug" size="sm"/>
+                    </div>
+                    @endif
                 </div>
-            </a>
+            </div>
             @empty
             <div class="cat-empty">
                 <div class="cat-empty-icon">
