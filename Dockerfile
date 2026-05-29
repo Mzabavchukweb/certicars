@@ -1,15 +1,30 @@
 FROM php:8.4-fpm
 
-# System deps + nginx + node
+# System deps + nginx + node + headless Chromium.
+# Chromium is required by spatie/browsershot for the public CertiCheck PDF
+# brochure. DomPDF remains in-tree as a fallback if the headless render fails.
+# libwebp-dev is needed so GD can encode/decode WebP — without it the
+# brochure's image embedder rejects every WebP photo silently.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         nginx supervisor \
-        libpng-dev libjpeg-dev libfreetype6-dev libzip-dev libsqlite3-dev \
+        libpng-dev libjpeg-dev libfreetype6-dev libzip-dev libsqlite3-dev libwebp-dev \
         unzip git curl ca-certificates \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+        chromium \
+        fonts-liberation fonts-dejavu fontconfig \
+        libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 \
+        libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libpango-1.0-0 \
+        libpangocairo-1.0-0 libasound2 \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install gd pdo pdo_sqlite pdo_mysql zip bcmath opcache \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
+
+# Browsershot drives system Chromium via puppeteer-core, so the package needs
+# to know where the binary lives. Setting it at the OS level means every PHP
+# request and every node sub-process picks it up without per-call config.
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+ENV PUPPETEER_SKIP_DOWNLOAD=true
 
 # PHP ini hardening + opcache + uploads
 COPY docker/php-security.ini /usr/local/etc/php/conf.d/zz-security.ini
@@ -27,7 +42,10 @@ RUN npm ci --no-audit --no-fund
 
 COPY . .
 
-RUN npm run build && rm -rf node_modules
+# Build the frontend, then drop dev-only npm packages but KEEP runtime ones
+# (puppeteer-core for Browsershot). The old `rm -rf node_modules` would have
+# broken PDF rendering on first request.
+RUN npm run build && npm prune --omit=dev
 
 RUN composer dump-autoload --optimize
 

@@ -90,9 +90,12 @@
         .paint-legend-swatch{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 
         /* ============ CONDITION CELL COLORS ============ */
+        /* cond-bad and cond-fail both used (cond-bad emitted by CarLabels::tireCondition,
+           cond-fail by older inline maps). Map both to the same red so legacy view stays
+           in lockstep with the browser-rendered version. */
         .cond-ok{color:#16a34a;font-weight:bold}
         .cond-warn{color:#d97706;font-weight:bold}
-        .cond-fail{color:#dc2626;font-weight:bold}
+        .cond-fail,.cond-bad{color:#dc2626;font-weight:bold}
 
         /* ============ EQUIPMENT LIST ============ */
         .eq-list{list-style:none;padding:0;margin:0}
@@ -383,52 +386,16 @@
         <th>Bieżnik</th>
         <th>Stan</th>
     </tr>
-    @php
-        // DB stores wheel position as a raw enum key (front_left / rear_right /
-        // top / spare …). Print human-readable Polish in the PDF, NEVER the
-        // raw key. Unknown keys fall back to a cleaned-up display string so
-        // an admin typo doesn't leak as e.g. "zajebiste".
-        $tirePositionLabel = function ($k) {
-            $map = [
-                'front_left'  => 'Przednia lewa',
-                'front_right' => 'Przednia prawa',
-                'rear_left'   => 'Tylna lewa',
-                'rear_right'  => 'Tylna prawa',
-                'spare'       => 'Zapasowe',
-                'top'         => 'Górna',
-            ];
-            if (!is_string($k) || $k === '') return '—';
-            return $map[$k] ?? mb_convert_case(str_replace('_', ' ', $k), MB_CASE_TITLE, 'UTF-8');
-        };
-        // PDF tire status is strictly one of four labels: "Bez
-        // nieprawidłowości" / "Wymaga uwagi" / "Zużyta" / "Do wymiany". Raw
-        // admin input (including typos / slang like "zajebiste") never reaches
-        // the client PDF. We classify the condition array by keyword sniff.
-        $tireStatusLabel = function ($cond) {
-            if (!is_array($cond) || count($cond) === 0) {
-                return ['label' => 'Bez nieprawidłowości', 'class' => 'cond-ok'];
-            }
-            $joined = mb_strtolower(implode(' ', array_filter($cond, 'is_string')));
-            // Hardest first — anything signaling damage / replacement.
-            if (preg_match('/wymian|p[eę]kni|uszkodz|do_wymiany|bad|zniszcz/u', $joined)) {
-                return ['label' => 'Do wymiany', 'class' => 'cond-warn'];
-            }
-            if (str_contains($joined, 'zuży') || str_contains($joined, 'zużyt')) {
-                return ['label' => 'Zużyta', 'class' => 'cond-warn'];
-            }
-            if (str_contains($joined, 'ok')) {
-                return ['label' => 'Bez nieprawidłowości', 'class' => 'cond-ok'];
-            }
-            // Unknown text (typo / admin slang) → generic warning, never raw.
-            return ['label' => 'Wymaga uwagi', 'class' => 'cond-warn'];
-        };
-    @endphp
+    {{-- Tire position + condition labels are owned by App\Helpers\CarLabels
+         so the browser-rendered brochure-browser.blade.php and this DomPDF
+         fallback always render the same client-facing strings. Raw enum
+         keys (front_left) and slang (zajebiste) never reach the PDF. --}}
     @foreach($set->tires as $tire)
-    @php $status = $tireStatusLabel($tire->condition); @endphp
+    @php $cond = \App\Helpers\CarLabels::tireCondition($tire->condition); @endphp
     <tr>
-        <td>{{ $tirePositionLabel($tire->position) }}</td>
+        <td>{{ \App\Helpers\CarLabels::tirePosition($tire->position) }}</td>
         <td style="font-weight:bold">{{ $tire->tread_depth !== null ? number_format((float) $tire->tread_depth, 1, ',', ' ') . ' mm' : '—' }}</td>
-        <td><span class="{{ $status['class'] }}">{{ $status['label'] }}</span></td>
+        <td><span class="{{ $cond['class'] }}">{{ $cond['label'] }}</span></td>
     </tr>
     @endforeach
 </table>
