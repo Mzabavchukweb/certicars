@@ -170,8 +170,171 @@ class BrochureBuilderTest extends TestCase
         ]);
 
         [$data] = $this->builder()->build($car, 'rid');
-        $this->assertNull($data->color);
-        $this->assertSame('skóra', $data->upholstery);
+        // Vehicle fields now live in $vehicleData kv pairs. Dirty values
+        // must drop out entirely; clean values appear as their own row.
+        $labels = array_column($data->vehicleData, 'label');
+        $this->assertNotContains('Kolor nadwozia', $labels);
+        $upholstery = collect($data->vehicleData)->firstWhere('label', 'Kolor wnętrza / tapicerka');
+        $this->assertSame('skóra', $upholstery['value']);
+    }
+
+    public function test_vehicle_data_includes_every_filled_field_in_correct_section(): void
+    {
+        $brand = Brand::create(['name' => 'Audi', 'slug' => 'audi']);
+        $car = Car::create([
+            'brand_id'           => $brand->id,
+            'model'              => 'A4',
+            'status'             => 'active',
+            'has_certicheck'     => true,
+            'mileage'            => 105200,
+            'fuel_type'          => 'petrol',
+            'transmission'       => 'automatic',
+            'transmission_detail' => 'S tronic 7-bieg.',
+            'vin'                => 'WAUZZZ8K9JA567890',
+            'body_type'          => 'sedan',
+            'doors'              => 4,
+            'seats'              => 5,
+            'power_hp'           => 252,
+            'engine_capacity'    => 1984,
+            'first_registration' => '11/2018',
+            'color'              => 'Florett Silver',
+            'number_of_keys'     => 2,
+        ]);
+
+        [$data] = $this->builder()->build($car, 'rid');
+
+        $labels = array_column($data->vehicleData, 'label');
+        // Every filled field appears as a row in Dane pojazdu, in Polish.
+        $this->assertContains('Marka', $labels);
+        $this->assertContains('Model', $labels);
+        $this->assertContains('Wersja', $labels);
+        $this->assertContains('VIN', $labels);
+        $this->assertContains('Typ nadwozia', $labels);
+        $this->assertContains('Paliwo', $labels);
+        $this->assertContains('Skrzynia biegów', $labels);
+        $this->assertContains('Moc', $labels);
+        $this->assertContains('Pojemność silnika', $labels);
+        $this->assertContains('Liczba kluczyków', $labels);
+
+        // Values are Polish, not raw enums.
+        $fuel = collect($data->vehicleData)->firstWhere('label', 'Paliwo');
+        $this->assertSame('Benzyna', $fuel['value']);
+        $body = collect($data->vehicleData)->firstWhere('label', 'Typ nadwozia');
+        $this->assertSame('Sedan', $body['value']);
+    }
+
+    public function test_empty_fields_do_not_create_blank_rows_in_any_section(): void
+    {
+        $brand = Brand::create(['name' => 'Renault', 'slug' => 'renault']);
+        $car   = Car::create([
+            'brand_id'       => $brand->id,
+            'model'          => 'Espace',
+            'status'         => 'active',
+            'has_certicheck' => true,
+        ]);
+
+        [$data] = $this->builder()->build($car, 'rid');
+
+        // Every kv row in every section has a non-empty value. No "—",
+        // no null, no whitespace-only strings.
+        foreach (['vehicleData','historyItems','documentItems','formalItems','serviceItems','fuelItems'] as $section) {
+            foreach ($data->{$section} as $row) {
+                $this->assertNotSame('', $row['value']);
+                $this->assertNotSame('—', $row['value']);
+                $this->assertMatchesRegularExpression('/\S/', $row['value']);
+            }
+        }
+    }
+
+    public function test_documents_and_formal_sections_render_canonical_certicars_lines(): void
+    {
+        $brand = Brand::create(['name' => 'Renault', 'slug' => 'renault']);
+        $car   = Car::create([
+            'brand_id'         => $brand->id,
+            'model'            => 'Espace',
+            'status'           => 'active',
+            'has_certicheck'   => true,
+            'service_book_status' => 'complete',  // → "Kompletna"
+            'owners_manual'    => 'tak',
+        ]);
+
+        [$data] = $this->builder()->build($car, 'rid');
+
+        // Documents canonical row "Faktura: VAT-marża" is always present.
+        $faktura = collect($data->documentItems)->firstWhere('label', 'Faktura');
+        $this->assertSame('VAT-marża', $faktura['value']);
+        // Service book status enum mapped to Polish.
+        $book = collect($data->documentItems)->firstWhere('label', 'Książka serwisowa');
+        $this->assertSame('Kompletna', $book['value']);
+
+        // Formalities canonical CertiCars-wide policy lines.
+        $pcc = collect($data->formalItems)->firstWhere('label', 'PCC 2%');
+        $this->assertSame('Kupujący zwolniony', $pcc['value']);
+        $cost = collect($data->formalItems)->firstWhere('label', 'Koszt rejestracji');
+        $this->assertSame('Po stronie kupującego', $cost['value']);
+    }
+
+    public function test_fuel_section_strips_embedded_units_and_normalises_decimal(): void
+    {
+        $brand = Brand::create(['name' => 'Renault', 'slug' => 'renault']);
+        $car   = Car::create([
+            'brand_id'         => $brand->id,
+            'model'            => 'Espace',
+            'status'           => 'active',
+            'has_certicheck'   => true,
+            'fuel_consumption' => '7,2 l/100 km',   // admin typed units + comma decimal
+            'emission_class'   => 'euro 6d',
+            'co2_emission'     => '163',
+        ]);
+
+        [$data] = $this->builder()->build($car, 'rid');
+
+        $avg = collect($data->fuelItems)->firstWhere('label', 'Średnie zużycie');
+        $this->assertSame('7.2 l/100 km', $avg['value']);
+        $emission = collect($data->fuelItems)->firstWhere('label', 'Norma emisji');
+        $this->assertSame('Euro 6d', $emission['value']);
+        $co2 = collect($data->fuelItems)->firstWhere('label', 'Emisja CO₂');
+        $this->assertSame('163 g/km', $co2['value']);
+    }
+
+    public function test_damage_severity_is_mapped_to_polish_not_raw_enum(): void
+    {
+        $brand = Brand::create(['name' => 'Audi', 'slug' => 'audi']);
+        $car = Car::create([
+            'brand_id' => $brand->id, 'model' => 'A4',
+            'status' => 'active', 'has_certicheck' => true,
+        ]);
+        foreach (['low', 'medium', 'high', 'garbage'] as $sev) {
+            CarDamage::create([
+                'car_id'   => $car->id,
+                'area'     => 'hood',
+                'type'     => 'accident',
+                'severity' => $sev,
+            ]);
+        }
+
+        [$data] = $this->builder()->build($car, 'rid');
+
+        $this->assertSame('Lekkie',     $data->damages[0]['severity']);
+        $this->assertSame('Umiarkowane',$data->damages[1]['severity']);
+        $this->assertSame('Znaczące',   $data->damages[2]['severity']);
+        // Unknown free-text severities drop to null instead of leaking raw.
+        $this->assertNull($data->damages[3]['severity']);
+    }
+
+    public function test_contact_strip_renders_required_phone(): void
+    {
+        $brand = Brand::create(['name' => 'Renault', 'slug' => 'renault']);
+        $car   = Car::create([
+            'brand_id' => $brand->id, 'model' => 'Espace',
+            'status' => 'active', 'has_certicheck' => true,
+        ]);
+
+        [$data] = $this->builder()->build($car, 'rid');
+
+        $this->assertSame('+48 515 440 623',   $data->contactPhone);
+        $this->assertSame('kontakt@certicars.pl', $data->contactEmail);
+        $this->assertSame('certicars.pl',     $data->contactWebsite);
     }
 
     public function test_equipment_categories_drop_dirty_items_and_hide_empty_categories(): void

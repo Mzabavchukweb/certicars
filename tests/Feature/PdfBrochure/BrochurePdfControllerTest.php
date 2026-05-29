@@ -42,6 +42,19 @@ class BrochurePdfControllerTest extends TestCase
             'fuel_type'      => 'diesel',
             'transmission'   => 'automatic',
         ]);
+        // CarBrochureObserver fires on Car::create() and (now that Chromium
+        // autoloads correctly) actually writes a brochure to fake storage.
+        // Reset every brochure_* column so each test starts from the
+        // documented "missing" baseline; tests that want a ready brochure
+        // call pretendBrochureReady() explicitly.
+        $this->car->forceFill([
+            'brochure_status'       => 'missing',
+            'brochure_path'         => null,
+            'brochure_size'         => null,
+            'brochure_error'        => null,
+            'brochure_generated_at' => null,
+        ])->saveQuietly();
+        Storage::disk('public')->deleteDirectory(sprintf('brochures/%d', $this->car->id));
     }
 
     /** Pretend a successful regeneration has already run for this car. */
