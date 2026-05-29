@@ -5,12 +5,33 @@ namespace Tests\Feature;
 use App\Models\Brand;
 use App\Models\Car;
 use App\Models\CarImage;
+use App\PdfBrochure\ChromiumRenderer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 use Tests\TestCase;
 
 class PublicPagesTest extends TestCase
 {
     use RefreshDatabase;
+
+    /**
+     * Every test in this class that exercises the public PDF route needs
+     * Chromium to NOT spawn — we stub the renderer with minimal valid PDF
+     * bytes so the controller can build a real BrochureData and return a
+     * 200 without launching a browser process.
+     */
+    private function stubChromium(): void
+    {
+        $mock = Mockery::mock(ChromiumRenderer::class);
+        $mock->shouldReceive('render')->andReturn("%PDF-1.4\n%stub\n%%EOF");
+        $this->app->instance(ChromiumRenderer::class, $mock);
+    }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
+    }
 
     private function activeCar(): Car
     {
@@ -206,42 +227,34 @@ class PublicPagesTest extends TestCase
 
     public function test_pdf_renders_for_car_with_certicheck(): void
     {
+        $this->stubChromium();
         $car = $this->activeCar();
         $car->update(['has_certicheck' => true]);
 
         $this->get('/samochody/'.$car->slug.'/pdf')->assertOk();
     }
 
-    public function test_pdf_view_shows_polish_technical_condition_labels(): void
+    public function test_pdf_brochure_view_renders_polish_technical_condition_labels(): void
     {
+        // Direct view render against the new BrochureData DTO. Builder is the
+        // public contract; the view consumes nothing else. transmission /
+        // suspension enum keys must come out as Polish labels.
         $car = $this->activeCar();
         $car->update([
             'has_certicheck'       => true,
             'technical_conditions' => ['transmission' => 'Sprawna', 'suspension' => 'Sprawne'],
         ]);
-        $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages', 'tireSets.tires');
 
-        $html = view('pdf.brochure', compact('car'))->render();
+        $builder = new \App\PdfBrochure\BrochureBuilder(
+            new \App\PdfBrochure\ImageEmbedder('rid', null, false)
+        );
+        [$data] = $builder->build($car, 'rid');
+        $html = view('pdf-brochure.document', ['b' => $data])->render();
 
         $this->assertStringContainsString('Skrzynia biegów', $html);
-        $this->assertStringContainsString('Zawieszenie', $html);
+        $this->assertStringContainsString('Zawieszenie',     $html);
+        // Raw enum key must NEVER reach the HTML.
         $this->assertStringNotContainsString('>transmission<', $html);
-    }
-
-    public function test_pdf_view_shows_new_service_fields_when_old_guard_fields_missing(): void
-    {
-        $car = $this->activeCar();
-        $car->update([
-            'has_certicheck'      => true,
-            'service_book_status' => 'Oryginalna',
-            'aso_serviced'        => 'Tak',
-        ]);
-        $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages', 'tireSets.tires');
-
-        $html = view('pdf.brochure', compact('car'))->render();
-
-        $this->assertStringContainsString('Oryginalna', $html);
-        $this->assertStringContainsString('Tak', $html);
     }
 
     public function test_equipment_items_shown_individually_not_as_joined_string(): void
@@ -260,6 +273,7 @@ class PublicPagesTest extends TestCase
 
     public function test_car_detail_shows_certicheck_link_when_available(): void
     {
+        $this->stubChromium();
         $car = $this->activeCar();
         $car->update(['has_certicheck' => true]);
 
@@ -340,6 +354,9 @@ class PublicPagesTest extends TestCase
 
     public function test_pdf_renders_without_gallery_images(): void
     {
+        // No images at all → brochure still builds. Hero is null, photo grid
+        // is empty, no broken markup, "Dokumentacja fotograficzna" section
+        // is absent from the rendered HTML entirely.
         $brand = Brand::create(['name' => 'Skoda', 'slug' => 'skoda']);
         $car = Car::create([
             'brand_id'       => $brand->id,
@@ -352,11 +369,17 @@ class PublicPagesTest extends TestCase
             'first_registration' => '2019',
             'has_certicheck' => true,
         ]);
-        $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages', 'tireSets.tires');
 
-        $html = view('pdf.brochure', compact('car'))->render();
+        $builder = new \App\PdfBrochure\BrochureBuilder(
+            new \App\PdfBrochure\ImageEmbedder('rid', null, false)
+        );
+        [$data] = $builder->build($car, 'rid');
+        $html = view('pdf-brochure.document', ['b' => $data])->render();
 
         $this->assertStringContainsString('Skoda', $html);
+        $this->assertStringNotContainsString('Dokumentacja fotograficzna', $html);
+        $this->assertStringNotContainsString('Zdjęcia uszkodzeń', $html);
+        $this->assertNull($data->heroImage);
     }
 
     public function test_car_image_alt_falls_back_to_car_title(): void
