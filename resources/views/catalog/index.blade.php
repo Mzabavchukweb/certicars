@@ -102,12 +102,15 @@
    breaks apart. Bumping .lcard-fav / .lcard-footer above z-index 1 lets
    those controls receive their own clicks even though the overlay covers
    the whole card. */
+/* Card hover effects intentionally removed — the lift / border-tint /
+   blue left-accent / image zoom together made the row feel unstable
+   ("card jumps on hover"). The card now stays static; the only
+   interactive feedback is the cursor pointer on the click overlay and
+   the focus-visible outline for keyboard users. Button-specific hovers
+   (.lcard-fav, CertiCheck pill) are unchanged. */
 .cat-cards{display:flex;flex-direction:column;gap:12px}
-.lcard{position:relative;display:flex;align-items:stretch;background:#fff;border:1px solid var(--border-l);border-radius:12px;transition:all .18s;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05)}
-.lcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform .2s;border-radius:2px 0 0 2px;z-index:3;pointer-events:none}
-.lcard:hover{background:#fafafe;border-color:#c5c5cc;box-shadow:0 4px 20px rgba(0,0,0,.1);transform:translateY(-1px)}
-.lcard:hover::before{transform:scaleX(1)}
-.lcard-link{position:absolute;inset:0;z-index:1;text-decoration:none;color:inherit;border-radius:inherit}
+.lcard{position:relative;display:flex;align-items:stretch;background:#fff;border:1px solid var(--border-l);border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.lcard-link{position:absolute;inset:0;z-index:1;text-decoration:none;color:inherit;border-radius:inherit;cursor:pointer}
 .lcard-link:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 
 /* Image — fixed width on desktop, stretches to match content height so the
@@ -115,8 +118,7 @@
    gradient + larger icon so cars without photos don't render as a flat
    featureless 260x190 white box. */
 .lcard-img{width:260px;min-width:260px;flex-shrink:0;align-self:stretch;min-height:190px;position:relative;overflow:hidden;background:linear-gradient(135deg,#eef4ff 0%,#e3ecfa 100%)}
-.lcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s;display:block}
-.lcard:hover .lcard-img img{transform:scale(1.03)}
+.lcard-img img{width:100%;height:100%;object-fit:cover;display:block}
 .lcard-img-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#eef4ff 0%,#e3ecfa 100%)}
 .lcard-img-placeholder svg{width:54px;height:54px;stroke:#94a3b8;stroke-width:1.4;fill:none;opacity:.55}
 .lcard-badge-top{position:absolute;top:10px;left:10px;background:var(--orange);color:#fff;font-size:10px;font-weight:800;padding:4px 8px;border-radius:6px;letter-spacing:.5px;z-index:2}

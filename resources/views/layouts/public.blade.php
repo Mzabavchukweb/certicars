@@ -190,12 +190,14 @@
         .badge-gray{background:var(--bg);color:var(--text-2);border:1px solid var(--border)}
         .badge-dark{background:#0a0a0a;color:#fff}
 
-        /* ============ VCARD (shared vertical car card) ============ */
-        .vcard{background:#fff;border-radius:14px;overflow:hidden;border:1.5px solid var(--border-l);box-shadow:0 4px 16px rgba(0,0,0,.05),0 1px 4px rgba(0,0,0,.04);transition:all .2s;text-decoration:none;display:flex;flex-direction:column;color:inherit}
-        .vcard:hover{box-shadow:0 12px 32px rgba(0,0,0,.1),0 2px 8px rgba(0,0,0,.05);border-color:transparent;transform:translateY(-4px)}
+        /* ============ VCARD (shared vertical car card) ============
+           Used by Podobne pojazdy on single-car page (resources/views/catalog/show.blade.php)
+           and any other surface that imports this layout. Card hover effects
+           intentionally removed — see catalog/index.blade.php for rationale.
+           The vcard-link button keeps its own hover (it's a real CTA). */
+        .vcard{background:#fff;border-radius:14px;overflow:hidden;border:1.5px solid var(--border-l);box-shadow:0 4px 16px rgba(0,0,0,.05),0 1px 4px rgba(0,0,0,.04);text-decoration:none;display:flex;flex-direction:column;color:inherit}
         .vcard-img{position:relative;width:100%;aspect-ratio:16/10;overflow:hidden;background:var(--bg)}
-        .vcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
-        .vcard:hover .vcard-img img{transform:scale(1.04)}
+        .vcard-img img{width:100%;height:100%;object-fit:cover}
         .vcard-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--bg)}
         .vcard-placeholder svg{width:40px;height:40px;stroke:var(--border);stroke-width:1.5;fill:none}
         .vcard-badge{position:absolute;top:12px;left:10px;background:var(--orange);color:#fff;padding:7px 16px 7px 22px;font-size:11px;font-weight:800;display:inline-flex;align-items:center;gap:5px;letter-spacing:.8px;text-transform:uppercase;box-shadow:0 4px 12px rgba(255,100,0,.4);clip-path:polygon(10px 0,100% 0,100% 100%,10px 100%,0 50%)}
@@ -210,8 +212,10 @@
         .vcard-bottom{margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--border-l);gap:10px}
         .vcard-price{font-size:21px;font-weight:900;color:#000;letter-spacing:-.5px;line-height:1.1}
         .vcard-price small{display:block;font-size:11px;font-weight:500;color:var(--text-3);letter-spacing:0;margin-top:1px}
-        .vcard-link{font-size:12px;font-weight:700;color:#fff;background:var(--blue);padding:9px 16px;border-radius:8px;display:inline-flex;align-items:center;gap:8px;transition:all .15s;white-space:nowrap;flex-shrink:0}
-        .vcard:hover .vcard-link{background:var(--blue-h);transform:translateY(-1px)}
+        /* vcard-link is a real CTA button — keep its own hover state, but no
+           longer driven by the parent .vcard:hover (which has been removed). */
+        .vcard-link{font-size:12px;font-weight:700;color:#fff;background:var(--blue);padding:9px 16px;border-radius:8px;display:inline-flex;align-items:center;gap:8px;transition:background .15s;white-space:nowrap;flex-shrink:0}
+        .vcard-link:hover{background:var(--blue-h)}
         .vcard-link svg{width:12px;height:12px;stroke:#fff;stroke-width:2.4;fill:none}
 
         .section{padding:80px 0}
