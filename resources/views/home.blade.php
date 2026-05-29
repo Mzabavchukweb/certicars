@@ -124,17 +124,15 @@
    .lcard-link overlay below is the whole-card click target; .lcard-fav
    and .lcard-footer are bumped to z-index 2 so they keep their own
    click handlers. Keep this in lockstep with catalog/index.blade.php. */
+/* Card hovers intentionally removed — see catalog/index.blade.php for the
+   rationale. Keep this view in lockstep with the catalog card visuals. */
 .home-listings{display:flex;flex-direction:column;gap:12px;background:transparent}
-.lcard{position:relative;display:flex;align-items:stretch;background:#fff;border:1px solid var(--border-l);border-radius:12px;transition:all .18s;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05)}
-.lcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform .2s;border-radius:2px 0 0 2px;z-index:3;pointer-events:none}
-.lcard:hover{background:#fafafe;border-color:#c5c5cc;box-shadow:0 4px 20px rgba(0,0,0,.1);transform:translateY(-1px)}
-.lcard:hover::before{transform:scaleX(1)}
-.lcard-link{position:absolute;inset:0;z-index:1;text-decoration:none;color:inherit;border-radius:inherit}
+.lcard{position:relative;display:flex;align-items:stretch;background:#fff;border:1px solid var(--border-l);border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.lcard-link{position:absolute;inset:0;z-index:1;text-decoration:none;color:inherit;border-radius:inherit;cursor:pointer}
 .lcard-link:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 
 .lcard-img{width:260px;min-width:260px;flex-shrink:0;align-self:stretch;min-height:190px;position:relative;overflow:hidden;background:linear-gradient(135deg,#eef4ff 0%,#e3ecfa 100%)}
-.lcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s;display:block}
-.lcard:hover .lcard-img img{transform:scale(1.03)}
+.lcard-img img{width:100%;height:100%;object-fit:cover;display:block}
 .lcard-img-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#eef4ff 0%,#e3ecfa 100%)}
 .lcard-img-placeholder svg{width:54px;height:54px;stroke:#94a3b8;stroke-width:1.4;fill:none;opacity:.55}
 .lcard-badge-top{position:absolute;top:10px;left:10px;background:var(--orange);color:#fff;font-size:10px;font-weight:800;padding:4px 8px;border-radius:6px;letter-spacing:.5px;z-index:2}

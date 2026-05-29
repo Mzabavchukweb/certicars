@@ -15,14 +15,12 @@
 .fav-wrap{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
 /* Cards */
 .fav-listings{background:#fff;border:1px solid var(--border-l);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-.fav-lcard{display:flex;text-decoration:none;border-bottom:1px solid var(--border-l);transition:background .15s;position:relative;overflow:hidden}
+/* Favorite-list cards: hover effects intentionally removed. The card stays
+   static; clickability is signalled by the cursor on the link inside. */
+.fav-lcard{display:flex;text-decoration:none;border-bottom:1px solid var(--border-l);position:relative;overflow:hidden}
 .fav-lcard:last-child{border-bottom:none}
-.fav-lcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--orange);transform:scaleY(0);transform-origin:center;transition:transform .2s}
-.fav-lcard:hover{background:#fafafa}
-.fav-lcard:hover::before{transform:scaleY(1)}
 .fav-lcard-img{width:260px;min-width:260px;height:190px;position:relative;overflow:hidden;flex-shrink:0;background:var(--bg)}
-.fav-lcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
-.fav-lcard:hover .fav-lcard-img img{transform:scale(1.03)}
+.fav-lcard-img img{width:100%;height:100%;object-fit:cover}
 .fav-lcard-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
 .fav-lcard-img-placeholder svg{width:48px;height:48px;stroke:var(--text-4);stroke-width:1.2;fill:none}
 /* CertiCheck pill visuals owned by the shared component. The wrap below
