@@ -168,6 +168,8 @@
 .body-types-card{background:#fff;border-radius:22px;box-shadow:0 24px 64px rgba(0,0,0,.16),0 4px 16px rgba(0,0,0,.06);padding:32px 40px 36px;max-width:1200px;margin:0 auto}
 .body-types-inner{max-width:1200px;margin:0 auto;padding:0}
 .body-types-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;gap:20px}
+.body-types-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:1.4px;margin-bottom:8px}
+.body-types-eyebrow::before{content:'';width:18px;height:1.5px;background:var(--blue);display:inline-block;border-radius:1px}
 .body-types-head h2{font-size:32px;font-weight:900;color:#000;letter-spacing:-.6px;line-height:1.1;margin:0}
 .body-types-head p{font-size:14px;color:var(--text-3);margin-top:6px}
 .body-types-head-link{font-size:13px;font-weight:700;color:var(--blue);display:inline-flex;align-items:center;gap:5px;white-space:nowrap;text-decoration:none;flex-shrink:0}
@@ -385,6 +387,7 @@
         <div class="body-types-card">
             <div class="body-types-head">
                 <div>
+                    <div class="body-types-eyebrow">Szukaj samochodów</div>
                     <h2>Przeglądaj auta według nadwozia</h2>
                     <p>Wybierz typ samochodu, który najlepiej pasuje do Twoich potrzeb</p>
                 </div>
