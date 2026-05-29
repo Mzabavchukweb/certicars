@@ -11,12 +11,45 @@ namespace App\PdfBrochure;
  *   - scrubbed through TextSanitizer (admin profanity / test text dropped)
  *   - embedded as base64 data: URI (images, all in EmbeddedImage form)
  *
- * If a field is null in this DTO, the corresponding section in the view
- * hides itself. There is exactly one place to decide "is there enough
+ * If a field is null / empty in this DTO, the corresponding section in the
+ * view hides itself. There is exactly one place to decide "is there enough
  * data here to render the section?" — the builder.
+ *
+ * Section layout (mirrors a COS-Check / professional inspection report):
+ *   1. Header strip on every page: brand + contact (phone, email, site)
+ *   2. Page 1 vehicle summary: hero, title, core facts, price
+ *   3. Page 1 main "Dane pojazdu" dense table
+ *   4. Historia pojazdu
+ *   5. Dokumenty
+ *   6. Formalności
+ *   7. Serwis i dokumentacja
+ *   8. Zużycie paliwa i emisje
+ *   9. Pomiary lakieru
+ *  10. Stan techniczny
+ *  11. Koła i opony
+ *  12. Stan wizualny / uszkodzenia
+ *  13. Wyposażenie
+ *  14. Dokumentacja fotograficzna
+ *  15. Zdjęcia uszkodzeń
+ *  16. Materiały online
  */
 final class BrochureData
 {
+    /**
+     * @param array<int,array{label:string,value:string}>                                                  $vehicleData
+     * @param array<int,array{label:string,value:string}>                                                  $historyItems
+     * @param array<int,array{label:string,value:string}>                                                  $documentItems
+     * @param array<int,array{label:string,value:string}>                                                  $formalItems
+     * @param array<int,array{label:string,value:string}>                                                  $serviceItems
+     * @param array<int,array{label:string,value:string}>                                                  $fuelItems
+     * @param array<int,array{key:string,label:string,status:string,class:string,note:?string}>            $technicalConditions
+     * @param array<int,array{label:string,value:int,class:string,verdict:string}>                         $paintMeasurements
+     * @param array<int,array{title:string,tires:array<int,array{position:string,treadMm:?string,label:string,class:string}>}> $tireSets
+     * @param array<int,array{area:string,type:string,severity:?string,tags:array<int,string>,description:?string,photos:array<int,EmbeddedImage>}> $damages
+     * @param array<int,array{title:string,items:array<int,string>}>                                       $equipment
+     * @param array<int,EmbeddedImage>                                                                     $galleryImages
+     * @param array<int,EmbeddedImage>                                                                     $damageImages
+     */
     public function __construct(
         public readonly string $reportId,
         public readonly string $generatedAt,
@@ -27,9 +60,15 @@ final class BrochureData
         public readonly ?string $formattedPrice,
         public readonly ?int $price,
 
-        // Cover key facts
+        // Contact strip (rendered on every page header)
+        public readonly string $contactPhone,
+        public readonly string $contactEmail,
+        public readonly string $contactWebsite,
+
+        // Page 1 summary key facts
         public readonly ?int $mileage,
         public readonly ?string $firstRegistration,
+        public readonly ?string $receptionDate,
         public readonly ?string $fuelType,
         public readonly ?string $transmission,
         public readonly ?int $powerHp,
@@ -38,45 +77,30 @@ final class BrochureData
         public readonly ?int $doors,
         public readonly ?int $seats,
 
-        // Page 2 — Dane pojazdu
-        public readonly ?string $vin,
-        public readonly ?string $bodyType,
-        public readonly ?string $color,
-        public readonly ?string $colorCode,
-        public readonly ?string $upholstery,
-        public readonly ?string $driveType,
-        public readonly ?int $weight,
-        public readonly ?int $numberOfKeys,
+        // Page 1 main Dane pojazdu table — pre-collected key/value rows
+        // so the view stays mechanical (no missing-field branching).
+        public readonly array $vehicleData,
 
-        // Page 3 — Historia / Formalności (free-text, scrubbed)
-        public readonly ?int $previousOwners,
-        public readonly ?string $importedFrom,
-        public readonly ?string $countryRegistration,
-        public readonly ?string $vehicleHistory,
+        // Per-section key/value rows. Empty arrays hide the section.
+        public readonly array $historyItems,
+        public readonly array $documentItems,
+        public readonly array $formalItems,
+        public readonly array $serviceItems,
+        public readonly array $fuelItems,
 
-        // Stan techniczny
-        /** @var array<int,array{key:string,label:string,status:string,class:string,note:?string}> */
+        // Free-text history paragraph (rendered after the historyItems table)
+        public readonly ?string $vehicleHistoryNote,
+
+        // Technical/visual sections
         public readonly array $technicalConditions,
-        /** @var array<int,array{label:string,value:int,class:string,verdict:string}> */
         public readonly array $paintMeasurements,
-
-        // Koła i opony
-        /** @var array<int,array{title:string,tires:array<int,array{position:string,treadMm:?string,label:string,class:string}>}> */
         public readonly array $tireSets,
-
-        // Damages
-        /** @var array<int,array{area:string,type:string,severity:?string,tags:array<int,string>,description:?string,photos:array<int,EmbeddedImage>}> */
         public readonly array $damages,
-
-        // Equipment
-        /** @var array<int,array{title:string,items:array<int,string>}> */
         public readonly array $equipment,
 
-        // Photo grid
+        // Photo grids
         public readonly ?EmbeddedImage $heroImage,
-        /** @var array<int,EmbeddedImage> */
         public readonly array $galleryImages,
-        /** @var array<int,EmbeddedImage> */
         public readonly array $damageImages,
 
         // Online materials

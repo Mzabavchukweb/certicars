@@ -100,6 +100,23 @@ final class Labels
     }
 
     /**
+     * Damage severity → Polish display. Admin can save free-text (`low`,
+     * `medium`, `high`, or already-localised); the raw enum must never
+     * appear in a client-facing PDF. Returns null when nothing meaningful
+     * to show.
+     */
+    public static function damageSeverity(?string $key): ?string
+    {
+        if (!is_string($key) || trim($key) === '') return null;
+        return match (strtolower(trim($key))) {
+            'low', 'minor', 'niski', 'lekkie' => 'Lekkie',
+            'medium', 'średni', 'sredni', 'umiarkowane' => 'Umiarkowane',
+            'high', 'duży', 'duzy', 'znaczące', 'znaczace' => 'Znaczące',
+            default => null,
+        };
+    }
+
+    /**
      * Technical-condition status: caller may pass either a plain string
      * ('ok' / 'attention' / 'bad'), an array {status, note}, or a legacy
      * free-text label. Returns the canonical client label + CSS class.
