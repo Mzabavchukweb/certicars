@@ -142,13 +142,7 @@
 .lcard-btn:hover{background:var(--blue-h);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,102,255,.3)}
 .lcard-btn svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.4}
 
-/* CertiCheck badge — COS Check style */
-.cc-badge{display:inline-flex;align-items:stretch;border-radius:8px;overflow:hidden;cursor:pointer;transition:all .18s;box-shadow:0 1px 4px rgba(0,0,0,.1);text-decoration:none}
-.cc-badge:hover{box-shadow:0 3px 12px rgba(0,0,0,.18);transform:translateY(-1px)}
-.cc-badge-icon{display:flex;align-items:center;justify-content:center;background:rgba(0,102,255,.1);padding:6px 10px}
-.cc-badge-icon svg{width:18px;height:18px}
-.cc-badge-text{display:flex;align-items:center;background:#1a1a1a;color:#fff;font-size:13px;font-weight:800;letter-spacing:-.2px;padding:6px 12px 6px 10px;white-space:nowrap}
-.cc-badge-text em{font-style:normal;color:var(--blue)}
+/* (legacy .cc-badge removed — CertiCheck CTA visuals owned by the shared component.) */
 
 /* Wrap — transparent, no background (cards are self-contained) */
 .cat-cards-wrap{background:transparent}
@@ -495,12 +489,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                         @if($car->has_certicheck)
                         <div class="lcard-meta">
-                            <span class="cc-badge" onclick="event.preventDefault();event.stopPropagation();var a=document.createElement('a');a.href='/samochody/{{ $car->slug }}/pdf';a.download='';document.body.appendChild(a);a.click();a.remove()">
-                                <span class="cc-badge-icon">
-                                    <x-icon name="clipboard-check" size="14" tone="blue" :strokeWidth="2.2"/>
-                                </span>
-                                <span class="cc-badge-text"><em>Certi</em>Check</span>
-                            </span>
+                            <x-certicheck-cta :slug="$car->slug" size="sm"/>
                         </div>
                         @endif
                     </div>

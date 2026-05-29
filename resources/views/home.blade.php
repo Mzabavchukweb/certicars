@@ -148,12 +148,7 @@
 .lcard-price-col{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;min-width:160px;padding-top:2px}
 .lcard-price{font-size:24px;font-weight:900;color:#000;letter-spacing:-.5px;line-height:1;white-space:nowrap}
 .lcard-price-label{font-size:11px;color:var(--text-3);font-weight:500;margin-top:3px}
-.cc-badge{display:inline-flex;align-items:stretch;border-radius:8px;overflow:hidden;cursor:pointer;transition:all .18s;box-shadow:0 1px 4px rgba(0,0,0,.1);text-decoration:none}
-.cc-badge:hover{box-shadow:0 3px 12px rgba(0,0,0,.18);transform:translateY(-1px)}
-.cc-badge-icon{display:flex;align-items:center;justify-content:center;background:rgba(0,102,255,.1);padding:6px 10px}
-.cc-badge-icon svg{width:18px;height:18px}
-.cc-badge-text{display:flex;align-items:center;background:#1a1a1a;color:#fff;font-size:13px;font-weight:800;letter-spacing:-.2px;padding:6px 12px 6px 10px;white-space:nowrap}
-.cc-badge-text em{font-style:normal;color:var(--blue)}
+/* (legacy .cc-badge removed — CertiCheck CTA contract owned by the x-certicheck-cta component.) */
 .home-listings-cta{margin-top:20px;padding-bottom:40px;text-align:center}
 .home-listings-cta-btn{display:inline-flex;align-items:center;gap:9px;border:2px solid var(--blue);color:var(--blue);font-size:14px;font-weight:700;padding:13px 32px;border-radius:50px;text-decoration:none;transition:all .2s}
 .home-listings-cta-btn:hover{background:var(--blue);color:#fff;box-shadow:0 8px 24px rgba(0,102,255,.25)}
@@ -239,8 +234,6 @@
     .lcard-price-col{flex-direction:row;align-items:center;justify-content:space-between;min-width:0;width:100%;padding-top:10px;border-top:1px solid var(--border-l);margin-top:4px}
     .lcard-price{font-size:26px;font-weight:900;letter-spacing:-.6px}
     .lcard-price-label{font-size:10px}
-    /* CertiCheck badge — compact on mobile */
-    .cc-badge{transform:scale(.88);transform-origin:left center}
     .lcard-meta{padding-top:8px;gap:6px}
 }
 @media(max-width:560px){
@@ -500,12 +493,7 @@
 
                         @if($car->has_certicheck)
                         <div class="lcard-meta">
-                            <span class="cc-badge" onclick="event.preventDefault();event.stopPropagation();var a=document.createElement('a');a.href='/samochody/{{ $car->slug }}/pdf';a.download='';document.body.appendChild(a);a.click();a.remove()">
-                                <span class="cc-badge-icon">
-                                    <x-icon name="clipboard-check" size="16" tone="blue" :strokeWidth="2.2"/>
-                                </span>
-                                <span class="cc-badge-text"><em>Certi</em>Check</span>
-                            </span>
+                            <x-certicheck-cta :slug="$car->slug" size="sm"/>
                         </div>
                         @endif
                     </div>
