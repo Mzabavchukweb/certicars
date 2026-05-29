@@ -893,10 +893,23 @@
 .cs-related-grid>*{flex:0 0 calc(33.333% - 14px);scroll-snap-align:start;min-width:260px}
 
 @media(max-width:768px){
-    /* Mobile gutter: container padding is the SOLE source of side spacing.
-       Reset desktop width:100%/max-width on all sections so they behave like
-       the cs-grid — natural block elements filling their parent equally. */
+    /* Mobile gutter: every section sits at the same left/right edge as
+       the vehicle summary card. The HTML structure puts most sections as
+       direct children of .cs-wrap (not .container — close-tag balance
+       drifted long ago), so we align them with auto-margins + a max-width
+       that matches the container's content area. The summary card lives
+       inside .container so this rule keeps it untouched.
+
+       Result: at any mobile width, every section card has identical
+       left/right gutters. No section touches the viewport edge. */
     .cs-wrap .container{padding-left:24px;padding-right:24px}
+    .cs-wrap > *:not(.container){
+        max-width:calc(100% - 48px);
+        width:auto;
+        margin-left:auto;
+        margin-right:auto;
+        box-sizing:border-box;
+    }
     .cs-pt-row,
     .cs-legal-bar,
     .cs-data-section{width:auto;max-width:none}
@@ -1018,7 +1031,10 @@
     .cs-card{padding:20px}
 }
 @media(max-width:500px){
+    /* Mobile gutter tightens to 20 px on small phones. Keep the
+       cs-wrap > * direct-child sections aligned with the container. */
     .cs-wrap .container{padding-left:20px;padding-right:20px}
+    .cs-wrap > *:not(.container){max-width:calc(100% - 40px)}
     .cs-sections-2col{padding:0}
     .cs-head h1{font-size:19px}
     .cs-gallery{border-radius:10px}
