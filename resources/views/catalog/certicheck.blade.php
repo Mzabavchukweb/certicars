@@ -422,7 +422,7 @@
 
     {{-- FOOTER --}}
     <div class="cc-footer">
-        CertiCars · <a href="mailto:kontakt@certicars.pl">kontakt@certicars.pl</a> · +48 123 456 789 · <a href="{{ url('/') }}">certicars.pl</a>
+        CertiCars · <a href="mailto:kontakt@certicars.pl">kontakt@certicars.pl</a> · +48 515 440 623 · <a href="{{ url('/') }}">certicars.pl</a>
         <br>Raport CertiCheck wygenerowany {{ now()->format('d.m.Y H:i') }}
     </div>
 </div>

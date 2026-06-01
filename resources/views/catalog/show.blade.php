@@ -1471,10 +1471,10 @@
                 </div>
                 <!-- CTA BUTTONS (desktop) -->
                 <div class="cs-price-actions">
-                    <a href="tel:+48585586090" class="cs-btn-phone">
+                    <a href="tel:+48515440623" class="cs-btn-phone">
                         <x-icon name="phone" size="18"/>
                         Zadzwoń
-                        <span style="font-weight:400;opacity:.85">+48 58 558 60 90</span>
+                        <span style="font-weight:400;opacity:.85">+48 515 440 623</span>
                     </a>
                     <button type="button" class="cs-btn-message" onclick="csOpenInquiry('general','main_car_cta')">
                         <x-icon name="mail" size="18"/>
@@ -1492,7 +1492,7 @@
                 </div>
                 <!-- CTA BUTTONS (mobile) -->
                 <div class="cs-mob-cta" style="display:none;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;padding:0 16px 16px">
-                    <a href="tel:+48585586090" style="display:flex;align-items:center;justify-content:center;gap:6px;background:#0066ff;color:#fff;padding:13px 10px;border-radius:12px;font-size:14px;font-weight:700;text-decoration:none;border:none;min-width:0;white-space:nowrap">Zadzwoń</a>
+                    <a href="tel:+48515440623" style="display:flex;align-items:center;justify-content:center;gap:6px;background:#0066ff;color:#fff;padding:13px 10px;border-radius:12px;font-size:14px;font-weight:700;text-decoration:none;border:none;min-width:0;white-space:nowrap">Zadzwoń</a>
                     <button type="button" onclick="csOpenInquiry('general','trust_banner_cta')" style="display:flex;align-items:center;justify-content:center;gap:6px;background:#f3f4f6;color:#1a1a1a;padding:13px 10px;border-radius:12px;font-size:14px;font-weight:700;border:none;cursor:pointer;min-width:0;white-space:nowrap">Napisz</button>
                 </div>
 
@@ -2770,7 +2770,7 @@
 
 {{-- STICKY MOBILE CTA --}}
 <div class="cs-sticky-cta" id="csStickyBar">
-    <a href="tel:+48585586090" class="cs-sticky-call">
+    <a href="tel:+48515440623" class="cs-sticky-call">
         <x-icon name="phone" size="16"/>
         Zadzwoń
     </a>
