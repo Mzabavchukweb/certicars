@@ -116,53 +116,9 @@
 .section-head p{font-size:14px;color:var(--text-3)}
 .section-head-link{color:var(--blue);font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:5px}
 .section-head-link svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4}
-/* Home listings — same visual contract as catalog/index.blade.php.
-   Outer .lcard is intentionally a <div>, NOT an <a>. The CertiCheck pill
-   in the footer is an <a download>, and HTML5 forbids nested anchors —
-   browsers auto-close the outer one and the card visually shatters
-   (image floats above a detached title / price / pill block). The
-   .lcard-link overlay below is the whole-card click target; .lcard-fav
-   and .lcard-footer are bumped to z-index 2 so they keep their own
-   click handlers. Keep this in lockstep with catalog/index.blade.php. */
-/* Card hovers intentionally removed — see catalog/index.blade.php for the
-   rationale. Keep this view in lockstep with the catalog card visuals. */
-.home-listings{display:flex;flex-direction:column;gap:12px;background:transparent}
-.lcard{position:relative;display:flex;align-items:stretch;background:#fff;border:1px solid var(--border-l);border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05)}
-.lcard-link{position:absolute;inset:0;z-index:1;text-decoration:none;color:inherit;border-radius:inherit;cursor:pointer}
-.lcard-link:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
-
-.lcard-img{width:260px;min-width:260px;flex-shrink:0;align-self:stretch;min-height:190px;position:relative;overflow:hidden;background:linear-gradient(135deg,#eef4ff 0%,#e3ecfa 100%)}
-.lcard-img img{width:100%;height:100%;object-fit:cover;display:block}
-.lcard-img-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#eef4ff 0%,#e3ecfa 100%)}
-.lcard-img-placeholder svg{width:54px;height:54px;stroke:#94a3b8;stroke-width:1.4;fill:none;opacity:.55}
-.lcard-badge-top{position:absolute;top:10px;left:10px;background:var(--orange);color:#fff;font-size:10px;font-weight:800;padding:4px 8px;border-radius:6px;letter-spacing:.5px;z-index:2}
-.lcard-fav{position:absolute;top:8px;right:8px;width:32px;height:32px;background:rgba(255,255,255,.92);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.15);z-index:2}
-.lcard-fav:hover{background:#fff;transform:scale(1.1)}
-.lcard-fav svg{width:15px;height:15px;stroke:#bbb;fill:none;stroke-width:2;transition:stroke .2s}
-.lcard-fav.active svg{stroke:var(--orange);fill:var(--orange)}
-.lcard-photo-count{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;font-weight:600;padding:3px 7px;border-radius:5px;display:flex;align-items:center;gap:4px;z-index:2}
-.lcard-photo-count svg{width:11px;height:11px;stroke:#fff;fill:none;stroke-width:2}
-
-.lcard-content{position:relative;flex:1;padding:18px 22px;display:flex;flex-direction:column;gap:12px;min-width:0}
-.lcard-main{display:flex;gap:20px;align-items:flex-start;min-width:0}
-.lcard-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
-.lcard-title{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.3px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0}
-.lcard-subtitle{font-size:13px;color:var(--text-3);margin:0;line-height:1.3}
-.lcard-specs{display:flex;flex-wrap:wrap;gap:6px 0;margin-top:6px}
-.lcard-spec{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-2);font-weight:500;padding-right:14px;margin-right:10px;border-right:1px solid var(--border-l);white-space:nowrap}
-.lcard-spec:last-child{border-right:none;padding-right:0;margin-right:0}
-.lcard-spec svg{width:14px;height:14px;stroke:var(--text-3);fill:none;stroke-width:2;flex-shrink:0}
-
-.lcard-price-col{flex-shrink:0;min-width:140px;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
-.lcard-price{font-size:24px;font-weight:900;color:#000;letter-spacing:-.5px;line-height:1;white-space:nowrap}
-.lcard-price-label{font-size:11px;color:var(--text-3);font-weight:500}
-
-.lcard-footer{margin-top:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:32px;position:relative;z-index:2}
-.home-listings-cta{margin-top:20px;padding-bottom:40px;text-align:center}
-.home-listings-cta-btn{display:inline-flex;align-items:center;gap:9px;border:2px solid var(--blue);color:var(--blue);font-size:14px;font-weight:700;padding:13px 32px;border-radius:50px;text-decoration:none;transition:all .2s}
-.home-listings-cta-btn:hover{background:var(--blue);color:#fff;box-shadow:0 8px 24px rgba(0,102,255,.25)}
-.home-listings-cta-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
-
+/* .lcard / .home-listings / .home-listings-cta rules live in
+   resources/views/layouts/public.blade.php as the single source of truth
+   for the shared car-list-card component. */
 
 .body-types{background:#fff;border:none;padding:32px 0 48px;margin-top:0}
 .body-types-card{background:#fff;border-radius:22px;box-shadow:0 24px 64px rgba(0,0,0,.16),0 4px 16px rgba(0,0,0,.06);padding:32px 40px 36px;max-width:1200px;margin:0 auto}
@@ -441,86 +397,7 @@
 
         <div class="home-listings">
             @foreach($featuredCars as $car)
-            {{-- Outer wrapper is a <div>, NOT an <a>: the CertiCheck footer pill is
-                 itself an <a> and nested anchors are illegal HTML. The .lcard-link
-                 overlay below is the whole-card click target. --}}
-            <div class="lcard">
-                <a href="{{ route('catalog.show',$car) }}" class="lcard-link" aria-label="{{ $car->title }}"></a>
-                {{-- Image --}}
-                <div class="lcard-img">
-                    @if($car->primaryImage)
-                        <img src="{{ $car->primaryImage->url }}" alt="{{ $car->primaryImage->alt }}" loading="lazy"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-                        <div class="lcard-img-placeholder" style="display:none">
-                    @else
-                        <div class="lcard-img-placeholder">
-                    @endif
-                            <x-icon name="car" size="40"/>
-                        </div>
-                    @if($car->is_featured)<div class="lcard-badge-top">Wyróżnione</div>@endif
-
-                    @php $imgCount = $car->images->count(); @endphp
-                    @if($imgCount > 1)
-                    <div class="lcard-photo-count">
-                        <x-icon name="image" size="14"/>
-                        {{ $imgCount }}
-                    </div>
-                    @endif
-                    <button class="lcard-fav" data-id="{{ $car->id }}" aria-label="Dodaj do ulubionych" onclick="toggleFav(event,{{ $car->id }})">
-                        <x-icon name="heart" size="16"/>
-                    </button>
-                </div>
-
-                {{-- Content: main row (info + price) on top, optional CertiCheck
-                     footer at the bottom. Same structure as catalog/index.blade.php. --}}
-                <div class="lcard-content">
-                    <div class="lcard-main">
-                        <div class="lcard-info">
-                            <div class="lcard-title">{{ $car->title }}</div>
-                            @if($car->category || $car->transmission)
-                            <div class="lcard-subtitle">{{ implode(' · ', array_filter([$car->category, $car->transmission])) }}</div>
-                            @endif
-
-                            <div class="lcard-specs">
-                                @if($car->mileage)
-                                <div class="lcard-spec">
-                                    <x-icon name="gauge" size="14"/>
-                                    {{ number_format((float) $car->mileage, 0, '.', ' ') }} km
-                                </div>
-                                @endif
-                                @if($car->fuel_type)
-                                <div class="lcard-spec">
-                                    <x-icon name="fuel" size="14"/>
-                                    {{ $car->fuel_type }}
-                                </div>
-                                @endif
-                                @if($car->power_hp)
-                                <div class="lcard-spec">
-                                    <x-icon name="zap" size="14"/>
-                                    {{ $car->power_hp }} KM
-                                </div>
-                                @endif
-                                @if($car->first_registration)
-                                <div class="lcard-spec">
-                                    <x-icon name="calendar" size="14"/>
-                                    {{ $car->first_registration }}
-                                </div>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="lcard-price-col">
-                            <div class="lcard-price">{{ $car->formatted_price }}</div>
-                        </div>
-                    </div>
-
-                    @if($car->has_certicheck)
-                    <div class="lcard-footer">
-                        <x-certicheck-cta :slug="$car->slug" :ready="$car->brochureIsReady()" size="sm"/>
-                    </div>
-                    @endif
-                </div>
-            </div>
+                <x-car-list-card :car="$car"/>
             @endforeach
         </div>
 
