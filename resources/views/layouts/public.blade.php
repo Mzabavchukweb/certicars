@@ -142,72 +142,103 @@
            hours card with subtle inner highlight. Same 4-column main grid
            and bottom bar as before. */
         .footer{background:#0d1b3e;color:rgba(255,255,255,.6);padding:0;margin-top:0;position:relative;overflow:hidden;isolation:isolate}
-        /* Top gradient hairline that already existed — kept. */
+        /* Top gradient hairline. */
         .footer::before{content:'';display:block;height:2px;background:linear-gradient(90deg,rgba(0,102,255,.25) 0%,#0066ff 40%,rgba(0,102,255,.25) 100%)}
-        /* Ambient blue glow anchored top-right. Pointer-events disabled so
-           it never interferes with clicks. z-index:-1 keeps it behind
-           everything. */
+        /* Two ambient blue glows: top-right + bottom-left for depth.
+           Pointer-events:none keeps them inert; z-index -1 pushes them
+           behind all content. */
         .footer::after{content:'';position:absolute;top:-220px;right:-180px;width:760px;height:520px;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(30,80,180,.45) 0%,rgba(30,80,180,.15) 40%,rgba(30,80,180,0) 70%);pointer-events:none;z-index:-1}
         .footer > *{position:relative;z-index:1}
+        /* Bottom-left ambient glow — absolute positioned BELOW the
+           normal-flow rule above so .footer > * doesn't reset it. */
+        .footer .footer-glow-bl{position:absolute;bottom:-280px;left:-220px;width:680px;height:520px;background:radial-gradient(ellipse 55% 55% at 50% 50%,rgba(30,80,180,.32) 0%,rgba(30,80,180,.1) 45%,rgba(30,80,180,0) 70%);pointer-events:none;z-index:0}
 
-        /* Brand row — logo only. Tagline + trust strip removed; their
-           CSS rules went with them. */
-        .footer-top{max-width:1200px;margin:0 auto;padding:40px 24px 24px;border-bottom:1px solid rgba(255,255,255,.08)}
+        /* Brand row — logo + tagline space. */
+        .footer-top{max-width:1200px;margin:0 auto;padding:44px 24px 24px;border-bottom:1px solid rgba(255,255,255,.08)}
         .footer-logo{display:inline-flex;align-items:center;gap:11px;text-decoration:none}
-        .footer-logo-badge{width:34px;height:34px;flex-shrink:0}
-        .footer-logo-text{font-family:'Inter',sans-serif;font-size:24px;font-weight:900;letter-spacing:-.6px;color:#fff;line-height:1}
+        .footer-logo-badge{width:36px;height:36px;flex-shrink:0;filter:drop-shadow(0 2px 8px rgba(0,102,255,.35))}
+        .footer-logo-text{font-family:'Inter',sans-serif;font-size:25px;font-weight:900;letter-spacing:-.6px;color:#fff;line-height:1}
         .footer-logo-text span{color:#4ea3ff}
 
         /* Main grid — 4 balanced columns on desktop. */
-        .footer-in{max-width:1200px;margin:0 auto;padding:30px 24px 36px;display:grid;grid-template-columns:1.5fr 1.1fr 1fr 1fr;gap:40px;align-items:start}
-        .footer h3{position:relative;color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.8px;font-weight:800;margin:0 0 16px;padding-bottom:10px}
-        .footer h3::after{content:'';position:absolute;bottom:0;left:0;width:22px;height:2px;background:#4ea3ff;border-radius:2px}
+        .footer-in{max-width:1200px;margin:0 auto;padding:36px 24px 40px;display:grid;grid-template-columns:1.5fr 1.15fr 1fr 1fr;gap:44px;align-items:start}
+        .footer h3{position:relative;color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.9px;font-weight:800;margin:0 0 18px;padding-bottom:11px}
+        .footer h3::after{content:'';position:absolute;bottom:0;left:0;width:26px;height:2px;background:#4ea3ff;border-radius:2px;box-shadow:0 0 8px rgba(78,163,255,.5)}
         .footer p,.footer li{font-size:13px;line-height:1.7;color:rgba(255,255,255,.55)}
-        .footer a{font-size:13px;line-height:1.7;color:rgba(255,255,255,.6);text-decoration:none;transition:color .15s}
+        .footer a{font-size:13px;line-height:1.7;color:rgba(255,255,255,.65);text-decoration:none;transition:color .15s}
         .footer a:hover{color:#fff}
         .footer ul{list-style:none;padding:0;margin:0}
-        .footer li{padding:4px 0}
 
         /* Col 1 — O CertiCars + opening hours card. */
-        .footer-brand p{font-size:13px;color:rgba(255,255,255,.6);line-height:1.7;margin:0 0 20px;max-width:340px}
-        .footer-hours-card{position:relative;background:linear-gradient(180deg,rgba(255,255,255,.05) 0%,rgba(255,255,255,.025) 100%);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:16px 18px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
-        .footer-hours-head{display:flex;align-items:center;gap:8px;color:#7eb3ff;font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px}
-        .footer-hours-head svg{width:13px;height:13px;stroke:#7eb3ff;fill:none;stroke-width:2}
-        .footer-hours-head span{color:#fff}
+        .footer-brand p{font-size:13px;color:rgba(255,255,255,.6);line-height:1.7;margin:0 0 20px;max-width:360px}
+        .footer-hours-card{position:relative;background:linear-gradient(180deg,rgba(255,255,255,.05) 0%,rgba(255,255,255,.025) 100%);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:18px 20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+        .footer-hours-head{display:flex;align-items:center;gap:10px;color:#fff;font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;margin-bottom:14px}
+        .footer-hours-head-ico{flex-shrink:0;width:30px;height:30px;border-radius:50%;border:1px solid rgba(78,163,255,.3);background:rgba(78,163,255,.08);display:flex;align-items:center;justify-content:center}
+        .footer-hours-head-ico svg{width:13px;height:13px;stroke:#7eb3ff;fill:none;stroke-width:2}
         .footer-hours{font-size:12.5px;color:rgba(255,255,255,.55);line-height:1}
-        .footer-hours-row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)}
-        .footer-hours-row:last-child{border-bottom:none}
+        .footer-hours-row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+        .footer-hours-row:last-child{border-bottom:none;padding-bottom:0}
+        .footer-hours-row:first-child{padding-top:0}
         .footer-hours-row .val{color:#fff;font-weight:700;font-variant-numeric:tabular-nums}
-        .footer-hours-row .closed{color:rgba(255,255,255,.32);font-weight:500}
 
-        /* Col 2 — Kontakt: phone/email/address rows + map button. */
+        /* Col 2 — Kontakt: phone/email/address rows + map preview card. */
         .footer-contact-item{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-        .footer-contact-icon{width:34px;height:34px;border-radius:9px;background:linear-gradient(180deg,rgba(78,163,255,.16) 0%,rgba(78,163,255,.08) 100%);border:1px solid rgba(78,163,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .footer-contact-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(180deg,rgba(78,163,255,.18) 0%,rgba(78,163,255,.08) 100%);border:1px solid rgba(78,163,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0}
         .footer-contact-icon svg{width:14px;height:14px;stroke:#7eb3ff;fill:none;stroke-width:2}
         .footer-contact-body{display:flex;flex-direction:column;gap:2px;min-width:0}
-        .footer-contact-label{font-size:10.5px;font-weight:700;color:rgba(255,255,255,.42);letter-spacing:.4px;text-transform:uppercase}
+        .footer-contact-label{font-size:10.5px;font-weight:700;color:rgba(255,255,255,.42);letter-spacing:.5px;text-transform:uppercase}
         .footer-contact-value{font-size:13.5px;font-weight:700;color:#fff;line-height:1.35;word-break:break-word;transition:color .15s}
         a.footer-contact-value:hover{color:#7eb3ff}
-        .footer-map-link{margin-top:16px;display:inline-flex;align-items:center;gap:7px;background:rgba(78,163,255,.1);border:1px solid rgba(78,163,255,.22);color:#7eb3ff;font-size:12px;font-weight:700;padding:10px 16px;border-radius:9px;letter-spacing:.1px;transition:background .15s,color .15s,border-color .15s}
-        .footer-map-link:hover{background:rgba(78,163,255,.2);color:#fff;border-color:rgba(78,163,255,.38)}
-        .footer-map-link svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2}
 
-        /* Bottom bar. */
-        .footer-btm{max-width:1200px;margin:0 auto;padding:18px 24px 22px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(255,255,255,.45);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-        .footer-btm-verified{display:inline-flex;align-items:center;gap:6px;color:#4ea3ff;font-weight:700;letter-spacing:.1px}
-        .footer-btm-verified svg{width:13px;height:13px;stroke:#4ea3ff;fill:none;stroke-width:2.2}
+        /* Map preview card — pure CSS / SVG illustration. No external
+           tiles, no iframe, no extra network requests. Pin in centre with
+           a soft glow, "Wyznacz trasę" CTA overlaid bottom-centre. */
+        .footer-map-card{position:relative;margin-top:18px;border-radius:14px;overflow:hidden;border:1px solid rgba(78,163,255,.18);box-shadow:0 4px 20px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.04);height:148px;background:linear-gradient(135deg,#11264f 0%,#0a1a3c 100%)}
+        .footer-map-bg{position:absolute;inset:0;opacity:.55;background-image:
+            linear-gradient(rgba(78,163,255,.12) 1px,transparent 1px),
+            linear-gradient(90deg,rgba(78,163,255,.12) 1px,transparent 1px);
+            background-size:32px 32px,32px 32px;background-position:0 0,0 0}
+        .footer-map-roads{position:absolute;inset:0;pointer-events:none}
+        .footer-map-pin{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);z-index:2;display:flex;align-items:center;justify-content:center}
+        .footer-map-pin::before{content:'';position:absolute;width:46px;height:46px;border-radius:50%;background:radial-gradient(circle,rgba(0,102,255,.45) 0%,rgba(0,102,255,0) 70%);animation:footerPinPulse 2.2s ease-in-out infinite}
+        .footer-map-pin svg{width:30px;height:30px;color:#0066ff;filter:drop-shadow(0 4px 8px rgba(0,102,255,.5));position:relative;z-index:1}
+        @keyframes footerPinPulse{0%,100%{transform:scale(1);opacity:.55}50%{transform:scale(1.4);opacity:.15}}
+        .footer-map-cta{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:3;display:inline-flex;align-items:center;gap:7px;background:#0066ff;color:#fff;font-size:12.5px;font-weight:700;padding:9px 18px;border-radius:50px;text-decoration:none;box-shadow:0 4px 16px rgba(0,102,255,.45);transition:background .15s,transform .15s,box-shadow .15s}
+        .footer-map-cta:hover{background:#0052cc;color:#fff;transform:translateX(-50%) translateY(-1px);box-shadow:0 6px 22px rgba(0,102,255,.55)}
+        .footer-map-cta svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.3;flex-shrink:0}
 
-        /* Tablet: collapse to 2-col. */
+        /* Col 3 & 4 — Nav + Info lists with blue chevron bullets. */
+        .footer-nav-list li{padding:0;margin:0}
+        .footer-nav-list a{display:inline-flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;color:rgba(255,255,255,.65);transition:color .15s,transform .15s}
+        .footer-nav-list a svg{width:11px;height:11px;stroke:#4ea3ff;fill:none;stroke-width:2.4;flex-shrink:0;transition:transform .15s}
+        .footer-nav-list a:hover{color:#fff}
+        .footer-nav-list a:hover svg{transform:translateX(3px)}
+
+        /* Bottom legal bar — 3-zone grid (left/center/right). */
+        .footer-btm{max-width:1200px;margin:0 auto;padding:18px 24px 22px;border-top:1px solid rgba(255,255,255,.08);font-size:11.5px;color:rgba(255,255,255,.45);display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center}
+        .footer-btm-left,.footer-btm-mid{display:inline-flex;align-items:center;gap:8px;line-height:1.5}
+        .footer-btm-mid{justify-self:center;text-align:center;color:rgba(255,255,255,.4);max-width:560px}
+        .footer-btm-left svg,.footer-btm-mid svg{width:13px;height:13px;stroke:rgba(255,255,255,.5);fill:none;stroke-width:2;flex-shrink:0}
+        .footer-btm-verified{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border:1px solid rgba(78,163,255,.3);background:rgba(78,163,255,.08);border-radius:50px;color:#7eb3ff;font-size:11.5px;font-weight:700;letter-spacing:.2px;white-space:nowrap;transition:background .15s,border-color .15s}
+        .footer-btm-verified:hover{background:rgba(78,163,255,.16);border-color:rgba(78,163,255,.5);color:#fff}
+        .footer-btm-verified svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2}
+
+        /* Tablet: 2-col main grid. Map card moves under contact. */
         @media(max-width:900px){
-            .footer-top{padding:32px 24px 20px}
-            .footer-in{grid-template-columns:1fr 1fr;gap:32px;padding:26px 24px 32px}
+            .footer-top{padding:36px 24px 20px}
+            .footer-in{grid-template-columns:1fr 1fr;gap:36px;padding:30px 24px 36px}
+            .footer-btm{grid-template-columns:1fr;gap:10px;text-align:center;padding:18px 24px 22px}
+            .footer-btm-left,.footer-btm-mid{justify-self:center;justify-content:center}
+            .footer-btm-verified{justify-self:center}
         }
-        /* Mobile: stack everything, match the 20px gutter used elsewhere. */
+        /* Mobile: full stack, 20 px gutter to match the rest of the site. */
         @media(max-width:600px){
-            .footer-top{padding:24px 20px 16px}
-            .footer-in{grid-template-columns:1fr;gap:28px;padding:22px 20px 28px}
+            .footer-top{padding:28px 20px 18px}
+            .footer-logo-text{font-size:22px}
+            .footer-in{grid-template-columns:1fr;gap:30px;padding:24px 20px 28px}
             .footer-brand p{max-width:none}
-            .footer-btm{flex-direction:column;text-align:center;padding:16px 20px 18px;gap:8px}
+            .footer-map-card{height:138px}
+            .footer-btm{padding:16px 20px 20px}
         }
 
         /* ============ COMPONENTS ============ */
@@ -420,9 +451,10 @@
 
 
     <footer class="footer" id="kontakt">
-        {{-- Brand row: logo only. Tagline + trust strip removed per
-             product decision — marketing claims belong in the
-             homepage hero, not the global footer. --}}
+        {{-- Bottom-left ambient glow (top-right glow comes from .footer::after). --}}
+        <div class="footer-glow-bl" aria-hidden="true"></div>
+
+        {{-- Brand row. --}}
         <div class="footer-top">
             <a href="{{ route('home') }}" class="footer-logo">
                 <svg class="footer-logo-badge" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" fill="#0066ff"/><path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -431,13 +463,13 @@
         </div>
 
         <div class="footer-in">
-            {{-- Col 1: O CertiCars (description + opening hours card). --}}
+            {{-- Col 1: O CertiCars — description + opening hours card. --}}
             <div class="footer-brand">
                 <h3>O CertiCars</h3>
-                <p>Każdy samochód w naszej ofercie przechodzi pełną inspekcję techniczną i weryfikację historii pojazdu. Kupujesz z pewnością.</p>
+                <p>Samochody używane z jasnym opisem stanu, pochodzenia i wyposażenia. Przy wybranych pojazdach dostępny jest rozszerzony raport CertiCheck, który pomaga lepiej ocenić auto jeszcze przed przyjazdem.</p>
                 <div class="footer-hours-card">
                     <div class="footer-hours-head">
-                        <x-icon name="clock" size="13"/>
+                        <span class="footer-hours-head-ico"><x-icon name="clock" size="13"/></span>
                         <span>Godziny otwarcia</span>
                     </div>
                     <div class="footer-hours">
@@ -447,7 +479,7 @@
                 </div>
             </div>
 
-            {{-- Col 2: Kontakt — phone / email / address + map link. --}}
+            {{-- Col 2: Kontakt — phone / email / address + map preview card. --}}
             <div>
                 <h3>Kontakt</h3>
                 <div class="footer-contact-item">
@@ -468,43 +500,68 @@
                     <div class="footer-contact-icon"><x-icon name="map-pin" size="14"/></div>
                     <div class="footer-contact-body">
                         <span class="footer-contact-label">Adres</span>
-                        <span class="footer-contact-value">Lipnik, Polska</span>
+                        <span class="footer-contact-value">Lipnik</span>
                     </div>
                 </div>
-                {{-- Map link replaces the previous iframe — the embed had no
-                     real coordinates and rendered as a broken gray block. --}}
-                <a href="https://www.google.com/maps/search/?api=1&query=Lipnik%2C+Polska" target="_blank" rel="noopener" class="footer-map-link">
-                    <x-icon name="map-pin" size="13"/>
-                    Zobacz na mapie
-                </a>
+
+                {{-- Static map illustration. No external tile/iframe load —
+                     a CSS grid pattern, two SVG "roads" and a pulsing blue
+                     pin keep the visual without burning network budget.
+                     Clicking the CTA opens Google Maps directions in a new
+                     tab targeting our locality. --}}
+                <div class="footer-map-card" aria-hidden="true">
+                    <div class="footer-map-bg"></div>
+                    <svg class="footer-map-roads" viewBox="0 0 400 148" preserveAspectRatio="none">
+                        <path d="M 0 88 L 130 88 L 210 56 L 400 56" stroke="rgba(126,179,255,.18)" stroke-width="14" fill="none"/>
+                        <path d="M 0 88 L 130 88 L 210 56 L 400 56" stroke="rgba(126,179,255,.32)" stroke-width="2" fill="none" stroke-dasharray="6 8"/>
+                        <path d="M 60 0 L 60 60 L 260 60 L 260 148" stroke="rgba(126,179,255,.14)" stroke-width="10" fill="none"/>
+                    </svg>
+                    <div class="footer-map-pin">
+                        <x-icon name="map-pin" size="30" :strokeWidth="2"/>
+                    </div>
+                    <a class="footer-map-cta" href="https://www.google.com/maps/dir/?api=1&destination=Lipnik%2C+Polska" target="_blank" rel="noopener">
+                        <x-icon name="arrow-right" size="13"/>
+                        Wyznacz trasę
+                    </a>
+                </div>
             </div>
 
             {{-- Col 3: Nawigacja. --}}
             <div>
                 <h3>Nawigacja</h3>
-                <ul>
-                    <li><a href="{{ route('home') }}">Strona główna</a></li>
-                    <li><a href="{{ route('catalog') }}">Oferta samochodów</a></li>
-                    <li><a href="{{ route('favorites') }}">Obserwowane</a></li>
-                    <li><a href="{{ route('about') }}">O nas</a></li>
-                    <li><a href="{{ route('contact') }}">Kontakt</a></li>
+                <ul class="footer-nav-list">
+                    <li><a href="{{ route('home') }}"><x-icon name="chevron-right" size="11"/>Strona główna</a></li>
+                    <li><a href="{{ route('catalog') }}"><x-icon name="chevron-right" size="11"/>Oferta samochodów</a></li>
+                    <li><a href="{{ route('home') }}#certicheck"><x-icon name="chevron-right" size="11"/>CertiCheck</a></li>
+                    <li><a href="{{ route('about') }}"><x-icon name="chevron-right" size="11"/>Jak wygląda zakup</a></li>
+                    <li><a href="{{ route('about') }}"><x-icon name="chevron-right" size="11"/>O nas</a></li>
+                    <li><a href="{{ route('contact') }}"><x-icon name="chevron-right" size="11"/>Kontakt</a></li>
                 </ul>
             </div>
 
             {{-- Col 4: Informacje. --}}
             <div>
                 <h3>Informacje</h3>
-                <ul>
-                    <li><a href="#">Polityka prywatności</a></li>
-                    <li><a href="#">Regulamin</a></li>
+                <ul class="footer-nav-list">
+                    <li><a href="#"><x-icon name="chevron-right" size="11"/>Polityka prywatności</a></li>
+                    <li><a href="#"><x-icon name="chevron-right" size="11"/>Regulamin</a></li>
+                    <li><a href="#"><x-icon name="chevron-right" size="11"/>Pliki cookies</a></li>
                 </ul>
             </div>
         </div>
 
+        {{-- Legal bar — 3 zones: copyright | civil-code disclaimer | verified dealer pill. --}}
         <div class="footer-btm">
-            <span>© {{ date('Y') }} CertiCars. Wszelkie prawa zastrzeżone.</span>
-            <span class="footer-btm-verified">
+            <span class="footer-btm-left">
                 <x-icon name="shield-check" size="13"/>
+                © {{ date('Y') }} CertiCars. Wszelkie prawa zastrzeżone.
+            </span>
+            <span class="footer-btm-mid">
+                <x-icon name="info" size="13"/>
+                Treści na stronie mają charakter informacyjny i nie stanowią oferty w rozumieniu art. 66 §1 Kodeksu cywilnego.
+            </span>
+            <span class="footer-btm-verified">
+                <x-icon name="badge-check" size="13"/>
                 Zweryfikowany dealer
             </span>
         </div>
