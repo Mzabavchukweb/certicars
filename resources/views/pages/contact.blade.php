@@ -166,14 +166,14 @@
 
     {{-- Info --}}
     <div class="contact-info">
-        <a href="tel:+48123456789" class="ci-card">
+        <a href="tel:+48515440623" class="ci-card">
             <div class="ci-icon">
                 <x-icon name="phone" size="22"/>
             </div>
             <div class="ci-body">
                 <strong>Zadzwoń do nas</strong>
-                <span>+48 123 456 789</span>
-                <small>Pon–Pt 9:00–18:00, Sob 10:00–14:00</small>
+                <span>+48 515 440 623</span>
+                <small>Pn–Pt 9:00–18:00, Sb–Nd 10:00–15:00</small>
             </div>
         </a>
 
@@ -194,15 +194,15 @@
             </div>
             <div class="ci-body">
                 <strong>Nasz salon</strong>
-                <span>ul. Przykładowa 15</span>
-                <small>00-001 Warszawa</small>
+                <span>Lipnik</span>
+                <small>Polska</small>
             </div>
         </div>
 
         <div class="ci-map">
             <div class="ci-map-pin">
                 <x-icon name="map-pin" size="16"/>
-                <span>ul. Przykładowa 15, Warszawa</span>
+                <span>Lipnik, Polska</span>
             </div>
         </div>
 
@@ -212,8 +212,7 @@
                 Godziny otwarcia
             </h3>
             <div class="ci-hours-row"><span class="day">Poniedziałek – Piątek</span><span class="time">9:00 – 18:00</span></div>
-            <div class="ci-hours-row"><span class="day">Sobota</span><span class="time">10:00 – 14:00</span></div>
-            <div class="ci-hours-row"><span class="day">Niedziela</span><span class="closed">— zamknięte</span></div>
+            <div class="ci-hours-row"><span class="day">Sobota – Niedziela</span><span class="time">10:00 – 15:00</span></div>
         </div>
     </div>
 </div>
@@ -223,9 +222,9 @@
     <div class="contact-strip-in">
         <h2>Wolisz porozmawiać?</h2>
         <p>Dzwoń bezpośrednio — nasz konsultant chętnie odpowie na wszystkie pytania.</p>
-        <a href="tel:+48123456789">
+        <a href="tel:+48515440623">
             <x-icon name="phone" size="22"/>
-            +48 123 456 789
+            +48 515 440 623
         </a>
     </div>
 </section>

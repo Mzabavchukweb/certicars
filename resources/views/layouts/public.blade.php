@@ -43,18 +43,16 @@
         'url' => url('/'),
         'logo' => asset('favicon.svg'),
         'image' => asset('img/og-default.jpg'),
-        'telephone' => '+48585586090',
+        'telephone' => '+48515440623',
         'email' => 'kontakt@certicars.pl',
         'address' => [
             '@type' => 'PostalAddress',
-            'streetAddress' => 'ul. Przykładowa 15',
-            'postalCode' => '00-001',
-            'addressLocality' => 'Warszawa',
+            'addressLocality' => 'Lipnik',
             'addressCountry' => 'PL',
         ],
         'openingHoursSpecification' => [
             ['@type' => 'OpeningHoursSpecification', 'dayOfWeek' => ['Monday','Tuesday','Wednesday','Thursday','Friday'], 'opens' => '09:00', 'closes' => '18:00'],
-            ['@type' => 'OpeningHoursSpecification', 'dayOfWeek' => 'Saturday', 'opens' => '10:00', 'closes' => '14:00'],
+            ['@type' => 'OpeningHoursSpecification', 'dayOfWeek' => ['Saturday','Sunday'], 'opens' => '10:00', 'closes' => '15:00'],
         ],
         'areaServed' => 'PL',
         'priceRange' => '$$',
@@ -314,9 +312,9 @@
     <div class="topbar" role="complementary">
         <div class="topbar-in">
             <div class="topbar-left">
-                <a href="tel:+48585586090">
+                <a href="tel:+48515440623">
                     <x-icon name="phone" size="14" class="tb-ico"/>
-                    <span class="tb-strong">+48 58 558 60 90</span>
+                    <span class="tb-strong">+48 515 440 623</span>
                 </a>
                 <span class="tb-sep"></span>
                 <a href="mailto:kontakt@certicars.pl" class="tb-hide-lg">
@@ -327,12 +325,14 @@
             <div class="topbar-right">
                 <span class="tb-item tb-hide-lg">
                     <x-icon name="clock" size="14" class="tb-ico"/>
-                    Pon–Pt <span class="tb-strong">9:00–18:00</span>
+                    Pn–Pt <span class="tb-strong">9:00–18:00</span>
+                    <span style="opacity:.55;margin:0 4px">·</span>
+                    Sb–Nd <span class="tb-strong">10:00–15:00</span>
                 </span>
                 <span class="tb-sep tb-hide-lg"></span>
                 <span class="tb-item">
                     <x-icon name="map-pin" size="14" class="tb-ico"/>
-                    Warszawa
+                    Lipnik
                 </span>
             </div>
         </div>
@@ -398,9 +398,9 @@
                 Znajdź auto
             </a>
             <div class="nav-mobile-contact">
-                <a href="tel:+48585586090">
+                <a href="tel:+48515440623">
                     <x-icon name="phone" size="16"/>
-                    +48 58 558 60 90
+                    +48 515 440 623
                 </a>
                 <a href="mailto:kontakt@certicars.pl">
                     <x-icon name="mail" size="16"/>
@@ -412,7 +412,7 @@
 
     <main id="main">@yield('content')</main>
 
-    <a href="tel:+48585586090" class="float-call" aria-label="Zadzwoń +48 58 558 60 90">
+    <a href="tel:+48515440623" class="float-call" aria-label="Zadzwoń +48 515 440 623">
         <x-icon name="phone" size="28" :strokeWidth="2.2"/>
     </a>
 
@@ -442,8 +442,7 @@
                     </div>
                     <div class="footer-hours">
                         <div class="footer-hours-row"><span>Poniedziałek – Piątek</span><span class="val">9:00 – 18:00</span></div>
-                        <div class="footer-hours-row"><span>Sobota</span><span class="val">10:00 – 14:00</span></div>
-                        <div class="footer-hours-row"><span>Niedziela</span><span class="closed">Zamknięte</span></div>
+                        <div class="footer-hours-row"><span>Sobota – Niedziela</span><span class="val">10:00 – 15:00</span></div>
                     </div>
                 </div>
             </div>
@@ -455,7 +454,7 @@
                     <div class="footer-contact-icon"><x-icon name="phone" size="14"/></div>
                     <div class="footer-contact-body">
                         <span class="footer-contact-label">Telefon</span>
-                        <a href="tel:+48585586090" class="footer-contact-value">+48 58 558 60 90</a>
+                        <a href="tel:+48515440623" class="footer-contact-value">+48 515 440 623</a>
                     </div>
                 </div>
                 <div class="footer-contact-item">
@@ -469,12 +468,12 @@
                     <div class="footer-contact-icon"><x-icon name="map-pin" size="14"/></div>
                     <div class="footer-contact-body">
                         <span class="footer-contact-label">Adres</span>
-                        <span class="footer-contact-value">Warszawa, Polska</span>
+                        <span class="footer-contact-value">Lipnik, Polska</span>
                     </div>
                 </div>
                 {{-- Map link replaces the previous iframe — the embed had no
                      real coordinates and rendered as a broken gray block. --}}
-                <a href="https://www.google.com/maps/search/?api=1&query=Warszawa%2C+Polska" target="_blank" rel="noopener" class="footer-map-link">
+                <a href="https://www.google.com/maps/search/?api=1&query=Lipnik%2C+Polska" target="_blank" rel="noopener" class="footer-map-link">
                     <x-icon name="map-pin" size="13"/>
                     Zobacz na mapie
                 </a>
