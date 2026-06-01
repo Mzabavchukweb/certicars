@@ -598,6 +598,113 @@
     .lb-thumbs img{width:56px;height:38px;object-fit:cover;border-radius:5px;opacity:.45;cursor:pointer;border:2px solid transparent;flex-shrink:0}
     .lb-thumbs img.active{opacity:1;border-color:#fff}
     .lb-trigger{cursor:zoom-in}
+
+    /* ============ VEHICLE LIST CARD (shared component) ============
+       One canonical .lcard ruleset for the horizontal vehicle card used
+       on both the catalog index and the homepage Wyróżnione section.
+       Lives in the global layout so both pages — and any future page
+       that drops in the car-list-card component — render identically
+       with no CSS duplication. Markup in
+       resources/views/components/car-list-card.blade.php.
+
+       Outer wrapper is a div (NOT an a) because the CertiCheck pill
+       inside is an <a download> and nested anchors are illegal HTML.
+       Whole-card click target is the absolutely-positioned .lcard-link.
+       .lcard-fav and .lcard-cta sit above it via z-index so they keep
+       their own click handlers. */
+    .cat-cards{display:flex;flex-direction:column;gap:14px}
+    .home-listings{display:flex;flex-direction:column;gap:14px}
+
+    .lcard{position:relative;display:flex;align-items:stretch;background:#fff;border:1px solid #eeeef0;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);transition:box-shadow .18s ease,border-color .18s ease}
+    .lcard:hover{border-color:#dbe3f0;box-shadow:0 2px 6px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.06)}
+    .lcard-link{position:absolute;inset:0;z-index:1;text-decoration:none;color:inherit;border-radius:inherit;cursor:pointer}
+    .lcard-link:focus-visible{outline:2px solid #0066ff;outline-offset:-2px}
+
+    /* Image rail — fixed-width on desktop, full-width on mobile. */
+    .lcard-img{width:280px;min-width:280px;flex-shrink:0;align-self:stretch;min-height:200px;position:relative;overflow:hidden;background:linear-gradient(135deg,#eef4ff 0%,#e3ecfa 100%)}
+    .lcard-img img{width:100%;height:100%;object-fit:cover;display:block}
+    .lcard-img-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#eef4ff 0%,#e3ecfa 100%)}
+    .lcard-img-placeholder svg{width:54px;height:54px;stroke:#94a3b8;stroke-width:1.4;fill:none;opacity:.55}
+
+    .lcard-badge-top{position:absolute;top:12px;left:12px;background:#f97316;color:#fff;font-size:10.5px;font-weight:800;padding:5px 10px;border-radius:6px;letter-spacing:.4px;text-transform:uppercase;z-index:2;box-shadow:0 1px 3px rgba(249,115,22,.3)}
+
+    .lcard-fav{position:absolute;top:10px;right:10px;width:36px;height:36px;background:rgba(255,255,255,.95);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s ease;box-shadow:0 1px 4px rgba(0,0,0,.18);z-index:2}
+    .lcard-fav:hover{background:#fff;transform:scale(1.08)}
+    .lcard-fav svg{width:16px;height:16px;stroke:#9ca3af;fill:none;stroke-width:2;transition:stroke .18s,fill .18s}
+    .lcard-fav.active svg{stroke:#f97316;fill:#f97316}
+
+    .lcard-photo-count{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.65);color:#fff;font-size:11px;font-weight:600;padding:3px 8px;border-radius:5px;display:flex;align-items:center;gap:4px;z-index:2}
+    .lcard-photo-count svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:2}
+
+    /* Content: a row with center info + right actions. CertiCheck pill
+       sits inside lcard-info so price+CTA align cleanly to the right. */
+    .lcard-content{flex:1;padding:18px 22px;display:flex;flex-direction:column;min-width:0;position:relative}
+    .lcard-main{display:flex;gap:24px;align-items:flex-start;min-width:0;flex:1}
+
+    .lcard-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
+    .lcard-title{font-size:18px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0}
+
+    /* Inline metadata row — single line, icons + label pairs separated
+       by a thin vertical rule on desktop, hides cleanly on mobile. */
+    .lcard-specs{display:flex;flex-wrap:wrap;gap:6px 0;margin:0}
+    .lcard-spec{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#475569;font-weight:500;padding-right:12px;margin-right:12px;border-right:1px solid #e5e7eb;white-space:nowrap;line-height:1.4}
+    .lcard-spec:last-child{border-right:none;padding-right:0;margin-right:0}
+    .lcard-spec svg{width:14px;height:14px;stroke:#64748b;fill:none;stroke-width:2;flex-shrink:0}
+
+    .lcard-certicheck{margin-top:4px;position:relative;z-index:2}
+
+    /* Right actions column — large price + outline CTA, vertically
+       stacked, right-aligned. min-width keeps it from collapsing
+       under long titles. */
+    .lcard-actions{flex-shrink:0;min-width:160px;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+    .lcard-price{font-size:24px;font-weight:900;color:#0a0a0a;letter-spacing:-.5px;line-height:1;white-space:nowrap}
+    .lcard-cta{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#0066ff;border:1.5px solid #0066ff;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all .18s ease;position:relative;z-index:2;cursor:pointer;white-space:nowrap}
+    .lcard-cta:hover{background:#0066ff;color:#fff;box-shadow:0 4px 12px rgba(0,102,255,.25)}
+    .lcard-cta:focus-visible{outline:2px solid #0066ff;outline-offset:2px}
+    .lcard-cta svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;flex-shrink:0;transition:transform .18s ease}
+    .lcard-cta:hover svg{transform:translateX(2px)}
+
+    /* Tablet — narrower image, slightly tighter content. */
+    @media(max-width:1024px){
+        .lcard-img{width:240px;min-width:240px;min-height:185px}
+        .lcard-content{padding:16px 20px}
+        .lcard-actions{min-width:140px}
+        .lcard-title{font-size:17px}
+        .lcard-price{font-size:22px}
+    }
+
+    /* Mobile — stack the card vertically. Image full-width on top,
+       content below; price+CTA become a horizontal footer row so they
+       fit on small screens without text wrapping. */
+    @media(max-width:720px){
+        .lcard{flex-direction:column}
+        .lcard-img{width:100%;min-width:0;height:200px;min-height:200px}
+        .lcard-content{padding:16px 18px;gap:12px}
+        .lcard-main{flex-direction:column;align-items:stretch;gap:14px}
+        .lcard-actions{min-width:0;width:100%;flex-direction:row;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;border-top:1px solid #f1f5f9}
+        .lcard-price{font-size:22px}
+        .lcard-cta{flex-shrink:0}
+        .lcard-spec{font-size:12.5px;padding-right:10px;margin-right:10px}
+    }
+
+    /* Very small phones — keep the CTA legible. */
+    @media(max-width:380px){
+        .lcard-content{padding:14px 16px}
+        .lcard-title{font-size:16px;white-space:normal}
+        .lcard-cta{padding:8px 12px;font-size:12.5px}
+        .lcard-price{font-size:20px}
+    }
+
+    /* Bottom CTA used on the homepage's featured section below the
+       card list — full-width centered "see all cars" button. */
+    .home-listings-cta{display:flex;justify-content:center;margin-top:24px}
+    .home-listings-cta-btn{display:inline-flex;align-items:center;gap:8px;background:#0066ff;color:#fff;padding:14px 28px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;transition:all .18s ease;box-shadow:0 4px 12px rgba(0,102,255,.25)}
+    .home-listings-cta-btn:hover{background:#0052cc;box-shadow:0 6px 18px rgba(0,102,255,.32);transform:translateY(-1px)}
+    .home-listings-cta-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+    @media(max-width:720px){
+        .home-listings-cta{margin-top:18px}
+        .home-listings-cta-btn{padding:12px 22px;font-size:13.5px}
+    }
     </style>
     <div class="lb-backdrop" id="lbBackdrop">
         <div class="lb-stage">
