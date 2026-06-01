@@ -108,7 +108,19 @@
 .cc-card:hover .cc-arrow{opacity:1;transform:translateX(3px)}
 .cc-card .cc-arrow svg{width:18px;height:18px;stroke:rgba(255,255,255,.7);fill:none;stroke-width:2}
 
-.featured-section{padding:80px 0 0}
+.featured-section{padding:60px 0 20px}
+.featured-section .section-inner{max-width:1200px;margin:0 auto;padding:0 24px}
+.featured-section .body-types-head{margin-bottom:18px;align-items:flex-end}
+.featured-section .body-types-head h2{font-size:30px;font-weight:900;letter-spacing:-.6px;color:#0a0a0a;line-height:1.1;margin:0 0 4px}
+.featured-section .body-types-head p{font-size:13.5px;color:#6b7280;line-height:1.5;margin:0;max-width:520px}
+.featured-section .body-types-head-link{font-size:13px;font-weight:700;color:#0066ff;display:inline-flex;align-items:center;gap:4px;text-decoration:none;flex-shrink:0;white-space:nowrap}
+.featured-section .body-types-head-link:hover{color:#0052cc}
+.featured-section .body-types-head-link svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4}
+@media(max-width:720px){
+    .featured-section{padding:40px 0 16px}
+    .featured-section .body-types-head h2{font-size:24px}
+    .featured-section .body-types-head{margin-bottom:14px}
+}
 .section{padding:80px 0}
 .section-inner{max-width:1200px;margin:0 auto;padding:0 24px}
 .section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;gap:20px;flex-wrap:wrap}
