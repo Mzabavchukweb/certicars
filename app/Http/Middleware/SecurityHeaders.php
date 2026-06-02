@@ -65,7 +65,7 @@ class SecurityHeaders
                 "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
                 "script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net",
                 "connect-src $connectSrc",
-                "frame-src 'self' https://www.youtube.com https://player.vimeo.com https://www.google.com",
+                "frame-src 'self' https://www.youtube.com https://player.vimeo.com https://www.google.com https://www.openstreetmap.org",
                 "upgrade-insecure-requests",
             ];
             $response->headers->set('Content-Security-Policy', implode('; ', $csp));
