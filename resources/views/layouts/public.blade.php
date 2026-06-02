@@ -153,17 +153,17 @@
            normal-flow rule above so .footer > * doesn't reset it. */
         .footer .footer-glow-bl{position:absolute;bottom:-280px;left:-220px;width:680px;height:520px;background:radial-gradient(ellipse 55% 55% at 50% 50%,rgba(30,80,180,.32) 0%,rgba(30,80,180,.1) 45%,rgba(30,80,180,0) 70%);pointer-events:none;z-index:0}
 
-        /* Brand row — logo + tagline space. */
-        .footer-top{max-width:1200px;margin:0 auto;padding:44px 24px 24px;border-bottom:1px solid rgba(255,255,255,.08)}
-        .footer-logo{display:inline-flex;align-items:center;gap:11px;text-decoration:none}
-        .footer-logo-badge{width:36px;height:36px;flex-shrink:0;filter:drop-shadow(0 2px 8px rgba(0,102,255,.35))}
-        .footer-logo-text{font-family:'Inter',sans-serif;font-size:25px;font-weight:900;letter-spacing:-.6px;color:#fff;line-height:1}
+        /* Brand row — bigger logo, stronger separator below. */
+        .footer-top{max-width:1200px;margin:0 auto;padding:52px 24px 28px;border-bottom:1px solid rgba(255,255,255,.08)}
+        .footer-logo{display:inline-flex;align-items:center;gap:13px;text-decoration:none}
+        .footer-logo-badge{width:42px;height:42px;flex-shrink:0;filter:drop-shadow(0 2px 10px rgba(0,102,255,.4))}
+        .footer-logo-text{font-family:'Inter',sans-serif;font-size:28px;font-weight:900;letter-spacing:-.7px;color:#fff;line-height:1}
         .footer-logo-text span{color:#4ea3ff}
 
-        /* Main grid — 4 balanced columns on desktop. */
-        .footer-in{max-width:1200px;margin:0 auto;padding:36px 24px 40px;display:grid;grid-template-columns:1.5fr 1.15fr 1fr 1fr;gap:44px;align-items:start}
-        .footer h3{position:relative;color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.9px;font-weight:800;margin:0 0 18px;padding-bottom:11px}
-        .footer h3::after{content:'';position:absolute;bottom:0;left:0;width:26px;height:2px;background:#4ea3ff;border-radius:2px;box-shadow:0 0 8px rgba(78,163,255,.5)}
+        /* Main grid — 4 balanced columns, O CERTICARS slightly wider. */
+        .footer-in{max-width:1200px;margin:0 auto;padding:40px 24px 44px;display:grid;grid-template-columns:1.55fr 1.2fr 1fr 1fr;gap:48px;align-items:start}
+        .footer h3{position:relative;color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:800;margin:0 0 20px;padding-bottom:12px}
+        .footer h3::after{content:'';position:absolute;bottom:0;left:0;width:28px;height:2px;background:#4ea3ff;border-radius:2px;box-shadow:0 0 10px rgba(78,163,255,.55)}
         .footer p,.footer li{font-size:13px;line-height:1.7;color:rgba(255,255,255,.55)}
         .footer a{font-size:13px;line-height:1.7;color:rgba(255,255,255,.65);text-decoration:none;transition:color .15s}
         .footer a:hover{color:#fff}
@@ -190,20 +190,23 @@
         .footer-contact-value{font-size:13.5px;font-weight:700;color:#fff;line-height:1.35;word-break:break-word;transition:color .15s}
         a.footer-contact-value:hover{color:#7eb3ff}
 
-        /* Map preview card — pure CSS / SVG illustration. No external
-           tiles, no iframe, no extra network requests. Pin in centre with
-           a soft glow, "Wyznacz trasę" CTA overlaid bottom-centre. */
-        .footer-map-card{position:relative;margin-top:18px;border-radius:14px;overflow:hidden;border:1px solid rgba(78,163,255,.18);box-shadow:0 4px 20px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.04);height:148px;background:linear-gradient(135deg,#11264f 0%,#0a1a3c 100%)}
-        .footer-map-bg{position:absolute;inset:0;opacity:.55;background-image:
-            linear-gradient(rgba(78,163,255,.12) 1px,transparent 1px),
-            linear-gradient(90deg,rgba(78,163,255,.12) 1px,transparent 1px);
-            background-size:32px 32px,32px 32px;background-position:0 0,0 0}
-        .footer-map-roads{position:absolute;inset:0;pointer-events:none}
-        .footer-map-pin{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);z-index:2;display:flex;align-items:center;justify-content:center}
-        .footer-map-pin::before{content:'';position:absolute;width:46px;height:46px;border-radius:50%;background:radial-gradient(circle,rgba(0,102,255,.45) 0%,rgba(0,102,255,0) 70%);animation:footerPinPulse 2.2s ease-in-out infinite}
-        .footer-map-pin svg{width:30px;height:30px;color:#0066ff;filter:drop-shadow(0 4px 8px rgba(0,102,255,.5));position:relative;z-index:1}
-        @keyframes footerPinPulse{0%,100%{transform:scale(1);opacity:.55}50%{transform:scale(1.4);opacity:.15}}
-        .footer-map-cta{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:3;display:inline-flex;align-items:center;gap:7px;background:#0066ff;color:#fff;font-size:12.5px;font-weight:700;padding:9px 18px;border-radius:50px;text-decoration:none;box-shadow:0 4px 16px rgba(0,102,255,.45);transition:background .15s,transform .15s,box-shadow .15s}
+        /* Map preview card — real OpenStreetMap tile of Lipnik used as
+           background image, tinted dark navy to fit the footer aesthetic.
+           Single <img> load (lazy + decoding=async), fallback gradient
+           shows during load and if the tile request fails. The pin and
+           CTA overlay sit absolute on top. */
+        .footer-map-card{position:relative;margin-top:18px;border-radius:14px;overflow:hidden;border:1px solid rgba(78,163,255,.22);box-shadow:0 4px 20px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.05);height:158px;background:linear-gradient(135deg,#11264f 0%,#0a1a3c 100%)}
+        .footer-map-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.55) saturate(1.1) hue-rotate(190deg) contrast(1.05);transition:opacity .3s ease;opacity:1}
+        /* Dark navy gradient overlay — pulls the tile in line with the
+           rest of the footer + adds vignette so the pin/CTA pop. */
+        .footer-map-overlay{position:absolute;inset:0;pointer-events:none;background:
+            radial-gradient(ellipse 70% 80% at 50% 45%,rgba(13,27,62,0) 0%,rgba(13,27,62,.55) 100%),
+            linear-gradient(180deg,rgba(13,27,62,.15) 0%,rgba(13,27,62,.5) 100%)}
+        .footer-map-pin{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);z-index:2;display:flex;align-items:center;justify-content:center}
+        .footer-map-pin::before{content:'';position:absolute;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle,rgba(0,102,255,.5) 0%,rgba(0,102,255,0) 70%);animation:footerPinPulse 2.2s ease-in-out infinite}
+        .footer-map-pin svg{width:34px;height:34px;color:#0066ff;filter:drop-shadow(0 4px 10px rgba(0,102,255,.6));position:relative;z-index:1}
+        @keyframes footerPinPulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.45);opacity:.15}}
+        .footer-map-cta{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:3;display:inline-flex;align-items:center;gap:7px;background:#0066ff;color:#fff;font-size:12.5px;font-weight:700;padding:10px 20px;border-radius:50px;text-decoration:none;box-shadow:0 4px 16px rgba(0,102,255,.45);transition:background .15s,transform .15s,box-shadow .15s}
         .footer-map-cta:hover{background:#0052cc;color:#fff;transform:translateX(-50%) translateY(-1px);box-shadow:0 6px 22px rgba(0,102,255,.55)}
         .footer-map-cta svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.3;flex-shrink:0}
 
@@ -214,14 +217,14 @@
         .footer-nav-list a:hover{color:#fff}
         .footer-nav-list a:hover svg{transform:translateX(3px)}
 
-        /* Bottom legal bar — 3-zone grid (left/center/right). */
-        .footer-btm{max-width:1200px;margin:0 auto;padding:18px 24px 22px;border-top:1px solid rgba(255,255,255,.08);font-size:11.5px;color:rgba(255,255,255,.45);display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center}
-        .footer-btm-left,.footer-btm-mid{display:inline-flex;align-items:center;gap:8px;line-height:1.5}
-        .footer-btm-mid{justify-self:center;text-align:center;color:rgba(255,255,255,.4);max-width:560px}
-        .footer-btm-left svg,.footer-btm-mid svg{width:13px;height:13px;stroke:rgba(255,255,255,.5);fill:none;stroke-width:2;flex-shrink:0}
-        .footer-btm-verified{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border:1px solid rgba(78,163,255,.3);background:rgba(78,163,255,.08);border-radius:50px;color:#7eb3ff;font-size:11.5px;font-weight:700;letter-spacing:.2px;white-space:nowrap;transition:background .15s,border-color .15s}
-        .footer-btm-verified:hover{background:rgba(78,163,255,.16);border-color:rgba(78,163,255,.5);color:#fff}
-        .footer-btm-verified svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2}
+        /* Bottom legal bar — 3-zone grid with stronger top separator. */
+        .footer-btm{max-width:1200px;margin:0 auto;padding:22px 24px 26px;border-top:1px solid rgba(255,255,255,.1);font-size:11.5px;color:rgba(255,255,255,.48);display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center}
+        .footer-btm-left,.footer-btm-mid{display:inline-flex;align-items:center;gap:9px;line-height:1.55}
+        .footer-btm-mid{justify-self:center;text-align:center;color:rgba(255,255,255,.42);max-width:580px}
+        .footer-btm-left svg,.footer-btm-mid svg{width:14px;height:14px;stroke:rgba(255,255,255,.55);fill:none;stroke-width:2;flex-shrink:0}
+        .footer-btm-verified{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:1.5px solid rgba(78,163,255,.4);background:rgba(78,163,255,.1);border-radius:50px;color:#7eb3ff;font-size:12px;font-weight:700;letter-spacing:.3px;white-space:nowrap;transition:background .15s,border-color .15s,color .15s,box-shadow .15s}
+        .footer-btm-verified:hover{background:rgba(78,163,255,.2);border-color:rgba(78,163,255,.6);color:#fff;box-shadow:0 4px 14px rgba(78,163,255,.25)}
+        .footer-btm-verified svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2}
 
         /* Tablet: 2-col main grid. Map card moves under contact. */
         @media(max-width:900px){
@@ -504,20 +507,24 @@
                     </div>
                 </div>
 
-                {{-- Static map illustration. No external tile/iframe load —
-                     a CSS grid pattern, two SVG "roads" and a pulsing blue
-                     pin keep the visual without burning network budget.
-                     Clicking the CTA opens Google Maps directions in a new
-                     tab targeting our locality. --}}
-                <div class="footer-map-card" aria-hidden="true">
-                    <div class="footer-map-bg"></div>
-                    <svg class="footer-map-roads" viewBox="0 0 400 148" preserveAspectRatio="none">
-                        <path d="M 0 88 L 130 88 L 210 56 L 400 56" stroke="rgba(126,179,255,.18)" stroke-width="14" fill="none"/>
-                        <path d="M 0 88 L 130 88 L 210 56 L 400 56" stroke="rgba(126,179,255,.32)" stroke-width="2" fill="none" stroke-dasharray="6 8"/>
-                        <path d="M 60 0 L 60 60 L 260 60 L 260 148" stroke="rgba(126,179,255,.14)" stroke-width="10" fill="none"/>
-                    </svg>
-                    <div class="footer-map-pin">
-                        <x-icon name="map-pin" size="30" :strokeWidth="2"/>
+                {{-- Real map preview. OSM tile of Lipnik (z=14, x=9054,
+                     y=5530 ≈ 49.86 N, 19.05 E) loaded lazily so it never
+                     blocks the first paint. A dark navy gradient overlay
+                     tints the tile in line with the footer theme. CSS
+                     `background` on .footer-map-card provides the fallback
+                     gradient if the tile request fails. Pin + CTA sit
+                     absolute on top; the CTA opens Google Maps directions
+                     to Lipnik in a new tab. --}}
+                <div class="footer-map-card">
+                    <img class="footer-map-img"
+                         src="https://tile.openstreetmap.org/14/9054/5530.png"
+                         srcset="https://tile.openstreetmap.org/14/9054/5530.png 1x, https://tile.openstreetmap.org/15/18109/11061.png 2x"
+                         alt="Mapa: Lipnik"
+                         loading="lazy" decoding="async" width="256" height="256"
+                         onerror="this.style.display='none'">
+                    <div class="footer-map-overlay" aria-hidden="true"></div>
+                    <div class="footer-map-pin" aria-hidden="true">
+                        <x-icon name="map-pin" size="34" :strokeWidth="2"/>
                     </div>
                     <a class="footer-map-cta" href="https://www.google.com/maps/dir/?api=1&destination=Lipnik%2C+Polska" target="_blank" rel="noopener">
                         <x-icon name="arrow-right" size="13"/>
