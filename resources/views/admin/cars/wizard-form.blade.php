@@ -1030,13 +1030,57 @@
         <div id="wzDamageUploadedGrid" class="wz-file-preview-grid"></div>
     </div>
 
-    {{-- 360° interior panorama --}}
+    {{-- 360° interior — video (preferred, Copart-style) --}}
+    <div class="wz-media-section">
+        <div class="wz-media-header">
+            <i data-lucide="film"></i>
+            <h3>360° wnętrza — film</h3>
+        </div>
+        <p style="font-size:12px;color:var(--text-3);margin:0 0 14px">
+            Wgraj krótki obrót kamerą wewnątrz pojazdu (3–6 s, MP4/WebM/MOV, max 200 MB).
+            System sam wytnie {{ \App\Services\InteriorFrameExtractor::FRAME_COUNT }} klatek do interaktywnego przeglądania w katalogu.
+            Status zmienia się na „gotowe” po przetworzeniu w tle.
+        </p>
+
+        @if($car?->interior_video_path)
+        @php
+            $intStatus = $car->interior_frames_status;
+            $intPill = match($intStatus) {
+                'ready' => ['#10b981','#ecfdf5','Gotowe — '.$car->interior_frames_count.' klatek'],
+                'processing' => ['#0066ff','#eff6ff','Przetwarzanie…'],
+                'pending' => ['#6b7280','#f3f4f6','W kolejce'],
+                'failed' => ['#b91c1c','#fef2f2','Błąd ekstrakcji'],
+                default => ['#6b7280','#f3f4f6','Stan nieznany'],
+            };
+        @endphp
+        <div style="background:#fafafb;border:1px solid var(--border-l);border-radius:10px;padding:12px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+            <div style="flex:1;min-width:240px">
+                <div style="font-weight:600;font-size:13px;margin-bottom:6px">
+                    <span style="display:inline-block;padding:3px 9px;border-radius:50px;font-size:11.5px;font-weight:700;color:{{ $intPill[0] }};background:{{ $intPill[1] }}">{{ $intPill[2] }}</span>
+                </div>
+                <div style="font-size:11.5px;color:var(--text-3);word-break:break-all;margin-bottom:8px">{{ $car->interior_video_path }}</div>
+                @if($intStatus === 'failed' && $car->interior_frames_error)
+                <div style="font-size:11px;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:6px 8px;margin-bottom:8px">{{ $car->interior_frames_error }}</div>
+                @endif
+                <label class="wz-inline-label" style="color:#b91c1c;font-size:12px"><input type="checkbox" name="remove_interior_video" value="1"> Usuń film i wszystkie klatki przy zapisie</label>
+            </div>
+        </div>
+        @endif
+
+        <label class="wz-file-drop" id="wzInteriorVidDrop">
+            <i data-lucide="film"></i>
+            <div class="drop-title">Kliknij lub przeciągnij <strong>film z wnętrza</strong> (MP4, WebM, MOV — max 200 MB)</div>
+            <input type="file" name="interior_video_file" accept="video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska">
+        </label>
+    </div>
+
+    {{-- 360° interior panorama (legacy / fallback) --}}
     <div class="wz-media-section">
         <div class="wz-media-header">
             <i data-lucide="globe"></i>
-            <h3>Panorama 360° — wnętrze</h3>
+            <h3>Panorama 360° — wnętrze <span style="font-size:11px;color:var(--text-3);font-weight:500">(zapas)</span></h3>
         </div>
-        <p style="font-size:12px;color:var(--text-3);margin:0 0 14px">Jedno zdjęcie equirectangular (format 2:1, np. 4096×2048 px).</p>
+        <p style="font-size:12px;color:var(--text-3);margin:0 0 14px">Pojedyncze zdjęcie equirectangular (format 2:1, np. 4096×2048 px). Pokaże się tylko, gdy film z wnętrza nie został wgrany.</p>
 
         @if($car?->pano360Image)
         <div style="background:#fafafb;border:1px solid var(--border-l);border-radius:10px;padding:12px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start">

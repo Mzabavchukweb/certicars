@@ -309,7 +309,7 @@ class CarController extends Controller
     private function safeFileCounts(Request $request): array
     {
         $out = [];
-        foreach (['gallery_images', 'damage_images', 'pano360_image', 'pano360ext_image', 'engine_video_file'] as $field) {
+        foreach (['gallery_images', 'damage_images', 'pano360_image', 'pano360ext_image', 'engine_video_file', 'interior_video_file'] as $field) {
             if ($request->hasFile($field)) {
                 $val = $request->file($field);
                 $out[$field] = is_array($val) ? count($val) : 1;
@@ -674,6 +674,12 @@ class CarController extends Controller
             'remove_pano360'   => 'nullable|boolean',
             'pano360ext_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:25600',
             'remove_pano360ext' => 'nullable|boolean',
+            // Interior 360° pan-around video — ffmpeg slices it into a JPEG
+            // frame sequence (see ExtractInteriorFramesJob) for the catalog
+            // page's drag-scrubber. Cap matches engine_video_file at 200 MB so
+            // typical phone clips upload in one go.
+            'interior_video_file' => 'nullable|file|mimetypes:video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska|max:204800',
+            'remove_interior_video' => 'nullable|boolean',
             'damages.*.image' => 'nullable|image|mimes:jpg,jpeg,png,webp,avif|max:20480',
             'damages.*.images' => 'nullable|array|max:20',
             'damages.*.images.*' => 'nullable|image|mimes:jpg,jpeg,png,webp,avif|max:20480',
@@ -713,6 +719,10 @@ class CarController extends Controller
             'damages.*.images.*.max'        => 'Zdjęcie uszkodzenia jest za duże. Maksymalny rozmiar to 20 MB.',
             'pano360_image.max'             => 'Zdjęcie panoramy 360° wnętrza jest za duże. Maksymalny rozmiar to 25 MB.',
             'pano360ext_image.max'          => 'Zdjęcie panoramy 360° zewnętrza jest za duże. Maksymalny rozmiar to 25 MB.',
+            'interior_video_file.file'       => 'Film wnętrza 360° musi być prawidłowym plikiem wideo.',
+            'interior_video_file.mimetypes'  => 'Nieobsługiwany format wideo wnętrza. Dozwolone: MP4, WebM, MOV (QuickTime), AVI, MKV.',
+            'interior_video_file.max'        => 'Film wnętrza 360° jest za duży. Maksymalny rozmiar to 200 MB.',
+            'interior_video_file.uploaded'   => 'Film wnętrza 360° jest za duży lub przesyłanie zostało przerwane. Maksymalny rozmiar to 200 MB.',
         ]);
     }
 
@@ -1015,7 +1025,82 @@ class CarController extends Controller
             }
         }
 
+        // ===== 360° interior — video → frame sequence (Copart-style scrubber) =====
+        $this->handleInteriorVideo($car, $request, $failures);
+
         return $failures;
+    }
+
+    /**
+     * Persist a newly uploaded interior pan-around video and queue the frame
+     * extraction job. On removal, deletes both the video and every previously
+     * extracted frame so the catalog page falls back to the equirectangular
+     * pano (if present) or hides the interior card altogether.
+     *
+     * Failures append to $failures by reference so the operator sees a single
+     * combined toast — never throws.
+     */
+    private function handleInteriorVideo(Car $car, Request $request, array &$failures): void
+    {
+        $disk = Storage::disk('public');
+
+        if ($request->boolean('remove_interior_video')) {
+            if ($car->interior_video_path && !str_starts_with($car->interior_video_path, 'http')) {
+                $disk->delete($car->interior_video_path);
+            }
+            if ($car->interior_frames_dir) {
+                try {
+                    foreach ($disk->files($car->interior_frames_dir) as $existing) {
+                        $disk->delete($existing);
+                    }
+                } catch (\Throwable $e) {
+                    \Log::warning('interior.frames.cleanup_failed', ['car_id' => $car->id, 'err' => $e->getMessage()]);
+                }
+            }
+            $car->forceFill([
+                'interior_video_path'    => null,
+                'interior_frames_status' => null,
+                'interior_frames_count'  => null,
+                'interior_frames_dir'    => null,
+                'interior_frames_error'  => null,
+            ])->save();
+        }
+
+        if (!$request->hasFile('interior_video_file')) return;
+
+        $videoFile = $request->file('interior_video_file');
+        $newPath = $this->safeStore($videoFile, 'cars/' . $car->id . '/interior_video');
+        if ($newPath === null) {
+            $failures[] = $videoFile->getClientOriginalName();
+            return;
+        }
+
+        // Delete the previous video (and any previously extracted frames) only
+        // AFTER the new upload succeeded — keeps catalog rendering intact if
+        // R2/S3 transiently fails on the new upload.
+        if ($car->interior_video_path && $car->interior_video_path !== $newPath && !str_starts_with($car->interior_video_path, 'http')) {
+            $disk->delete($car->interior_video_path);
+        }
+        if ($car->interior_frames_dir) {
+            try {
+                foreach ($disk->files($car->interior_frames_dir) as $existing) {
+                    $disk->delete($existing);
+                }
+            } catch (\Throwable $e) {
+                // Best-effort; the extractor will overwrite anyway.
+            }
+        }
+
+        $framesDir = 'cars/' . $car->id . '/interior_frames';
+        $car->forceFill([
+            'interior_video_path'    => $newPath,
+            'interior_frames_status' => 'pending',
+            'interior_frames_count'  => null,
+            'interior_frames_dir'    => $framesDir,
+            'interior_frames_error'  => null,
+        ])->save();
+
+        \App\Jobs\ExtractInteriorFramesJob::dispatch($car->id, $newPath, $framesDir);
     }
 
     /**

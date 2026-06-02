@@ -22,6 +22,8 @@ class Car extends Model
         'service_book', 'coc_documents', 'vehicle_folder', 'hu_au_report',
         'service_book_status', 'registration_cert', 'owners_manual', 'aso_serviced', 'service_history',
         'paint_measurements', 'technical_conditions', 'equipment', 'highlighted_equipment', 'engine_video_url', 'engine_video_path',
+        // Interior 360° (Copart-style frame scrubber) — see migration add_interior_360_video_to_cars_table.
+        'interior_video_path', 'interior_frames_status', 'interior_frames_count', 'interior_frames_dir', 'interior_frames_error',
         'is_featured', 'is_sold', 'has_certicheck', 'available_now', 'home_delivery', 'has_gethelp', 'gethelp_package', 'status',
         'meta_title', 'meta_description', 'focus_keyword', 'noindex',
         // Cached-brochure state — see migration add_brochure_columns_to_cars_table.
@@ -115,6 +117,34 @@ class Car extends Model
     public function exteriorPano360Image()
     {
         return $this->hasOne(CarImage::class)->where('type', 'pano360ext');
+    }
+
+    /** True iff the catalog page should switch the interior 360° card to the frame-scrubber. */
+    public function hasInteriorFrames(): bool
+    {
+        return $this->interior_frames_status === 'ready'
+            && (int) $this->interior_frames_count > 0
+            && !empty($this->interior_frames_dir);
+    }
+
+    /**
+     * Build a sequenced list of public URLs for the extracted interior frames.
+     * Used by the catalog page's drag-scrubber. Returns [] when frames are not
+     * ready so the Blade view can fall back to the equirectangular interior
+     * Pannellum embed.
+     */
+    public function interiorFrameUrls(): array
+    {
+        if (!$this->hasInteriorFrames()) {
+            return [];
+        }
+        $disk = \Illuminate\Support\Facades\Storage::disk('public');
+        $count = (int) $this->interior_frames_count;
+        $urls = [];
+        for ($i = 1; $i <= $count; $i++) {
+            $urls[] = $disk->url($this->interior_frames_dir . '/' . sprintf('frame_%03d.jpg', $i));
+        }
+        return $urls;
     }
 
     public function damages(): HasMany
