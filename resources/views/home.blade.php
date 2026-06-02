@@ -439,7 +439,7 @@
         <div class="body-types-head">
             <div>
                 <h2>Wyróżnione pojazdy</h2>
-                <p>Starannie dobrane auta — sprawdzone, wyszukane, gotowe do odbioru</p>
+                <p>Sprawdź aktualnie dostępne auta z naszej oferty.</p>
             </div>
             <a href="{{ route('catalog') }}" class="body-types-head-link">Pełna oferta ({{ $totalCars }}) <x-icon name="arrow-right" size="14"/></a>
         </div>
@@ -496,7 +496,7 @@
             @php
                 $jwzBenefits = [
                     ['shield-check', 'Jasne zasady'],
-                    ['wallet',       'Brak ukrytych kosztów'],
+                    ['wallet',       'Jasne koszty zakupu'],
                     ['search',       'Możliwość sprawdzenia auta'],
                     ['phone-call',   'Jesteśmy do Twojej dyspozycji'],
                 ];
