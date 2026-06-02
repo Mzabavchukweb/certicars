@@ -319,7 +319,7 @@
                     <span class="line1">Pewne auta.</span>
                     <span class="line2">Przejrzyste opisy.</span>
                 </h1>
-                <p class="lead">Znajdź samochód z jasnym opisem stanu, wyposażenia i pochodzenia. Wybrane auta sprawdzamy dodatkowo w ramach <a href="#certicheck">CertiCheck</a>.</p>
+                <p class="lead">Znajdź samochód z jasnym opisem stanu, pochodzenia i wyposażenia. Wybrane auta opisujemy dodatkowo w ramach <a href="#certicheck">CertiCheck</a>.</p>
                 <div class="hero-ctas">
                     <a href="{{ route('catalog') }}" class="btn btn-blue">
                         <x-icon name="search" size="16" :strokeWidth="2.2"/>
