@@ -809,6 +809,20 @@
 @media(max-width:1024px){.cs-data-grid-4col{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px}}
 @media(max-width:600px){.cs-data-grid-4col{grid-template-columns:1fr;column-gap:0}}
 
+/* Dane pojazdu — icon-led grid. Each cell pairs a small blue outline-style
+   icon box with a label + value stack. Same .cs-data-section card chrome,
+   but the data layout matches the reference's "icon-on-the-left" rhythm
+   instead of a plain key/value table. */
+.cs-dp-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 24px}
+.cs-dp-item{display:flex;align-items:center;gap:12px;min-width:0}
+.cs-dp-ico{flex-shrink:0;width:38px;height:38px;border-radius:10px;background:#eff6ff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-dp-ico svg,.cs-dp-ico i[data-lucide]{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+.cs-dp-text{display:flex;flex-direction:column;gap:2px;min-width:0}
+.cs-dp-lbl{font-size:11px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:.4px;line-height:1.3}
+.cs-dp-val{font-size:14px;color:#0a0a0a;font-weight:700;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:1024px){.cs-dp-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 20px}}
+@media(max-width:520px){.cs-dp-grid{grid-template-columns:1fr;gap:12px}}
+
 /* TECH CONDITION LIST — fixed icon column, no text-icon collision */
 .cs-tech-list{display:flex;flex-direction:column}
 .cs-tech-row{display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f0f0f2;font-size:14px}
@@ -875,6 +889,101 @@
 /* ============ PODOBNE POJAZDY (section wrapper + nav + fuel badge) ============ */
 /* Reuses the .cs-tech-engine-card system for the wrapper so the section sits
    inside the same content-container card as the rest of the redesign. */
+/* ============ JAK WYGLĄDA ZAKUP — purchase process section ============
+   Dark premium block placed BEFORE the CertiCheck section. Five
+   step-cards in one row on desktop, a benefits strip below, and a
+   primary CTA at the bottom. Real component, not a screenshot block. */
+.cs-jwz{position:relative;background:linear-gradient(180deg,#0a1a3c 0%,#11264f 100%);color:#fff;border-radius:20px;padding:48px 32px 40px;margin:0 auto 16px;max-width:calc(1200px - 48px);width:100%;box-sizing:border-box;overflow:hidden;isolation:isolate}
+.cs-jwz::before{content:'';position:absolute;top:-40%;right:-12%;width:60%;height:120%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(0,102,255,.28) 0%,rgba(0,102,255,.08) 40%,rgba(0,102,255,0) 70%);pointer-events:none;z-index:-1}
+.cs-jwz::after{content:'';position:absolute;bottom:-30%;left:-8%;width:55%;height:90%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(78,163,255,.18) 0%,rgba(78,163,255,.06) 45%,rgba(78,163,255,0) 70%);pointer-events:none;z-index:-1}
+.cs-jwz-head{text-align:center;margin-bottom:32px;position:relative;z-index:1}
+.cs-jwz-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#7eb3ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:14px}
+.cs-jwz-kicker::before,.cs-jwz-kicker::after{content:'';width:24px;height:1.5px;background:#7eb3ff;border-radius:1px}
+.cs-jwz-head h2{font-size:30px;font-weight:900;color:#fff;letter-spacing:-.6px;line-height:1.15;margin:0 0 12px;max-width:680px;margin-left:auto;margin-right:auto}
+.cs-jwz-head p{font-size:14px;color:rgba(255,255,255,.7);line-height:1.6;margin:0;max-width:600px;margin-left:auto;margin-right:auto}
+
+.cs-jwz-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-bottom:32px;position:relative;z-index:1}
+.cs-jwz-step{background:#fff;border-radius:14px;padding:22px 18px 20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);transition:transform .18s ease,box-shadow .18s ease;position:relative}
+.cs-jwz-step:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(0,0,0,.25)}
+.cs-jwz-step-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.cs-jwz-step-ico{flex-shrink:0;width:42px;height:42px;border-radius:11px;background:#eff6ff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-jwz-step-ico svg,.cs-jwz-step-ico i[data-lucide]{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8}
+.cs-jwz-step-num{font-size:13px;font-weight:800;color:#0066ff;background:#eff6ff;border-radius:6px;padding:3px 9px;letter-spacing:.4px}
+.cs-jwz-step h3{font-size:15px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:6px 0 2px;line-height:1.25}
+.cs-jwz-step p{font-size:12.5px;color:#4b5563;line-height:1.55;margin:0}
+
+.cs-jwz-benefits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:28px;position:relative;z-index:1}
+.cs-jwz-benefit{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(126,179,255,.18);border-radius:12px;padding:12px 16px;color:#fff;font-size:13px;font-weight:600}
+.cs-jwz-benefit-ico{flex-shrink:0;width:30px;height:30px;border-radius:8px;background:rgba(78,163,255,.15);border:1px solid rgba(78,163,255,.3);color:#7eb3ff;display:flex;align-items:center;justify-content:center}
+.cs-jwz-benefit-ico svg,.cs-jwz-benefit-ico i[data-lucide]{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+
+.cs-jwz-cta-wrap{text-align:center;position:relative;z-index:1}
+.cs-jwz-cta{display:inline-flex;align-items:center;gap:9px;background:#0066ff;color:#fff;padding:14px 32px;border-radius:50px;font-size:15px;font-weight:700;text-decoration:none;transition:all .18s ease;box-shadow:0 6px 20px rgba(0,102,255,.4)}
+.cs-jwz-cta:hover{background:#0052cc;box-shadow:0 8px 26px rgba(0,102,255,.5);transform:translateY(-1px);color:#fff}
+.cs-jwz-cta svg,.cs-jwz-cta i[data-lucide]{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2}
+
+@media(max-width:1024px){
+    .cs-jwz{padding:40px 24px 36px}
+    .cs-jwz-steps{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .cs-jwz-benefits{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .cs-jwz-head h2{font-size:26px}
+}
+@media(max-width:600px){
+    .cs-jwz{padding:32px 20px 28px;border-radius:16px}
+    .cs-jwz-steps{grid-template-columns:1fr;gap:12px}
+    .cs-jwz-benefits{grid-template-columns:1fr;gap:8px}
+    .cs-jwz-head h2{font-size:22px}
+    .cs-jwz-head p{font-size:13.5px}
+    .cs-jwz-cta{padding:12px 26px;font-size:14px}
+}
+
+/* ============ CERTICHECK SECTION (single car page) ============
+   Light premium section after Jak wygląda zakup. Left content stack
+   with kicker / heading / paragraph / buttons / info box; right side a
+   2×2 grid of feature cards with circular icon medallions. */
+.cs-cc{position:relative;background:#fafbff;border-radius:20px;padding:48px;margin:0 auto 16px;max-width:calc(1200px - 48px);width:100%;box-sizing:border-box;overflow:hidden;isolation:isolate;border:1px solid #eaf0fc}
+.cs-cc::before{content:'';position:absolute;top:-30%;right:-10%;width:55%;height:120%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(0,102,255,.12) 0%,rgba(0,102,255,.04) 45%,rgba(0,102,255,0) 70%);pointer-events:none;z-index:-1}
+.cs-cc-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:center;position:relative;z-index:1}
+.cs-cc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:14px}
+.cs-cc-kicker::before{content:'';width:22px;height:1.5px;background:#0066ff;border-radius:1px}
+.cs-cc-left h2{font-size:36px;font-weight:900;color:#0a0a0a;letter-spacing:-.7px;line-height:1.1;margin:0 0 18px}
+.cs-cc-left p{font-size:15px;color:#475569;line-height:1.7;margin:0 0 24px;max-width:480px}
+.cs-cc-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.cs-cc-cta-primary{display:inline-flex;align-items:center;gap:8px;background:#0066ff;color:#fff;padding:13px 24px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;transition:all .18s ease;box-shadow:0 4px 16px rgba(0,102,255,.3)}
+.cs-cc-cta-primary:hover{background:#0052cc;box-shadow:0 6px 20px rgba(0,102,255,.42);transform:translateY(-1px);color:#fff}
+.cs-cc-cta-secondary{display:inline-flex;align-items:center;gap:6px;color:#0066ff;padding:13px 18px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid transparent;transition:color .15s,border-color .15s}
+.cs-cc-cta-secondary:hover{color:#0052cc;border-color:#dbeafe}
+.cs-cc-ctas svg,.cs-cc-ctas i[data-lucide]{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
+.cs-cc-info{display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid #dbeafe;border-radius:10px;padding:10px 14px;font-size:12.5px;color:#475569;line-height:1.5}
+.cs-cc-info-ico{flex-shrink:0;width:24px;height:24px;border-radius:6px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-cc-info-ico svg,.cs-cc-info-ico i[data-lucide]{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+
+.cs-cc-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cs-cc-card{position:relative;background:#fff;border:1px solid #eaf0fc;border-radius:16px;padding:22px 20px 24px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 6px 20px rgba(15,32,80,.05);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.cs-cc-card:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,.04),0 12px 32px rgba(15,32,80,.1);border-color:#cfdcf5}
+.cs-cc-card-ico{width:44px;height:44px;border-radius:50%;background:#eff6ff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.cs-cc-card-ico svg,.cs-cc-card-ico i[data-lucide]{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8}
+.cs-cc-card h3{font-size:15px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0 0 6px;line-height:1.25}
+.cs-cc-card p{font-size:13px;color:#4b5563;line-height:1.55;margin:0}
+.cs-cc-card-arrow{position:absolute;top:20px;right:20px;width:26px;height:26px;border-radius:50%;background:#fff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center;opacity:.55;transition:opacity .18s ease,transform .18s ease}
+.cs-cc-card-arrow svg,.cs-cc-card-arrow i[data-lucide]{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4}
+.cs-cc-card:hover .cs-cc-card-arrow{opacity:1;transform:translateX(2px) translateY(-2px)}
+
+@media(max-width:1024px){
+    .cs-cc{padding:36px 32px}
+    .cs-cc-grid{grid-template-columns:1fr;gap:32px}
+    .cs-cc-left h2{font-size:30px}
+    .cs-cc-cards{grid-template-columns:1fr 1fr;gap:12px}
+}
+@media(max-width:600px){
+    .cs-cc{padding:28px 20px;border-radius:16px}
+    .cs-cc-left h2{font-size:24px}
+    .cs-cc-left p{font-size:14px}
+    .cs-cc-cards{grid-template-columns:1fr}
+    .cs-cc-ctas{flex-direction:column;align-items:stretch}
+    .cs-cc-cta-primary,.cs-cc-cta-secondary{justify-content:center}
+}
+
 .cs-related-section{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box}
 .cs-related-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;flex-wrap:wrap}
 .cs-related-head-left{display:flex;align-items:flex-start;gap:14px;flex:1;min-width:240px}
@@ -1685,85 +1794,39 @@
             <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
         </div>
         <div class="cs-data-body">
-            {{-- Reference 4-column layout. Renders fields that exist in the
-                 backend; missing-column fields simply don't show (no fake data). --}}
-            <div class="cs-data-grid-4col">
-                {{-- Column 1: Marka, Wersja, Wersja wyposażenia, Rok produkcji, Pierwsza rejestracja --}}
-                <div class="cs-data-col">
-                    @if($car->brand?->name)
-                        <div class="cs-data-row"><span class="lbl">Marka</span><span class="val">{{ $car->brand->name }}</span></div>
-                    @endif
-                    @if($rowOk($car->transmission_detail))
-                        <div class="cs-data-row"><span class="lbl">Wersja</span><span class="val">{{ $car->transmission_detail }}</span></div>
-                    @endif
-                    @if($rowOk($car->equipment_version))
-                        <div class="cs-data-row"><span class="lbl">Wersja wyposażenia</span><span class="val">{{ $car->equipment_version }}</span></div>
-                    @endif
-                    @if($rowOk($car->first_registration))
-                        <div class="cs-data-row"><span class="lbl">Rok produkcji</span><span class="val">{{ $car->first_registration }}</span></div>
-                    @endif
-                    @if($car->reception_date)
-                        <div class="cs-data-row"><span class="lbl">Pierwsza rejestracja</span><span class="val">{{ $car->reception_date->format('d.m.Y') }}</span></div>
-                    @endif
-                </div>
-
-                {{-- Column 2: Model, VIN, Paliwo, Skrzynia biegów, Przebieg --}}
-                <div class="cs-data-col">
-                    @if($rowOk($car->model))
-                        <div class="cs-data-row"><span class="lbl">Model</span><span class="val">{{ $car->model }}</span></div>
-                    @endif
-                    @if($rowOk($car->vin))
-                        <div class="cs-data-row"><span class="lbl">VIN</span><span class="val" style="font-family:'SF Mono',Menlo,monospace;font-size:12px;letter-spacing:.4px">{{ $car->vin }}</span></div>
-                    @endif
-                    @if($rowOk($dispFuel))
-                        <div class="cs-data-row"><span class="lbl">Paliwo</span><span class="val">{{ $dispFuel }}</span></div>
-                    @endif
-                    @if($rowOk($dispTransmission))
-                        <div class="cs-data-row"><span class="lbl">Skrzynia biegów</span><span class="val">{{ $dispTransmission }}</span></div>
-                    @endif
-                    @if($rowOk($car->mileage))
-                        <div class="cs-data-row"><span class="lbl">Przebieg</span><span class="val">{{ number_format((float) $car->mileage, 0, '', ' ') }} km</span></div>
-                    @endif
-                </div>
-
-                {{-- Column 3: Pojemność skokowa, Norma emisji spalin, Napęd, Moc, Liczba miejsc --}}
-                <div class="cs-data-col">
-                    @if($rowOk($car->engine_capacity))
-                        <div class="cs-data-row"><span class="lbl">Pojemność skokowa</span><span class="val">{{ number_format((float) $car->engine_capacity, 0, '', ' ') }} cm³</span></div>
-                    @endif
-                    @if($rowOk($car->emission_class))
-                        @php $emissionDisp = preg_replace('/^(euro)\s*(\d.*)$/i', 'Euro $2', trim((string) $car->emission_class)); @endphp
-                        <div class="cs-data-row"><span class="lbl">Norma emisji spalin</span><span class="val">{{ $emissionDisp }}</span></div>
-                    @endif
-                    @if($rowOk($car->drivetrain))
-                        <div class="cs-data-row"><span class="lbl">Napęd</span><span class="val">{{ $car->drivetrain }}</span></div>
-                    @endif
-                    @if($rowOk($car->power_hp))
-                        <div class="cs-data-row"><span class="lbl">Moc</span><span class="val">{{ $car->power_hp }} KM @if($rowOk($car->power_kw))/ {{ $car->power_kw }} kW @endif</span></div>
-                    @endif
-                    @if($rowOk($car->seats))
-                        <div class="cs-data-row"><span class="lbl">Liczba miejsc</span><span class="val">{{ $car->seats }}</span></div>
-                    @endif
-                </div>
-
-                {{-- Column 4: Typ nadwozia, Liczba drzwi, Kolor nadwozia, Kolor wnętrza, Kraj pochodzenia --}}
-                <div class="cs-data-col">
-                    @if($rowOk($dispBody))
-                        <div class="cs-data-row"><span class="lbl">Typ nadwozia</span><span class="val">{{ $dispBody }}</span></div>
-                    @endif
-                    @if($rowOk($car->doors))
-                        <div class="cs-data-row"><span class="lbl">Liczba drzwi</span><span class="val">{{ $car->doors }}</span></div>
-                    @endif
-                    @if($rowOk($car->color))
-                        <div class="cs-data-row"><span class="lbl">Kolor nadwozia</span><span class="val">{{ $car->color }}</span></div>
-                    @endif
-                    @if($rowOk($car->upholstery))
-                        <div class="cs-data-row"><span class="lbl">Kolor wnętrza</span><span class="val">{{ $car->upholstery }}</span></div>
-                    @endif
-                    @if($rowOk($dispCountry))
-                        <div class="cs-data-row"><span class="lbl">Kraj pochodzenia</span><span class="val">{{ $dispCountry }}</span></div>
-                    @endif
-                </div>
+            {{-- 14-field icon-led grid. Order is fixed; each row only
+                 renders when the backend has a real value, so cars with
+                 missing fields gracefully collapse (no empty cells). --}}
+            @php
+                $emissionDisp = $rowOk($car->emission_class)
+                    ? preg_replace('/^(euro)\s*(\d.*)$/i', 'Euro $2', trim((string) $car->emission_class))
+                    : null;
+                $dpRows = [];
+                if ($car->brand?->name)              $dpRows[] = ['badge-check',   'Marka',                $car->brand->name];
+                if ($rowOk($car->first_registration))$dpRows[] = ['calendar',      'Rok produkcji',        $car->first_registration];
+                if ($rowOk($car->model))             $dpRows[] = ['car',           'Model',                $car->model];
+                if ($rowOk($dispFuel))               $dpRows[] = ['fuel',          'Paliwo',               $dispFuel];
+                if ($rowOk($dispTransmission))       $dpRows[] = ['settings',      'Skrzynia biegów',      $dispTransmission];
+                if ($rowOk($car->mileage))           $dpRows[] = ['gauge',         'Przebieg',             number_format((float) $car->mileage, 0, '', ' ') . ' km'];
+                if ($rowOk($car->engine_capacity))   $dpRows[] = ['activity',      'Pojemność skokowa',    number_format((float) $car->engine_capacity, 0, '', ' ') . ' cm³'];
+                if ($emissionDisp)                   $dpRows[] = ['leaf',          'Norma emisji spalin',  $emissionDisp];
+                if ($rowOk($car->power_hp))          $dpRows[] = ['zap',           'Moc',                  $car->power_hp . ' KM' . ($rowOk($car->power_kw) ? ' / ' . $car->power_kw . ' kW' : '')];
+                if ($rowOk($car->seats))             $dpRows[] = ['users',         'Liczba miejsc',        $car->seats];
+                if ($rowOk($dispBody))               $dpRows[] = ['car-front',     'Typ nadwozia',         $dispBody];
+                if ($rowOk($car->doors))             $dpRows[] = ['door-open',     'Liczba drzwi',         $car->doors];
+                if ($rowOk($car->color))             $dpRows[] = ['palette',       'Kolor nadwozia',       $car->color];
+                if ($rowOk($dispCountry))            $dpRows[] = ['globe',         'Kraj pochodzenia',     $dispCountry];
+            @endphp
+            <div class="cs-dp-grid">
+                @foreach($dpRows as [$ico, $label, $value])
+                    <div class="cs-dp-item">
+                        <span class="cs-dp-ico" aria-hidden="true"><x-icon :name="$ico" size="18" :strokeWidth="1.8"/></span>
+                        <span class="cs-dp-text">
+                            <span class="cs-dp-lbl">{{ $label }}</span>
+                            <span class="cs-dp-val" title="{{ $value }}">{{ $value }}</span>
+                        </span>
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>
@@ -2619,6 +2682,110 @@
 
     </div>
     @endif
+
+    {{-- =================== JAK WYGLĄDA ZAKUP =================== --}}
+    {{-- Dark premium section: 5 step cards + benefits strip + CTA.
+         Real component, dynamic CTA href falls back to the canonical
+         CertiCars phone number used everywhere else on the site. --}}
+    <section class="cs-jwz" id="jak-wyglada-zakup">
+        <div class="cs-jwz-head">
+            <div class="cs-jwz-kicker">Jak wygląda zakup</div>
+            <h2>Prosty proces. Więcej spokoju przed zakupem.</h2>
+            <p>Od wyboru samochodu do odbioru auta prowadzimy Cię krok po kroku — jasno, konkretnie i bez zbędnych komplikacji.</p>
+        </div>
+
+        <div class="cs-jwz-steps">
+            @php
+                $jwzSteps = [
+                    ['search',         '01', 'Wybierasz samochód',           'Przeglądasz ofertę, zdjęcia, dane techniczne, wyposażenie oraz opis stanu auta. Przy wybranych pojazdach dostępny jest dodatkowy raport CertiCheck.'],
+                    ['message-square', '02', 'Kontaktujesz się z nami',      'Potwierdzamy dostępność auta, odpowiadamy na pytania i umawiamy dogodny termin oględzin.'],
+                    ['clipboard-check','03', 'Oglądasz i sprawdzasz auto',   'Na miejscu możesz dokładnie obejrzeć samochód, odbyć jazdę próbną oraz sprawdzić auto przed zakupem — na stacji diagnostycznej lub w wybranym serwisie.'],
+                    ['file-text',      '04', 'Finalizujesz zakup',           'Wyjaśniamy formalności, dokumenty oraz koszty. Wiesz, co jest w cenie auta i co pozostaje po stronie kupującego.'],
+                    ['truck',          '05', 'Możliwy transport auta',       'Po wcześniejszym ustaleniu warunków i kosztów możemy przywieźć samochód pod wskazany adres.'],
+                ];
+            @endphp
+            @foreach($jwzSteps as [$ico, $num, $title, $desc])
+                <div class="cs-jwz-step">
+                    <div class="cs-jwz-step-head">
+                        <span class="cs-jwz-step-ico" aria-hidden="true"><x-icon :name="$ico" size="20" :strokeWidth="1.8"/></span>
+                        <span class="cs-jwz-step-num">{{ $num }}</span>
+                    </div>
+                    <h3>{{ $title }}</h3>
+                    <p>{{ $desc }}</p>
+                </div>
+            @endforeach
+        </div>
+
+        <div class="cs-jwz-benefits">
+            @php
+                $jwzBenefits = [
+                    ['shield-check', 'Jasne zasady'],
+                    ['wallet',       'Brak ukrytych kosztów'],
+                    ['search',       'Możliwość sprawdzenia auta'],
+                    ['phone-call',   'Jesteśmy do Twojej dyspozycji'],
+                ];
+            @endphp
+            @foreach($jwzBenefits as [$ico, $label])
+                <div class="cs-jwz-benefit">
+                    <span class="cs-jwz-benefit-ico" aria-hidden="true"><x-icon :name="$ico" size="15" :strokeWidth="2"/></span>
+                    {{ $label }}
+                </div>
+            @endforeach
+        </div>
+
+        <div class="cs-jwz-cta-wrap">
+            <a class="cs-jwz-cta" href="tel:+48515440623">
+                <x-icon name="phone" size="17" :strokeWidth="2.2"/>
+                Zadzwoń i zapytaj o auto
+            </a>
+        </div>
+    </section>
+
+    {{-- =================== CERTICHECK SECTION (single car) =================== --}}
+    {{-- Left content + right 2×2 feature cards. Buttons point to the
+         existing catalog + about routes, no dead URLs. --}}
+    <section class="cs-cc" id="certicheck-info">
+        <div class="cs-cc-grid">
+            <div class="cs-cc-left">
+                <div class="cs-cc-kicker">CertiCheck — dla wybranych aut</div>
+                <h2>Wiesz więcej<br>przed przyjazdem</h2>
+                <p>Przy wybranych autach przygotowujemy rozszerzony opis CertiCheck z dodatkowymi informacjami o stanie pojazdu, lakierze, śladach użytkowania i dokumentach. Dzięki temu łatwiej oceniasz auto jeszcze przed wizytą.</p>
+                <div class="cs-cc-ctas">
+                    <a class="cs-cc-cta-primary" href="{{ route('catalog') }}">
+                        <x-icon name="search" size="15" :strokeWidth="2.2"/>
+                        Zobacz auta z CertiCheck
+                    </a>
+                    <a class="cs-cc-cta-secondary" href="{{ route('about') }}">
+                        Jak działa CertiCheck?
+                        <x-icon name="arrow-right" size="14" :strokeWidth="2.2"/>
+                    </a>
+                </div>
+                <div class="cs-cc-info">
+                    <span class="cs-cc-info-ico" aria-hidden="true"><x-icon name="shield-check" size="13" :strokeWidth="2"/></span>
+                    CertiCheck dotyczy wybranych pojazdów w naszej ofercie.
+                </div>
+            </div>
+
+            <div class="cs-cc-cards">
+                @php
+                    $ccCards = [
+                        ['scan-line',     'Pomiary lakieru',   'Wykryjemy ponowne malowania i grubsze powłoki w punktach kontrolnych.'],
+                        ['wrench',        'Stan techniczny',   'Sprawdzamy kluczowe elementy mechaniczne i eksploatacyjne pojazdu.'],
+                        ['search',        'Ślady użytkowania', 'Wskazujemy widoczne ślady eksploatacji i ich dokładną lokalizację.'],
+                        ['file-text',     'Raport PDF',        'Czytelne podsumowanie ze zdjęciami i danymi do pobrania.'],
+                    ];
+                @endphp
+                @foreach($ccCards as [$ico, $title, $desc])
+                    <div class="cs-cc-card">
+                        <div class="cs-cc-card-ico" aria-hidden="true"><x-icon :name="$ico" size="20" :strokeWidth="1.8"/></div>
+                        <h3>{{ $title }}</h3>
+                        <p>{{ $desc }}</p>
+                        <span class="cs-cc-card-arrow" aria-hidden="true"><x-icon name="arrow-up-right" size="13" :strokeWidth="2.4"/></span>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
 
     {{-- PODOBNE POJAZDY — wrapped in the same .cs-related-section card system as
          the other redesigned sections (blue icon tile, title, subtitle, content
