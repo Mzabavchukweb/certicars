@@ -190,19 +190,27 @@
         .footer-contact-value{font-size:13.5px;font-weight:700;color:#fff;line-height:1.35;word-break:break-word;transition:color .15s}
         a.footer-contact-value:hover{color:#7eb3ff}
 
-        /* Map preview card — real OpenStreetMap tile of Lipnik used as
-           background image, tinted dark navy to fit the footer aesthetic.
-           Single <img> load (lazy + decoding=async), fallback gradient
-           shows during load and if the tile request fails. The pin and
-           CTA overlay sit absolute on top. */
+        /* Map preview card — 2×2 OpenStreetMap tile mosaic of the
+           CertiCars location (~53.3503 N, 14.9399 E). Tiles are
+           positioned via `left: calc(50% - <pin-offset-px>)` so the pin
+           overlay's natural center (50%, 50%) lands exactly on the
+           pinpoint regardless of the card's responsive width. Lazy +
+           async, plus CSS gradient fallback if any tile request fails. */
         .footer-map-card{position:relative;margin-top:18px;border-radius:14px;overflow:hidden;border:1px solid rgba(78,163,255,.22);box-shadow:0 4px 20px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.05);height:158px;background:linear-gradient(135deg,#11264f 0%,#0a1a3c 100%)}
-        .footer-map-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.55) saturate(1.1) hue-rotate(190deg) contrast(1.05);transition:opacity .3s ease;opacity:1}
-        /* Dark navy gradient overlay — pulls the tile in line with the
-           rest of the footer + adds vignette so the pin/CTA pop. */
+        .footer-map-tiles{position:absolute;inset:0;overflow:hidden;filter:brightness(.55) saturate(1.1) hue-rotate(190deg) contrast(1.05)}
+        .footer-map-tile{position:absolute;width:256px;height:256px;display:block;pointer-events:none}
+        /* Mosaic geometry — pin pixel (221.8, 266) inside the 2×2 grid
+           (origin at NW corner). To centre pin at (50%, 79 px) of the
+           card we offset the NW tile to (50% - 222px, -187px). */
+        .footer-map-tile.nw,.footer-map-tile.ne{top:-187px}
+        .footer-map-tile.sw,.footer-map-tile.se{top:69px}
+        .footer-map-tile.nw,.footer-map-tile.sw{left:calc(50% - 222px)}
+        .footer-map-tile.ne,.footer-map-tile.se{left:calc(50% + 34px)}
+        /* Dark navy gradient overlay on top of the mosaic. */
         .footer-map-overlay{position:absolute;inset:0;pointer-events:none;background:
-            radial-gradient(ellipse 70% 80% at 50% 45%,rgba(13,27,62,0) 0%,rgba(13,27,62,.55) 100%),
+            radial-gradient(ellipse 70% 80% at 50% 50%,rgba(13,27,62,0) 0%,rgba(13,27,62,.55) 100%),
             linear-gradient(180deg,rgba(13,27,62,.15) 0%,rgba(13,27,62,.5) 100%)}
-        .footer-map-pin{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);z-index:2;display:flex;align-items:center;justify-content:center}
+        .footer-map-pin{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;display:flex;align-items:center;justify-content:center}
         .footer-map-pin::before{content:'';position:absolute;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle,rgba(0,102,255,.5) 0%,rgba(0,102,255,0) 70%);animation:footerPinPulse 2.2s ease-in-out infinite}
         .footer-map-pin svg{width:34px;height:34px;color:#0066ff;filter:drop-shadow(0 4px 10px rgba(0,102,255,.6));position:relative;z-index:1}
         @keyframes footerPinPulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.45);opacity:.15}}
@@ -507,26 +515,26 @@
                     </div>
                 </div>
 
-                {{-- Real map preview. OSM tile of Lipnik (z=14, x=9054,
-                     y=5530 ≈ 49.86 N, 19.05 E) loaded lazily so it never
-                     blocks the first paint. A dark navy gradient overlay
-                     tints the tile in line with the footer theme. CSS
-                     `background` on .footer-map-card provides the fallback
-                     gradient if the tile request fails. Pin + CTA sit
-                     absolute on top; the CTA opens Google Maps directions
-                     to Lipnik in a new tab. --}}
+                {{-- Real map preview. 2×2 OpenStreetMap tile mosaic
+                     centred on the CertiCars pin (53.3502947, 14.9399374).
+                     Tiles are positioned via calc(50% - 222 px) so the pin
+                     overlay's natural centre lands exactly on the
+                     pinpoint at any responsive card width. Lazy +
+                     async loads; the card's CSS background gradient is
+                     the visible fallback if tiles fail. CTA opens Google
+                     Maps directions to the exact coordinates. --}}
                 <div class="footer-map-card">
-                    <img class="footer-map-img"
-                         src="https://tile.openstreetmap.org/14/9054/5530.png"
-                         srcset="https://tile.openstreetmap.org/14/9054/5530.png 1x, https://tile.openstreetmap.org/15/18109/11061.png 2x"
-                         alt="Mapa: Lipnik"
-                         loading="lazy" decoding="async" width="256" height="256"
-                         onerror="this.style.display='none'">
+                    <div class="footer-map-tiles" aria-hidden="true">
+                        <img class="footer-map-tile nw" src="https://tile.openstreetmap.org/15/17743/10620.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
+                        <img class="footer-map-tile ne" src="https://tile.openstreetmap.org/15/17744/10620.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
+                        <img class="footer-map-tile sw" src="https://tile.openstreetmap.org/15/17743/10621.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
+                        <img class="footer-map-tile se" src="https://tile.openstreetmap.org/15/17744/10621.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
+                    </div>
                     <div class="footer-map-overlay" aria-hidden="true"></div>
                     <div class="footer-map-pin" aria-hidden="true">
                         <x-icon name="map-pin" size="34" :strokeWidth="2"/>
                     </div>
-                    <a class="footer-map-cta" href="https://www.google.com/maps/dir/?api=1&destination=Lipnik%2C+Polska" target="_blank" rel="noopener">
+                    <a class="footer-map-cta" href="https://www.google.com/maps/dir/?api=1&destination=53.3502947,14.9399374" target="_blank" rel="noopener">
                         <x-icon name="arrow-right" size="13"/>
                         Wyznacz trasę
                     </a>
