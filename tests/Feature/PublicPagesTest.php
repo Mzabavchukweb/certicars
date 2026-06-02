@@ -795,6 +795,10 @@ class PublicPagesTest extends TestCase
             "360 card backgrounds must use \$pano->url, never asset('storage/...')."
         );
         $this->assertStringContainsString('$car->exteriorPano360Image->url', $source);
-        $this->assertStringContainsString('$car->pano360Image->url',         $source);
+        // Interior thumbnail moved behind $interiorThumbUrl so we can prefer the
+        // first frame of the new Copart-style scrubber when available and fall
+        // back to the legacy equirectangular ?->url accessor. The R2-aware
+        // CarImage::url accessor is still the only source for the fallback.
+        $this->assertStringContainsString('$car->pano360Image?->url',        $source);
     }
 }

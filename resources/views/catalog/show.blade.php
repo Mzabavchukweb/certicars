@@ -115,6 +115,11 @@
 .cs-gallery-main{position:absolute;inset:0;background:#e8e8ea;display:flex;align-items:center;justify-content:center;width:100%;height:100%;box-sizing:border-box}
 .cs-gallery-main:not(.active){display:none!important}
 .cs-gallery-main img{width:100%;height:100%;object-fit:cover}
+.cs-interior-frames-pane{cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.cs-interior-frames-pane.is-dragging{cursor:grabbing}
+.cs-interior-frames-pane .cs-interior-frames-img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+.cs-interior-frames-pane .cs-interior-frames-progress{position:absolute;left:18px;right:18px;bottom:14px;height:3px;background:rgba(255,255,255,.22);border-radius:2px;overflow:hidden;pointer-events:none}
+.cs-interior-frames-pane .cs-interior-frames-progress span{display:block;height:100%;width:0;background:#fff;transition:width .04s linear}
 .cs-gallery-main .empty{color:#9ca3af}
 .cs-gallery-main .empty i{width:80px;height:80px}
 .cs-gallery-counter{position:absolute;top:12px;right:12px;background:rgba(10,10,10,.75);color:#fff;padding:6px 12px;border-radius:50px;font-size:12px;display:flex;align-items:center;gap:5px;backdrop-filter:blur(10px);font-weight:600}
@@ -1357,8 +1362,22 @@
                     @endif
                 </div>
 
-                {{-- ===== 360° PANORAMA VIEWER (interior) ===== --}}
-                @if($car->pano360Image)
+                {{-- ===== 360° INTERIOR (frame scrubber, Copart-style) =====
+                     Preferred path: admin uploaded a pan-around video, ExtractInteriorFramesJob
+                     produced N JPEGs, the user drag-scrubs through them client-side. Falls
+                     through to the equirectangular Pannellum embed below when frames are
+                     not ready (legacy or still-processing rows). --}}
+                @if($car->hasInteriorFrames())
+                <div class="cs-gallery-main cs-pano360 cs-interior-frames-pane" id="csInteriorFrames" style="background:#000"
+                     data-frames='@json($car->interiorFrameUrls())'>
+                    <img class="cs-interior-frames-img" alt="Wnętrze 360°" draggable="false" decoding="async">
+                    <div class="cs-interior-frames-progress"><span></span></div>
+                    <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(10,10,10,.78);color:#fff;font-size:12px;padding:7px 14px;border-radius:50px;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px);font-weight:600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg>
+                        Przeciągnij, aby obejrzeć wnętrze
+                    </div>
+                </div>
+                @elseif($car->pano360Image)
                 <div class="cs-gallery-main cs-pano360" id="csPano360" style="background:#000">
                     <div id="csPanoramaContainer" style="width:100%;height:100%;background:#000" data-pano-src="{{ route('panorama.stream', $car->pano360Image) }}"></div>
                     <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(10,10,10,.78);color:#fff;font-size:12px;padding:7px 14px;border-radius:50px;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px);font-weight:600">
@@ -2338,7 +2357,13 @@
          Replaces the old in-place Pannellum embed; the interactive viewer still lives
          in the main gallery (lines ~949+) so we reuse csFilterGallery + csScrollGalleryIntoView
          instead of duplicating the iframe. --}}
-    @if($car->pano360Image || $car->exteriorPano360Image)
+    @php
+        $hasInteriorViewer = $car->hasInteriorFrames() || $car->pano360Image;
+        $interiorThumbUrl = $car->hasInteriorFrames()
+            ? ($car->interiorFrameUrls()[0] ?? null)
+            : ($car->pano360Image?->url);
+    @endphp
+    @if($hasInteriorViewer || $car->exteriorPano360Image)
     <div class="cs-pano360-section-card">
         <div class="cs-pano360-section-head">
             <div class="cs-pano360-section-ico">
@@ -2349,7 +2374,7 @@
                 <p class="cs-pano360-section-sub">Obejrzyj pojazd z każdej strony. Przesuwaj, obracaj i przybliżaj obraz, aby dokładnie zapoznać się z autem.</p>
             </div>
         </div>
-        @php $singleCard = !($car->pano360Image && $car->exteriorPano360Image); @endphp
+        @php $singleCard = !($hasInteriorViewer && $car->exteriorPano360Image); @endphp
         <div class="cs-pano360-row{{ $singleCard ? ' single' : '' }}">
             @if($car->exteriorPano360Image)
             <button type="button" class="cs-pano360-card" onclick="csOpenPano360('pano360ext')" aria-label="Otwórz widok 360° z zewnątrz">
@@ -2372,10 +2397,10 @@
                 </div>
             </button>
             @endif
-            @if($car->pano360Image)
+            @if($hasInteriorViewer)
             <button type="button" class="cs-pano360-card" onclick="csOpenPano360('pano360')" aria-label="Otwórz widok 360° wnętrza">
-                @if($car->pano360Image->url)
-                    <img class="cs-pano360-card-img" src="{{ $car->pano360Image->url }}" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/placeholder-car.svg'">
+                @if($interiorThumbUrl)
+                    <img class="cs-pano360-card-img" src="{{ $interiorThumbUrl }}" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/placeholder-car.svg'">
                 @else
                     <div class="cs-pano360-card-empty">Podgląd niedostępny</div>
                 @endif
@@ -2389,7 +2414,7 @@
                 </span>
                 <div class="cs-pano360-card-text">
                     <h4 class="cs-pano360-card-title">360° wnętrza</h4>
-                    <p class="cs-pano360-card-sub">Zobacz kabinę kierowcy i przestrzeń pasażerską</p>
+                    <p class="cs-pano360-card-sub">{{ $car->hasInteriorFrames() ? 'Przeciągnij, by obejrzeć wnętrze' : 'Zobacz kabinę kierowcy i przestrzeń pasażerską' }}</p>
                 </div>
             </button>
             @endif
@@ -3012,17 +3037,23 @@ function csFilterGallery(btn,filter){
     btn.setAttribute('aria-selected','true');
 
     // Toggle gallery panes (active class controls visibility — see .cs-gallery-main:not(.active){display:none})
-    const std     = document.getElementById('csGalleryStandard');
-    const pano    = document.getElementById('csPano360');
-    const panoExt = document.getElementById('csPano360ext');
+    const std       = document.getElementById('csGalleryStandard');
+    const pano      = document.getElementById('csPano360');
+    const panoExt   = document.getElementById('csPano360ext');
+    const intFrames = document.getElementById('csInteriorFrames');
     const thumbsWrap = document.getElementById('csGalleryThumbs');
-    [std, pano, panoExt].forEach(el => el && el.classList.remove('active'));
-    if(filter === 'pano360' && pano) pano.classList.add('active');
+    [std, pano, panoExt, intFrames].forEach(el => el && el.classList.remove('active'));
+    if(filter === 'pano360' && intFrames) intFrames.classList.add('active');
+    else if(filter === 'pano360' && pano) pano.classList.add('active');
     else if(filter === 'pano360ext' && panoExt) panoExt.classList.add('active');
     else if(std) std.classList.add('active');
     if(thumbsWrap) thumbsWrap.style.display = (filter==='pano360'||filter==='pano360ext') ? 'none' : '';
 
-    if(filter==='pano360'){ if(window.csPano360Init)csPano360Init(); return; }
+    if(filter==='pano360'){
+        if(intFrames && window.csInteriorFramesInit){ csInteriorFramesInit(); return; }
+        if(window.csPano360Init) csPano360Init();
+        return;
+    }
     if(filter==='pano360ext'){ if(window.csPano360ExtInit)csPano360ExtInit(); return; }
 
     if(filter==='video'){
@@ -3107,6 +3138,95 @@ window.csPano360Init = (function(){
         } else {
             onReady();
         }
+    };
+})();
+@endif
+
+// ==== 360° INTERIOR FRAME SCRUBBER (Copart-style) ====
+// Pointer-driven drag through the pre-extracted JPEG sequence. The pane
+// reads its frame URL list from `data-frames` (JSON). Frames load lazily —
+// the first one paints synchronously; the rest preload in the background so
+// the scrubber feels instant after the first ~half second.
+@if($car->hasInteriorFrames())
+window.csInteriorFramesInit = (function(){
+    let initialized = false;
+    return function(){
+        if(initialized) return;
+        initialized = true;
+        var pane = document.getElementById('csInteriorFrames');
+        if(!pane) return;
+        var img  = pane.querySelector('.cs-interior-frames-img');
+        var bar  = pane.querySelector('.cs-interior-frames-progress span');
+        var urls = [];
+        try { urls = JSON.parse(pane.getAttribute('data-frames') || '[]'); } catch(_) { urls = []; }
+        if(!Array.isArray(urls) || urls.length < 2) return;
+
+        var preloaded = new Array(urls.length);
+        function loadFrame(i){
+            if(preloaded[i]) return preloaded[i];
+            var p = new Image();
+            p.decoding = 'async';
+            p.src = urls[i];
+            preloaded[i] = p;
+            return p;
+        }
+        // Paint the first frame and kick off background preloading.
+        loadFrame(0).addEventListener('load', function(){ img.src = urls[0]; }, { once: true });
+        if(preloaded[0].complete) img.src = urls[0];
+        var nextToPreload = 1;
+        (function preloadNext(){
+            if(nextToPreload >= urls.length) return;
+            var p = loadFrame(nextToPreload++);
+            p.addEventListener('load', preloadNext, { once: true });
+            p.addEventListener('error', preloadNext, { once: true });
+        })();
+
+        var current = 0, dragging = false, lastX = 0, accum = 0;
+        function setFrame(i){
+            if(i < 0) i = 0;
+            if(i > urls.length - 1) i = urls.length - 1;
+            if(i === current) return;
+            current = i;
+            var src = urls[i];
+            // Only swap when the frame has decoded, otherwise the pane flashes
+            // grey while the network request resolves.
+            if(preloaded[i] && preloaded[i].complete) img.src = src;
+            else loadFrame(i).addEventListener('load', function(){ if(current === i) img.src = src; }, { once: true });
+            if(bar) bar.style.width = ((i / (urls.length - 1)) * 100) + '%';
+        }
+
+        // ~6 px of pointer travel per frame on desktop; on touch we tighten so
+        // a thumb-swipe across the viewport completes a full rotation.
+        function pixelsPerFrame(){
+            var w = pane.clientWidth || 800;
+            return Math.max(4, w / urls.length);
+        }
+        function onDown(e){
+            dragging = true;
+            pane.classList.add('is-dragging');
+            lastX = (e.touches ? e.touches[0].clientX : e.clientX);
+            accum = 0;
+            if(e.cancelable) e.preventDefault();
+        }
+        function onMove(e){
+            if(!dragging) return;
+            var x = (e.touches ? e.touches[0].clientX : e.clientX);
+            accum += (x - lastX);
+            lastX = x;
+            var step = pixelsPerFrame();
+            while(accum >= step){ setFrame(current + 1); accum -= step; }
+            while(accum <= -step){ setFrame(current - 1); accum += step; }
+            if(e.cancelable) e.preventDefault();
+        }
+        function onUp(){ dragging = false; pane.classList.remove('is-dragging'); }
+
+        pane.addEventListener('mousedown', onDown);
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+        pane.addEventListener('touchstart', onDown, { passive: false });
+        pane.addEventListener('touchmove', onMove, { passive: false });
+        pane.addEventListener('touchend', onUp);
+        pane.addEventListener('touchcancel', onUp);
     };
 })();
 @endif

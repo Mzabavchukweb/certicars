@@ -1,15 +1,19 @@
 FROM php:8.4-fpm
 
-# System deps + nginx + node + headless Chromium.
+# System deps + nginx + node + headless Chromium + ffmpeg.
 # Chromium is required by spatie/browsershot for the public CertiCheck PDF
 # brochure. DomPDF remains in-tree as a fallback if the headless render fails.
 # libwebp-dev is needed so GD can encode/decode WebP — without it the
 # brochure's image embedder rejects every WebP photo silently.
+# ffmpeg is required by the interior 360° feature: admin uploads a slow
+# pan-around video, ExtractInteriorFramesJob runs ffmpeg to slice it into a
+# fixed-count frame sequence that the catalog page scrubs through (Copart-style).
 RUN apt-get update && apt-get install -y --no-install-recommends \
         nginx supervisor \
         libpng-dev libjpeg-dev libfreetype6-dev libzip-dev libsqlite3-dev libwebp-dev \
         unzip git curl ca-certificates \
         chromium \
+        ffmpeg \
         fonts-liberation fonts-dejavu fontconfig \
         libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 \
         libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libpango-1.0-0 \
