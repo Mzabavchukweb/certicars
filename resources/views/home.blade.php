@@ -79,34 +79,95 @@
 .hero-search-submit:hover{background:var(--blue-h);box-shadow:0 8px 24px rgba(0,102,255,.35);transform:translateY(-1px)}
 .hero-search-submit svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5}
 
-/* CERTICHECK SECTION */
-.certicheck-section{background:#0a1838;padding:88px 0;position:relative;overflow:hidden}
-.certicheck-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 15% 50%,rgba(30,58,138,.5) 0%,rgba(10,24,56,0) 60%);pointer-events:none}
-.certicheck-inner{display:grid;grid-template-columns:1fr 1.15fr;gap:80px;align-items:center;position:relative;z-index:2}
-.certicheck-left .cc-label{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#7eb3ff;margin-bottom:24px}
-.certicheck-left .cc-label::before{content:'';width:18px;height:1.5px;background:#7eb3ff;display:inline-block}
-.certicheck-left h2{font-size:44px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1.05;margin-bottom:22px}
-.certicheck-left p.cc-desc-main{font-size:15px;color:rgba(255,255,255,.7);line-height:1.7;margin-bottom:32px;max-width:480px}
-.certicheck-ctas{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:28px}
-.certicheck-cta{display:inline-flex;align-items:center;gap:9px;background:var(--blue);color:#fff;padding:14px 26px;border-radius:50px;font-weight:700;font-size:14px;text-decoration:none;transition:all .2s;border:1px solid var(--blue)}
-.certicheck-cta:hover{background:var(--blue-h);border-color:var(--blue-h);color:#fff;box-shadow:0 8px 24px rgba(0,102,255,.4);transform:translateY(-1px)}
-.certicheck-cta svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2.4}
-.certicheck-cta-ghost{display:inline-flex;align-items:center;gap:9px;background:transparent;color:#fff;padding:14px 24px;border-radius:50px;font-weight:600;font-size:14px;text-decoration:none;transition:all .2s;border:1px solid rgba(255,255,255,.2)}
-.certicheck-cta-ghost:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.35);color:#fff;transform:translateY(-1px)}
-.certicheck-cta-ghost svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;transition:transform .2s}
-.certicheck-cta-ghost:hover svg{transform:translateX(3px)}
-.cc-foot{display:inline-flex;align-items:center;gap:9px;font-size:13px;color:rgba(255,255,255,.55);font-weight:500}
-.cc-foot svg{width:16px;height:16px;stroke:#4ea3ff;fill:none;stroke-width:2.2;flex-shrink:0}
-.certicheck-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.cc-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);padding:26px 24px;display:flex;flex-direction:column;gap:12px;transition:all .2s;border-radius:16px;position:relative;text-decoration:none;color:inherit}
-.cc-card:hover{background:rgba(255,255,255,.06);border-color:rgba(126,179,255,.35);transform:translateY(-2px)}
-.cc-card .cc-ico{width:44px;height:44px;background:rgba(78,163,255,.12);border:1px solid rgba(78,163,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center}
-.cc-card .cc-ico svg{width:20px;height:20px;stroke:#7eb3ff;fill:none;stroke-width:1.8}
-.cc-card .cc-title{font-size:17px;font-weight:700;color:#fff;letter-spacing:-.3px;margin-top:4px}
-.cc-card .cc-desc{font-size:13.5px;color:rgba(255,255,255,.6);line-height:1.6;margin-top:-2px}
-.cc-card .cc-arrow{position:absolute;bottom:22px;right:22px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;opacity:.4;transition:opacity .2s,transform .2s}
-.cc-card:hover .cc-arrow{opacity:1;transform:translateX(3px)}
-.cc-card .cc-arrow svg{width:18px;height:18px;stroke:rgba(255,255,255,.7);fill:none;stroke-width:2}
+/* ============ JAK WYGLĄDA ZAKUP — purchase process section ============
+   Dark premium block. Five step-cards in one row on desktop, a benefits
+   strip below, and a primary CTA at the bottom. Real component. */
+.cs-jwz{position:relative;background:linear-gradient(180deg,#0a1a3c 0%,#11264f 100%);color:#fff;padding:60px 0;overflow:hidden;isolation:isolate}
+.cs-jwz::before{content:'';position:absolute;top:-30%;right:-8%;width:55%;height:120%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(0,102,255,.28) 0%,rgba(0,102,255,.08) 40%,rgba(0,102,255,0) 70%);pointer-events:none;z-index:0}
+.cs-jwz::after{content:'';position:absolute;bottom:-25%;left:-6%;width:50%;height:90%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(78,163,255,.18) 0%,rgba(78,163,255,.06) 45%,rgba(78,163,255,0) 70%);pointer-events:none;z-index:0}
+.cs-jwz > .container{position:relative;z-index:1}
+.cs-jwz-inner{max-width:1200px;margin:0 auto}
+.cs-jwz-head{text-align:center;margin-bottom:36px}
+.cs-jwz-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#7eb3ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:14px}
+.cs-jwz-kicker::before,.cs-jwz-kicker::after{content:'';width:24px;height:1.5px;background:#7eb3ff;border-radius:1px}
+.cs-jwz-head h2{font-size:34px;font-weight:900;color:#fff;letter-spacing:-.7px;line-height:1.12;margin:0 0 14px;max-width:720px;margin-left:auto;margin-right:auto}
+.cs-jwz-head p{font-size:15px;color:rgba(255,255,255,.7);line-height:1.6;margin:0;max-width:620px;margin-left:auto;margin-right:auto}
+
+.cs-jwz-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-bottom:32px}
+.cs-jwz-step{background:#fff;border-radius:14px;padding:22px 18px 20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);transition:transform .18s ease,box-shadow .18s ease;position:relative}
+.cs-jwz-step:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(0,0,0,.25)}
+.cs-jwz-step-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.cs-jwz-step-ico{flex-shrink:0;width:42px;height:42px;border-radius:11px;background:#eff6ff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-jwz-step-ico svg,.cs-jwz-step-ico i[data-lucide]{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8}
+.cs-jwz-step-num{font-size:13px;font-weight:800;color:#0066ff;background:#eff6ff;border-radius:6px;padding:3px 9px;letter-spacing:.4px}
+.cs-jwz-step h3{font-size:15px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:6px 0 2px;line-height:1.25}
+.cs-jwz-step p{font-size:12.5px;color:#4b5563;line-height:1.55;margin:0}
+
+.cs-jwz-benefits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:28px}
+.cs-jwz-benefit{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(126,179,255,.18);border-radius:12px;padding:12px 16px;color:#fff;font-size:13px;font-weight:600}
+.cs-jwz-benefit-ico{flex-shrink:0;width:30px;height:30px;border-radius:8px;background:rgba(78,163,255,.15);border:1px solid rgba(78,163,255,.3);color:#7eb3ff;display:flex;align-items:center;justify-content:center}
+.cs-jwz-benefit-ico svg,.cs-jwz-benefit-ico i[data-lucide]{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+
+.cs-jwz-cta-wrap{text-align:center}
+.cs-jwz-cta{display:inline-flex;align-items:center;gap:9px;background:#0066ff;color:#fff;padding:14px 32px;border-radius:50px;font-size:15px;font-weight:700;text-decoration:none;transition:all .18s ease;box-shadow:0 6px 20px rgba(0,102,255,.4)}
+.cs-jwz-cta:hover{background:#0052cc;box-shadow:0 8px 26px rgba(0,102,255,.5);transform:translateY(-1px);color:#fff}
+.cs-jwz-cta svg,.cs-jwz-cta i[data-lucide]{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2}
+
+/* ============ CERTICHECK SECTION (homepage, redesigned) ============ */
+.cs-cc{position:relative;background:#fafbff;padding:60px 0;overflow:hidden;isolation:isolate}
+.cs-cc::before{content:'';position:absolute;top:-30%;right:-10%;width:55%;height:120%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(0,102,255,.12) 0%,rgba(0,102,255,.04) 45%,rgba(0,102,255,0) 70%);pointer-events:none;z-index:0}
+.cs-cc > .container{position:relative;z-index:1}
+.cs-cc-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1.1fr;gap:60px;align-items:center}
+.cs-cc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:16px}
+.cs-cc-kicker::before{content:'';width:22px;height:1.5px;background:#0066ff;border-radius:1px}
+.cs-cc-left h2{font-size:42px;font-weight:900;color:#0a0a0a;letter-spacing:-.8px;line-height:1.08;margin:0 0 20px}
+.cs-cc-left p{font-size:15px;color:#475569;line-height:1.7;margin:0 0 26px;max-width:480px}
+.cs-cc-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.cs-cc-cta-primary{display:inline-flex;align-items:center;gap:8px;background:#0066ff;color:#fff;padding:13px 24px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;transition:all .18s ease;box-shadow:0 4px 16px rgba(0,102,255,.3)}
+.cs-cc-cta-primary:hover{background:#0052cc;box-shadow:0 6px 20px rgba(0,102,255,.42);transform:translateY(-1px);color:#fff}
+.cs-cc-cta-secondary{display:inline-flex;align-items:center;gap:6px;color:#0066ff;padding:13px 18px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid transparent;transition:color .15s,border-color .15s}
+.cs-cc-cta-secondary:hover{color:#0052cc;border-color:#dbeafe}
+.cs-cc-ctas svg,.cs-cc-ctas i[data-lucide]{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
+.cs-cc-info{display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid #dbeafe;border-radius:10px;padding:10px 14px;font-size:12.5px;color:#475569;line-height:1.5}
+.cs-cc-info-ico{flex-shrink:0;width:24px;height:24px;border-radius:6px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-cc-info-ico svg,.cs-cc-info-ico i[data-lucide]{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+
+.cs-cc-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cs-cc-card{position:relative;background:#fff;border:1px solid #eaf0fc;border-radius:16px;padding:22px 20px 24px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 6px 20px rgba(15,32,80,.05);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.cs-cc-card:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,.04),0 12px 32px rgba(15,32,80,.1);border-color:#cfdcf5}
+.cs-cc-card-ico{width:44px;height:44px;border-radius:50%;background:#eff6ff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.cs-cc-card-ico svg,.cs-cc-card-ico i[data-lucide]{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8}
+.cs-cc-card h3{font-size:15px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0 0 6px;line-height:1.25}
+.cs-cc-card p{font-size:13px;color:#4b5563;line-height:1.55;margin:0}
+.cs-cc-card-arrow{position:absolute;top:20px;right:20px;width:26px;height:26px;border-radius:50%;background:#fff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center;opacity:.55;transition:opacity .18s ease,transform .18s ease}
+.cs-cc-card-arrow svg,.cs-cc-card-arrow i[data-lucide]{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4}
+.cs-cc-card:hover .cs-cc-card-arrow{opacity:1;transform:translateX(2px) translateY(-2px)}
+
+@media(max-width:1024px){
+    .cs-jwz{padding:48px 0}
+    .cs-jwz-steps{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .cs-jwz-benefits{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .cs-jwz-head h2{font-size:28px}
+    .cs-cc{padding:48px 0}
+    .cs-cc-grid{grid-template-columns:1fr;gap:36px}
+    .cs-cc-left h2{font-size:32px}
+    .cs-cc-cards{grid-template-columns:1fr 1fr;gap:12px}
+}
+@media(max-width:600px){
+    .cs-jwz{padding:36px 0}
+    .cs-jwz-steps{grid-template-columns:1fr;gap:12px}
+    .cs-jwz-benefits{grid-template-columns:1fr;gap:8px}
+    .cs-jwz-head{margin-bottom:26px}
+    .cs-jwz-head h2{font-size:24px}
+    .cs-jwz-head p{font-size:13.5px}
+    .cs-jwz-cta{padding:12px 26px;font-size:14px}
+    .cs-cc{padding:36px 0}
+    .cs-cc-left h2{font-size:26px}
+    .cs-cc-left p{font-size:14px}
+    .cs-cc-cards{grid-template-columns:1fr}
+    .cs-cc-ctas{flex-direction:column;align-items:stretch}
+    .cs-cc-cta-primary,.cs-cc-cta-secondary{justify-content:center}
+}
 
 .featured-section{padding:60px 0 20px}
 .featured-section .section-inner{max-width:1200px;margin:0 auto;padding:0 24px}
@@ -183,17 +244,8 @@
     .lcard-img{width:180px;min-width:180px;height:160px}
     .lcard-price{font-size:20px}
     .lcard-price-col{min-width:130px}
-    /* CertiCheck section — tighter on tablet */
-    .certicheck-section{padding:56px 0}
-    .certicheck-inner{grid-template-columns:1fr;gap:40px;text-align:center}
-    .certicheck-left .cc-label{justify-content:center}
-    .certicheck-left h2{font-size:32px}
-    .certicheck-left p.cc-desc-main{max-width:520px;margin-left:auto;margin-right:auto}
-    .certicheck-ctas{justify-content:center}
-    .certicheck-cards{max-width:640px;margin:0 auto;text-align:left}
-    .cc-card{padding:22px 22px}
-    .cc-card .cc-title{font-size:15px}
-    .cc-card .cc-desc{font-size:13px;line-height:1.6}
+    /* CertiCheck + Jak wygląda zakup responsive rules live in the
+       main rule block above (cs-cc / cs-jwz @media queries). */
     .feature-strip-in{grid-template-columns:1fr 1fr;gap:20px}
     .section{padding:56px 0}
     .section-head h2{font-size:24px}
@@ -241,23 +293,8 @@
     .body-types-head p{font-size:13px}
     .body-type-card .bt-icon{height:62px}
     .body-type-card .bt-icon img{max-height:54px}
-    /* CertiCheck section — COMPACT on mobile */
-    .certicheck-section{padding:48px 0}
-    .certicheck-inner{gap:28px}
-    .certicheck-left .cc-label{font-size:10.5px;letter-spacing:1.5px;margin-bottom:14px}
-    .certicheck-left h2{font-size:26px;margin-bottom:14px}
-    .certicheck-left p.cc-desc-main{font-size:14px;line-height:1.6;margin-bottom:24px}
-    .certicheck-ctas{gap:10px}
-    .certicheck-cta,.certicheck-cta-ghost{padding:12px 22px;font-size:13px}
-    .cc-foot{font-size:12px}
-    .certicheck-cards{grid-template-columns:1fr;gap:10px}
-    .cc-card{padding:20px 20px;gap:10px;border-radius:14px}
-    .cc-card .cc-ico{width:38px;height:38px}
-    .cc-card .cc-ico svg{width:18px;height:18px}
-    .cc-card .cc-title{font-size:15px}
-    .cc-card .cc-desc{font-size:13px;line-height:1.55}
-    .cc-card .cc-arrow{bottom:18px;right:18px;width:18px;height:18px}
-    .cc-card .cc-arrow svg{width:16px;height:16px}
+    /* CertiCheck + Jak wygląda zakup mobile rules already covered by
+       the cs-cc / cs-jwz @media(max-width:600px) block above. */
     .feature-strip-in{grid-template-columns:1fr}
     .cat-cards{grid-template-columns:1fr}
     /* Price — even MORE prominent on small mobile */
@@ -423,55 +460,108 @@
 </section>
 @endif
 
-<section class="certicheck-section" id="certicheck">
+<!-- ============ JAK WYGLĄDA ZAKUP — purchase process section ============ -->
+<section class="cs-jwz" id="jak-wyglada-zakup">
     <div class="container">
-        <div class="certicheck-inner">
-            <div class="certicheck-left">
-                <p class="cc-label">CertiCheck — dla wybranych aut</p>
-                <h2>Wiesz więcej<br>przed przyjazdem</h2>
-                <p class="cc-desc-main">Przy wybranych autach przygotowujemy rozszerzony opis CertiCheck z dodatkowymi informacjami o stanie pojazdu, lakierze, śladach użytkowania i dokumentach. Dzięki temu łatwiej oceniasz auto jeszcze przed wizytą.</p>
-                <div class="certicheck-ctas">
-                    <a href="{{ route('catalog') }}" class="certicheck-cta">
-                        <x-icon name="search" size="16"/>
-                        Zobacz auta z CertiCheck
-                    </a>
-                    <a href="{{ route('about') }}" class="certicheck-cta-ghost">
-                        Jak działa CertiCheck?
-                        <x-icon name="arrow-right" size="14"/>
-                    </a>
+    <div class="cs-jwz-inner">
+        <div class="cs-jwz-head">
+            <div class="cs-jwz-kicker">Jak wygląda zakup</div>
+            <h2>Prosty proces. Więcej spokoju przed zakupem.</h2>
+            <p>Od wyboru samochodu do odbioru auta prowadzimy Cię krok po kroku — jasno, konkretnie i bez zbędnych komplikacji.</p>
+        </div>
+
+        <div class="cs-jwz-steps">
+            @php
+                $jwzSteps = [
+                    ['search',         '01', 'Wybierasz samochód',           'Przeglądasz ofertę, zdjęcia, dane techniczne, wyposażenie oraz opis stanu auta. Przy wybranych pojazdach dostępny jest dodatkowy raport CertiCheck.'],
+                    ['message-square', '02', 'Kontaktujesz się z nami',      'Potwierdzamy dostępność auta, odpowiadamy na pytania i umawiamy dogodny termin oględzin.'],
+                    ['clipboard-check','03', 'Oglądasz i sprawdzasz auto',   'Na miejscu możesz dokładnie obejrzeć samochód, odbyć jazdę próbną oraz sprawdzić auto przed zakupem — na stacji diagnostycznej lub w wybranym serwisie.'],
+                    ['file-text',      '04', 'Finalizujesz zakup',           'Wyjaśniamy formalności, dokumenty oraz koszty. Wiesz, co jest w cenie auta i co pozostaje po stronie kupującego.'],
+                    ['truck',          '05', 'Możliwy transport auta',       'Po wcześniejszym ustaleniu warunków i kosztów możemy przywieźć samochód pod wskazany adres.'],
+                ];
+            @endphp
+            @foreach($jwzSteps as [$ico, $num, $title, $desc])
+                <div class="cs-jwz-step">
+                    <div class="cs-jwz-step-head">
+                        <span class="cs-jwz-step-ico" aria-hidden="true"><x-icon :name="$ico" size="20" :strokeWidth="1.8"/></span>
+                        <span class="cs-jwz-step-num">{{ $num }}</span>
+                    </div>
+                    <h3>{{ $title }}</h3>
+                    <p>{{ $desc }}</p>
                 </div>
-                <div class="cc-foot">
-                    <x-icon name="shield-check" size="14"/>
-                    CertiCheck dotyczy wybranych pojazdów w naszej ofercie.
+            @endforeach
+        </div>
+
+        <div class="cs-jwz-benefits">
+            @php
+                $jwzBenefits = [
+                    ['shield-check', 'Jasne zasady'],
+                    ['wallet',       'Brak ukrytych kosztów'],
+                    ['search',       'Możliwość sprawdzenia auta'],
+                    ['phone-call',   'Jesteśmy do Twojej dyspozycji'],
+                ];
+            @endphp
+            @foreach($jwzBenefits as [$ico, $label])
+                <div class="cs-jwz-benefit">
+                    <span class="cs-jwz-benefit-ico" aria-hidden="true"><x-icon :name="$ico" size="15" :strokeWidth="2"/></span>
+                    {{ $label }}
                 </div>
+            @endforeach
+        </div>
+
+        <div class="cs-jwz-cta-wrap">
+            <a class="cs-jwz-cta" href="tel:+48515440623">
+                <x-icon name="phone" size="17" :strokeWidth="2.2"/>
+                Zadzwoń i zapytaj o auto
+            </a>
+        </div>
+    </div>
+    </div>
+</section>
+
+<!-- ============ CERTICHECK SECTION (redesigned) ============ -->
+<section class="cs-cc" id="certicheck">
+    <div class="container">
+    <div class="cs-cc-grid">
+        <div class="cs-cc-left">
+            <div class="cs-cc-kicker">CertiCheck — dla wybranych aut</div>
+            <h2>Wiesz więcej<br>przed przyjazdem</h2>
+            <p>Przy wybranych autach przygotowujemy rozszerzony opis CertiCheck z dodatkowymi informacjami o stanie pojazdu, lakierze, śladach użytkowania i dokumentach. Dzięki temu łatwiej oceniasz auto jeszcze przed wizytą.</p>
+            <div class="cs-cc-ctas">
+                <a class="cs-cc-cta-primary" href="{{ route('catalog') }}">
+                    <x-icon name="search" size="15" :strokeWidth="2.2"/>
+                    Zobacz auta z CertiCheck
+                </a>
+                <a class="cs-cc-cta-secondary" href="{{ route('about') }}">
+                    Jak działa CertiCheck?
+                    <x-icon name="arrow-right" size="14" :strokeWidth="2.2"/>
+                </a>
             </div>
-            <div class="certicheck-cards">
-                <a href="{{ route('catalog') }}" class="cc-card">
-                    <div class="cc-ico"><x-icon name="paintbrush" size="22"/></div>
-                    <div class="cc-title">Pomiary lakieru</div>
-                    <div class="cc-desc">Wykryjemy ponowne malowania i grubsze powłoki w punktach kontrolnych.</div>
-                    <div class="cc-arrow"><x-icon name="chevron-right" size="16"/></div>
-                </a>
-                <a href="{{ route('catalog') }}" class="cc-card">
-                    <div class="cc-ico"><x-icon name="wrench" size="22"/></div>
-                    <div class="cc-title">Stan techniczny</div>
-                    <div class="cc-desc">Sprawdzamy kluczowe elementy mechaniczne i eksploatacyjne pojazdu.</div>
-                    <div class="cc-arrow"><x-icon name="chevron-right" size="16"/></div>
-                </a>
-                <a href="{{ route('catalog') }}" class="cc-card">
-                    <div class="cc-ico"><x-icon name="search" size="22"/></div>
-                    <div class="cc-title">Ślady użytkowania</div>
-                    <div class="cc-desc">Wskazujemy widoczne ślady eksploatacji i ich dokładną lokalizację.</div>
-                    <div class="cc-arrow"><x-icon name="chevron-right" size="16"/></div>
-                </a>
-                <a href="{{ route('catalog') }}" class="cc-card">
-                    <div class="cc-ico"><x-icon name="file-text" size="22"/></div>
-                    <div class="cc-title">Raport PDF</div>
-                    <div class="cc-desc">Czytelne podsumowanie ze zdjęciami i danymi do pobrania.</div>
-                    <div class="cc-arrow"><x-icon name="chevron-right" size="16"/></div>
-                </a>
+            <div class="cs-cc-info">
+                <span class="cs-cc-info-ico" aria-hidden="true"><x-icon name="shield-check" size="13" :strokeWidth="2"/></span>
+                CertiCheck dotyczy wybranych pojazdów w naszej ofercie.
             </div>
         </div>
+
+        <div class="cs-cc-cards">
+            @php
+                $ccCards = [
+                    ['scan-line',     'Pomiary lakieru',   'Wykryjemy ponowne malowania i grubsze powłoki w punktach kontrolnych.'],
+                    ['wrench',        'Stan techniczny',   'Sprawdzamy kluczowe elementy mechaniczne i eksploatacyjne pojazdu.'],
+                    ['search',        'Ślady użytkowania', 'Wskazujemy widoczne ślady eksploatacji i ich dokładną lokalizację.'],
+                    ['file-text',     'Raport PDF',        'Czytelne podsumowanie ze zdjęciami i danymi do pobrania.'],
+                ];
+            @endphp
+            @foreach($ccCards as [$ico, $title, $desc])
+                <div class="cs-cc-card">
+                    <div class="cs-cc-card-ico" aria-hidden="true"><x-icon :name="$ico" size="20" :strokeWidth="1.8"/></div>
+                    <h3>{{ $title }}</h3>
+                    <p>{{ $desc }}</p>
+                    <span class="cs-cc-card-arrow" aria-hidden="true"><x-icon name="arrow-up-right" size="13" :strokeWidth="2.4"/></span>
+                </div>
+            @endforeach
+        </div>
+    </div>
     </div>
 </section>
 
