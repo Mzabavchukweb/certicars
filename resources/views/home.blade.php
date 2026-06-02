@@ -128,7 +128,7 @@
 .cs-cc-cta-secondary{display:inline-flex;align-items:center;gap:6px;color:#0066ff;padding:13px 18px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid transparent;transition:color .15s,border-color .15s}
 .cs-cc-cta-secondary:hover{color:#0052cc;border-color:#dbeafe}
 .cs-cc-ctas svg,.cs-cc-ctas i[data-lucide]{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
-.cs-cc-info{display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid #dbeafe;border-radius:10px;padding:10px 14px;font-size:12.5px;color:#475569;line-height:1.5}
+.cs-cc-info{display:flex;align-items:flex-start;gap:10px;background:#fff;border:1px solid #dbeafe;border-radius:10px;padding:12px 14px;font-size:12.5px;color:#475569;line-height:1.55;max-width:520px}
 .cs-cc-info-ico{flex-shrink:0;width:24px;height:24px;border-radius:6px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
 .cs-cc-info-ico svg,.cs-cc-info-ico i[data-lucide]{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
 
@@ -526,7 +526,7 @@
         <div class="cs-cc-left">
             <div class="cs-cc-kicker">CertiCheck — dla wybranych aut</div>
             <h2>Wiesz więcej<br>przed przyjazdem</h2>
-            <p>Przy wybranych autach przygotowujemy rozszerzony opis CertiCheck z dodatkowymi informacjami o stanie pojazdu, lakierze, śladach użytkowania i dokumentach. Dzięki temu łatwiej oceniasz auto jeszcze przed wizytą.</p>
+            <p>Przy wybranych autach przygotowujemy rozszerzony opis CertiCheck z dodatkowymi informacjami o stanie pojazdu, lakierze, śladach użytkowania i dokumentach. Dzięki temu łatwiej ocenisz auto jeszcze przed wizytą.</p>
             <div class="cs-cc-ctas">
                 <a class="cs-cc-cta-primary" href="{{ route('catalog') }}">
                     <x-icon name="search" size="15" :strokeWidth="2.2"/>
@@ -539,16 +539,16 @@
             </div>
             <div class="cs-cc-info">
                 <span class="cs-cc-info-ico" aria-hidden="true"><x-icon name="shield-check" size="13" :strokeWidth="2"/></span>
-                CertiCheck dotyczy wybranych pojazdów w naszej ofercie.
+                CertiCheck to wewnętrzny standard kontroli jakości CertiCars, a nie opinia rzeczoznawcy. Opis dotyczy stanu pojazdu na dzień oględzin i obejmuje elementy możliwe do oceny bez specjalistycznego demontażu podzespołów.
             </div>
         </div>
 
         <div class="cs-cc-cards">
             @php
                 $ccCards = [
-                    ['scan-line',     'Pomiary lakieru',   'Wykryjemy ponowne malowania i grubsze powłoki w punktach kontrolnych.'],
-                    ['wrench',        'Stan techniczny',   'Sprawdzamy kluczowe elementy mechaniczne i eksploatacyjne pojazdu.'],
-                    ['search',        'Ślady użytkowania', 'Wskazujemy widoczne ślady eksploatacji i ich dokładną lokalizację.'],
+                    ['scan-line',     'Pomiary lakieru',   'Wskazujemy pomiary i ewentualne różnice grubości powłoki w punktach kontrolnych.'],
+                    ['wrench',        'Stan techniczny',   'Opisujemy widoczne elementy techniczne i podstawowe obserwacje z oględzin pojazdu.'],
+                    ['search',        'Ślady użytkowania', 'Pokazujemy widoczne ślady eksploatacji i ich lokalizację.'],
                     ['file-text',     'Raport PDF',        'Czytelne podsumowanie ze zdjęciami i danymi do pobrania.'],
                 ];
             @endphp
