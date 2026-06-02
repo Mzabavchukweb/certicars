@@ -192,44 +192,21 @@
         .footer-contact-value{font-size:13.5px;font-weight:700;color:#fff;line-height:1.35;word-break:break-word;transition:color .15s}
         a.footer-contact-value:hover{color:#7eb3ff}
 
-        /* Map row — a separate full-width band inside the footer, sitting
-           between the .footer-in column grid and the .footer-btm legal
-           bar. Same 1200 px content rail as the rest of the footer; the
-           card itself fills the available width so the location reads
-           as a proper map preview, not a thumbnail trapped in a column. */
+        /* Map row — full-width band inside the footer, sitting between
+           the .footer-in column grid and the .footer-btm legal bar.
+           The card itself uses a real OpenStreetMap embed iframe so
+           the map fills the entire card edge-to-edge (no dark side
+           gutters from a 256-px tile mosaic) and the pin + popup come
+           from the live OSM marker, not a CSS overlay. */
         .footer-map-row{max-width:1200px;margin:0 auto;padding:0 24px 32px}
-        .footer-map-card{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(78,163,255,.28);box-shadow:0 8px 28px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.05);height:260px;background:linear-gradient(135deg,#11264f 0%,#0a1a3c 100%)}
-        .footer-map-tiles{position:absolute;inset:0;overflow:hidden;filter:brightness(.76) saturate(1.18) hue-rotate(195deg) contrast(1.06)}
-        .footer-map-tile{position:absolute;width:256px;height:256px;display:block;pointer-events:none}
-        /* 2×2 z=15 mosaic — pin pixel (221.8, 266) inside the grid. Tile
-           origin offset = `calc(50% - 222 px)` horizontally and
-           `calc(50% - 187 px)` vertically (relative to card centre) so
-           the pin lands at exactly 50%/50% regardless of card width. */
-        .footer-map-tile.nw,.footer-map-tile.ne{top:calc(50% - 187px)}
-        .footer-map-tile.sw,.footer-map-tile.se{top:calc(50% + 69px)}
-        .footer-map-tile.nw,.footer-map-tile.sw{left:calc(50% - 222px)}
-        .footer-map-tile.ne,.footer-map-tile.se{left:calc(50% + 34px)}
-        /* Very subtle vignette + soft bottom shade — keeps the chip
-           readable but never feels like a heavy overlay or marketing
-           plate covering the map. */
-        .footer-map-overlay{position:absolute;inset:0;pointer-events:none;background:
-            radial-gradient(ellipse 75% 80% at 50% 50%,rgba(13,27,62,0) 0%,rgba(13,27,62,.18) 100%),
-            linear-gradient(180deg,rgba(13,27,62,.04) 0%,rgba(13,27,62,.26) 100%)}
-        .footer-map-pin{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;display:flex;align-items:center;justify-content:center}
-        .footer-map-pin::before{content:'';position:absolute;width:72px;height:72px;border-radius:50%;background:radial-gradient(circle,rgba(0,102,255,.55) 0%,rgba(0,102,255,0) 70%);animation:footerPinPulse 2.2s ease-in-out infinite}
-        .footer-map-pin svg{width:42px;height:42px;color:#0066ff;filter:drop-shadow(0 6px 14px rgba(0,102,255,.7));position:relative;z-index:1}
-        @keyframes footerPinPulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.45);opacity:.15}}
-
-        /* Address chip — elegant minimal anchor in the bottom-left of
-           the map. Real link to Google Maps directions; no oversized
-           CTA button blocking the map. */
-        .footer-map-addr{position:absolute;left:18px;bottom:18px;z-index:3;display:inline-flex;align-items:center;gap:10px;background:rgba(10,26,60,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(126,179,255,.28);border-radius:12px;padding:10px 14px;color:#fff;text-decoration:none;transition:background .15s,border-color .15s,transform .15s}
-        .footer-map-addr:hover{background:rgba(20,40,90,.85);border-color:rgba(126,179,255,.55);color:#fff;transform:translateY(-1px)}
-        .footer-map-addr-ico{flex-shrink:0;width:28px;height:28px;border-radius:8px;background:rgba(0,102,255,.22);border:1px solid rgba(78,163,255,.42);color:#7eb3ff;display:flex;align-items:center;justify-content:center}
-        .footer-map-addr-ico svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
-        .footer-map-addr-text{display:flex;flex-direction:column;gap:1px;min-width:0;line-height:1.2}
-        .footer-map-addr-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.5px;text-transform:uppercase}
-        .footer-map-addr-value{font-size:13.5px;font-weight:700;color:#fff;letter-spacing:-.1px;white-space:nowrap}
+        .footer-map-card{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(78,163,255,.28);box-shadow:0 8px 28px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.05);height:300px;background:#0a1a3c}
+        .footer-map-iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;color-scheme:light}
+        /* Subtle gradient frame so the embed integrates with the dark
+           footer chrome at the top and bottom edges. pointer-events:
+           none means OSM controls underneath still work. */
+        .footer-map-frame-shade{position:absolute;inset:0;pointer-events:none;background:
+            linear-gradient(180deg,rgba(13,27,62,.18) 0%,rgba(13,27,62,0) 12%,rgba(13,27,62,0) 88%,rgba(13,27,62,.18) 100%);
+            border-radius:inherit}
 
         /* Col 3 & 4 — Nav + Info lists with blue chevron bullets. */
         .footer-nav-list li{padding:0;margin:0}
@@ -259,7 +236,7 @@
             .footer-top{padding:36px 24px 20px}
             .footer-in{grid-template-columns:1fr 1fr;gap:36px;padding:30px 24px 24px}
             .footer-map-row{padding:0 24px 28px}
-            .footer-map-card{height:220px}
+            .footer-map-card{height:260px}
             .footer-btm{grid-template-columns:1fr;gap:10px;text-align:center;padding:18px 24px 22px}
             .footer-btm-left,.footer-btm-mid{justify-self:center;justify-content:center}
             .footer-btm-mid{white-space:normal;max-width:560px}
@@ -272,13 +249,7 @@
             .footer-in{grid-template-columns:1fr;gap:30px;padding:24px 20px 20px}
             .footer-brand p{max-width:none}
             .footer-map-row{padding:0 20px 24px}
-            .footer-map-card{height:200px;border-radius:14px}
-            .footer-map-addr{left:12px;bottom:12px;padding:8px 11px;gap:8px}
-            .footer-map-addr-ico{width:24px;height:24px}
-            .footer-map-addr-ico svg{width:12px;height:12px}
-            .footer-map-addr-label{font-size:9.5px}
-            .footer-map-addr-value{font-size:12.5px}
-            .footer-map-pin svg{width:36px;height:36px}
+            .footer-map-card{height:220px;border-radius:14px}
             .footer-btm{padding:16px 20px 20px}
         }
 
@@ -575,33 +546,24 @@
             </div>
         </div>
 
-        {{-- Wide map preview row. 2×2 OpenStreetMap tile mosaic centred
-             on the CertiCars pin (53.3502947 N, 14.9399374 E). Spans
-             the full 1200 px container, replacing the old narrow
-             thumbnail that lived in the Kontakt column. An elegant
-             address chip (Lipnik) anchors the bottom-left and links to
-             Google Maps directions — no oversized CTA button blocking
-             the map. Lazy + async tile loads; CSS background gradient
-             is the visible fallback if any tile fails. --}}
+        {{-- Wide map preview row. Live OpenStreetMap embed iframe at the
+             CertiCars pin (53.3502947 N, 14.9399374 E from the Google
+             Maps share link). The iframe paints the entire card edge-
+             to-edge — no 256-px tile mosaic that left dark side gutters
+             on wide screens — and OSM ships the native pin marker plus
+             a clickable popup showing the address. CSP frame-src has
+             been extended to include openstreetmap.org. --}}
         <div class="footer-map-row">
             <div class="footer-map-card">
-                <div class="footer-map-tiles" aria-hidden="true">
-                    <img class="footer-map-tile nw" src="https://tile.openstreetmap.org/15/17743/10620.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
-                    <img class="footer-map-tile ne" src="https://tile.openstreetmap.org/15/17744/10620.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
-                    <img class="footer-map-tile sw" src="https://tile.openstreetmap.org/15/17743/10621.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
-                    <img class="footer-map-tile se" src="https://tile.openstreetmap.org/15/17744/10621.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
-                </div>
-                <div class="footer-map-overlay" aria-hidden="true"></div>
-                <div class="footer-map-pin" aria-hidden="true">
-                    <x-icon name="map-pin" size="42" :strokeWidth="2"/>
-                </div>
-                <a class="footer-map-addr" href="https://www.google.com/maps/dir/?api=1&destination=53.3502947,14.9399374" target="_blank" rel="noopener" aria-label="Otwórz mapę: Lipnik">
-                    <span class="footer-map-addr-ico" aria-hidden="true"><x-icon name="map-pin" size="14" :strokeWidth="2"/></span>
-                    <span class="footer-map-addr-text">
-                        <span class="footer-map-addr-label">Nasza lokalizacja</span>
-                        <span class="footer-map-addr-value">Lipnik</span>
-                    </span>
-                </a>
+                <iframe
+                    class="footer-map-iframe"
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=14.910%2C53.340%2C14.970%2C53.360&layer=mapnik&marker=53.3502947%2C14.9399374"
+                    title="Mapa: CertiCars — Lipnik"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    aria-label="Mapa lokalizacji CertiCars: Lipnik (53.35°N, 14.94°E)"
+                ></iframe>
+                <div class="footer-map-frame-shade" aria-hidden="true"></div>
             </div>
         </div>
 
