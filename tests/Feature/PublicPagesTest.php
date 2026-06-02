@@ -303,12 +303,16 @@ class PublicPagesTest extends TestCase
 
     public function test_car_detail_hides_equipment_section_when_empty(): void
     {
+        // The original assertion ("Not to contain: pozycji") collided with the
+        // word "dyspozycji" in the new "Jak wygląda zakup" benefits strip
+        // (Jesteśmy do Twojej dyspozycji). Switch to a marker that only the
+        // equipment section ever emits — the cs-equip-section CSS class.
         $car = $this->activeCar();
         $car->update(['equipment' => null]);
 
         $this->get('/samochody/'.$car->slug)
             ->assertOk()
-            ->assertDontSee('pozycji');
+            ->assertDontSee('Najważniejsze elementy wyposażenia');
     }
 
     public function test_inquiry_route_stores_inquiry_and_returns_json(): void
