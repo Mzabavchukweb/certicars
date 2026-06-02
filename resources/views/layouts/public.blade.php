@@ -194,44 +194,40 @@
 
         /* Map row — full-width band inside the footer, between the
            .footer-in column grid and the .footer-btm legal bar. Uses
-           a live Google Maps Embed iframe when GOOGLE_MAPS_API_KEY
-           is set in env; otherwise a styled fallback address card with
-           the same dimensions is shown. The "Nawiguj" button sits in
-           the top-right corner of the map and works in both modes
-           (it links to a no-key directions URL on maps.google.com). */
+           a 2×2 OpenStreetMap tile mosaic loaded as <img> tags. No
+           iframe, no API key, no CSP changes — tiles load over
+           img-src 'self' data: blob: https: which is already allowed.
+           A bold blue pin marker with attached "CertiCars" badge sits
+           dead-centre over the pinpoint. */
         .footer-map-row{max-width:1200px;margin:0 auto;padding:0 24px 32px}
-        .footer-map-card{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(78,163,255,.28);box-shadow:0 8px 28px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.05);height:320px;background:#0a1a3c}
-        .footer-map-iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;color-scheme:light}
-        /* Subtle dark gradient bookend at the top + bottom edges so the
-           map integrates with the dark footer chrome without darkening
-           the map content itself. pointer-events:none keeps Google
-           Maps controls fully usable underneath. */
-        .footer-map-frame-shade{position:absolute;inset:0;pointer-events:none;background:
-            linear-gradient(180deg,rgba(13,27,62,.22) 0%,rgba(13,27,62,0) 14%,rgba(13,27,62,0) 86%,rgba(13,27,62,.22) 100%);
-            border-radius:inherit}
+        .footer-map-card{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(78,163,255,.28);box-shadow:0 8px 28px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.05);height:300px;background:linear-gradient(135deg,#11264f 0%,#0a1a3c 100%)}
+        .footer-map-tiles{position:absolute;inset:0;overflow:hidden}
+        .footer-map-tile{position:absolute;width:256px;height:256px;display:block;pointer-events:none}
+        /* 2×2 z=15 mosaic — pin pixel (221.8, 266) inside the grid.
+           Tile origin offset = `calc(50% - 222 px)` horizontally and
+           `calc(50% - 187 px)` vertically (relative to card centre) so
+           the marker overlay's natural centre (50%/50%) lands on the
+           pinpoint at any responsive card width. */
+        .footer-map-tile.nw,.footer-map-tile.ne{top:calc(50% - 187px)}
+        .footer-map-tile.sw,.footer-map-tile.se{top:calc(50% + 69px)}
+        .footer-map-tile.nw,.footer-map-tile.sw{left:calc(50% - 222px)}
+        .footer-map-tile.ne,.footer-map-tile.se{left:calc(50% + 34px)}
+        /* Very subtle vignette so the marker pops without darkening
+           the map content. */
+        .footer-map-overlay{position:absolute;inset:0;pointer-events:none;background:
+            radial-gradient(ellipse 75% 80% at 50% 50%,rgba(13,27,62,0) 0%,rgba(13,27,62,.18) 100%)}
 
-        /* Floating "Nawiguj" button. Sits top-right of the map; small
-           enough not to cover meaningful map content. Always works
-           because the directions URL doesn't need an API key. */
-        .footer-map-nav{position:absolute;top:14px;right:14px;z-index:3;display:inline-flex;align-items:center;gap:7px;background:#0066ff;color:#fff;font-size:13px;font-weight:700;padding:9px 16px;border-radius:50px;text-decoration:none;box-shadow:0 4px 14px rgba(0,102,255,.4),0 1px 3px rgba(0,0,0,.18);transition:background .15s,transform .15s,box-shadow .15s}
-        .footer-map-nav:hover{background:#0052cc;color:#fff;transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,102,255,.55),0 1px 3px rgba(0,0,0,.2)}
-        .footer-map-nav:focus-visible{outline:2px solid #fff;outline-offset:2px}
-        .footer-map-nav svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;flex-shrink:0}
-
-        /* Fallback address card — shown when GOOGLE_MAPS_API_KEY is
-           not configured. Keeps the same card dimensions so the
-           footer never collapses; admin can wire up the real map
-           later by adding the env var. */
-        .footer-map-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:18px;padding:24px 32px;text-align:left;background:
-            radial-gradient(ellipse 70% 100% at 25% 50%,rgba(0,102,255,.16) 0%,rgba(0,102,255,0) 60%),
-            linear-gradient(135deg,#0d1f48 0%,#0a1a3c 70%);
-            color:#fff}
-        .footer-map-fallback-ico{flex-shrink:0;width:64px;height:64px;border-radius:50%;background:rgba(0,102,255,.18);border:1px solid rgba(78,163,255,.42);color:#7eb3ff;display:flex;align-items:center;justify-content:center}
-        .footer-map-fallback-ico svg{width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:1.8}
-        .footer-map-fallback-text{display:flex;flex-direction:column;gap:4px;max-width:520px}
-        .footer-map-fallback-label{font-size:11px;font-weight:800;color:#7eb3ff;text-transform:uppercase;letter-spacing:1.4px}
-        .footer-map-fallback-value{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.4px;line-height:1.2}
-        .footer-map-fallback-coords{font-size:12.5px;color:rgba(255,255,255,.55);font-variant-numeric:tabular-nums;margin-top:2px}
+        /* CertiCars marker — drop-pin + speech-bubble label. The pin
+           sits exactly on the pinpoint; the "CertiCars" badge hangs
+           below the pin like a Google-Maps label, joined by a small
+           tail triangle. */
+        .footer-map-marker{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none}
+        .footer-map-marker-pin{position:relative;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 6px 14px rgba(0,102,255,.7))}
+        .footer-map-marker-pin::before{content:'';position:absolute;width:76px;height:76px;border-radius:50%;background:radial-gradient(circle,rgba(0,102,255,.55) 0%,rgba(0,102,255,0) 70%);animation:footerPinPulse 2.2s ease-in-out infinite}
+        .footer-map-marker-pin svg{width:46px;height:46px;color:#0066ff;position:relative;z-index:1}
+        .footer-map-marker-label{position:relative;background:#0066ff;color:#fff;font-size:13px;font-weight:800;letter-spacing:.1px;padding:8px 16px;border-radius:8px;box-shadow:0 6px 18px rgba(0,102,255,.5),0 1px 3px rgba(0,0,0,.22);white-space:nowrap;line-height:1}
+        .footer-map-marker-label::before{content:'';position:absolute;left:50%;top:-5px;transform:translateX(-50%) rotate(45deg);width:10px;height:10px;background:#0066ff;border-radius:1px}
+        @keyframes footerPinPulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.45);opacity:.15}}
 
         /* Col 3 & 4 — Nav + Info lists with blue chevron bullets. */
         .footer-nav-list li{padding:0;margin:0}
@@ -261,9 +257,7 @@
             .footer-top{padding:36px 24px 20px}
             .footer-in{grid-template-columns:1fr 1fr;gap:36px;padding:30px 24px 24px}
             .footer-map-row{padding:0 24px 28px}
-            .footer-map-card{height:280px}
-            .footer-map-fallback{padding:20px 24px;gap:14px}
-            .footer-map-fallback-value{font-size:20px}
+            .footer-map-card{height:260px}
             .footer-btm{grid-template-columns:1fr;gap:10px;text-align:center;padding:18px 24px 22px}
             .footer-btm-left,.footer-btm-mid{justify-self:center;justify-content:center}
             .footer-btm-mid{white-space:normal;max-width:560px}
@@ -276,13 +270,9 @@
             .footer-in{grid-template-columns:1fr;gap:30px;padding:24px 20px 20px}
             .footer-brand p{max-width:none}
             .footer-map-row{padding:0 20px 24px}
-            .footer-map-card{height:240px;border-radius:14px}
-            .footer-map-fallback{flex-direction:column;text-align:center;gap:12px;padding:20px}
-            .footer-map-fallback-text{max-width:none;align-items:center}
-            .footer-map-fallback-ico{width:54px;height:54px}
-            .footer-map-fallback-ico svg{width:26px;height:26px}
-            .footer-map-fallback-value{font-size:18px}
-            .footer-map-nav{top:12px;right:12px;padding:8px 14px;font-size:12.5px}
+            .footer-map-card{height:220px;border-radius:14px}
+            .footer-map-marker-pin svg{width:40px;height:40px}
+            .footer-map-marker-label{font-size:12px;padding:7px 13px}
             .footer-btm{padding:16px 20px 20px}
         }
 
@@ -579,52 +569,27 @@
             </div>
         </div>
 
-        {{-- Wide Google Maps location row. When GOOGLE_MAPS_API_KEY is
-             set in env we render the official Maps Embed API iframe
-             (`/maps/embed/v1/place`) — strong zoom, native pin, native
-             address tooltip. Without a key we fall back to a styled
-             address card so the footer never collapses; admin can
-             wire up the real map later by setting the env var.
-             The "Nawiguj" button works in both modes — it points at
-             the no-key `maps/dir/?api=1&destination=...` URL which
-             opens in Google Maps app on mobile and a new tab on
-             desktop. --}}
-        @php
-            $gmLat   = config('services.google_maps.lat', '53.3502947');
-            $gmLng   = config('services.google_maps.lng', '14.9399374');
-            $gmZoom  = (int) config('services.google_maps.zoom', 17);
-            $gmKey   = config('services.google_maps.api_key');
-            $gmLabel = config('services.google_maps.label', 'Lipnik');
-            $gmNavUrl = 'https://www.google.com/maps/dir/?api=1&destination=' . $gmLat . ',' . $gmLng;
-        @endphp
+        {{-- Wide location row. 2×2 OpenStreetMap tile mosaic centred
+             on the CertiCars pin (53.3502947 N, 14.9399374 E). Tiles
+             load as plain <img> tags over img-src 'https:' — no
+             iframe, no API key, no CSP changes, no env vars. A bold
+             blue drop-pin sits dead-centre with a "CertiCars" badge
+             hanging below it like a Google-Maps label. --}}
         <div class="footer-map-row">
             <div class="footer-map-card">
-                @if($gmKey)
-                    <iframe
-                        class="footer-map-iframe"
-                        src="https://www.google.com/maps/embed/v1/place?key={{ $gmKey }}&q={{ $gmLat }},{{ $gmLng }}&zoom={{ $gmZoom }}&maptype=roadmap&language=pl&region=PL"
-                        title="Mapa: CertiCars — {{ $gmLabel }}"
-                        loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade"
-                        allowfullscreen
-                        aria-label="Mapa lokalizacji CertiCars: {{ $gmLabel }}"
-                    ></iframe>
-                @else
-                    {{-- No GOOGLE_MAPS_API_KEY → friendly fallback card. --}}
-                    <div class="footer-map-fallback" aria-label="Lokalizacja: {{ $gmLabel }}">
-                        <span class="footer-map-fallback-ico" aria-hidden="true"><x-icon name="map-pin" size="30" :strokeWidth="1.8"/></span>
-                        <div class="footer-map-fallback-text">
-                            <span class="footer-map-fallback-label">Nasza lokalizacja</span>
-                            <span class="footer-map-fallback-value">{{ $gmLabel }}, Polska</span>
-                            <span class="footer-map-fallback-coords">{{ number_format((float) $gmLat, 4, '.', '') }}° N · {{ number_format((float) $gmLng, 4, '.', '') }}° E</span>
-                        </div>
-                    </div>
-                @endif
-                <div class="footer-map-frame-shade" aria-hidden="true"></div>
-                <a class="footer-map-nav" href="{{ $gmNavUrl }}" target="_blank" rel="noopener" aria-label="Otwórz nawigację Google Maps do {{ $gmLabel }}">
-                    <x-icon name="navigation" size="14" :strokeWidth="2.2"/>
-                    Nawiguj
-                </a>
+                <div class="footer-map-tiles" aria-hidden="true">
+                    <img class="footer-map-tile nw" src="https://tile.openstreetmap.org/15/17743/10620.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
+                    <img class="footer-map-tile ne" src="https://tile.openstreetmap.org/15/17744/10620.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
+                    <img class="footer-map-tile sw" src="https://tile.openstreetmap.org/15/17743/10621.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
+                    <img class="footer-map-tile se" src="https://tile.openstreetmap.org/15/17744/10621.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
+                </div>
+                <div class="footer-map-overlay" aria-hidden="true"></div>
+                <div class="footer-map-marker" aria-label="Lokalizacja: CertiCars">
+                    <span class="footer-map-marker-pin" aria-hidden="true">
+                        <x-icon name="map-pin" size="46" :strokeWidth="2"/>
+                    </span>
+                    <span class="footer-map-marker-label">CertiCars</span>
+                </div>
             </div>
         </div>
 

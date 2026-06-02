@@ -35,19 +35,4 @@ return [
         ],
     ],
 
-    /*
-     | Google Maps Embed API — used by the public footer location preview.
-     | Get a key at: https://console.cloud.google.com/google/maps-apis
-     | enable: "Maps Embed API" (always free, no quota). Restrict the key
-     | by HTTP referrer to the production domain. Lat/lng can be
-     | overridden per-environment for staging.
-     */
-    'google_maps' => [
-        'api_key' => env('GOOGLE_MAPS_API_KEY'),
-        'lat'     => env('GOOGLE_MAPS_LAT', '53.3502947'),
-        'lng'     => env('GOOGLE_MAPS_LNG', '14.9399374'),
-        'zoom'    => (int) env('GOOGLE_MAPS_ZOOM', 17),
-        'label'   => env('GOOGLE_MAPS_LABEL', 'Lipnik'),
-    ],
-
 ];
