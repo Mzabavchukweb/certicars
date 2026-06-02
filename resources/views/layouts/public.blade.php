@@ -203,15 +203,19 @@
         .footer-map-card{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(78,163,255,.28);box-shadow:0 8px 28px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.05);height:300px;background:linear-gradient(135deg,#11264f 0%,#0a1a3c 100%)}
         .footer-map-tiles{position:absolute;inset:0;overflow:hidden}
         .footer-map-tile{position:absolute;width:256px;height:256px;display:block;pointer-events:none}
-        /* 2×2 z=15 mosaic — pin pixel (221.8, 266) inside the grid.
-           Tile origin offset = `calc(50% - 222 px)` horizontally and
-           `calc(50% - 187 px)` vertically (relative to card centre) so
-           the marker overlay's natural centre (50%/50%) lands on the
-           pinpoint at any responsive card width. */
-        .footer-map-tile.nw,.footer-map-tile.ne{top:calc(50% - 187px)}
-        .footer-map-tile.sw,.footer-map-tile.se{top:calc(50% + 69px)}
-        .footer-map-tile.nw,.footer-map-tile.sw{left:calc(50% - 222px)}
-        .footer-map-tile.ne,.footer-map-tile.se{left:calc(50% + 34px)}
+        /* 6×2 z=15 mosaic — 1536 × 512 px of map content fills the
+           card edge-to-edge on any container width up to ~1280 px
+           (no dark side gutters). Pin pixel (221.8, 266) sits in
+           col 2 / row 1 of the grid → tile c2 is at calc(50% − 222 px)
+           so the marker overlay's 50%/50% centre lands on the pin. */
+        .footer-map-tile.r0{top:calc(50% - 266px)}
+        .footer-map-tile.r1{top:calc(50% - 10px)}
+        .footer-map-tile.c0{left:calc(50% - 734px)}
+        .footer-map-tile.c1{left:calc(50% - 478px)}
+        .footer-map-tile.c2{left:calc(50% - 222px)}
+        .footer-map-tile.c3{left:calc(50% + 34px)}
+        .footer-map-tile.c4{left:calc(50% + 290px)}
+        .footer-map-tile.c5{left:calc(50% + 546px)}
         /* Very subtle vignette so the marker pops without darkening
            the map content. */
         .footer-map-overlay{position:absolute;inset:0;pointer-events:none;background:
@@ -578,10 +582,10 @@
         <div class="footer-map-row">
             <div class="footer-map-card">
                 <div class="footer-map-tiles" aria-hidden="true">
-                    <img class="footer-map-tile nw" src="https://tile.openstreetmap.org/15/17743/10620.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
-                    <img class="footer-map-tile ne" src="https://tile.openstreetmap.org/15/17744/10620.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
-                    <img class="footer-map-tile sw" src="https://tile.openstreetmap.org/15/17743/10621.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
-                    <img class="footer-map-tile se" src="https://tile.openstreetmap.org/15/17744/10621.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
+                    @foreach([[0,17741],[1,17742],[2,17743],[3,17744],[4,17745],[5,17746]] as [$ci,$tx])
+                        <img class="footer-map-tile r0 c{{ $ci }}" src="https://tile.openstreetmap.org/15/{{ $tx }}/10620.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
+                        <img class="footer-map-tile r1 c{{ $ci }}" src="https://tile.openstreetmap.org/15/{{ $tx }}/10621.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
+                    @endforeach
                 </div>
                 <div class="footer-map-overlay" aria-hidden="true"></div>
                 <div class="footer-map-marker" aria-label="Lokalizacja: CertiCars">
