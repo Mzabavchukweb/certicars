@@ -160,10 +160,10 @@
         .footer-logo-text{font-family:'Inter',sans-serif;font-size:28px;font-weight:900;letter-spacing:-.7px;color:#fff;line-height:1}
         .footer-logo-text span{color:#4ea3ff}
 
-        /* Main grid — 4 balanced columns, O CERTICARS slightly wider. */
-        /* Contact column wider so the bigger map card has room to
-           breathe; O CertiCars stays widest for its description copy. */
-        .footer-in{max-width:1200px;margin:0 auto;padding:40px 24px 44px;display:grid;grid-template-columns:1.4fr 1.45fr 0.95fr 0.95fr;gap:44px;align-items:start}
+        /* Main grid — 4 balanced columns. Map moved out of Kontakt into
+           its own full-width row below this grid, so Kontakt no longer
+           needs extra width. O CertiCars stays widest for the copy. */
+        .footer-in{max-width:1200px;margin:0 auto;padding:40px 24px 28px;display:grid;grid-template-columns:1.5fr 1.1fr 1fr 1fr;gap:48px;align-items:start}
         .footer h3{position:relative;color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:800;margin:0 0 20px;padding-bottom:12px}
         .footer h3::after{content:'';position:absolute;bottom:0;left:0;width:28px;height:2px;background:#4ea3ff;border-radius:2px;box-shadow:0 0 10px rgba(78,163,255,.55)}
         .footer p,.footer li{font-size:13px;line-height:1.7;color:rgba(255,255,255,.55)}
@@ -192,36 +192,44 @@
         .footer-contact-value{font-size:13.5px;font-weight:700;color:#fff;line-height:1.35;word-break:break-word;transition:color .15s}
         a.footer-contact-value:hover{color:#7eb3ff}
 
-        /* Map preview card — bigger, readable, real OpenStreetMap tiles
-           of the CertiCars location. Uses a 2×2 z=15 mosaic centred on
-           the pinpoint (53.3502947 N, 14.9399374 E from the Google Maps
-           share link) so the blue pin overlay lands exactly on the
-           target location regardless of card width. Tiles are dark-tinted
-           via CSS filter to match the footer aesthetic; the card's CSS
-           gradient is the visible fallback if any tile fails. */
-        .footer-map-card{position:relative;margin-top:18px;border-radius:14px;overflow:hidden;border:1px solid rgba(78,163,255,.28);box-shadow:0 6px 24px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.05);height:230px;background:linear-gradient(135deg,#11264f 0%,#0a1a3c 100%)}
-        .footer-map-tiles{position:absolute;inset:0;overflow:hidden;filter:brightness(.72) saturate(1.2) hue-rotate(195deg) contrast(1.08)}
+        /* Map row — a separate full-width band inside the footer, sitting
+           between the .footer-in column grid and the .footer-btm legal
+           bar. Same 1200 px content rail as the rest of the footer; the
+           card itself fills the available width so the location reads
+           as a proper map preview, not a thumbnail trapped in a column. */
+        .footer-map-row{max-width:1200px;margin:0 auto;padding:0 24px 32px}
+        .footer-map-card{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(78,163,255,.28);box-shadow:0 8px 28px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.05);height:260px;background:linear-gradient(135deg,#11264f 0%,#0a1a3c 100%)}
+        .footer-map-tiles{position:absolute;inset:0;overflow:hidden;filter:brightness(.76) saturate(1.18) hue-rotate(195deg) contrast(1.06)}
         .footer-map-tile{position:absolute;width:256px;height:256px;display:block;pointer-events:none}
-        /* Mosaic geometry — pin pixel (221.8, 266) inside the 2×2 z=15
-           grid. Tile origin offset = `calc(50% - 222 px)` (horizontal)
-           and `calc(50% - 187 px)` (vertical, relative to card centre).
-           Card centre Y is dynamic (50%) so the geometry works at any
-           card height — the pin always sits at the card's centre. */
+        /* 2×2 z=15 mosaic — pin pixel (221.8, 266) inside the grid. Tile
+           origin offset = `calc(50% - 222 px)` horizontally and
+           `calc(50% - 187 px)` vertically (relative to card centre) so
+           the pin lands at exactly 50%/50% regardless of card width. */
         .footer-map-tile.nw,.footer-map-tile.ne{top:calc(50% - 187px)}
         .footer-map-tile.sw,.footer-map-tile.se{top:calc(50% + 69px)}
         .footer-map-tile.nw,.footer-map-tile.sw{left:calc(50% - 222px)}
         .footer-map-tile.ne,.footer-map-tile.se{left:calc(50% + 34px)}
-        /* Dark gradient overlay — subtle vignette so the pin/CTA pop. */
+        /* Very subtle vignette + soft bottom shade — keeps the chip
+           readable but never feels like a heavy overlay or marketing
+           plate covering the map. */
         .footer-map-overlay{position:absolute;inset:0;pointer-events:none;background:
-            radial-gradient(ellipse 65% 70% at 50% 50%,rgba(13,27,62,0) 0%,rgba(13,27,62,.32) 100%),
-            linear-gradient(180deg,rgba(13,27,62,.08) 0%,rgba(13,27,62,.32) 100%)}
+            radial-gradient(ellipse 75% 80% at 50% 50%,rgba(13,27,62,0) 0%,rgba(13,27,62,.18) 100%),
+            linear-gradient(180deg,rgba(13,27,62,.04) 0%,rgba(13,27,62,.26) 100%)}
         .footer-map-pin{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;display:flex;align-items:center;justify-content:center}
-        .footer-map-pin::before{content:'';position:absolute;width:64px;height:64px;border-radius:50%;background:radial-gradient(circle,rgba(0,102,255,.55) 0%,rgba(0,102,255,0) 70%);animation:footerPinPulse 2.2s ease-in-out infinite}
-        .footer-map-pin svg{width:38px;height:38px;color:#0066ff;filter:drop-shadow(0 5px 12px rgba(0,102,255,.65));position:relative;z-index:1}
+        .footer-map-pin::before{content:'';position:absolute;width:72px;height:72px;border-radius:50%;background:radial-gradient(circle,rgba(0,102,255,.55) 0%,rgba(0,102,255,0) 70%);animation:footerPinPulse 2.2s ease-in-out infinite}
+        .footer-map-pin svg{width:42px;height:42px;color:#0066ff;filter:drop-shadow(0 6px 14px rgba(0,102,255,.7));position:relative;z-index:1}
         @keyframes footerPinPulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.45);opacity:.15}}
-        .footer-map-cta{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);z-index:3;display:inline-flex;align-items:center;gap:7px;background:#0066ff;color:#fff;font-size:13px;font-weight:700;padding:11px 22px;border-radius:50px;text-decoration:none;box-shadow:0 4px 16px rgba(0,102,255,.5);transition:background .15s,transform .15s,box-shadow .15s}
-        .footer-map-cta:hover{background:#0052cc;color:#fff;transform:translateX(-50%) translateY(-1px);box-shadow:0 6px 22px rgba(0,102,255,.6)}
-        .footer-map-cta svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.3;flex-shrink:0}
+
+        /* Address chip — elegant minimal anchor in the bottom-left of
+           the map. Real link to Google Maps directions; no oversized
+           CTA button blocking the map. */
+        .footer-map-addr{position:absolute;left:18px;bottom:18px;z-index:3;display:inline-flex;align-items:center;gap:10px;background:rgba(10,26,60,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(126,179,255,.28);border-radius:12px;padding:10px 14px;color:#fff;text-decoration:none;transition:background .15s,border-color .15s,transform .15s}
+        .footer-map-addr:hover{background:rgba(20,40,90,.85);border-color:rgba(126,179,255,.55);color:#fff;transform:translateY(-1px)}
+        .footer-map-addr-ico{flex-shrink:0;width:28px;height:28px;border-radius:8px;background:rgba(0,102,255,.22);border:1px solid rgba(78,163,255,.42);color:#7eb3ff;display:flex;align-items:center;justify-content:center}
+        .footer-map-addr-ico svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+        .footer-map-addr-text{display:flex;flex-direction:column;gap:1px;min-width:0;line-height:1.2}
+        .footer-map-addr-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.5px;text-transform:uppercase}
+        .footer-map-addr-value{font-size:13.5px;font-weight:700;color:#fff;letter-spacing:-.1px;white-space:nowrap}
 
         /* Col 3 & 4 — Nav + Info lists with blue chevron bullets. */
         .footer-nav-list li{padding:0;margin:0}
@@ -244,13 +252,14 @@
         .footer-btm-verified:hover{background:rgba(78,163,255,.2);border-color:rgba(78,163,255,.6);color:#fff;box-shadow:0 4px 14px rgba(78,163,255,.25)}
         .footer-btm-verified svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2}
 
-        /* Tablet: 2-col main grid. Map card moves under contact.
+        /* Tablet: 2-col main grid. Map row keeps its full-width band.
            Bottom bar restacks centred, and the legal disclaimer can
            wrap (single-line is only required on desktop). */
         @media(max-width:900px){
             .footer-top{padding:36px 24px 20px}
-            .footer-in{grid-template-columns:1fr 1fr;gap:36px;padding:30px 24px 36px}
-            .footer-map-card{height:200px}
+            .footer-in{grid-template-columns:1fr 1fr;gap:36px;padding:30px 24px 24px}
+            .footer-map-row{padding:0 24px 28px}
+            .footer-map-card{height:220px}
             .footer-btm{grid-template-columns:1fr;gap:10px;text-align:center;padding:18px 24px 22px}
             .footer-btm-left,.footer-btm-mid{justify-self:center;justify-content:center}
             .footer-btm-mid{white-space:normal;max-width:560px}
@@ -260,9 +269,16 @@
         @media(max-width:600px){
             .footer-top{padding:28px 20px 18px}
             .footer-logo-text{font-size:22px}
-            .footer-in{grid-template-columns:1fr;gap:30px;padding:24px 20px 28px}
+            .footer-in{grid-template-columns:1fr;gap:30px;padding:24px 20px 20px}
             .footer-brand p{max-width:none}
-            .footer-map-card{height:180px}
+            .footer-map-row{padding:0 20px 24px}
+            .footer-map-card{height:200px;border-radius:14px}
+            .footer-map-addr{left:12px;bottom:12px;padding:8px 11px;gap:8px}
+            .footer-map-addr-ico{width:24px;height:24px}
+            .footer-map-addr-ico svg{width:12px;height:12px}
+            .footer-map-addr-label{font-size:9.5px}
+            .footer-map-addr-value{font-size:12.5px}
+            .footer-map-pin svg{width:36px;height:36px}
             .footer-btm{padding:16px 20px 20px}
         }
 
@@ -529,31 +545,10 @@
                     </div>
                 </div>
 
-                {{-- Real map preview. 2×2 OpenStreetMap tile mosaic
-                     centred on the CertiCars pin (53.3502947 N,
-                     14.9399374 E from the Google Maps share link).
-                     Tiles are positioned via calc(50% - 222 px) so the
-                     pin overlay's natural centre lands exactly on the
-                     pinpoint at any responsive card width. Lazy +
-                     async loads; the card's CSS background gradient is
-                     the visible fallback if tiles fail. CTA opens
-                     Google Maps directions to the exact coordinates. --}}
-                <div class="footer-map-card">
-                    <div class="footer-map-tiles" aria-hidden="true">
-                        <img class="footer-map-tile nw" src="https://tile.openstreetmap.org/15/17743/10620.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
-                        <img class="footer-map-tile ne" src="https://tile.openstreetmap.org/15/17744/10620.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
-                        <img class="footer-map-tile sw" src="https://tile.openstreetmap.org/15/17743/10621.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
-                        <img class="footer-map-tile se" src="https://tile.openstreetmap.org/15/17744/10621.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
-                    </div>
-                    <div class="footer-map-overlay" aria-hidden="true"></div>
-                    <div class="footer-map-pin" aria-hidden="true">
-                        <x-icon name="map-pin" size="38" :strokeWidth="2"/>
-                    </div>
-                    <a class="footer-map-cta" href="https://www.google.com/maps/dir/?api=1&destination=53.3502947,14.9399374" target="_blank" rel="noopener">
-                        <x-icon name="arrow-right" size="14"/>
-                        Wyznacz trasę
-                    </a>
-                </div>
+                {{-- Map moved OUT of the Kontakt column. It now lives in
+                     its own full-width .footer-map-row below the column
+                     grid so the location reads as a proper preview
+                     instead of a thumbnail. --}}
             </div>
 
             {{-- Col 3: Nawigacja. --}}
@@ -577,6 +572,36 @@
                     <li><a href="#"><x-icon name="chevron-right" size="11"/>Regulamin</a></li>
                     <li><a href="#"><x-icon name="chevron-right" size="11"/>Pliki cookies</a></li>
                 </ul>
+            </div>
+        </div>
+
+        {{-- Wide map preview row. 2×2 OpenStreetMap tile mosaic centred
+             on the CertiCars pin (53.3502947 N, 14.9399374 E). Spans
+             the full 1200 px container, replacing the old narrow
+             thumbnail that lived in the Kontakt column. An elegant
+             address chip (Lipnik) anchors the bottom-left and links to
+             Google Maps directions — no oversized CTA button blocking
+             the map. Lazy + async tile loads; CSS background gradient
+             is the visible fallback if any tile fails. --}}
+        <div class="footer-map-row">
+            <div class="footer-map-card">
+                <div class="footer-map-tiles" aria-hidden="true">
+                    <img class="footer-map-tile nw" src="https://tile.openstreetmap.org/15/17743/10620.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
+                    <img class="footer-map-tile ne" src="https://tile.openstreetmap.org/15/17744/10620.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
+                    <img class="footer-map-tile sw" src="https://tile.openstreetmap.org/15/17743/10621.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
+                    <img class="footer-map-tile se" src="https://tile.openstreetmap.org/15/17744/10621.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
+                </div>
+                <div class="footer-map-overlay" aria-hidden="true"></div>
+                <div class="footer-map-pin" aria-hidden="true">
+                    <x-icon name="map-pin" size="42" :strokeWidth="2"/>
+                </div>
+                <a class="footer-map-addr" href="https://www.google.com/maps/dir/?api=1&destination=53.3502947,14.9399374" target="_blank" rel="noopener" aria-label="Otwórz mapę: Lipnik">
+                    <span class="footer-map-addr-ico" aria-hidden="true"><x-icon name="map-pin" size="14" :strokeWidth="2"/></span>
+                    <span class="footer-map-addr-text">
+                        <span class="footer-map-addr-label">Nasza lokalizacja</span>
+                        <span class="footer-map-addr-value">Lipnik</span>
+                    </span>
+                </a>
             </div>
         </div>
 
