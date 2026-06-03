@@ -1316,11 +1316,11 @@
                 <x-icon name="image" size="14" :strokeWidth="1.8"/>
                 Wszystkie zdjęcia
             </button>
-            <button type="button" class="cs-gallery-tab {{ $car->exteriorPano360Image ? '' : 'disabled' }}" data-gallery-filter="pano360ext" onclick="csFilterGallery(this,'pano360ext')" role="tab" aria-selected="false">
+            <button type="button" class="cs-gallery-tab {{ ($car->hasExteriorFrames() || $car->exteriorPano360Image) ? '' : 'disabled' }}" data-gallery-filter="pano360ext" onclick="csFilterGallery(this,'pano360ext')" role="tab" aria-selected="false">
                 <x-icon name="rotate-3d" size="14" :strokeWidth="1.8"/>
                 360° z zewnątrz
             </button>
-            <button type="button" class="cs-gallery-tab {{ $car->pano360Image ? '' : 'disabled' }}" data-gallery-filter="pano360" onclick="csFilterGallery(this,'pano360')" role="tab" aria-selected="false">
+            <button type="button" class="cs-gallery-tab {{ ($car->hasInteriorFrames() || $car->pano360Image) ? '' : 'disabled' }}" data-gallery-filter="pano360" onclick="csFilterGallery(this,'pano360')" role="tab" aria-selected="false">
                 <x-icon name="rotate-3d" size="14" :strokeWidth="1.8"/>
                 360° wnętrza
             </button>
@@ -1387,8 +1387,22 @@
                 </div>
                 @endif
 
-                {{-- ===== 360° PANORAMA VIEWER (exterior) ===== --}}
-                @if($car->exteriorPano360Image)
+                {{-- ===== 360° EXTERIOR (frame scrubber, Copart-style walk-around) =====
+                     Preferred path mirrors the interior viewer: admin uploads a video,
+                     ExtractExteriorFramesJob produces N JPEGs, the user drag-scrubs
+                     through them. Falls back to the equirectangular Pannellum embed
+                     below when frames are not ready. --}}
+                @if($car->hasExteriorFrames())
+                <div class="cs-gallery-main cs-pano360ext cs-interior-frames-pane" id="csExteriorFrames" style="background:#000"
+                     data-frames='@json($car->exteriorFrameUrls())'>
+                    <img class="cs-interior-frames-img" alt="Zewnętrze 360°" draggable="false" decoding="async">
+                    <div class="cs-interior-frames-progress"><span></span></div>
+                    <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(10,10,10,.78);color:#fff;font-size:12px;padding:7px 14px;border-radius:50px;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px);font-weight:600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg>
+                        Przeciągnij, aby obejrzeć auto z zewnątrz
+                    </div>
+                </div>
+                @elseif($car->exteriorPano360Image)
                 <div class="cs-gallery-main cs-pano360ext" id="csPano360ext" style="background:#000">
                     <div id="csPanoramaExtContainer" style="width:100%;height:100%;background:#000" data-pano-src="{{ route('panorama.stream', $car->exteriorPano360Image) }}"></div>
                     <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(10,10,10,.78);color:#fff;font-size:12px;padding:7px 14px;border-radius:50px;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px);font-weight:600">
@@ -1398,16 +1412,17 @@
                 </div>
                 @endif
             </div>
-            @if($galleryList->count() > 0 || $car->exteriorPano360Image)
+            @php $hasExteriorViewer = $car->hasExteriorFrames() || $car->exteriorPano360Image; @endphp
+            @if($galleryList->count() > 0 || $hasExteriorViewer)
             <div class="cs-gallery-thumbs" id="csGalleryThumbs">
-                @if($car->exteriorPano360Image)
+                @if($hasExteriorViewer)
                 <div class="cs-thumb-360" onclick="csFilterGallery(document.querySelector('[data-gallery-filter=pano360ext]'),'pano360ext')" title="Widok 360°" tabindex="0" role="button" onkeypress="if(event.key==='Enter')this.click()">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                     360°
                 </div>
                 @endif
                 @foreach($galleryList as $i => $img)
-                    <img src="{{ $img->url }}" loading="lazy" alt="{{ $img->alt }}" class="cs-thumb {{ $i===0 && !$car->exteriorPano360Image ? 'active' : '' }}" data-type="gallery" data-idx="{{ $i }}" onclick="csSelImg(this,{{ $i+1 }})" ondblclick="openCarGallery({{ $i }})" tabindex="0" onkeypress="if(event.key==='Enter')csSelImg(this,{{ $i+1 }})">
+                    <img src="{{ $img->url }}" loading="lazy" alt="{{ $img->alt }}" class="cs-thumb {{ $i===0 && !$hasExteriorViewer ? 'active' : '' }}" data-type="gallery" data-idx="{{ $i }}" onclick="csSelImg(this,{{ $i+1 }})" ondblclick="openCarGallery({{ $i }})" tabindex="0" onkeypress="if(event.key==='Enter')csSelImg(this,{{ $i+1 }})">
                 @endforeach
                 @foreach($damageImgList as $j => $dimg)
                     <img src="{{ $dimg->url }}" loading="lazy" alt="{{ $dimg->alt }}" class="cs-thumb" data-type="damage" data-idx="{{ $galleryList->count() + $j }}" onclick="csSelImg(this,{{ $galleryList->count() + $j + 1 }})" tabindex="0" data-hidden>
@@ -2362,8 +2377,12 @@
         $interiorThumbUrl = $car->hasInteriorFrames()
             ? ($car->interiorFrameUrls()[0] ?? null)
             : ($car->pano360Image?->url);
+        $hasExteriorViewerCard = $car->hasExteriorFrames() || $car->exteriorPano360Image;
+        $exteriorThumbUrl = $car->hasExteriorFrames()
+            ? ($car->exteriorFrameUrls()[0] ?? null)
+            : ($car->exteriorPano360Image?->url);
     @endphp
-    @if($hasInteriorViewer || $car->exteriorPano360Image)
+    @if($hasInteriorViewer || $hasExteriorViewerCard)
     <div class="cs-pano360-section-card">
         <div class="cs-pano360-section-head">
             <div class="cs-pano360-section-ico">
@@ -2374,12 +2393,12 @@
                 <p class="cs-pano360-section-sub">Obejrzyj pojazd z każdej strony. Przesuwaj, obracaj i przybliżaj obraz, aby dokładnie zapoznać się z autem.</p>
             </div>
         </div>
-        @php $singleCard = !($hasInteriorViewer && $car->exteriorPano360Image); @endphp
+        @php $singleCard = !($hasInteriorViewer && $hasExteriorViewerCard); @endphp
         <div class="cs-pano360-row{{ $singleCard ? ' single' : '' }}">
-            @if($car->exteriorPano360Image)
+            @if($hasExteriorViewerCard)
             <button type="button" class="cs-pano360-card" onclick="csOpenPano360('pano360ext')" aria-label="Otwórz widok 360° z zewnątrz">
-                @if($car->exteriorPano360Image->url)
-                    <img class="cs-pano360-card-img" src="{{ $car->exteriorPano360Image->url }}" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/placeholder-car.svg'">
+                @if($exteriorThumbUrl)
+                    <img class="cs-pano360-card-img" src="{{ $exteriorThumbUrl }}" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/placeholder-car.svg'">
                 @else
                     <div class="cs-pano360-card-empty">Podgląd niedostępny</div>
                 @endif
@@ -2393,7 +2412,7 @@
                 </span>
                 <div class="cs-pano360-card-text">
                     <h4 class="cs-pano360-card-title">360° z zewnątrz</h4>
-                    <p class="cs-pano360-card-sub">Obejrzyj auto dookoła</p>
+                    <p class="cs-pano360-card-sub">{{ $car->hasExteriorFrames() ? 'Przeciągnij, by obrócić auto' : 'Obejrzyj auto dookoła' }}</p>
                 </div>
             </button>
             @endif
@@ -3041,10 +3060,12 @@ function csFilterGallery(btn,filter){
     const pano      = document.getElementById('csPano360');
     const panoExt   = document.getElementById('csPano360ext');
     const intFrames = document.getElementById('csInteriorFrames');
+    const extFrames = document.getElementById('csExteriorFrames');
     const thumbsWrap = document.getElementById('csGalleryThumbs');
-    [std, pano, panoExt, intFrames].forEach(el => el && el.classList.remove('active'));
+    [std, pano, panoExt, intFrames, extFrames].forEach(el => el && el.classList.remove('active'));
     if(filter === 'pano360' && intFrames) intFrames.classList.add('active');
     else if(filter === 'pano360' && pano) pano.classList.add('active');
+    else if(filter === 'pano360ext' && extFrames) extFrames.classList.add('active');
     else if(filter === 'pano360ext' && panoExt) panoExt.classList.add('active');
     else if(std) std.classList.add('active');
     if(thumbsWrap) thumbsWrap.style.display = (filter==='pano360'||filter==='pano360ext') ? 'none' : '';
@@ -3054,7 +3075,11 @@ function csFilterGallery(btn,filter){
         if(window.csPano360Init) csPano360Init();
         return;
     }
-    if(filter==='pano360ext'){ if(window.csPano360ExtInit)csPano360ExtInit(); return; }
+    if(filter==='pano360ext'){
+        if(extFrames && window.csExteriorFramesInit){ csExteriorFramesInit(); return; }
+        if(window.csPano360ExtInit) csPano360ExtInit();
+        return;
+    }
 
     if(filter==='video'){
         var vid=document.querySelector('[data-panel-engine-video]');
@@ -3142,18 +3167,19 @@ window.csPano360Init = (function(){
 })();
 @endif
 
-// ==== 360° INTERIOR FRAME SCRUBBER (Copart-style) ====
-// Pointer-driven drag through the pre-extracted JPEG sequence. The pane
-// reads its frame URL list from `data-frames` (JSON). Frames load lazily —
-// the first one paints synchronously; the rest preload in the background so
-// the scrubber feels instant after the first ~half second.
-@if($car->hasInteriorFrames())
-window.csInteriorFramesInit = (function(){
+// ==== 360° FRAME SCRUBBER (Copart-style) ====
+// Pointer-driven drag through a pre-extracted JPEG sequence. The pane reads
+// its frame URL list from `data-frames` (JSON). Frames load lazily — the
+// first one paints synchronously; the rest preload in the background so the
+// scrubber feels instant after the first ~half second. Used by both the
+// interior and exterior viewers.
+@if($car->hasInteriorFrames() || $car->hasExteriorFrames())
+window.csMakeFramesScrubber = function(paneId){
     let initialized = false;
     return function(){
         if(initialized) return;
         initialized = true;
-        var pane = document.getElementById('csInteriorFrames');
+        var pane = document.getElementById(paneId);
         if(!pane) return;
         var img  = pane.querySelector('.cs-interior-frames-img');
         var bar  = pane.querySelector('.cs-interior-frames-progress span');
@@ -3170,7 +3196,6 @@ window.csInteriorFramesInit = (function(){
             preloaded[i] = p;
             return p;
         }
-        // Paint the first frame and kick off background preloading.
         loadFrame(0).addEventListener('load', function(){ img.src = urls[0]; }, { once: true });
         if(preloaded[0].complete) img.src = urls[0];
         var nextToPreload = 1;
@@ -3188,15 +3213,10 @@ window.csInteriorFramesInit = (function(){
             if(i === current) return;
             current = i;
             var src = urls[i];
-            // Only swap when the frame has decoded, otherwise the pane flashes
-            // grey while the network request resolves.
             if(preloaded[i] && preloaded[i].complete) img.src = src;
             else loadFrame(i).addEventListener('load', function(){ if(current === i) img.src = src; }, { once: true });
             if(bar) bar.style.width = ((i / (urls.length - 1)) * 100) + '%';
         }
-
-        // ~6 px of pointer travel per frame on desktop; on touch we tighten so
-        // a thumb-swipe across the viewport completes a full rotation.
         function pixelsPerFrame(){
             var w = pane.clientWidth || 800;
             return Math.max(4, w / urls.length);
@@ -3228,7 +3248,13 @@ window.csInteriorFramesInit = (function(){
         pane.addEventListener('touchend', onUp);
         pane.addEventListener('touchcancel', onUp);
     };
-})();
+};
+@endif
+@if($car->hasInteriorFrames())
+window.csInteriorFramesInit = window.csMakeFramesScrubber('csInteriorFrames');
+@endif
+@if($car->hasExteriorFrames())
+window.csExteriorFramesInit = window.csMakeFramesScrubber('csExteriorFrames');
 @endif
 
 // ==== 360° PANORAMA VIEWER (exterior gallery tab) ====
