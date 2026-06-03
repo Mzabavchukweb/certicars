@@ -309,7 +309,7 @@ class CarController extends Controller
     private function safeFileCounts(Request $request): array
     {
         $out = [];
-        foreach (['gallery_images', 'damage_images', 'pano360_image', 'pano360ext_image', 'engine_video_file', 'interior_video_file'] as $field) {
+        foreach (['gallery_images', 'damage_images', 'pano360_image', 'pano360ext_image', 'engine_video_file', 'interior_video_file', 'exterior_video_file'] as $field) {
             if ($request->hasFile($field)) {
                 $val = $request->file($field);
                 $out[$field] = is_array($val) ? count($val) : 1;
@@ -680,6 +680,10 @@ class CarController extends Controller
             // typical phone clips upload in one go.
             'interior_video_file' => 'nullable|file|mimetypes:video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska|max:204800',
             'remove_interior_video' => 'nullable|boolean',
+            // Exterior 360° walk-around video — same pipeline as interior, see
+            // ExtractExteriorFramesJob. 200 MB cap matches interior.
+            'exterior_video_file' => 'nullable|file|mimetypes:video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska|max:204800',
+            'remove_exterior_video' => 'nullable|boolean',
             'damages.*.image' => 'nullable|image|mimes:jpg,jpeg,png,webp,avif|max:20480',
             'damages.*.images' => 'nullable|array|max:20',
             'damages.*.images.*' => 'nullable|image|mimes:jpg,jpeg,png,webp,avif|max:20480',
@@ -723,6 +727,10 @@ class CarController extends Controller
             'interior_video_file.mimetypes'  => 'Nieobsługiwany format wideo wnętrza. Dozwolone: MP4, WebM, MOV (QuickTime), AVI, MKV.',
             'interior_video_file.max'        => 'Film wnętrza 360° jest za duży. Maksymalny rozmiar to 200 MB.',
             'interior_video_file.uploaded'   => 'Film wnętrza 360° jest za duży lub przesyłanie zostało przerwane. Maksymalny rozmiar to 200 MB.',
+            'exterior_video_file.file'       => 'Film zewnętrza 360° musi być prawidłowym plikiem wideo.',
+            'exterior_video_file.mimetypes'  => 'Nieobsługiwany format wideo zewnętrza. Dozwolone: MP4, WebM, MOV (QuickTime), AVI, MKV.',
+            'exterior_video_file.max'        => 'Film zewnętrza 360° jest za duży. Maksymalny rozmiar to 200 MB.',
+            'exterior_video_file.uploaded'   => 'Film zewnętrza 360° jest za duży lub przesyłanie zostało przerwane. Maksymalny rozmiar to 200 MB.',
         ]);
     }
 
@@ -1028,6 +1036,9 @@ class CarController extends Controller
         // ===== 360° interior — video → frame sequence (Copart-style scrubber) =====
         $this->handleInteriorVideo($car, $request, $failures);
 
+        // ===== 360° exterior — same pipeline, walk-around video =====
+        $this->handleExteriorVideo($car, $request, $failures);
+
         return $failures;
     }
 
@@ -1101,6 +1112,73 @@ class CarController extends Controller
         ])->save();
 
         \App\Jobs\ExtractInteriorFramesJob::dispatch($car->id, $newPath, $framesDir);
+    }
+
+    /**
+     * Persist a newly uploaded exterior walk-around video and queue its frame
+     * extraction. Mirrors handleInteriorVideo() — kept as a separate method so
+     * the two video paths can diverge later (e.g. different mime caps, extra
+     * vehicle-mask post-processing on exterior) without untangling shared
+     * state. Never throws; failures append to $failures by reference.
+     */
+    private function handleExteriorVideo(Car $car, Request $request, array &$failures): void
+    {
+        $disk = Storage::disk('public');
+
+        if ($request->boolean('remove_exterior_video')) {
+            if ($car->exterior_video_path && !str_starts_with($car->exterior_video_path, 'http')) {
+                $disk->delete($car->exterior_video_path);
+            }
+            if ($car->exterior_frames_dir) {
+                try {
+                    foreach ($disk->files($car->exterior_frames_dir) as $existing) {
+                        $disk->delete($existing);
+                    }
+                } catch (\Throwable $e) {
+                    \Log::warning('exterior.frames.cleanup_failed', ['car_id' => $car->id, 'err' => $e->getMessage()]);
+                }
+            }
+            $car->forceFill([
+                'exterior_video_path'    => null,
+                'exterior_frames_status' => null,
+                'exterior_frames_count'  => null,
+                'exterior_frames_dir'    => null,
+                'exterior_frames_error'  => null,
+            ])->save();
+        }
+
+        if (!$request->hasFile('exterior_video_file')) return;
+
+        $videoFile = $request->file('exterior_video_file');
+        $newPath = $this->safeStore($videoFile, 'cars/' . $car->id . '/exterior_video');
+        if ($newPath === null) {
+            $failures[] = $videoFile->getClientOriginalName();
+            return;
+        }
+
+        if ($car->exterior_video_path && $car->exterior_video_path !== $newPath && !str_starts_with($car->exterior_video_path, 'http')) {
+            $disk->delete($car->exterior_video_path);
+        }
+        if ($car->exterior_frames_dir) {
+            try {
+                foreach ($disk->files($car->exterior_frames_dir) as $existing) {
+                    $disk->delete($existing);
+                }
+            } catch (\Throwable $e) {
+                // Best-effort; the extractor will overwrite anyway.
+            }
+        }
+
+        $framesDir = 'cars/' . $car->id . '/exterior_frames';
+        $car->forceFill([
+            'exterior_video_path'    => $newPath,
+            'exterior_frames_status' => 'pending',
+            'exterior_frames_count'  => null,
+            'exterior_frames_dir'    => $framesDir,
+            'exterior_frames_error'  => null,
+        ])->save();
+
+        \App\Jobs\ExtractExteriorFramesJob::dispatch($car->id, $newPath, $framesDir);
     }
 
     /**

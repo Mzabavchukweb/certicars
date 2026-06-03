@@ -24,6 +24,8 @@ class Car extends Model
         'paint_measurements', 'technical_conditions', 'equipment', 'highlighted_equipment', 'engine_video_url', 'engine_video_path',
         // Interior 360° (Copart-style frame scrubber) — see migration add_interior_360_video_to_cars_table.
         'interior_video_path', 'interior_frames_status', 'interior_frames_count', 'interior_frames_dir', 'interior_frames_error',
+        // Exterior 360° walk-around (same scrubber pipeline) — see migration add_exterior_360_video_to_cars_table.
+        'exterior_video_path', 'exterior_frames_status', 'exterior_frames_count', 'exterior_frames_dir', 'exterior_frames_error',
         'is_featured', 'is_sold', 'has_certicheck', 'available_now', 'home_delivery', 'has_gethelp', 'gethelp_package', 'status',
         'meta_title', 'meta_description', 'focus_keyword', 'noindex',
         // Cached-brochure state — see migration add_brochure_columns_to_cars_table.
@@ -138,11 +140,36 @@ class Car extends Model
         if (!$this->hasInteriorFrames()) {
             return [];
         }
+        return $this->buildFrameUrls($this->interior_frames_dir, (int) $this->interior_frames_count);
+    }
+
+    /** True iff the catalog page should switch the exterior 360° card to the frame-scrubber. */
+    public function hasExteriorFrames(): bool
+    {
+        return $this->exterior_frames_status === 'ready'
+            && (int) $this->exterior_frames_count > 0
+            && !empty($this->exterior_frames_dir);
+    }
+
+    /**
+     * Sequenced public URLs for the extracted exterior walk-around frames.
+     * Returns [] when frames are not ready so the Blade view can fall back to
+     * the equirectangular exterior Pannellum embed (legacy uploads).
+     */
+    public function exteriorFrameUrls(): array
+    {
+        if (!$this->hasExteriorFrames()) {
+            return [];
+        }
+        return $this->buildFrameUrls($this->exterior_frames_dir, (int) $this->exterior_frames_count);
+    }
+
+    private function buildFrameUrls(string $dir, int $count): array
+    {
         $disk = \Illuminate\Support\Facades\Storage::disk('public');
-        $count = (int) $this->interior_frames_count;
         $urls = [];
         for ($i = 1; $i <= $count; $i++) {
-            $urls[] = $disk->url($this->interior_frames_dir . '/' . sprintf('frame_%03d.jpg', $i));
+            $urls[] = $disk->url($dir . '/' . sprintf('frame_%03d.jpg', $i));
         }
         return $urls;
     }

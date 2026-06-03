@@ -9,14 +9,18 @@ use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 
 /**
- * Slices an admin-uploaded interior pan-around video into a fixed-count JPEG
- * sequence using ffmpeg. The catalog page then drag-scrubs through that
- * sequence client-side (Copart-style) instead of streaming the original video.
+ * Slices an admin-uploaded pan-around video into a fixed-count JPEG sequence
+ * using ffmpeg. Used by both the interior viewer and the exterior walk-around
+ * viewer — the catalog page drag-scrubs through the sequence client-side
+ * (Copart-style) instead of streaming the original video.
  *
  * Why a fixed count: the frontend pre-loads the sequence and maps pointer
  * delta → frame index. A predictable frame count makes the scrubber feel
  * uniform regardless of source video duration (3 s phone clip vs 10 s
- * tripod pan both end up at 60 evenly-distributed frames).
+ * tripod pan both end up at FRAME_COUNT evenly-distributed frames).
+ *
+ * Name kept for backwards-compat with the wizard view that references the
+ * constants; nothing about the implementation is interior-specific.
  */
 class InteriorFrameExtractor
 {
