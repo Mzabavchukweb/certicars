@@ -75,45 +75,48 @@
 .steps-row{grid-template-columns:1fr 56px 1fr 56px 1fr 56px 1fr}
 
 /* ===== CTA banner (dark rounded) ===== */
-.about-cta-wrap{padding:96px 0 110px;background:#fff}
-/* No bottom padding — the character illustration is anchored to the bottom
-   of its grid cell so it can rest flush against the rounded card edge. The
-   text column compensates with its own padding-bottom so the eyebrow→trust
-   block stays vertically centered. */
-.about-cta{position:relative;border-radius:28px;background:linear-gradient(135deg,#070d20 0%,#0a1532 55%,#0c1a3f 100%);overflow:hidden;padding:64px 64px 0;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:stretch;box-shadow:0 30px 60px -24px rgba(7,13,32,.5)}
-.about-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 20% 30%,rgba(0,102,255,.22),transparent 60%),radial-gradient(ellipse 55% 70% at 85% 75%,rgba(0,102,255,.18),transparent 60%);pointer-events:none}
-.about-cta-sweep{position:absolute;left:-10%;top:60%;width:140%;height:200px;background:linear-gradient(95deg,transparent 30%,rgba(95,161,255,.32) 45%,rgba(95,161,255,.06) 55%,transparent 70%);transform:rotate(-8deg);filter:blur(28px);pointer-events:none}
-.about-cta-carline{position:absolute;left:8%;bottom:6%;width:55%;max-width:520px;opacity:.07;pointer-events:none}
+.about-cta-wrap{padding:88px 0 96px;background:#fff}
+/* Wider container just for the CTA so the dark card reads as a panoramic
+   banner, not a centered text block. */
+.about-cta-in{max-width:1320px;margin:0 auto;padding:0 24px;position:relative;box-sizing:border-box}
+/* Shell sits outside the dark card and is overflow:visible so the character
+   illustration can break above the card's top edge. */
+.about-cta-shell{position:relative;overflow:visible}
+.about-cta{position:relative;border-radius:28px;background:linear-gradient(135deg,#070d20 0%,#0a1532 55%,#0c1a3f 100%);overflow:hidden;padding:48px 64px;min-height:280px;box-shadow:0 30px 60px -24px rgba(7,13,32,.5)}
+.about-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 80% at 18% 30%,rgba(0,102,255,.22),transparent 60%),radial-gradient(ellipse 50% 70% at 82% 70%,rgba(0,102,255,.2),transparent 60%);pointer-events:none}
+.about-cta-sweep{position:absolute;left:-8%;top:55%;width:130%;height:160px;background:linear-gradient(95deg,transparent 25%,rgba(95,161,255,.36) 48%,rgba(95,161,255,.08) 58%,transparent 75%);transform:rotate(-7deg);filter:blur(26px);pointer-events:none}
+.about-cta-carline{position:absolute;left:52%;bottom:8%;width:48%;max-width:560px;opacity:.09;pointer-events:none}
 .about-cta-carline svg{width:100%;height:auto;display:block}
-.about-cta-body{position:relative;z-index:2;padding-bottom:64px;align-self:center}
+.about-cta-body{position:relative;z-index:2;max-width:560px}
 .about-cta-eyebrow{font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#5fa1ff;margin-bottom:14px;display:inline-flex;align-items:center;gap:10px}
 .about-cta-eyebrow::before{content:'';width:24px;height:2px;background:#5fa1ff;border-radius:2px}
-.about-cta-body h2{font-size:42px;font-weight:900;color:#fff;letter-spacing:-1px;margin:0 0 16px;line-height:1.1}
-.about-cta-body p{font-size:15.5px;color:rgba(255,255,255,.65);line-height:1.75;margin:0 0 32px;max-width:480px}
-.about-cta-btn{display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0066ff,#1a7fff);color:#fff;padding:18px 30px;border-radius:50px;font-weight:800;font-size:16.5px;text-decoration:none;letter-spacing:-.2px;box-shadow:0 18px 36px -12px rgba(0,102,255,.6),inset 0 -2px 4px rgba(0,0,0,.18);transition:transform .2s ease,box-shadow .2s ease}
+.about-cta-body h2{font-size:40px;font-weight:900;color:#fff;letter-spacing:-1px;margin:0 0 14px;line-height:1.08}
+.about-cta-body p{font-size:15.5px;color:rgba(255,255,255,.65);line-height:1.7;margin:0 0 28px;max-width:480px}
+.about-cta-btn{display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0066ff,#1a7fff);color:#fff;padding:17px 30px;border-radius:50px;font-weight:800;font-size:16.5px;text-decoration:none;letter-spacing:-.2px;box-shadow:0 18px 36px -12px rgba(0,102,255,.6),inset 0 -2px 4px rgba(0,0,0,.18);transition:transform .2s ease,box-shadow .2s ease}
 .about-cta-btn:hover{transform:translateY(-2px);box-shadow:0 24px 48px -12px rgba(0,102,255,.75),inset 0 -2px 4px rgba(0,0,0,.18)}
 .about-cta-btn svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.about-cta-trust{display:flex;flex-wrap:wrap;gap:22px;margin-top:24px}
-.about-cta-trust span{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.6);font-weight:500}
+.about-cta-trust{display:flex;flex-wrap:nowrap;gap:24px;margin-top:22px;align-items:center}
+.about-cta-trust span{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.62);font-weight:500;white-space:nowrap}
 .about-cta-trust svg{width:14px;height:14px;stroke:#5fa1ff;fill:none;stroke-width:2.4;flex-shrink:0}
-/* Bohater illustration — anchored to the bottom-right of the dark CTA card.
-   The CTA has overflow:hidden + a 28px border-radius, so the image sits
-   flush against the bottom rounded edge and inherits the card's clip.
-   Image flows naturally inside its grid cell so its intrinsic 1122x1402
-   ratio drives the cell height; the cell aligns to the bottom of the
-   card so the laptop edge touches the rounded base. */
-.about-cta-art{position:relative;z-index:2;align-self:end;display:flex;justify-content:flex-end;align-items:flex-end}
-.about-cta-art img{display:block;width:100%;max-width:440px;height:auto;margin:0 -8px 0 auto;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 24px 40px rgba(0,0,0,.45))}
+
+/* Bohater illustration — lives in the shell, NOT inside the dark card, so
+   it can break above the card's top edge (overflow:hidden on .about-cta
+   would otherwise clip the head). Anchored to the bottom-right with a
+   small negative bottom so the laptop visually rests on the card's
+   rounded base. */
+.about-cta-bohater{position:absolute;right:48px;bottom:-12px;height:440px;width:auto;max-width:48%;z-index:5;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 24px 40px rgba(0,0,0,.5))}
 
 /* ===== Responsive ===== */
 @media(max-width:1024px){
     .about-hero h1{font-size:48px}
     .steps-row{grid-template-columns:repeat(4,1fr);gap:18px}
     .step-arrow{display:none}
-    .about-cta{padding:48px 40px 0;grid-template-columns:1fr;gap:24px;align-items:start}
-    .about-cta-body{padding-bottom:0;align-self:auto}
-    .about-cta-art{justify-content:center;align-items:flex-end}
-    .about-cta-art img{margin:0 auto;width:100%;max-width:320px}
+    /* Tablet: keep bohater anchored bottom-right but shrink so it still
+       breaks above the card edge without overlapping the text. The body
+       max-width tightens to keep the text out of the illustration. */
+    .about-cta{padding:44px 48px}
+    .about-cta-body{max-width:54%}
+    .about-cta-bohater{right:24px;bottom:-8px;height:360px;max-width:42%}
 }
 @media(max-width:900px){
     .about-hero{padding:72px 0 96px}
@@ -125,7 +128,17 @@
     .values-grid{grid-template-columns:1fr;gap:18px}
     .about-section-h{font-size:32px}
     .steps-row{grid-template-columns:1fr 1fr;gap:18px}
+    .about-cta{padding:40px 40px}
     .about-cta-body h2{font-size:32px}
+    .about-cta-body{max-width:58%}
+    .about-cta-bohater{height:320px;right:16px;bottom:-6px;max-width:44%}
+}
+@media(max-width:760px){
+    /* Below tablet, stack: bohater drops below text inside the card.
+       overflow:hidden returns implicitly because the image is now relative. */
+    .about-cta{padding:40px 32px 0;min-height:auto}
+    .about-cta-body{max-width:100%}
+    .about-cta-bohater{position:relative;right:auto;bottom:auto;height:auto;width:100%;max-width:300px;display:block;margin:24px auto 0}
 }
 @media(max-width:600px){
     .about-hero h1{font-size:32px;letter-spacing:-.6px}
@@ -133,13 +146,13 @@
     .about-section-h{font-size:26px;letter-spacing:-.4px}
     .about-section-sub{font-size:14px;margin-bottom:40px}
     .steps-row{grid-template-columns:1fr;gap:16px}
-    .about-cta{padding:36px 24px 0;border-radius:20px}
+    .about-cta{padding:32px 24px 0;border-radius:20px}
     .about-cta-body h2{font-size:26px}
     .about-cta-btn{font-size:15px;padding:16px 24px}
-    .about-cta-art img{max-width:240px}
+    .about-cta-bohater{max-width:240px;margin-top:20px}
+    .about-cta-trust{flex-wrap:wrap;gap:14px}
     .val-card{padding:28px 24px}
     .step-card{padding:30px 22px 26px}
-    .about-cta-trust{gap:14px}
 }
 @endsection
 @section('content')
@@ -272,40 +285,40 @@
 
 {{-- ===== CTA banner (dark rounded) ===== --}}
 <section class="about-cta-wrap">
-    <div class="about-section-in">
-        <div class="about-cta">
-            <div class="about-cta-sweep" aria-hidden="true"></div>
-            {{-- Faint car silhouette in the banner background --}}
-            <div class="about-cta-carline" aria-hidden="true">
-                <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#5fa1ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M40 150 L120 150 Q140 92 210 86 L460 84 Q540 86 580 150 L680 150"/>
-                    <path d="M170 96 L240 96 L260 130 L160 130 Z"/>
-                    <path d="M275 96 L430 96 L450 130 L275 130 Z"/>
-                    <path d="M460 96 L545 96 L575 130 L460 130 Z"/>
-                    <circle cx="220" cy="160" r="20"/>
-                    <circle cx="540" cy="160" r="20"/>
-                </svg>
-            </div>
-            <div class="about-cta-body">
-                <div class="about-cta-eyebrow">Masz pytania?</div>
-                <h2>Porozmawiajmy o aucie</h2>
-                <p>Jeśli chcesz dopytać o konkretny samochód, zadzwoń. Odpowiemy na pytania i pomożemy umówić oględziny.</p>
-                <a href="tel:+48515440623" class="about-cta-btn">
-                    <x-icon name="phone" size="20"/>
-                    Zadzwoń: 515 440 623
-                </a>
-                <div class="about-cta-trust">
-                    <span><x-icon name="zap" size="14"/> Szybki kontakt</span>
-                    <span><x-icon name="info" size="14"/> Jasne informacje</span>
-                    <span><x-icon name="calendar-check" size="14"/> Możliwość oględzin</span>
+    <div class="about-cta-in">
+        {{-- Shell wrapper sits outside the dark card with overflow:visible so the
+             bohater illustration can break above the card's top edge. The dark
+             card itself keeps overflow:hidden for its internal sweep + gradient. --}}
+        <div class="about-cta-shell">
+            <div class="about-cta">
+                <div class="about-cta-sweep" aria-hidden="true"></div>
+                {{-- Faint car silhouette behind the character on the right --}}
+                <div class="about-cta-carline" aria-hidden="true">
+                    <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#5fa1ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M40 150 L120 150 Q140 92 210 86 L460 84 Q540 86 580 150 L680 150"/>
+                        <path d="M170 96 L240 96 L260 130 L160 130 Z"/>
+                        <path d="M275 96 L430 96 L450 130 L275 130 Z"/>
+                        <path d="M460 96 L545 96 L575 130 L460 130 Z"/>
+                        <circle cx="220" cy="160" r="20"/>
+                        <circle cx="540" cy="160" r="20"/>
+                    </svg>
+                </div>
+                <div class="about-cta-body">
+                    <div class="about-cta-eyebrow">Masz pytania?</div>
+                    <h2>Porozmawiajmy o aucie</h2>
+                    <p>Jeśli chcesz dopytać o konkretny samochód, zadzwoń. Odpowiemy na pytania i pomożemy umówić oględziny.</p>
+                    <a href="tel:+48515440623" class="about-cta-btn">
+                        <x-icon name="phone" size="20"/>
+                        Zadzwoń: 515 440 623
+                    </a>
+                    <div class="about-cta-trust">
+                        <span><x-icon name="zap" size="14"/> Szybki kontakt</span>
+                        <span><x-icon name="info" size="14"/> Jasne informacje</span>
+                        <span><x-icon name="calendar-check" size="14"/> Możliwość oględzin</span>
+                    </div>
                 </div>
             </div>
-            <div class="about-cta-art" aria-hidden="true">
-                {{-- Branded consultant illustration. Source PNG ships from public/images so
-                     it's served by the web server directly, not via Laravel. Anchored to
-                     the bottom-right of the dark CTA card via .about-cta-art img CSS. --}}
-                <img src="/images/bohater.png" alt="" loading="lazy" decoding="async" width="1122" height="1402">
-            </div>
+            <img class="about-cta-bohater" src="/images/bohater.png" alt="" loading="lazy" decoding="async" width="1122" height="1402">
         </div>
     </div>
 </section>
