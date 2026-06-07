@@ -116,7 +116,7 @@
    card at ~280 px tall and bottom:-16, that means the head + shoulders
    extend ~310 px above the card's top edge — the dramatic "break-out"
    look from the reference. */
-.about-cta-bohater{position:absolute;right:36px;bottom:-16px;width:42%;max-width:520px;min-width:360px;height:auto;z-index:5;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 28px 44px rgba(0,0,0,.55))}
+.about-cta-bohater{position:absolute;right:36px;bottom:-16px;width:42%;max-width:520px;min-width:360px;height:auto;object-fit:contain;z-index:5;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 28px 44px rgba(0,0,0,.55))}
 
 /* ===== Responsive ===== */
 @media(max-width:1024px){
@@ -334,7 +334,7 @@
                     </div>
                 </div>
             </div>
-            <img class="about-cta-bohater" src="/images/bohater.png" alt="" loading="lazy" decoding="async" width="1122" height="1402">
+            <img class="about-cta-bohater" src="/images/bohater.png" alt="Doradca CertiCars rozmawiający z klientem o aucie" loading="lazy" decoding="async" width="1122" height="1402">
         </div>
     </div>
 </section>
