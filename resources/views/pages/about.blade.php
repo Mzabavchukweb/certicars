@@ -76,12 +76,16 @@
 
 /* ===== CTA banner (dark rounded) ===== */
 .about-cta-wrap{padding:96px 0 110px;background:#fff}
-.about-cta{position:relative;border-radius:28px;background:linear-gradient(135deg,#070d20 0%,#0a1532 55%,#0c1a3f 100%);overflow:hidden;padding:60px 64px;display:grid;grid-template-columns:1.2fr .9fr;gap:48px;align-items:center;box-shadow:0 30px 60px -24px rgba(7,13,32,.5)}
+/* No bottom padding — the character illustration is anchored to the bottom
+   of its grid cell so it can rest flush against the rounded card edge. The
+   text column compensates with its own padding-bottom so the eyebrow→trust
+   block stays vertically centered. */
+.about-cta{position:relative;border-radius:28px;background:linear-gradient(135deg,#070d20 0%,#0a1532 55%,#0c1a3f 100%);overflow:hidden;padding:64px 64px 0;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:stretch;box-shadow:0 30px 60px -24px rgba(7,13,32,.5)}
 .about-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 20% 30%,rgba(0,102,255,.22),transparent 60%),radial-gradient(ellipse 55% 70% at 85% 75%,rgba(0,102,255,.18),transparent 60%);pointer-events:none}
 .about-cta-sweep{position:absolute;left:-10%;top:60%;width:140%;height:200px;background:linear-gradient(95deg,transparent 30%,rgba(95,161,255,.32) 45%,rgba(95,161,255,.06) 55%,transparent 70%);transform:rotate(-8deg);filter:blur(28px);pointer-events:none}
 .about-cta-carline{position:absolute;left:8%;bottom:6%;width:55%;max-width:520px;opacity:.07;pointer-events:none}
 .about-cta-carline svg{width:100%;height:auto;display:block}
-.about-cta-body{position:relative;z-index:2}
+.about-cta-body{position:relative;z-index:2;padding-bottom:64px;align-self:center}
 .about-cta-eyebrow{font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#5fa1ff;margin-bottom:14px;display:inline-flex;align-items:center;gap:10px}
 .about-cta-eyebrow::before{content:'';width:24px;height:2px;background:#5fa1ff;border-radius:2px}
 .about-cta-body h2{font-size:42px;font-weight:900;color:#fff;letter-spacing:-1px;margin:0 0 16px;line-height:1.1}
@@ -92,17 +96,24 @@
 .about-cta-trust{display:flex;flex-wrap:wrap;gap:22px;margin-top:24px}
 .about-cta-trust span{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.6);font-weight:500}
 .about-cta-trust svg{width:14px;height:14px;stroke:#5fa1ff;fill:none;stroke-width:2.4;flex-shrink:0}
-.about-cta-art{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;min-height:340px}
-.about-cta-art svg{width:100%;max-width:380px;height:auto;display:block;filter:drop-shadow(0 18px 32px rgba(0,0,0,.4))}
+/* Bohater illustration — anchored to the bottom-right of the dark CTA card.
+   The CTA has overflow:hidden + a 28px border-radius, so the image sits
+   flush against the bottom rounded edge and inherits the card's clip.
+   Image flows naturally inside its grid cell so its intrinsic 1122x1402
+   ratio drives the cell height; the cell aligns to the bottom of the
+   card so the laptop edge touches the rounded base. */
+.about-cta-art{position:relative;z-index:2;align-self:end;display:flex;justify-content:flex-end;align-items:flex-end}
+.about-cta-art img{display:block;width:100%;max-width:440px;height:auto;margin:0 -8px 0 auto;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 24px 40px rgba(0,0,0,.45))}
 
 /* ===== Responsive ===== */
 @media(max-width:1024px){
     .about-hero h1{font-size:48px}
     .steps-row{grid-template-columns:repeat(4,1fr);gap:18px}
     .step-arrow{display:none}
-    .about-cta{padding:48px 40px;grid-template-columns:1fr;gap:32px}
-    .about-cta-art{min-height:auto;order:-1}
-    .about-cta-art svg{max-width:280px}
+    .about-cta{padding:48px 40px 0;grid-template-columns:1fr;gap:24px;align-items:start}
+    .about-cta-body{padding-bottom:0;align-self:auto}
+    .about-cta-art{justify-content:center;align-items:flex-end}
+    .about-cta-art img{margin:0 auto;width:100%;max-width:320px}
 }
 @media(max-width:900px){
     .about-hero{padding:72px 0 96px}
@@ -122,9 +133,10 @@
     .about-section-h{font-size:26px;letter-spacing:-.4px}
     .about-section-sub{font-size:14px;margin-bottom:40px}
     .steps-row{grid-template-columns:1fr;gap:16px}
-    .about-cta{padding:40px 26px;border-radius:20px}
+    .about-cta{padding:36px 24px 0;border-radius:20px}
     .about-cta-body h2{font-size:26px}
     .about-cta-btn{font-size:15px;padding:16px 24px}
+    .about-cta-art img{max-width:240px}
     .val-card{padding:28px 24px}
     .step-card{padding:30px 22px 26px}
     .about-cta-trust{gap:14px}
@@ -289,94 +301,10 @@
                 </div>
             </div>
             <div class="about-cta-art" aria-hidden="true">
-                {{-- Vector portrait of a CertiCars consultant on the phone, with laptop + mug.
-                     Hand-drawn SVG so it ships inline (no external asset, no http call). --}}
-                <svg viewBox="0 0 380 360" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="ccArtBg" x1="0" x2="1" y1="0" y2="1">
-                            <stop offset="0" stop-color="#0f2454"/>
-                            <stop offset="1" stop-color="#0a1838"/>
-                        </linearGradient>
-                        <linearGradient id="ccArtGlow" x1="0" x2="1" y1="0" y2="1">
-                            <stop offset="0" stop-color="#5fa1ff"/>
-                            <stop offset="1" stop-color="#0066ff"/>
-                        </linearGradient>
-                        <linearGradient id="ccArtShirt" x1="0" x2="0" y1="0" y2="1">
-                            <stop offset="0" stop-color="#1a4ea8"/>
-                            <stop offset="1" stop-color="#0d2f6e"/>
-                        </linearGradient>
-                        <linearGradient id="ccArtSkin" x1="0" x2="0" y1="0" y2="1">
-                            <stop offset="0" stop-color="#f1c8a8"/>
-                            <stop offset="1" stop-color="#d9a784"/>
-                        </linearGradient>
-                    </defs>
-
-                    {{-- Soft glow halo behind the figure --}}
-                    <circle cx="190" cy="180" r="155" fill="url(#ccArtBg)" opacity=".55"/>
-                    <circle cx="190" cy="170" r="110" fill="url(#ccArtGlow)" opacity=".18"/>
-
-                    {{-- Desk surface --}}
-                    <rect x="40" y="278" width="300" height="14" rx="3" fill="#1a2a4f"/>
-                    <rect x="40" y="278" width="300" height="3" fill="#5fa1ff" opacity=".4"/>
-
-                    {{-- Laptop --}}
-                    <rect x="62" y="232" width="120" height="50" rx="5" fill="#0e1a36" stroke="#5fa1ff" stroke-width="1.6"/>
-                    <rect x="68" y="238" width="108" height="38" rx="2" fill="#0a1530"/>
-                    <rect x="74" y="244" width="56" height="4" rx="1" fill="#5fa1ff" opacity=".7"/>
-                    <rect x="74" y="252" width="80" height="3" rx="1" fill="#5fa1ff" opacity=".4"/>
-                    <rect x="74" y="259" width="64" height="3" rx="1" fill="#5fa1ff" opacity=".3"/>
-                    <rect x="74" y="266" width="44" height="3" rx="1" fill="#5fa1ff" opacity=".3"/>
-                    <rect x="56" y="278" width="132" height="4" rx="2" fill="#1a2a4f"/>
-
-                    {{-- Mug --}}
-                    <path d="M232 248 L268 248 L264 280 L236 280 Z" fill="#fff"/>
-                    <path d="M268 254 q12 0 12 12 q0 12 -12 12" fill="none" stroke="#fff" stroke-width="3"/>
-                    <rect x="238" y="255" width="24" height="3" fill="#0066ff"/>
-                    <path d="M244 240 q2 -8 0 -16 M250 240 q2 -8 0 -16 M256 240 q2 -8 0 -16" stroke="#cfe1ff" stroke-width="1.4" stroke-linecap="round" fill="none" opacity=".6"/>
-
-                    {{-- Body / shirt --}}
-                    <path d="M118 230 Q140 198 200 198 Q260 198 282 230 L290 290 L110 290 Z" fill="url(#ccArtShirt)"/>
-                    <path d="M180 198 L200 230 L220 198" fill="none" stroke="#0a1432" stroke-width="2.4"/>
-                    {{-- Lanyard / ID badge --}}
-                    <rect x="194" y="232" width="14" height="20" rx="2" fill="#5fa1ff"/>
-                    <rect x="195" y="235" width="12" height="3" fill="#fff" opacity=".8"/>
-
-                    {{-- Neck --}}
-                    <rect x="186" y="180" width="28" height="22" fill="url(#ccArtSkin)"/>
-
-                    {{-- Head --}}
-                    <ellipse cx="200" cy="158" rx="40" ry="44" fill="url(#ccArtSkin)"/>
-                    {{-- Hair --}}
-                    <path d="M158 142 Q170 110 200 108 Q236 108 244 144 Q248 132 240 122 Q224 100 200 100 Q170 100 156 124 Q150 134 158 142 Z" fill="#3a2818"/>
-                    {{-- Ear --}}
-                    <ellipse cx="160" cy="160" rx="6" ry="9" fill="url(#ccArtSkin)"/>
-                    {{-- Eyes + brows + mouth --}}
-                    <path d="M178 152 q6 -4 12 0" stroke="#2a1a0c" stroke-width="2" fill="none" stroke-linecap="round"/>
-                    <path d="M208 152 q6 -4 12 0" stroke="#2a1a0c" stroke-width="2" fill="none" stroke-linecap="round"/>
-                    <circle cx="184" cy="162" r="2" fill="#2a1a0c"/>
-                    <circle cx="214" cy="162" r="2" fill="#2a1a0c"/>
-                    <path d="M188 180 q12 8 22 0" stroke="#a35b3a" stroke-width="2" fill="none" stroke-linecap="round"/>
-
-                    {{-- Phone to ear (right arm raised) --}}
-                    <path d="M240 200 Q272 178 268 142 Q266 124 244 130" fill="url(#ccArtShirt)" stroke="#0a1432" stroke-width="1.2"/>
-                    <rect x="232" y="118" width="20" height="40" rx="5" fill="#0a1432" stroke="#5fa1ff" stroke-width="1.4"/>
-                    <rect x="234" y="122" width="16" height="28" rx="2" fill="#0066ff" opacity=".25"/>
-                    <circle cx="242" cy="154" r="2" fill="#5fa1ff"/>
-                    {{-- Hand on phone --}}
-                    <ellipse cx="240" cy="138" rx="9" ry="11" fill="url(#ccArtSkin)"/>
-
-                    {{-- Left arm down to laptop --}}
-                    <path d="M120 230 Q90 240 92 268 Q102 274 134 262 Z" fill="url(#ccArtShirt)" stroke="#0a1432" stroke-width="1.2"/>
-                    <ellipse cx="98" cy="266" rx="10" ry="7" fill="url(#ccArtSkin)"/>
-
-                    {{-- Headset wire to the phone (suggestion of a call) --}}
-                    <path d="M236 156 q-8 18 -4 30" stroke="#5fa1ff" stroke-width="1.4" fill="none" stroke-dasharray="2 3" opacity=".7"/>
-
-                    {{-- Speech sparkle near phone --}}
-                    <circle cx="266" cy="118" r="3" fill="#5fa1ff"/>
-                    <circle cx="278" cy="106" r="2" fill="#5fa1ff" opacity=".7"/>
-                    <circle cx="288" cy="118" r="1.6" fill="#5fa1ff" opacity=".5"/>
-                </svg>
+                {{-- Branded consultant illustration. Source PNG ships from public/images so
+                     it's served by the web server directly, not via Laravel. Anchored to
+                     the bottom-right of the dark CTA card via .about-cta-art img CSS. --}}
+                <img src="/images/bohater.png" alt="" loading="lazy" decoding="async" width="1122" height="1402">
             </div>
         </div>
     </div>
