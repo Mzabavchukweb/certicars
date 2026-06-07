@@ -9,8 +9,18 @@
 .about-hero{background:linear-gradient(160deg,#050a17 0%,#070d20 45%,#0a1432 100%);padding:96px 0 120px;position:relative;overflow:hidden}
 .about-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 18% 30%,rgba(0,102,255,.18),transparent 60%),radial-gradient(ellipse 55% 65% at 85% 70%,rgba(0,102,255,.12),transparent 65%);pointer-events:none}
 .about-hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000 30%,transparent 90%)}
-.about-hero-carline{position:absolute;left:-3%;bottom:8%;width:60%;max-width:760px;opacity:.08;pointer-events:none}
-.about-hero-carline svg{width:100%;height:auto;display:block}
+/* Hero info pill sitting under the narrative paragraph — links to the
+   CertiCheck section on the home page and matches the reference: thin
+   blue-tinted border on the dark navy hero, (i) circle icon on the
+   left, body text with the "CertiCheck" brand word emphasised, and a
+   small external-link glyph after it. */
+.about-hero-pill{display:inline-flex;align-items:flex-start;gap:14px;margin-top:22px;padding:14px 18px;background:rgba(15,28,60,.55);border:1px solid rgba(95,161,255,.32);border-radius:14px;max-width:520px;text-decoration:none;color:rgba(255,255,255,.78);transition:background .2s ease,border-color .2s ease}
+.about-hero-pill:hover{background:rgba(15,28,60,.78);border-color:rgba(95,161,255,.55)}
+.about-hero-pill-ico{flex-shrink:0;width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(95,161,255,.55);display:flex;align-items:center;justify-content:center;color:#5fa1ff}
+.about-hero-pill-ico svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2}
+.about-hero-pill-text{font-size:14.5px;line-height:1.55;letter-spacing:-.05px}
+.about-hero-pill-text b{color:#5fa1ff;font-weight:700}
+.about-hero-pill-text svg{width:14px;height:14px;stroke:#5fa1ff;fill:none;stroke-width:2.2;vertical-align:-2px;margin-left:4px}
 .about-hero-bottom{position:absolute;left:0;right:0;bottom:-1px;height:88px;background:#fff;clip-path:polygon(0 100%,100% 100%,100% 35%,50% 100%,0 35%);pointer-events:none}
 .about-hero-in{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
 .about-breadcrumb{display:flex;align-items:center;gap:8px;font-size:12.5px;color:rgba(255,255,255,.45);margin-bottom:24px}
@@ -174,17 +184,6 @@
 {{-- ===== HERO (dark) ===== --}}
 <section class="about-hero">
     <div class="about-hero-dots"></div>
-    {{-- Faint line-art car silhouette behind the left narrative --}}
-    <div class="about-hero-carline" aria-hidden="true">
-        <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#5fa1ff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M40 150 L120 150 Q140 92 210 86 L460 84 Q540 86 580 150 L680 150"/>
-            <path d="M170 96 L210 96 L240 130 L160 130 Z"/>
-            <path d="M255 96 L380 96 L420 130 L255 130 Z"/>
-            <path d="M435 96 L545 96 L575 130 L435 130 Z"/>
-            <circle cx="220" cy="160" r="22"/><circle cx="220" cy="160" r="10"/>
-            <circle cx="540" cy="160" r="22"/><circle cx="540" cy="160" r="10"/>
-        </svg>
-    </div>
     <div class="about-section-in about-hero-in">
         <div>
             <nav class="about-breadcrumb" aria-label="Okruszki">
@@ -195,6 +194,10 @@
             <div class="about-hero-label">Nasza historia</div>
             <h1>Zmieniamy rynek<br>aut używanych.<br><em>Na lepsze.</em></h1>
             <p class="about-hero-desc">CertiCars powstało po to, żeby przywracać zaufanie do rynku samochodów używanych. Pokazujemy auta możliwie konkretnie — z informacjami o pochodzeniu, wyposażeniu, formalnościach i stanie pojazdu, tak aby klient mógł lepiej poznać samochód jeszcze przed przyjazdem.</p>
+            <a href="{{ route('home') }}#certicheck" class="about-hero-pill">
+                <span class="about-hero-pill-ico"><x-icon name="info" size="16"/></span>
+                <span class="about-hero-pill-text">Przy wybranych autach dodatkowe informacje przygotowujemy w&nbsp;ramach <b>CertiCheck.<x-icon name="arrow-up-right" size="14"/></b></span>
+            </a>
         </div>
         <aside class="std-panel" aria-label="Standard CertiCars">
             <div class="std-panel-head">
