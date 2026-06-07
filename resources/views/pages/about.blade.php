@@ -58,7 +58,7 @@
 .val-card p{font-size:14.5px;color:var(--text-3);line-height:1.75;margin:0}
 
 /* ===== How it works — step cards with arrow connectors ===== */
-.about-how{padding:96px 0;background:#f7f9fc;position:relative}
+.about-how{padding:96px 0 32px;background:#f7f9fc;position:relative}
 .steps-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;align-items:stretch;position:relative}
 .step-card{background:#fff;border-radius:20px;padding:36px 26px 32px;border:1px solid #eeeef0;box-shadow:0 1px 3px rgba(0,0,0,.04),0 16px 40px -20px rgba(15,23,42,.15);display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1}
 .step-num-wrap{position:relative;margin-bottom:14px}
@@ -75,19 +75,25 @@
 .steps-row{grid-template-columns:1fr 56px 1fr 56px 1fr 56px 1fr}
 
 /* ===== CTA banner (dark rounded) ===== */
-.about-cta-wrap{padding:88px 0 96px;background:#fff}
-/* Wider container just for the CTA so the dark card reads as a panoramic
-   banner, not a centered text block. */
-.about-cta-in{max-width:1320px;margin:0 auto;padding:0 24px;position:relative;box-sizing:border-box}
+/* The bohater illustration is taller than the dark card and overflows
+   above its top edge. Top padding here is dimensioned so that overflow
+   FILLS the space above the card instead of poking up into the steps
+   section. Result: no visible empty white band, dark card sits tight
+   below the steps row. */
+.about-cta-wrap{padding:240px 0 96px;background:#fff}
+/* Container matches the other page sections (1200 max-width) so the dark
+   banner aligns vertically with the values cards and step cards above. */
+.about-cta-in{max-width:1200px;margin:0 auto;padding:0 24px;position:relative;box-sizing:border-box}
 /* Shell sits outside the dark card and is overflow:visible so the character
    illustration can break above the card's top edge. */
 .about-cta-shell{position:relative;overflow:visible}
-.about-cta{position:relative;border-radius:28px;background:linear-gradient(135deg,#070d20 0%,#0a1532 55%,#0c1a3f 100%);overflow:hidden;padding:48px 64px;min-height:280px;box-shadow:0 30px 60px -24px rgba(7,13,32,.5)}
+/* Shorter, more panoramic card: 36 top / 40 bottom padding (was 48/48). */
+.about-cta{position:relative;border-radius:28px;background:linear-gradient(135deg,#070d20 0%,#0a1532 55%,#0c1a3f 100%);overflow:hidden;padding:36px 64px 40px;min-height:240px;box-shadow:0 30px 60px -24px rgba(7,13,32,.5)}
 .about-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 80% at 18% 30%,rgba(0,102,255,.22),transparent 60%),radial-gradient(ellipse 50% 70% at 82% 70%,rgba(0,102,255,.2),transparent 60%);pointer-events:none}
 .about-cta-sweep{position:absolute;left:-8%;top:55%;width:130%;height:160px;background:linear-gradient(95deg,transparent 25%,rgba(95,161,255,.36) 48%,rgba(95,161,255,.08) 58%,transparent 75%);transform:rotate(-7deg);filter:blur(26px);pointer-events:none}
 .about-cta-carline{position:absolute;left:52%;bottom:8%;width:48%;max-width:560px;opacity:.09;pointer-events:none}
 .about-cta-carline svg{width:100%;height:auto;display:block}
-.about-cta-body{position:relative;z-index:2;max-width:560px}
+.about-cta-body{position:relative;z-index:2;max-width:520px}
 .about-cta-eyebrow{font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#5fa1ff;margin-bottom:14px;display:inline-flex;align-items:center;gap:10px}
 .about-cta-eyebrow::before{content:'';width:24px;height:2px;background:#5fa1ff;border-radius:2px}
 .about-cta-body h2{font-size:40px;font-weight:900;color:#fff;letter-spacing:-1px;margin:0 0 14px;line-height:1.08}
@@ -104,7 +110,13 @@
    would otherwise clip the head). Anchored to the bottom-right with a
    small negative bottom so the laptop visually rests on the card's
    rounded base. */
-.about-cta-bohater{position:absolute;right:48px;bottom:-12px;height:440px;width:auto;max-width:48%;z-index:5;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 24px 40px rgba(0,0,0,.5))}
+/* Bohater anchored bottom-right. Width is 42% of the shell (matches the
+   38–45% target band) and height auto preserves the 0.8 aspect ratio, so
+   at a typical 1152 px shell width the image is ~484×605 px. With the
+   card at ~280 px tall and bottom:-16, that means the head + shoulders
+   extend ~310 px above the card's top edge — the dramatic "break-out"
+   look from the reference. */
+.about-cta-bohater{position:absolute;right:36px;bottom:-16px;width:42%;max-width:520px;min-width:360px;height:auto;z-index:5;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 28px 44px rgba(0,0,0,.55))}
 
 /* ===== Responsive ===== */
 @media(max-width:1024px){
@@ -114,9 +126,11 @@
     /* Tablet: keep bohater anchored bottom-right but shrink so it still
        breaks above the card edge without overlapping the text. The body
        max-width tightens to keep the text out of the illustration. */
-    .about-cta{padding:44px 48px}
-    .about-cta-body{max-width:54%}
-    .about-cta-bohater{right:24px;bottom:-8px;height:360px;max-width:42%}
+    /* Tablet: shrink the top padding because the bohater is smaller too. */
+    .about-cta-wrap{padding-top:180px}
+    .about-cta{padding:32px 48px 36px}
+    .about-cta-body{max-width:52%}
+    .about-cta-bohater{right:24px;bottom:-12px;width:44%;max-width:420px;min-width:280px;height:auto}
 }
 @media(max-width:900px){
     .about-hero{padding:72px 0 96px}
@@ -128,14 +142,16 @@
     .values-grid{grid-template-columns:1fr;gap:18px}
     .about-section-h{font-size:32px}
     .steps-row{grid-template-columns:1fr 1fr;gap:18px}
-    .about-cta{padding:40px 40px}
+    .about-cta-wrap{padding-top:140px}
+    .about-cta{padding:32px 36px 32px}
     .about-cta-body h2{font-size:32px}
-    .about-cta-body{max-width:58%}
-    .about-cta-bohater{height:320px;right:16px;bottom:-6px;max-width:44%}
+    .about-cta-body{max-width:56%}
+    .about-cta-bohater{width:46%;max-width:340px;min-width:240px;right:14px;bottom:-8px}
 }
 @media(max-width:760px){
     /* Below tablet, stack: bohater drops below text inside the card.
-       overflow:hidden returns implicitly because the image is now relative. */
+       The wrap padding-top resets to normal because there's no overflow to absorb. */
+    .about-cta-wrap{padding:48px 0 80px}
     .about-cta{padding:40px 32px 0;min-height:auto}
     .about-cta-body{max-width:100%}
     .about-cta-bohater{position:relative;right:auto;bottom:auto;height:auto;width:100%;max-width:300px;display:block;margin:24px auto 0}
