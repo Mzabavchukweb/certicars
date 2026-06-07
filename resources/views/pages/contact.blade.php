@@ -87,55 +87,10 @@
 .kt-side-val{font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.2px;margin:0 0 4px;display:block;text-decoration:none}
 a.kt-side-val:hover{color:var(--blue)}
 .kt-side-meta{font-size:12.5px;color:var(--text-3);line-height:1.55;margin:0}
-.kt-side-btn{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:9px 16px;background:#fff;color:var(--blue);border:1.5px solid var(--blue);border-radius:50px;font-size:12.5px;font-weight:700;text-decoration:none;transition:background .15s,color .15s}
-.kt-side-btn:hover{background:var(--blue);color:#fff}
-.kt-side-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4}
 .kt-hours-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:13px;border-top:1px dashed #eef2f7}
 .kt-hours-row:first-of-type{border-top:none;padding-top:6px}
 .kt-hours-row .d{color:var(--text-3);font-weight:500}
 .kt-hours-row .t{color:var(--text);font-weight:800}
-
-/* ===== Map + location section ===== */
-.kt-map-section{padding:24px 0 80px;background:var(--bg)}
-.kt-map-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:32px;align-items:start}
-.kt-map-card{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--border-l);height:420px;background:#dbeafe}
-.kt-map-tiles{position:absolute;inset:0;overflow:hidden}
-.kt-map-tile{position:absolute;width:256px;height:256px;display:block;pointer-events:none}
-.kt-map-tile.r0{top:calc(50% - 266px)}
-.kt-map-tile.r1{top:calc(50% - 10px)}
-.kt-map-tile.c0{left:calc(50% - 734px)}
-.kt-map-tile.c1{left:calc(50% - 478px)}
-.kt-map-tile.c2{left:calc(50% - 222px)}
-.kt-map-tile.c3{left:calc(50% + 34px)}
-.kt-map-tile.c4{left:calc(50% + 290px)}
-.kt-map-tile.c5{left:calc(50% + 546px)}
-.kt-map-overlay{display:none}
-.kt-map-marker{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
-.kt-map-marker-pin{display:flex;align-items:center;justify-content:center}
-.kt-map-marker-pin svg{width:42px;height:42px;color:var(--blue);stroke:currentColor;fill:none;stroke-width:2}
-.kt-map-marker-label{position:relative;background:var(--blue);color:#fff;font-size:13px;font-weight:700;padding:6px 14px;border-radius:6px;white-space:nowrap;line-height:1}
-.kt-map-marker-label::before{content:'';position:absolute;left:50%;top:-4px;transform:translateX(-50%) rotate(45deg);width:8px;height:8px;background:var(--blue)}
-
-.kt-loc-body{padding-top:8px}
-.kt-loc-eyebrow{font-size:11px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:var(--blue);margin-bottom:12px;display:inline-flex;align-items:center;gap:10px}
-.kt-loc-eyebrow::before{content:'';width:24px;height:2px;background:var(--blue);border-radius:2px;opacity:.6}
-.kt-loc-h{font-size:32px;font-weight:900;color:var(--text);letter-spacing:-.7px;margin:0 0 22px;line-height:1.15}
-.kt-loc-line{display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:flex-start;padding:14px 0;border-top:1px solid #eef2f7}
-.kt-loc-line:first-of-type{border-top:none}
-.kt-loc-line-ico{width:36px;height:36px;border-radius:10px;background:var(--blue-bg);color:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.kt-loc-line-ico svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2}
-.kt-loc-line-eyebrow{font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:1.3px;margin:0 0 2px}
-.kt-loc-line-val{font-size:15px;font-weight:700;color:var(--text);line-height:1.5;margin:0}
-.kt-loc-line-sub{font-size:13px;color:var(--text-3);margin:2px 0 0;line-height:1.5}
-.kt-loc-hours-grid{display:grid;grid-template-columns:1fr auto;row-gap:6px;column-gap:18px;margin-top:6px;font-size:13px}
-.kt-loc-hours-grid .d{color:var(--text-3);font-weight:500}
-.kt-loc-hours-grid .t{color:var(--text);font-weight:800}
-.kt-loc-callout{display:flex;gap:12px;align-items:flex-start;background:#eff6ff;border:1px solid #dbeafe;border-radius:12px;padding:14px 16px;margin-top:20px}
-.kt-loc-callout-ico{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;margin-top:1px}
-.kt-loc-callout-ico svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2.6}
-.kt-loc-callout p{margin:0;font-size:13px;color:var(--text);line-height:1.5}
-.kt-loc-callout p b{display:block;font-weight:800;color:var(--text);margin-bottom:2px;font-size:13.5px}
-.kt-loc-callout p span{color:var(--text-3);font-weight:500}
 
 /* ===== Bottom phone CTA strip — flat blue, no gradients/glow ===== */
 .kt-call-strip{background:var(--blue);padding:48px 0}
@@ -153,8 +108,6 @@ a.kt-side-val:hover{color:var(--blue)}
     .kt-hero h1{font-size:44px}
     .kt-hero-in{grid-template-columns:1fr;gap:48px}
     .kt-form-grid{grid-template-columns:1fr;gap:22px}
-    .kt-map-grid{grid-template-columns:1fr;gap:28px}
-    .kt-map-card{height:340px}
     .kt-call-strip-in{grid-template-columns:auto 1fr;gap:24px;text-align:left}
     .kt-call-strip-btn{grid-column:1/-1;justify-self:start}
 }
@@ -163,7 +116,6 @@ a.kt-side-val:hover{color:var(--blue)}
     .kt-hero h1{font-size:38px}
     .kt-methods-grid{grid-template-columns:1fr;gap:14px}
     .kt-section-h{font-size:28px}
-    .kt-loc-h{font-size:26px}
     .kt-panel{padding:24px 22px 20px}
     .kt-prow-val{font-size:16px}
 }
@@ -199,8 +151,6 @@ a.kt-side-val:hover{color:var(--blue)}
             <p class="kt-hero-desc">Zadzwoń, napisz lub umów oględziny auta. Odpowiadamy konkretnie i pomagamy szybko ustalić najważniejsze informacje.</p>
             <div class="kt-trust">
                 <span class="kt-trust-pill"><x-icon name="zap" size="14"/> Szybka odpowiedź</span>
-                <span class="kt-trust-pill"><x-icon name="map-pin" size="14"/> Salon w Lipniku k. Stargardu</span>
-                <span class="kt-trust-pill"><x-icon name="clock" size="14"/> Pn-Pt 9:00-18:00 · Sb-Nd 10:00-15:00</span>
             </div>
         </div>
         <aside class="kt-panel" aria-label="Dane kontaktowe">
@@ -337,7 +287,6 @@ a.kt-side-val:hover{color:var(--blue)}
                         <p class="kt-side-eyebrow">Nasz salon</p>
                         <span class="kt-side-val">Lipnik k. Stargardu</span>
                         <p class="kt-side-meta">Oględziny po wcześniejszym kontakcie.</p>
-                        <a href="#kontakt-mapa" class="kt-side-btn"><x-icon name="map" size="13"/> Pokaż na mapie</a>
                     </div>
                 </div>
                 <div class="kt-side-card">
@@ -351,58 +300,6 @@ a.kt-side-val:hover{color:var(--blue)}
                     </div>
                 </div>
             </aside>
-        </div>
-    </div>
-</section>
-
-{{-- ===== Map + Gdzie nas znajdziesz? ===== --}}
-<section class="kt-map-section" id="kontakt-mapa">
-    <div class="kt-section-in">
-        <div class="kt-map-grid">
-            {{-- OSM tile mosaic centred on the CertiCars pin in Lipnik k. Stargardu.
-                 Same coordinates + tile pattern as the footer map. --}}
-            <div class="kt-map-card">
-                <div class="kt-map-tiles" aria-hidden="true">
-                    @foreach([[0,17741],[1,17742],[2,17743],[3,17744],[4,17745],[5,17746]] as [$ci,$tx])
-                        <img class="kt-map-tile r0 c{{ $ci }}" src="https://tile.openstreetmap.org/15/{{ $tx }}/10620.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
-                        <img class="kt-map-tile r1 c{{ $ci }}" src="https://tile.openstreetmap.org/15/{{ $tx }}/10621.png" alt="" loading="lazy" decoding="async" width="256" height="256" onerror="this.style.display='none'">
-                    @endforeach
-                </div>
-                <div class="kt-map-overlay" aria-hidden="true"></div>
-                <div class="kt-map-marker" aria-label="Lokalizacja: CertiCars">
-                    <span class="kt-map-marker-pin" aria-hidden="true"><x-icon name="map-pin" size="46" :strokeWidth="2"/></span>
-                    <span class="kt-map-marker-label">CertiCars</span>
-                </div>
-            </div>
-            <div class="kt-loc-body">
-                <div class="kt-loc-eyebrow">Nasza lokalizacja</div>
-                <h2 class="kt-loc-h">Gdzie nas znajdziesz?</h2>
-                <div class="kt-loc-line">
-                    <div class="kt-loc-line-ico"><x-icon name="map-pin" size="18"/></div>
-                    <div>
-                        <p class="kt-loc-line-eyebrow">Adres</p>
-                        <p class="kt-loc-line-val">Lipnik k. Stargardu</p>
-                        <p class="kt-loc-line-sub">73-110 Stargard, Polska</p>
-                    </div>
-                </div>
-                <div class="kt-loc-line">
-                    <div class="kt-loc-line-ico"><x-icon name="clock" size="18"/></div>
-                    <div>
-                        <p class="kt-loc-line-eyebrow">Godziny otwarcia</p>
-                        <div class="kt-loc-hours-grid">
-                            <span class="d">Poniedziałek – Piątek</span><span class="t">9:00 – 18:00</span>
-                            <span class="d">Sobota – Niedziela</span><span class="t">10:00 – 15:00</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="kt-loc-callout">
-                    <div class="kt-loc-callout-ico"><x-icon name="check" size="14"/></div>
-                    <p>
-                        <b>Przed przyjazdem zadzwoń i potwierdź dostępność auta.</b>
-                        <span>Oględziny tylko po wcześniejszym kontakcie.</span>
-                    </p>
-                </div>
-            </div>
         </div>
     </div>
 </section>
