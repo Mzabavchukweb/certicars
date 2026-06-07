@@ -5,10 +5,9 @@
 /* ===== ABOUT PAGE — premium refresh ===== */
 .about-section-in{max-width:1200px;margin:0 auto;padding:0 24px;position:relative;width:100%;box-sizing:border-box}
 
-/* ===== HERO (dark) ===== */
-.about-hero{background:linear-gradient(160deg,#050a17 0%,#070d20 45%,#0a1432 100%);padding:96px 0 120px;position:relative;overflow:hidden}
-.about-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 18% 30%,rgba(0,102,255,.18),transparent 60%),radial-gradient(ellipse 55% 65% at 85% 70%,rgba(0,102,255,.12),transparent 65%);pointer-events:none}
-.about-hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000 30%,transparent 90%)}
+/* ===== HERO (dark, flat) ===== */
+.about-hero{background:#0a1432;padding:96px 0 120px;position:relative;overflow:hidden;border-bottom:1px solid #131b3a}
+.about-hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
 .about-hero-carline{position:absolute;left:-3%;bottom:8%;width:60%;max-width:760px;opacity:.08;pointer-events:none}
 .about-hero-carline svg{width:100%;height:auto;display:block}
 .about-hero-bottom{position:absolute;left:0;right:0;bottom:-1px;height:88px;background:#fff;clip-path:polygon(0 100%,100% 100%,100% 35%,50% 100%,0 35%);pointer-events:none}
@@ -21,12 +20,11 @@
 .about-hero-label{font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#5fa1ff;margin-bottom:22px;display:inline-flex;align-items:center;gap:12px}
 .about-hero-label::before{content:'';width:32px;height:2px;background:#5fa1ff;border-radius:2px;flex-shrink:0}
 .about-hero h1{font-size:60px;font-weight:900;color:#fff;letter-spacing:-1.2px;line-height:1.04;margin:0 0 26px;max-width:560px}
-.about-hero h1 em{font-style:normal;color:var(--blue);background:linear-gradient(120deg,#0066ff,#3b8bff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.about-hero h1 em{font-style:normal;color:#3b8bff}
 .about-hero-desc{font-size:16px;color:rgba(255,255,255,.62);line-height:1.8;margin:0;max-width:520px}
 
-/* Right side — Standard CertiCars panel */
-.std-panel{position:relative;background:linear-gradient(180deg,rgba(15,28,60,.85),rgba(8,16,38,.95));border:1px solid rgba(95,161,255,.32);border-radius:24px;padding:36px 36px 30px;box-shadow:0 0 0 1px rgba(0,102,255,.08),0 40px 80px -20px rgba(0,40,120,.6),0 0 80px -20px rgba(0,102,255,.35)}
-.std-panel::before{content:'';position:absolute;inset:0;border-radius:24px;padding:1px;background:linear-gradient(135deg,rgba(95,161,255,.45),rgba(95,161,255,0) 45%,rgba(95,161,255,.12) 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+/* Right side — Standard CertiCars panel — flat dark navy, single border */
+.std-panel{position:relative;background:#0e1a3a;border:1px solid #1f2e58;border-radius:18px;padding:32px 32px 26px}
 .std-panel-head{margin-bottom:26px}
 .std-panel-eyebrow{font-size:10.5px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#5fa1ff;margin-bottom:8px;display:flex;align-items:center;gap:8px}
 .std-panel-eyebrow svg{width:13px;height:13px;stroke:#5fa1ff;fill:none;stroke-width:2.2}
@@ -50,8 +48,8 @@
 /* ===== Values (white) ===== */
 .about-values{padding:96px 0;background:#fff}
 .values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.val-card{background:#fff;border-radius:20px;padding:36px 32px;border:1px solid #eeeef0;box-shadow:0 1px 3px rgba(0,0,0,.04),0 12px 32px -16px rgba(15,23,42,.12);transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;position:relative}
-.val-card:hover{transform:translateY(-4px);box-shadow:0 1px 3px rgba(0,0,0,.04),0 24px 48px -16px rgba(15,23,42,.18);border-color:#dbeafe}
+.val-card{background:#fff;border-radius:12px;padding:36px 32px;border:1px solid var(--border-l);transition:border-color .15s ease}
+.val-card:hover{border-color:var(--blue)}
 .val-icon{width:60px;height:60px;background:var(--blue-bg);border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:22px}
 .val-icon svg{width:28px;height:28px;stroke:var(--blue);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .val-card h3{font-size:19px;font-weight:800;color:var(--text);margin:0 0 12px;letter-spacing:-.3px;line-height:1.25}
@@ -60,17 +58,16 @@
 /* ===== How it works — step cards with arrow connectors ===== */
 .about-how{padding:96px 0 32px;background:#f7f9fc;position:relative}
 .steps-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;align-items:stretch;position:relative}
-.step-card{background:#fff;border-radius:20px;padding:36px 26px 32px;border:1px solid #eeeef0;box-shadow:0 1px 3px rgba(0,0,0,.04),0 16px 40px -20px rgba(15,23,42,.15);display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1}
+.step-card{background:#fff;border-radius:12px;padding:36px 26px 32px;border:1px solid var(--border-l);display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1}
 .step-num-wrap{position:relative;margin-bottom:14px}
-.step-num{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#0066ff,#1a7fff);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;letter-spacing:.5px;box-shadow:0 12px 24px -6px rgba(0,102,255,.45),inset 0 -3px 6px rgba(0,0,0,.12)}
-.step-num::after{content:'';position:absolute;inset:-4px;border:2px solid rgba(0,102,255,.18);border-radius:50%;pointer-events:none}
+.step-num{width:64px;height:64px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;letter-spacing:.5px}
 .step-ico{width:48px;height:48px;border-radius:14px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
 .step-ico svg{width:24px;height:24px;stroke:var(--blue);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .step-card h4{font-size:17px;font-weight:800;color:var(--text);margin:0 0 10px;letter-spacing:-.2px;line-height:1.25}
 .step-underline{width:32px;height:3px;border-radius:2px;background:var(--blue);margin:0 0 16px}
 .step-card p{font-size:13.5px;color:var(--text-3);line-height:1.7;margin:0}
 .step-arrow{display:flex;align-items:center;justify-content:center;position:relative;z-index:0}
-.step-arrow span{width:40px;height:40px;border-radius:50%;background:#fff;border:1.5px solid #dbeafe;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px -8px rgba(15,23,42,.18)}
+.step-arrow span{width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--border-l);display:flex;align-items:center;justify-content:center}
 .step-arrow svg{width:18px;height:18px;stroke:var(--blue);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .steps-row{grid-template-columns:1fr 56px 1fr 56px 1fr 56px 1fr}
 
@@ -88,9 +85,8 @@
    illustration can break above the card's top edge. */
 .about-cta-shell{position:relative;overflow:visible}
 /* Shorter, more panoramic card: 36 top / 40 bottom padding (was 48/48). */
-.about-cta{position:relative;border-radius:28px;background:linear-gradient(135deg,#070d20 0%,#0a1532 55%,#0c1a3f 100%);overflow:hidden;padding:36px 64px 40px;min-height:240px;box-shadow:0 30px 60px -24px rgba(7,13,32,.5)}
-.about-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 80% at 18% 30%,rgba(0,102,255,.22),transparent 60%),radial-gradient(ellipse 50% 70% at 82% 70%,rgba(0,102,255,.2),transparent 60%);pointer-events:none}
-.about-cta-sweep{position:absolute;left:-8%;top:55%;width:130%;height:160px;background:linear-gradient(95deg,transparent 25%,rgba(95,161,255,.36) 48%,rgba(95,161,255,.08) 58%,transparent 75%);transform:rotate(-7deg);filter:blur(26px);pointer-events:none}
+.about-cta{position:relative;border-radius:18px;background:#0a1432;overflow:hidden;padding:36px 64px 40px;min-height:240px;border:1px solid #131b3a}
+.about-cta-sweep{display:none}
 .about-cta-carline{position:absolute;left:52%;bottom:8%;width:48%;max-width:560px;opacity:.09;pointer-events:none}
 .about-cta-carline svg{width:100%;height:auto;display:block}
 .about-cta-body{position:relative;z-index:2;max-width:520px}
@@ -98,8 +94,8 @@
 .about-cta-eyebrow::before{content:'';width:24px;height:2px;background:#5fa1ff;border-radius:2px}
 .about-cta-body h2{font-size:40px;font-weight:900;color:#fff;letter-spacing:-1px;margin:0 0 14px;line-height:1.08}
 .about-cta-body p{font-size:15.5px;color:rgba(255,255,255,.65);line-height:1.7;margin:0 0 28px;max-width:480px}
-.about-cta-btn{display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0066ff,#1a7fff);color:#fff;padding:17px 30px;border-radius:50px;font-weight:800;font-size:16.5px;text-decoration:none;letter-spacing:-.2px;box-shadow:0 18px 36px -12px rgba(0,102,255,.6),inset 0 -2px 4px rgba(0,0,0,.18);transition:transform .2s ease,box-shadow .2s ease}
-.about-cta-btn:hover{transform:translateY(-2px);box-shadow:0 24px 48px -12px rgba(0,102,255,.75),inset 0 -2px 4px rgba(0,0,0,.18)}
+.about-cta-btn{display:inline-flex;align-items:center;gap:12px;background:var(--blue);color:#fff;padding:16px 28px;border-radius:8px;font-weight:700;font-size:16px;text-decoration:none;letter-spacing:-.1px;transition:background .15s ease}
+.about-cta-btn:hover{background:var(--blue-h)}
 .about-cta-btn svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .about-cta-trust{display:flex;flex-wrap:nowrap;gap:24px;margin-top:22px;align-items:center}
 .about-cta-trust span{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.62);font-weight:500;white-space:nowrap}
@@ -116,7 +112,7 @@
    card at ~280 px tall and bottom:-16, that means the head + shoulders
    extend ~310 px above the card's top edge — the dramatic "break-out"
    look from the reference. */
-.about-cta-bohater{position:absolute;right:36px;bottom:-16px;width:42%;max-width:520px;min-width:360px;height:auto;z-index:5;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 28px 44px rgba(0,0,0,.55))}
+.about-cta-bohater{position:absolute;right:36px;bottom:-16px;width:42%;max-width:520px;min-width:360px;height:auto;z-index:5;pointer-events:none;user-select:none;-webkit-user-drag:none}
 
 /* ===== Responsive ===== */
 @media(max-width:1024px){
