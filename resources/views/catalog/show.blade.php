@@ -829,6 +829,7 @@
 .cs-dp-lbl::after{content:':'}
 .cs-dp-val{font-size:13.5px;color:#0a0a0a;font-weight:700;line-height:1.35;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .cs-dp-val.ok{color:#15803d}
+.cs-dp-val.muted{color:#9ca3af;font-weight:500}
 @media(max-width:1024px){
     .cs-dp-grid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:28px}
 }
@@ -1742,11 +1743,11 @@
             <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
         </div>
         <div class="cs-data-body">
-            {{-- 16-field icon-led grid laid out in 4 columns of 4 rows to
-                 match the reference. Order is fixed by column (1: identity,
-                 2: history dates + VIN, 3: powertrain, 4: body). Each cell
-                 only renders when the backend has a real value, so cars
-                 with missing fields gracefully collapse (no empty cells). --}}
+            {{-- Fixed 4×4 grid: every cell ALWAYS renders so missing data
+                 never shifts the column layout — the value falls back to a
+                 muted "—" placeholder instead. Row order maps directly to
+                 the reference (row 1 is the top of every column, row 4 is
+                 the bottom). --}}
             @php
                 $engineVersion = trim(implode(' ', array_filter([
                     $rowOk($car->equipment_version) ? $car->equipment_version : null,
@@ -1757,30 +1758,36 @@
                 if ($firstRegDate && preg_match('/(\d{4})/', (string) $firstRegDate, $m)) {
                     $prodYear = $m[1];
                 }
-                $dpRows = [];
-                if ($car->brand?->name)              $dpRows[] = ['badge-check',   'Marka',                $car->brand->name];
-                if ($firstRegDate)                   $dpRows[] = ['calendar',      'Pierwsza rejestracja', $firstRegDate];
-                if ($rowOk($dispFuel))               $dpRows[] = ['fuel',          'Paliwo',               $dispFuel];
-                if ($rowOk($dispBody))               $dpRows[] = ['car-front',     'Typ nadwozia',         $dispBody];
-                if ($rowOk($car->model))             $dpRows[] = ['car',           'Model',                $car->model];
-                if ($rowOk($car->mileage))           $dpRows[] = ['gauge',         'Przebieg',             number_format((float) $car->mileage, 0, '', ' ') . ' km'];
-                if ($rowOk($dispTransmission))       $dpRows[] = ['settings',      'Skrzynia biegów',      $dispTransmission];
-                if ($rowOk($car->seats))             $dpRows[] = ['users',         'Liczba miejsc',        $car->seats];
-                if ($engineVersion !== '')           $dpRows[] = ['cog',           'Wersja / silnik',      $engineVersion];
-                if ($rowOk($dispCountry))            $dpRows[] = ['globe',         'Kraj pochodzenia',     $dispCountry];
-                if ($rowOk($car->power_hp))          $dpRows[] = ['zap',           'Moc',                  $car->power_hp . ' KM' . ($rowOk($car->power_kw) ? ' / ' . $car->power_kw . ' kW' : '')];
-                if ($rowOk($car->doors))             $dpRows[] = ['door-open',     'Liczba drzwi',         $car->doors];
-                if ($prodYear)                       $dpRows[] = ['calendar-days', 'Rok produkcji',        $prodYear];
-                if ($rowOk($car->vin))               $dpRows[] = ['hash',          'VIN',                  strtoupper($car->vin)];
-                if ($rowOk($car->engine_capacity))   $dpRows[] = ['activity',      'Pojemność skokowa',    number_format((float) $car->engine_capacity, 0, '', ' ') . ' cm³'];
-                if ($rowOk($car->color))             $dpRows[] = ['palette',       'Kolor nadwozia',       $car->color];
+                $em = '—';
+                $dpRows = [
+                    // Row 1
+                    ['badge-check',   'Marka',                $car->brand?->name ?: $em],
+                    ['calendar',      'Pierwsza rejestracja', $firstRegDate ?: $em],
+                    ['fuel',          'Paliwo',               $rowOk($dispFuel) ? $dispFuel : $em],
+                    ['car-front',     'Typ nadwozia',         $rowOk($dispBody) ? $dispBody : $em],
+                    // Row 2
+                    ['car',           'Model',                $rowOk($car->model) ? $car->model : $em],
+                    ['gauge',         'Przebieg',             $rowOk($car->mileage) ? number_format((float) $car->mileage, 0, '', ' ') . ' km' : $em],
+                    ['settings',      'Skrzynia biegów',      $rowOk($dispTransmission) ? $dispTransmission : $em],
+                    ['users',         'Liczba miejsc',        $rowOk($car->seats) ? $car->seats : $em],
+                    // Row 3
+                    ['cog',           'Wersja / silnik',      $engineVersion !== '' ? $engineVersion : $em],
+                    ['globe',         'Kraj pochodzenia',     $rowOk($dispCountry) ? $dispCountry : $em],
+                    ['zap',           'Moc',                  $rowOk($car->power_hp) ? $car->power_hp . ' KM' . ($rowOk($car->power_kw) ? ' / ' . $car->power_kw . ' kW' : '') : $em],
+                    ['door-open',     'Liczba drzwi',         $rowOk($car->doors) ? $car->doors : $em],
+                    // Row 4
+                    ['calendar-days', 'Rok produkcji',        $prodYear ?: $em],
+                    ['hash',          'VIN',                  $rowOk($car->vin) ? strtoupper($car->vin) : $em],
+                    ['activity',      'Pojemność skokowa',    $rowOk($car->engine_capacity) ? number_format((float) $car->engine_capacity, 0, '', ' ') . ' cm³' : $em],
+                    ['palette',       'Kolor nadwozia',       $rowOk($car->color) ? $car->color : $em],
+                ];
             @endphp
             <div class="cs-dp-grid">
                 @foreach($dpRows as [$ico, $label, $value])
                     <div class="cs-dp-item">
                         <span class="cs-dp-ico" aria-hidden="true"><x-icon :name="$ico" size="18" :strokeWidth="1.8"/></span>
                         <span class="cs-dp-lbl">{{ $label }}</span>
-                        <span class="cs-dp-val" title="{{ $value }}">{{ $value }}</span>
+                        <span class="cs-dp-val {{ $value === $em ? 'muted' : '' }}" title="{{ $value }}">{{ $value }}</span>
                     </div>
                 @endforeach
             </div>
