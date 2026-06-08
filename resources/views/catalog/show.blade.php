@@ -1749,10 +1749,11 @@
                  the reference (row 1 is the top of every column, row 4 is
                  the bottom). --}}
             @php
-                $engineVersion = trim(implode(' ', array_filter([
-                    $rowOk($car->equipment_version) ? $car->equipment_version : null,
-                    $rowOk($car->transmission_detail) ? $car->transmission_detail : null,
-                ])));
+                // engine_version is the dedicated admin field for the engine
+                // variant string ("1.6 dCi 160 KM EDC"). The earlier fallback
+                // to transmission_detail / equipment_version was wrong — those
+                // fields describe the gearbox and trim level, not the engine.
+                $engineVersion = $rowOk($car->engine_version) ? $car->engine_version : '';
                 $firstRegDate = $rowOk($car->first_registration) ? $car->first_registration : null;
                 $prodYear = null;
                 if ($firstRegDate && preg_match('/(\d{4})/', (string) $firstRegDate, $m)) {
