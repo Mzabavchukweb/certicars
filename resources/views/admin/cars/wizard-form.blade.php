@@ -746,7 +746,12 @@
             </div>
         </div>
 
-        <div class="wz-grid-2" style="margin-bottom:14px">
+        <div class="wz-grid-3" style="margin-bottom:14px">
+            <div class="wz-field">
+                <label>Wersja / silnik</label>
+                <input type="text" name="engine_version" value="{{ old('engine_version',$car?->engine_version) }}" maxlength="120" placeholder="np. 1.6 dCi 160 KM EDC">
+                <small style="font-size:11px;color:var(--text-3);margin-top:4px;display:block">Wyświetlane w sekcji „Dane pojazdu” na karcie auta.</small>
+            </div>
             <div class="wz-field">
                 <label>Wersja wyposażenia</label>
                 <input type="text" name="equipment_version" value="{{ old('equipment_version',$car?->equipment_version) }}" maxlength="120" placeholder="np. Initiale Paris">
