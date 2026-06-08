@@ -225,7 +225,17 @@ class Car extends Model
 
     public function getTitleAttribute(): string
     {
-        return trim(($this->brand?->name ?? '') . ' ' . $this->model);
+        // Formula: Marka + Model + Silnik (engine_version) + Wersja wyposażenia.
+        // Engine + trim are admin-entered free-text strings; both are
+        // optional, so the title gracefully falls back to "Brand Model"
+        // when the dealer hasn't filled them yet.
+        $parts = array_filter([
+            $this->brand?->name ?? '',
+            $this->model ?? '',
+            $this->engine_version ?? '',
+            $this->equipment_version ?? '',
+        ], fn($v) => trim((string) $v) !== '');
+        return trim(implode(' ', $parts));
     }
 
     public function getSeoTitleAttribute(): string
