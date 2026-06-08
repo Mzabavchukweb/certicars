@@ -817,19 +817,25 @@
 @media(max-width:1024px){.cs-data-grid-4col{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px}}
 @media(max-width:600px){.cs-data-grid-4col{grid-template-columns:1fr;column-gap:0}}
 
-/* Dane pojazdu — icon-led grid. Each cell pairs a small blue outline-style
-   icon box with a label + value stack. Same .cs-data-section card chrome,
-   but the data layout matches the reference's "icon-on-the-left" rhythm
-   instead of a plain key/value table. */
-.cs-dp-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 24px}
-.cs-dp-item{display:flex;align-items:center;gap:12px;min-width:0}
-.cs-dp-ico{flex-shrink:0;width:38px;height:38px;border-radius:10px;background:#eff6ff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center}
-.cs-dp-ico svg,.cs-dp-ico i[data-lucide]{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
-.cs-dp-text{display:flex;flex-direction:column;gap:2px;min-width:0}
-.cs-dp-lbl{font-size:11px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:.4px;line-height:1.3}
-.cs-dp-val{font-size:14px;color:#0a0a0a;font-weight:700;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-@media(max-width:1024px){.cs-dp-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 20px}}
-@media(max-width:520px){.cs-dp-grid{grid-template-columns:1fr;gap:12px}}
+/* 4×N grid matching the reference. Each cell is its own inline row:
+   [icon] [Label:]  ………  [value]. A hairline beneath each cell creates the
+   stacked-list look within each column; the grid's column-gap keeps the
+   four columns visually separate without needing vertical dividers. */
+.cs-dp-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:24px;row-gap:0}
+.cs-dp-item{display:grid;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #f3f4f6;min-width:0}
+.cs-dp-ico{width:32px;height:32px;border-radius:9px;background:#eff6ff;color:var(--blue);display:flex;align-items:center;justify-content:center}
+.cs-dp-ico svg,.cs-dp-ico i[data-lucide]{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}
+.cs-dp-lbl{font-size:13px;color:#6b7280;font-weight:500;line-height:1.35;min-width:0;word-break:normal;overflow-wrap:anywhere}
+.cs-dp-lbl::after{content:':'}
+.cs-dp-val{font-size:13.5px;color:#0a0a0a;font-weight:700;line-height:1.35;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.cs-dp-val.ok{color:#15803d}
+@media(max-width:1024px){
+    .cs-dp-grid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:28px}
+}
+@media(max-width:520px){
+    .cs-dp-grid{grid-template-columns:1fr;column-gap:0}
+    .cs-dp-item{padding:10px 0}
+}
 
 /* TECH CONDITION LIST — fixed icon column, no text-icon collision */
 .cs-tech-list{display:flex;flex-direction:column}
@@ -1773,10 +1779,8 @@
                 @foreach($dpRows as [$ico, $label, $value])
                     <div class="cs-dp-item">
                         <span class="cs-dp-ico" aria-hidden="true"><x-icon :name="$ico" size="18" :strokeWidth="1.8"/></span>
-                        <span class="cs-dp-text">
-                            <span class="cs-dp-lbl">{{ $label }}</span>
-                            <span class="cs-dp-val" title="{{ $value }}">{{ $value }}</span>
-                        </span>
+                        <span class="cs-dp-lbl">{{ $label }}</span>
+                        <span class="cs-dp-val" title="{{ $value }}">{{ $value }}</span>
                     </div>
                 @endforeach
             </div>
