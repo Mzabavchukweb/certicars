@@ -683,7 +683,7 @@
         <div class="tp-icon"><i data-lucide="type"></i></div>
         <div>
             <div class="tp-text" id="wzAutoTitle">{{ $car ? $car->title : 'Tytuł wygeneruje się automatycznie' }}</div>
-            <div class="tp-sub">Tytuł buduje się z: Marka + Model + Moc + Paliwo + Rok</div>
+            <div class="tp-sub">Tytuł buduje się z: Marka + Model + Silnik + Wersja wyposażenia</div>
         </div>
     </div>
 
@@ -1992,12 +1992,11 @@
         const km    = $v('[name="mileage"]');
         const price = $v('[name="price"]');
         const curr  = $v('[name="currency"]') || 'PLN';
+        const engineVersion    = $v('[name="engine_version"]');
+        const equipmentVersion = $v('[name="equipment_version"]');
 
-        // Auto title
-        let parts = [brand, model];
-        if (power) parts.push(power + ' KM');
-        if (fuel) parts.push(fuel);
-        if (reg) parts.push(reg);
+        // Auto title: Marka + Model + Silnik (engine_version) + Wersja wyposażenia
+        let parts = [brand, model, engineVersion, equipmentVersion];
         const title = parts.filter(Boolean).join(' ');
         const titleEl = $('#wzAutoTitle');
         const prevTitleEl = $('#wzPreviewTitle');
