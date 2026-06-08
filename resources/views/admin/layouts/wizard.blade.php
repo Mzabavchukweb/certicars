@@ -88,6 +88,12 @@
         .wiz-center{overflow-y:auto;background:#fff;padding:32px 40px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
         .wiz-center::-webkit-scrollbar{width:6px}
         .wiz-center::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+        /* Centre the form on wide desktops so the wizard content doesn't
+           hang against the left edge while empty space stretches to the
+           right preview panel. 900 px gives the same comfortable line
+           length as the public /samochody card layout. */
+        .wiz-center > form,
+        .wiz-center > .wz-form{max-width:900px;margin-left:auto;margin-right:auto;width:100%}
 
         /* ===================== RIGHT SIDEBAR (PREVIEW) ===================== */
         .wiz-preview{background:var(--bg);border-left:1px solid var(--border-l);overflow-y:auto;padding:24px 20px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
