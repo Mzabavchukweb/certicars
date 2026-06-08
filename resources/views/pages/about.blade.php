@@ -28,8 +28,6 @@
 .std-panel{position:relative;background:linear-gradient(180deg,rgba(15,28,60,.85),rgba(8,16,38,.95));border:1px solid rgba(95,161,255,.32);border-radius:24px;padding:36px 36px 30px;box-shadow:0 0 0 1px rgba(0,102,255,.08),0 40px 80px -20px rgba(0,40,120,.6),0 0 80px -20px rgba(0,102,255,.35)}
 .std-panel::before{content:'';position:absolute;inset:0;border-radius:24px;padding:1px;background:linear-gradient(135deg,rgba(95,161,255,.45),rgba(95,161,255,0) 45%,rgba(95,161,255,.12) 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
 .std-panel-head{margin-bottom:26px}
-.std-panel-eyebrow{font-size:10.5px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#5fa1ff;margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.std-panel-eyebrow svg{width:13px;height:13px;stroke:#5fa1ff;fill:none;stroke-width:2.2}
 .std-panel-title{font-size:24px;font-weight:800;color:#fff;letter-spacing:-.4px;margin:0 0 6px}
 .std-panel-sub{font-size:13px;color:rgba(255,255,255,.55);margin:0;line-height:1.5}
 .std-list{list-style:none;margin:0;padding:0}
@@ -116,7 +114,7 @@
    card at ~280 px tall and bottom:-16, that means the head + shoulders
    extend ~310 px above the card's top edge — the dramatic "break-out"
    look from the reference. */
-.about-cta-bohater{position:absolute;right:36px;bottom:-16px;width:42%;max-width:520px;min-width:360px;height:auto;z-index:5;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 28px 44px rgba(0,0,0,.55))}
+.about-cta-bohater{position:absolute;right:36px;bottom:-16px;width:42%;max-width:520px;min-width:360px;height:auto;object-fit:contain;z-index:5;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 28px 44px rgba(0,0,0,.55))}
 
 /* ===== Responsive ===== */
 @media(max-width:1024px){
@@ -200,26 +198,25 @@
         </div>
         <aside class="std-panel" aria-label="Standard CertiCars">
             <div class="std-panel-head">
-                <div class="std-panel-eyebrow"><x-icon name="shield-check" size="13"/> Standard CertiCars</div>
                 <h2 class="std-panel-title">Standard CertiCars</h2>
                 <p class="std-panel-sub">Więcej konkretów przed przyjazdem.</p>
             </div>
             <ol class="std-list">
                 <li class="std-item">
                     <span class="std-num">01</span>
-                    <span class="std-text"><strong>Poznaj auto wcześniej</strong>Najważniejsze informacje pokazujemy jeszcze przed oględzinami.</span>
+                    <span class="std-text"><strong>Poznaj auto wcześniej —</strong>Najważniejsze informacje pokazujemy jeszcze przed oględzinami.</span>
                 </li>
                 <li class="std-item">
                     <span class="std-num">02</span>
-                    <span class="std-text"><strong>Mniej domysłów</strong>Opisujemy pochodzenie, wyposażenie, formalności, stan i ślady użytkowania.</span>
+                    <span class="std-text"><strong>Mniej domysłów —</strong>Opisujemy pochodzenie, wyposażenie, formalności, stan i ślady użytkowania.</span>
                 </li>
                 <li class="std-item">
                     <span class="std-num">03</span>
-                    <span class="std-text"><strong>Spokojniejsza decyzja</strong>Łatwiej oceniasz, czy dane auto pasuje do Twoich potrzeb.</span>
+                    <span class="std-text"><strong>Spokojniejsza decyzja —</strong>Łatwiej ocenisz, czy dane auto pasuje do Twoich potrzeb.</span>
                 </li>
                 <li class="std-item">
                     <span class="std-num">04</span>
-                    <span class="std-text"><strong>CertiCheck dla wybranych aut</strong>Dodatkowe informacje o pojeździe w ramach CertiCheck.</span>
+                    <span class="std-text"><strong>CertiCheck dla wybranych aut —</strong>Dodatkowe informacje o pojeździe w ramach CertiCheck.</span>
                 </li>
             </ol>
             <div class="std-callout">
@@ -334,7 +331,7 @@
                     </div>
                 </div>
             </div>
-            <img class="about-cta-bohater" src="/images/bohater.png" alt="" loading="lazy" decoding="async" width="1122" height="1402">
+            <img class="about-cta-bohater" src="/images/bohater.png" alt="Doradca CertiCars rozmawiający z klientem o aucie" loading="lazy" decoding="async" width="1122" height="1402">
         </div>
     </div>
 </section>
