@@ -330,6 +330,59 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
     .wz-icon-row > .wz-icon-row-input { grid-column: 1 / -1; }
 }
 
+/* ── Stan wizualny — 3-chip selector + 2-col diagram/list layout ───── */
+.wz-dmg-chip-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+.wz-dmg-chip { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border: 1.5px solid #e5e7eb; background: #fff; border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--text-2, #4b5563); cursor: pointer; transition: border-color .15s, background .15s; }
+.wz-dmg-chip:hover { border-color: #cbd5e1; }
+.wz-dmg-chip.active { border-color: var(--blue, #0066ff); background: rgba(0,102,255,.05); color: var(--text, #0a0a0a); }
+.wz-dmg-chip-glyph { width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; }
+.wz-dmg-chip-glyph.dot { border-radius: 50%; }
+.wz-dmg-chip-glyph svg { display: block; }
+
+.wz-dmg-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; align-items: stretch; }
+.wz-car-diagram { position: relative; background: #fff; border: 1px solid var(--border-l, #eeeef0); border-radius: 14px; padding: 20px; cursor: crosshair; user-select: none; min-height: 360px; display: flex; align-items: center; justify-content: center; }
+#wzSvgStage { width: 100%; max-width: 460px; position: relative; }
+.wz-svg-view { width: 100%; }
+.wz-svg-view img { width: 100%; height: auto; display: block; pointer-events: none; }
+#wzDiagramMarkers { position: absolute; inset: 20px; pointer-events: none; }
+.wz-car-diagram-hint { position: absolute; left: 20px; bottom: 20px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-3, #6b7280); pointer-events: none; line-height: 1.4; }
+.wz-car-diagram-hint i { flex-shrink: 0; color: var(--text-3, #6b7280); }
+
+.wz-dmg-side { background: #fff; border: 1px solid var(--border-l, #eeeef0); border-radius: 14px; padding: 18px 18px 14px; display: flex; flex-direction: column; min-height: 360px; }
+.wz-dmg-side-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 14px; }
+.wz-dmg-side-title { font-size: 14px; font-weight: 700; color: var(--text, #0a0a0a); }
+.wz-dmg-side-count { font-size: 13px; font-weight: 600; color: var(--text-3, #6b7280); }
+.wz-dmg-side-count::before { content: '('; }
+.wz-dmg-side-count::after { content: ')'; }
+.wz-dmg-list { display: flex; flex-direction: column; gap: 10px; }
+.wz-dmg-empty { font-size: 12.5px; color: var(--text-3, #6b7280); margin: auto 0; text-align: center; padding: 14px 0; line-height: 1.5; }
+.wz-dmg-list:not(:empty) + .wz-dmg-empty { display: none; }
+
+.wz-dmg-item { position: relative; background: #fff; border: 1px solid var(--border-l, #eeeef0); border-radius: 10px; padding: 12px 14px; border-left-width: 4px; }
+.wz-dmg-item[data-dtype="damage"] { border-left-color: #facc15; }
+.wz-dmg-item[data-dtype="accident"] { border-left-color: #f97316; }
+.wz-dmg-item[data-dtype="repaired"] { border-left-color: #94a3b8; }
+.wz-dmg-item-head { display: flex; align-items: center; gap: 10px; }
+.wz-dmg-item-glyph { width: 22px; height: 22px; flex-shrink: 0; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; }
+.wz-dmg-item-glyph.type-damage { background: #facc15; }
+.wz-dmg-item-glyph.type-accident::before { content: ''; width: 14px; height: 14px; display: block; background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f97316'><path d='M12 2L2 22h20L12 2z'/></svg>") center/contain no-repeat; }
+.wz-dmg-item-glyph.type-repaired::before { content: ''; width: 14px; height: 14px; display: block; background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.77 3.77z'/></svg>") center/contain no-repeat; }
+.wz-dmg-item-label { flex: 1; font-size: 13.5px; font-weight: 600; color: var(--text, #0a0a0a); line-height: 1.3; }
+.wz-dmg-item-x { background: none; border: none; color: #b91c1c; cursor: pointer; padding: 4px; opacity: .5; transition: opacity .15s; flex-shrink: 0; }
+.wz-dmg-item-x:hover { opacity: 1; }
+.wz-dmg-item-x i, .wz-dmg-item-x svg { width: 16px; height: 16px; }
+.wz-dmg-item-photo { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.wz-dmg-item-thumb { position: relative; width: 56px; height: 56px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-l, #eeeef0); }
+.wz-dmg-item-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.wz-dmg-item-thumb-x { position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; background: #ef4444; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 10px; line-height: 1; border: 2px solid #fff; }
+.wz-dmg-photo-btn { width: 56px; height: 56px; border-radius: 8px; border: 1.5px dashed #d1d5db; background: #f9fafb; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color .15s, color .15s; color: var(--text-3, #6b7280); flex-shrink: 0; }
+.wz-dmg-photo-btn:hover { border-color: var(--blue, #0066ff); color: var(--blue, #0066ff); }
+.wz-dmg-photo-btn i, .wz-dmg-photo-btn svg { width: 20px; height: 20px; }
+
+@media (max-width: 900px) {
+    .wz-dmg-grid { grid-template-columns: 1fr; }
+}
+
 /* Info banner shown below each card. Same blue tint everywhere. */
 .wz-info-banner { display: flex; gap: 12px; align-items: flex-start; background: #eff6ff; border: 1px solid #dbeafe; border-radius: 12px; padding: 13px 16px; margin-top: 14px; }
 .wz-info-banner-ico { width: 22px; height: 22px; color: var(--blue, #0066ff); flex-shrink: 0; margin-top: 1px; }
@@ -1735,129 +1788,112 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 <div class="wz-step" data-step="7" data-certicheck-only="1">
     <div class="wz-section">
         <div class="wz-section-header">
-            <div class="wz-section-badge"><i data-lucide="scan-eye" style="width:16px;height:16px"></i></div>
-            <div><div class="wz-section-title">Stan wizualny i ślady użytkowania</div><div class="wz-section-subtitle">Kliknij na schemacie pojazdu, aby zaznaczyć uszkodzenie <span style="background:rgba(0,102,255,.1);color:var(--blue);padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:700;letter-spacing:.4px;margin-left:6px">CERTICHECK</span></div></div>
-        </div>
-
-        {{-- Legend — 3 types like the reference --}}
-        <div style="display:flex;flex-wrap:wrap;gap:20px;margin-bottom:18px;font-size:12.5px;font-weight:600">
-            <span style="display:flex;align-items:center;gap:7px"><span style="width:24px;height:24px;border-radius:50%;background:#dc2626;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M12 2L2 22h20L12 2z"/></svg></span> Szkoda wypadkowa</span>
-            <span style="display:flex;align-items:center;gap:7px"><span style="width:24px;height:24px;border-radius:50%;background:#f59e0b;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="#000" stroke="none"><path d="M12 2L2 22h20L12 2zM12 8v6M12 17h.01"/></svg></span> Uszkodzenia</span>
-            <span style="display:flex;align-items:center;gap:7px"><span style="width:24px;height:24px;border-radius:50%;background:#9ca3af;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.77 3.77z"/></svg></span> Naprawione szkody</span>
-        </div>
-
-        {{-- Active damage type selector --}}
-        <div style="display:flex;gap:6px;margin-bottom:14px">
-            <button type="button" class="wz-dtype-btn active" data-dtype="damage" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid #f59e0b;background:#fffbeb;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;color:#92400e">
-                <span style="width:20px;height:20px;border-radius:50%;background:#f59e0b;display:inline-flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24" fill="#000" stroke="none"><path d="M12 2L2 22h20L12 2z"/></svg></span> Uszkodzenie
-            </button>
-            <button type="button" class="wz-dtype-btn" data-dtype="accident" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid transparent;background:#fafafa;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;color:var(--text-3)">
-                <span style="width:20px;height:20px;border-radius:50%;background:#dc2626;display:inline-flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M12 2L2 22h20L12 2z"/></svg></span> Wypadkowa
-            </button>
-            <button type="button" class="wz-dtype-btn" data-dtype="repaired" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid transparent;background:#fafafa;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;color:var(--text-3)">
-                <span style="width:20px;height:20px;border-radius:50%;background:#9ca3af;display:inline-flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.77 3.77z"/></svg></span> Naprawiona
-            </button>
-        </div>
-
-        {{-- View switch buttons --}}
-        <div class="wz-view-switch" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">
-            <button type="button" class="wz-view-btn active" data-view="top" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border-l);background:#fff;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s">
-                <span class="svg-ic" style="width:16px;height:16px;display:inline-flex">@include('admin.cars.partials.car-icon-top')</span> Góra
-            </button>
-            <button type="button" class="wz-view-btn" data-view="front" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border-l);background:#fff;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s">
-                <span class="svg-ic" style="width:16px;height:16px;display:inline-flex">@include('admin.cars.partials.car-icon-front')</span> Przód
-            </button>
-            <button type="button" class="wz-view-btn" data-view="rear" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border-l);background:#fff;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s">
-                <span class="svg-ic" style="width:16px;height:16px;display:inline-flex">@include('admin.cars.partials.car-icon-rear')</span> Tył
-            </button>
-            <button type="button" class="wz-view-btn" data-view="left" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border-l);background:#fff;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s">
-                <span class="svg-ic" style="width:16px;height:16px;display:inline-flex">@include('admin.cars.partials.car-icon-side')</span> Lewy bok
-            </button>
-            <button type="button" class="wz-view-btn" data-view="right" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border-l);background:#fff;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s">
-                <span class="svg-ic" style="width:16px;height:16px;display:inline-flex;transform:scaleX(-1)">@include('admin.cars.partials.car-icon-side')</span> Prawy bok
-            </button>
-        </div>
-
-        {{-- Car diagram --}}
-        <div class="wz-car-diagram" id="wzCarDiagram" style="position:relative;background:linear-gradient(180deg,#fafafb,#f0f0f2);border:1px solid var(--border-l);border-radius:14px;padding:24px;cursor:crosshair;user-select:none;min-height:360px;margin-bottom:18px">
-            <div id="wzSvgStage" style="max-width:540px;margin:0 auto;position:relative">
-                <div class="wz-svg-view active" data-view="top">
-                    @php
-                        $bodyTypeMap = [
-                            'sedan' => 'sedan', 'suv' => 'suv', 'coupé' => 'coupe', 'coupe' => 'coupe',
-                            'bus' => 'van', 'van' => 'van', 'kombi' => 'kombi', 'hatchback' => 'hatchback',
-                            'kabriolet' => 'sedan', 'cabriolet' => 'sedan', 'pickup' => 'suv',
-                        ];
-                        $btKey = strtolower(old('body_type', $car?->body_type ?? 'sedan'));
-                        $topImg = $bodyTypeMap[$btKey] ?? 'sedan';
-                    @endphp
-                    <img id="wzDamageTopImg" src="/img/body-types-top/{{ $topImg }}.png" alt="Schemat pojazdu" draggable="false" style="width:100%;height:auto;display:block;pointer-events:none">
-                </div>
-                <div class="wz-svg-view" data-view="front" style="display:none">@include('admin.cars.partials.view-front')</div>
-                <div class="wz-svg-view" data-view="rear" style="display:none">@include('admin.cars.partials.view-rear')</div>
-                <div class="wz-svg-view" data-view="left" style="display:none">@include('admin.cars.partials.view-side')</div>
-                <div class="wz-svg-view" data-view="right" style="display:none;transform:scaleX(-1)">@include('admin.cars.partials.view-side')</div>
+            <div>
+                <div class="wz-section-title" style="font-size:22px">Stan wizualny i ślady użytkowania</div>
+                <div class="wz-section-subtitle">Kliknij na pojeździe, aby dodać oznaczenie. Po zaznaczeniu punkt pojawi się po prawej stronie, gdzie można dodać zdjęcie.</div>
             </div>
-            <div id="wzDiagramMarkers" style="position:absolute;inset:24px;pointer-events:none"></div>
-            <div style="position:absolute;top:14px;right:14px;background:rgba(10,10,10,.78);color:#fff;font-size:11px;padding:6px 11px;border-radius:999px;pointer-events:none;display:flex;align-items:center;gap:5px;backdrop-filter:blur(6px)"><i data-lucide="mouse-pointer-click" style="width:12px;height:12px"></i> Kliknij aby dodać marker</div>
-            <div id="wzViewLabel" style="position:absolute;top:14px;left:14px;background:rgba(255,255,255,.92);color:var(--text);font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:999px;pointer-events:none;text-transform:uppercase;letter-spacing:.4px;border:1px solid var(--border-l)">WIDOK: GÓRA</div>
         </div>
 
-        {{-- Damage list — type icon + label + photo --}}
-        <div id="wzDamageList">
-            @foreach($existingDamages as $i => $dmg)
-            <div class="wz-damage-item" data-idx="{{ $i }}" data-view="{{ $dmg->position_view ?? 'top' }}" data-dtype="{{ $dmg->type ?? 'damage' }}" style="padding:10px 14px;margin-bottom:6px;background:#fafafb;border:1px solid var(--border-l);border-radius:10px">
-                <input type="hidden" name="damages[{{ $i }}][id]" value="{{ $dmg->id }}">
-                <input type="hidden" name="damages[{{ $i }}][type]" value="{{ $dmg->type ?? 'damage' }}" class="wz-dtype-input">
-                <input type="hidden" name="damages[{{ $i }}][position_x]" value="{{ $dmg->position_x ?? 50 }}" class="wz-pos-x">
-                <input type="hidden" name="damages[{{ $i }}][position_y]" value="{{ $dmg->position_y ?? 50 }}" class="wz-pos-y">
-                <input type="hidden" name="damages[{{ $i }}][position_view]" value="{{ $dmg->position_view ?? 'top' }}" class="wz-pos-view">
-                <div style="display:flex;align-items:center;gap:10px">
-                    <button type="button" class="wz-dtype-icon" onclick="wzCycleDamageType(this)" title="Kliknij aby zmienić typ" style="width:28px;height:28px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:{{ $dmg->type=='accident'?'#dc2626':($dmg->type=='repaired'?'#9ca3af':'#f59e0b') }}">
-                        @if($dmg->type=='accident')<svg width="12" height="12" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M12 2L2 22h20L12 2z"/></svg>
-                        @elseif($dmg->type=='repaired')<svg width="12" height="12" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.77 3.77z"/></svg>
-                        @else<svg width="12" height="12" viewBox="0 0 24 24" fill="#000" stroke="none"><path d="M12 2L2 22h20L12 2zM12 8v6M12 17h.01"/></svg>
-                        @endif
-                    </button>
-                    <input type="text" name="damages[{{ $i }}][area]" value="{{ $dmg->area }}" placeholder="Podpis (np. Rysa na masce)" style="flex:1;font-weight:600;font-size:13.5px;border:none;background:transparent;outline:none;padding:0">
-                    <label class="wz-dmg-photo-btn" title="Dodaj zdjęcia" style="width:30px;height:30px;border-radius:8px;border:1px dashed var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:.15s;color:var(--text-3)" onmouseenter="this.style.borderColor='var(--blue)';this.style.color='var(--blue)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-3)'">
-                        <i data-lucide="camera" style="width:14px;height:14px"></i>
-                        <input type="file" name="damages[{{ $i }}][images][]" accept="image/*" multiple style="display:none" onchange="wzPreviewDmgImages(this)">
-                    </label>
-                    <button type="button" onclick="wzRemoveDamage(this)" style="background:none;border:none;color:#b91c1c;cursor:pointer;padding:4px;flex-shrink:0;opacity:.5;transition:.15s" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=.5"><i data-lucide="x" style="width:15px;height:15px"></i></button>
-                </div>
-                {{-- Existing photos --}}
-                @php $dmgPhotos = $dmg->photos ?? collect(); @endphp
-                @if($dmg->image_path || $dmgPhotos->count())
-                <div class="wz-dmg-photos" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start">
-                    @if($dmg->image_path)
-                    <div class="wz-dmg-thumb-item" style="position:relative">
-                        {{-- P1 FIX: R2-aware accessor (CarDamage image_url) — see commit log. --}}
-                        <img src="{{ $dmg->image_url ?? asset('images/placeholder-car.svg') }}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border-l)">
-                        <label style="position:absolute;top:-4px;right:-4px;width:18px;height:18px;background:#ef4444;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;line-height:1;border:2px solid #fff" title="Usuń">
-                            <input type="checkbox" name="damages[{{ $i }}][remove_image]" value="1" style="display:none" onchange="this.closest('.wz-dmg-thumb-item').style.opacity=this.checked?'.3':'1'">✕
-                        </label>
+        {{-- Type chip selector (3 fixed types) — sits ABOVE the diagram per
+             the reference. Same DB enum values as before (damage / accident
+             / repaired) so the public car page + brochure still render
+             unchanged; only the labels in the wizard moved to the new
+             "Ślad użytkowania / Widoczna niedoskonałość / Element po
+             naprawie" trio. --}}
+        <div class="wz-dmg-chip-row">
+            <button type="button" class="wz-dmg-chip active" data-dtype="damage">
+                <span class="wz-dmg-chip-glyph dot" style="background:#facc15"></span>
+                Ślad użytkowania
+            </button>
+            <button type="button" class="wz-dmg-chip" data-dtype="accident">
+                <span class="wz-dmg-chip-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="#f97316" stroke="none"><path d="M12 2L2 22h20L12 2z"/></svg></span>
+                Widoczna niedoskonałość
+            </button>
+            <button type="button" class="wz-dmg-chip" data-dtype="repaired">
+                <span class="wz-dmg-chip-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.77 3.77z"/></svg></span>
+                Element po naprawie
+            </button>
+        </div>
+
+        {{-- Two-column body: car diagram (top-down view only) | added markers
+             list. The position_view input is kept and hardcoded to "top"
+             so the existing CarController syncRelations() / public-page
+             render path doesn't need to change. --}}
+        <div class="wz-dmg-grid">
+            {{-- LEFT: top-down car diagram --}}
+            <div class="wz-car-diagram" id="wzCarDiagram">
+                <div id="wzSvgStage">
+                    <div class="wz-svg-view active" data-view="top">
+                        @php
+                            $bodyTypeMap = [
+                                'sedan' => 'sedan', 'suv' => 'suv', 'coupé' => 'coupe', 'coupe' => 'coupe',
+                                'bus' => 'van', 'van' => 'van', 'kombi' => 'kombi', 'hatchback' => 'hatchback',
+                                'kabriolet' => 'sedan', 'cabriolet' => 'sedan', 'pickup' => 'suv',
+                            ];
+                            $btKey = strtolower(old('body_type', $car?->body_type ?? 'sedan'));
+                            $topImg = $bodyTypeMap[$btKey] ?? 'sedan';
+                        @endphp
+                        <img id="wzDamageTopImg" src="/img/body-types-top/{{ $topImg }}.png" alt="Schemat pojazdu" draggable="false">
                     </div>
-                    @endif
-                    @foreach($dmgPhotos as $dp)
-                    <div class="wz-dmg-thumb-item" style="position:relative">
-                        {{-- P1 FIX: R2-aware accessor (CarImage url) — see commit log. --}}
-                        <img src="{{ $dp->url }}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border-l)">
-                        <label style="position:absolute;top:-4px;right:-4px;width:18px;height:18px;background:#ef4444;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;line-height:1;border:2px solid #fff" title="Usuń">
-                            <input type="checkbox" name="damages[{{ $i }}][remove_photos][]" value="{{ $dp->id }}" style="display:none" onchange="this.closest('.wz-dmg-thumb-item').style.opacity=this.checked?'.3':'1'">✕
-                        </label>
+                </div>
+                <div id="wzDiagramMarkers"></div>
+                <div class="wz-car-diagram-hint">
+                    <i data-lucide="mouse-pointer-click" style="width:14px;height:14px"></i>
+                    Kliknij na pojeździe,<br>aby dodać znacznik
+                </div>
+            </div>
+
+            {{-- RIGHT: list of added markers --}}
+            <div class="wz-dmg-side">
+                <div class="wz-dmg-side-head">
+                    <span class="wz-dmg-side-title">Dodane oznaczenia</span>
+                    <span class="wz-dmg-side-count" id="wzDmgCount">0</span>
+                </div>
+                <div id="wzDamageList" class="wz-dmg-list">
+                    @foreach($existingDamages as $i => $dmg)
+                    @php
+                        $dmgType = $dmg->type ?? 'damage';
+                        $typeLabel = $dmgType === 'accident' ? 'Widoczna niedoskonałość'
+                                   : ($dmgType === 'repaired' ? 'Element po naprawie' : 'Ślad użytkowania');
+                        // R2-aware accessors only — never asset('storage/...').
+                        $existingPhoto = null;
+                        if ($dmg->image_url) {
+                            $existingPhoto = $dmg->image_url;
+                        } elseif ($dp = $dmg->photos?->first()) {
+                            $existingPhoto = $dp->url;
+                        }
+                    @endphp
+                    <div class="wz-dmg-item" data-idx="{{ $i }}" data-dtype="{{ $dmgType }}">
+                        <input type="hidden" name="damages[{{ $i }}][id]" value="{{ $dmg->id }}">
+                        <input type="hidden" name="damages[{{ $i }}][type]" value="{{ $dmgType }}" class="wz-dtype-input">
+                        <input type="hidden" name="damages[{{ $i }}][area]" value="{{ $dmg->area ?: $typeLabel }}" class="wz-area-input">
+                        <input type="hidden" name="damages[{{ $i }}][position_x]" value="{{ $dmg->position_x ?? 50 }}" class="wz-pos-x">
+                        <input type="hidden" name="damages[{{ $i }}][position_y]" value="{{ $dmg->position_y ?? 50 }}" class="wz-pos-y">
+                        <input type="hidden" name="damages[{{ $i }}][position_view]" value="top" class="wz-pos-view">
+                        <div class="wz-dmg-item-head">
+                            <span class="wz-dmg-item-glyph type-{{ $dmgType }}"></span>
+                            <span class="wz-dmg-item-label">{{ $typeLabel }}</span>
+                            <button type="button" class="wz-dmg-item-x" onclick="wzRemoveDamage(this)" aria-label="Usuń"><i data-lucide="x"></i></button>
+                        </div>
+                        <div class="wz-dmg-item-photo">
+                            @if($existingPhoto)
+                            <div class="wz-dmg-item-thumb">
+                                <img src="{{ $existingPhoto }}" alt="">
+                                <label class="wz-dmg-item-thumb-x" title="Usuń zdjęcie">
+                                    <input type="checkbox" name="damages[{{ $i }}][remove_image]" value="1" onchange="this.closest('.wz-dmg-item-thumb').style.opacity=this.checked?'.3':'1'">✕
+                                </label>
+                            </div>
+                            @endif
+                            <label class="wz-dmg-photo-btn" title="Dodaj zdjęcie">
+                                <i data-lucide="camera"></i>
+                                <input type="file" name="damages[{{ $i }}][images][]" accept="image/*" style="display:none" onchange="wzPreviewDmgImages(this)">
+                            </label>
+                        </div>
                     </div>
                     @endforeach
-                    {{-- New upload previews inserted by JS --}}
-                    <div class="wz-dmg-new-previews" style="display:contents"></div>
                 </div>
-                @else
-                <div class="wz-dmg-photos" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start">
-                    <div class="wz-dmg-new-previews" style="display:contents"></div>
-                </div>
-                @endif
+                <p id="wzDmgEmpty" class="wz-dmg-empty">Brak oznaczeń. Wybierz typ powyżej i kliknij na pojeździe.</p>
             </div>
-            @endforeach
         </div>
     </div>
 </div>
@@ -2724,143 +2760,98 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
     })();
 
     // ===================================================================
-    //  WIZARD — Interactive car diagram + damage system (simplified)
+    //  WIZARD — Stan wizualny (Step 7) — simplified damage markers
+    //  3 chips above the top-down diagram → click on diagram drops a
+    //  marker → an entry appears in the right list with a camera button
+    //  for photo + X to delete. No free-text area, no view switcher.
     // ===================================================================
     (function(){
-        const WZ_VIEW_LABELS = {top:'Góra',front:'Przód',rear:'Tył',left:'Lewy bok',right:'Prawy bok'};
-        const TYPE_COLORS = {damage:'#f59e0b', accident:'#dc2626', repaired:'#9ca3af'};
-        const TYPE_ICONS = {
-            damage: '<svg width="12" height="12" viewBox="0 0 24 24" fill="#000" stroke="none"><path d="M12 2L2 22h20L12 2zM12 8v6M12 17h.01"/></svg>',
-            accident: '<svg width="12" height="12" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M12 2L2 22h20L12 2z"/></svg>',
-            repaired: '<svg width="12" height="12" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.77 3.77z"/></svg>'
-        };
-        const TYPE_ORDER = ['damage','accident','repaired'];
+        const TYPE_COLORS  = { damage: '#facc15', accident: '#f97316', repaired: '#94a3b8' };
+        const TYPE_LABELS  = { damage: 'Ślad użytkowania', accident: 'Widoczna niedoskonałość', repaired: 'Element po naprawie' };
+        // Marker glyphs that sit on top of the diagram. Yellow circle /
+        // orange triangle / wrench — matching the chip indicators.
         const TYPE_MARKER_ICONS = {
-            damage: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="none"><path d="M12 2L1 21h22L12 2z" fill="#000"/><path d="M12 9v5" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/><circle cx="12" cy="17" r="1.2" fill="#f59e0b"/></svg>',
-            accident: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="none"><path d="M12 2L1 21h22L12 2z" fill="#fff"/><path d="M12 9v5" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"/><circle cx="12" cy="17" r="1.2" fill="#dc2626"/></svg>',
-            repaired: '<svg width="14" height="14" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.77 3.77z"/></svg>'
+            damage:   '<svg width="14" height="14" viewBox="0 0 24 24" fill="#000"><circle cx="12" cy="12" r="10" fill="#000" opacity=".15"/></svg>',
+            accident: '<svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M12 2L2 22h20L12 2z"/></svg>',
+            repaired: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.77 3.77z"/></svg>'
         };
-        let wzCurrentView = 'top';
         let wzCurrentType = 'damage';
 
-        // Type selector buttons
-        document.querySelectorAll('.wz-dtype-btn').forEach(btn => {
+        // Chip selector (above the diagram).
+        document.querySelectorAll('.wz-dmg-chip').forEach(btn => {
             btn.addEventListener('click', () => {
                 wzCurrentType = btn.dataset.dtype;
-                document.querySelectorAll('.wz-dtype-btn').forEach(b => {
-                    const isActive = b.dataset.dtype === wzCurrentType;
-                    b.classList.toggle('active', isActive);
-                    const col = TYPE_COLORS[b.dataset.dtype];
-                    b.style.border = isActive ? `2px solid ${col}` : '2px solid transparent';
-                    b.style.background = isActive ? (b.dataset.dtype === 'damage' ? '#fffbeb' : b.dataset.dtype === 'accident' ? '#fef2f2' : '#f5f5f5') : '#fafafa';
-                    b.style.color = isActive ? (b.dataset.dtype === 'damage' ? '#92400e' : b.dataset.dtype === 'accident' ? '#991b1b' : '#374151') : 'var(--text-3)';
-                });
+                document.querySelectorAll('.wz-dmg-chip').forEach(b => b.classList.toggle('active', b.dataset.dtype === wzCurrentType));
             });
         });
 
-        // Cycle damage type on icon click
-        window.wzCycleDamageType = function(btn) {
-            const item = btn.closest('.wz-damage-item');
-            const input = item.querySelector('.wz-dtype-input');
-            const cur = input.value || 'damage';
-            const next = TYPE_ORDER[(TYPE_ORDER.indexOf(cur) + 1) % TYPE_ORDER.length];
-            input.value = next;
-            item.dataset.dtype = next;
-            btn.style.background = TYPE_COLORS[next];
-            btn.innerHTML = TYPE_ICONS[next];
-            wzRenderMarkers();
-        };
-
-        function wzBuildDamageHTML(idx, posX, posY, posView) {
-            posView = posView || wzCurrentView;
+        function wzBuildDamageHTML(idx, posX, posY) {
             const dtype = wzCurrentType;
-            const color = TYPE_COLORS[dtype];
-            return `<div class="wz-damage-item" data-idx="${idx}" data-view="${posView}" data-dtype="${dtype}" style="padding:10px 14px;margin-bottom:6px;background:#fafafb;border:1px solid var(--border-l);border-radius:10px">
+            const label = TYPE_LABELS[dtype];
+            // position_view kept hardcoded to "top" so the existing
+            // CarController validation + brochure render path keeps
+            // working without changes. area is auto-filled from the
+            // type label so the controller's `if (empty($area)) continue`
+            // gate passes.
+            return `<div class="wz-dmg-item" data-idx="${idx}" data-dtype="${dtype}">
                 <input type="hidden" name="damages[${idx}][type]" value="${dtype}" class="wz-dtype-input">
+                <input type="hidden" name="damages[${idx}][area]" value="${label}" class="wz-area-input">
                 <input type="hidden" name="damages[${idx}][position_x]" value="${posX??50}" class="wz-pos-x">
                 <input type="hidden" name="damages[${idx}][position_y]" value="${posY??50}" class="wz-pos-y">
-                <input type="hidden" name="damages[${idx}][position_view]" value="${posView}" class="wz-pos-view">
-                <div style="display:flex;align-items:center;gap:10px">
-                    <button type="button" class="wz-dtype-icon" onclick="wzCycleDamageType(this)" title="Kliknij aby zmienić typ" style="width:28px;height:28px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${color}">${TYPE_ICONS[dtype]}</button>
-                    <input type="text" name="damages[${idx}][area]" placeholder="Podpis (np. Rysa na masce)" style="flex:1;font-weight:600;font-size:13.5px;border:none;background:transparent;outline:none;padding:0" autofocus>
-                    <label class="wz-dmg-photo-btn" title="Dodaj zdjęcia" style="width:30px;height:30px;border-radius:8px;border:1px dashed var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:.15s;color:var(--text-3)" onmouseenter="this.style.borderColor='var(--blue)';this.style.color='var(--blue)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-3)'">
-                        <i data-lucide="camera" style="width:14px;height:14px"></i>
-                        <input type="file" name="damages[${idx}][images][]" accept="image/*" multiple style="display:none" onchange="wzPreviewDmgImages(this)">
-                    </label>
-                    <button type="button" onclick="wzRemoveDamage(this)" style="background:none;border:none;color:#b91c1c;cursor:pointer;padding:4px;flex-shrink:0;opacity:.5;transition:.15s" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=.5"><i data-lucide="x" style="width:15px;height:15px"></i></button>
+                <input type="hidden" name="damages[${idx}][position_view]" value="top" class="wz-pos-view">
+                <div class="wz-dmg-item-head">
+                    <span class="wz-dmg-item-glyph type-${dtype}"${dtype==='damage'?'':''}></span>
+                    <span class="wz-dmg-item-label">${label}</span>
+                    <button type="button" class="wz-dmg-item-x" onclick="wzRemoveDamage(this)" aria-label="Usuń"><i data-lucide="x"></i></button>
                 </div>
-                <div class="wz-dmg-photos" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start">
-                    <div class="wz-dmg-new-previews" style="display:contents"></div>
+                <div class="wz-dmg-item-photo">
+                    <label class="wz-dmg-photo-btn" title="Dodaj zdjęcie">
+                        <i data-lucide="camera"></i>
+                        <input type="file" name="damages[${idx}][images][]" accept="image/*" style="display:none" onchange="wzPreviewDmgImages(this)">
+                    </label>
                 </div>
             </div>`;
         }
 
-        function wzAddDamageItem(posX, posY, posView) {
+        function wzAddDamageItem(posX, posY) {
             const list = document.getElementById('wzDamageList');
-            const idx = list.querySelectorAll('.wz-damage-item').length;
-            list.insertAdjacentHTML('beforeend', wzBuildDamageHTML(idx, posX, posY, posView));
+            const idx = list.querySelectorAll('.wz-dmg-item').length;
+            list.insertAdjacentHTML('beforeend', wzBuildDamageHTML(idx, posX, posY));
             if (window.lucide) lucide.createIcons();
             wzRenderMarkers();
-            const el = list.querySelector(`.wz-damage-item[data-idx="${idx}"]`);
-            el?.scrollIntoView({behavior:'smooth', block:'center'});
-            el?.querySelector('input[name$="[area]"]')?.focus();
+            wzUpdateCount();
         }
 
-        window.wzAddDamageManual = function() {
-            wzAddDamageItem(50, 50, wzCurrentView);
-        };
-
         window.wzRemoveDamage = function(btn) {
-            btn.closest('.wz-damage-item').remove();
+            btn.closest('.wz-dmg-item').remove();
             wzReindexDamages();
             wzRenderMarkers();
+            wzUpdateCount();
         };
 
         window.wzPreviewDmgImages = function(input) {
-            const item = input.closest('.wz-damage-item');
-            let container = item.querySelector('.wz-dmg-new-previews');
-            if (!container) {
-                let photosDiv = item.querySelector('.wz-dmg-photos');
-                if (!photosDiv) {
-                    photosDiv = document.createElement('div');
-                    photosDiv.className = 'wz-dmg-photos';
-                    photosDiv.style.cssText = 'margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start';
-                    item.appendChild(photosDiv);
+            const item = input.closest('.wz-dmg-item');
+            const photoRow = item.querySelector('.wz-dmg-item-photo');
+            const file = input.files && input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                let thumb = item.querySelector('.wz-dmg-item-thumb.is-new');
+                if (!thumb) {
+                    thumb = document.createElement('div');
+                    thumb.className = 'wz-dmg-item-thumb is-new';
+                    photoRow.insertBefore(thumb, photoRow.firstChild);
                 }
-                container = document.createElement('div');
-                container.className = 'wz-dmg-new-previews';
-                container.style.display = 'contents';
-                photosDiv.appendChild(container);
-            }
-            if (input.files) {
-                Array.from(input.files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = e => {
-                        const thumb = document.createElement('div');
-                        thumb.style.cssText = 'position:relative';
-                        thumb.innerHTML = `<img src="${e.target.result}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:2px solid #10b981">`;
-                        container.appendChild(thumb);
-                    };
-                    reader.readAsDataURL(file);
-                });
-                const label = input.closest('.wz-dmg-photo-btn');
-                if (label) {
-                    label.style.borderColor = '#10b981';
-                    label.style.color = '#10b981';
-                    label.style.borderStyle = 'solid';
-                }
-            }
-        };
-
-        window.wzGoToMarker = function(btn) {
-            const card = btn.closest('.wz-damage-item');
-            const view = card.dataset.view || card.querySelector('.wz-pos-view')?.value || 'top';
-            wzSetView(view);
-            document.getElementById('wzCarDiagram')?.scrollIntoView({behavior:'smooth', block:'center'});
+                thumb.innerHTML = `<img src="${e.target.result}" alt="">`;
+                // Mark the camera button as filled so admin sees the upload landed.
+                const label = item.querySelector('.wz-dmg-photo-btn');
+                if (label) { label.style.borderColor = '#10b981'; label.style.color = '#10b981'; label.style.borderStyle = 'solid'; }
+            };
+            reader.readAsDataURL(file);
         };
 
         function wzReindexDamages() {
-            document.querySelectorAll('.wz-damage-item').forEach((el, idx) => {
+            document.querySelectorAll('.wz-dmg-item').forEach((el, idx) => {
                 el.dataset.idx = idx;
                 el.querySelectorAll('[name^="damages["]').forEach(inp => {
                     inp.name = inp.name.replace(/damages\[\d+\]/, 'damages[' + idx + ']');
@@ -2868,34 +2859,34 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             });
         }
 
+        function wzUpdateCount() {
+            const el = document.getElementById('wzDmgCount');
+            if (el) el.textContent = document.querySelectorAll('.wz-dmg-item').length;
+            const empty = document.getElementById('wzDmgEmpty');
+            if (empty) empty.style.display = document.querySelectorAll('.wz-dmg-item').length ? 'none' : '';
+        }
+
         function wzRenderMarkers() {
             const layer = document.getElementById('wzDiagramMarkers');
             if (!layer) return;
             layer.innerHTML = '';
-            document.querySelectorAll('.wz-damage-item').forEach((el, idx) => {
-                const view = el.dataset.view || el.querySelector('.wz-pos-view')?.value || 'top';
-                if (view !== wzCurrentView) return;
+            document.querySelectorAll('.wz-dmg-item').forEach((el, idx) => {
                 const x = parseFloat(el.querySelector('.wz-pos-x')?.value);
                 const y = parseFloat(el.querySelector('.wz-pos-y')?.value);
                 if (isNaN(x) || isNaN(y)) return;
                 const dtype = el.dataset.dtype || el.querySelector('.wz-dtype-input')?.value || 'damage';
-                const color = TYPE_COLORS[dtype] || '#f59e0b';
-                const glowColor = dtype === 'accident' ? 'rgba(220,38,38,.25)' : dtype === 'repaired' ? 'rgba(156,163,175,.25)' : 'rgba(245,158,11,.25)';
-                const markerIcon = TYPE_MARKER_ICONS[dtype] || TYPE_MARKER_ICONS.damage;
+                const color = TYPE_COLORS[dtype] || '#facc15';
                 const m = document.createElement('div');
                 m.className = 'wz-diagram-marker';
                 m.dataset.idx = idx;
-                m.style.cssText = `position:absolute;left:${x}%;top:${y}%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;background:${glowColor};display:flex;align-items:center;justify-content:center;cursor:grab;pointer-events:auto;z-index:5;transition:transform .12s`;
-                const inner = document.createElement('div');
-                inner.style.cssText = `width:28px;height:28px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.25)`;
-                inner.innerHTML = markerIcon;
-                m.appendChild(inner);
-                m.title = el.querySelector('input[name$="[area]"]')?.value || '#' + (idx + 1);
-                m.addEventListener('mouseenter', () => m.style.transform = 'translate(-50%,-50%) scale(1.18)');
+                m.style.cssText = `position:absolute;left:${x}%;top:${y}%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;cursor:grab;pointer-events:auto;z-index:5;box-shadow:0 2px 6px rgba(0,0,0,.18);transition:transform .12s`;
+                m.innerHTML = TYPE_MARKER_ICONS[dtype] || TYPE_MARKER_ICONS.damage;
+                m.title = TYPE_LABELS[dtype];
+                m.addEventListener('mouseenter', () => m.style.transform = 'translate(-50%,-50%) scale(1.15)');
                 m.addEventListener('mouseleave', () => m.style.transform = 'translate(-50%,-50%) scale(1)');
                 m.addEventListener('click', e => {
                     e.stopPropagation();
-                    const target = document.querySelector(`.wz-damage-item[data-idx="${idx}"]`);
+                    const target = document.querySelector(`.wz-dmg-item[data-idx="${idx}"]`);
                     target?.scrollIntoView({behavior:'smooth', block:'center'});
                     target?.style.setProperty('outline', '2px solid var(--blue)');
                     setTimeout(() => target?.style.removeProperty('outline'), 1200);
@@ -2912,11 +2903,11 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             const wrap = document.getElementById('wzCarDiagram');
             const diag = wrap.getBoundingClientRect();
             const move = ev => {
-                const px = ((ev.clientX - diag.left - 24) / (diag.width - 48)) * 100;
-                const py = ((ev.clientY - diag.top - 24) / (diag.height - 48)) * 100;
+                const px = ((ev.clientX - diag.left - 20) / (diag.width - 40)) * 100;
+                const py = ((ev.clientY - diag.top - 20) / (diag.height - 40)) * 100;
                 const x = Math.max(0, Math.min(100, px));
                 const y = Math.max(0, Math.min(100, py));
-                const el = document.querySelector(`.wz-damage-item[data-idx="${idx}"]`);
+                const el = document.querySelector(`.wz-dmg-item[data-idx="${idx}"]`);
                 if (el) {
                     el.querySelector('.wz-pos-x').value = x.toFixed(2);
                     el.querySelector('.wz-pos-y').value = y.toFixed(2);
@@ -2929,45 +2920,22 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             document.addEventListener('mouseup', up);
         }
 
-        function wzSetView(view) {
-            wzCurrentView = view;
-            document.querySelectorAll('.wz-view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
-            document.querySelectorAll('.wz-svg-view').forEach(v => {
-                const isActive = v.dataset.view === view;
-                v.classList.toggle('active', isActive);
-                v.style.display = isActive ? '' : 'none';
-            });
-            const label = document.getElementById('wzViewLabel');
-            if (label) label.textContent = 'WIDOK: ' + (WZ_VIEW_LABELS[view] || 'GÓRA').toUpperCase();
-            wzRenderMarkers();
-            wzApplyDamageFilter();
-        }
-
-        function wzApplyDamageFilter() {
-            document.querySelectorAll('.wz-damage-item').forEach(el => {
-                const view = el.dataset.view || el.querySelector('.wz-pos-view')?.value || 'top';
-                el.style.opacity = view === wzCurrentView ? '1' : '0.4';
-            });
-        }
-
-        // View switch buttons
-        document.querySelectorAll('.wz-view-btn').forEach(b => b.addEventListener('click', () => wzSetView(b.dataset.view)));
-
-        // Click on diagram to add damage
+        // Click on diagram (anywhere except an existing marker) drops a
+        // new marker of the currently-active chip type.
         const diagram = document.getElementById('wzCarDiagram');
         diagram?.addEventListener('click', e => {
             if (e.target.closest('.wz-diagram-marker')) return;
             const rect = diagram.getBoundingClientRect();
-            const px = ((e.clientX - rect.left - 24) / (rect.width - 48)) * 100;
-            const py = ((e.clientY - rect.top - 24) / (rect.height - 48)) * 100;
+            const px = ((e.clientX - rect.left - 20) / (rect.width - 40)) * 100;
+            const py = ((e.clientY - rect.top - 20) / (rect.height - 40)) * 100;
             const x = Math.max(0, Math.min(100, px)).toFixed(2);
             const y = Math.max(0, Math.min(100, py)).toFixed(2);
-            wzAddDamageItem(x, y, wzCurrentView);
+            wzAddDamageItem(x, y);
         });
 
-        // Dynamic body-type image
-        const btMap = {sedan:'sedan',suv:'suv','coupé':'coupe',coupe:'coupe',bus:'van',van:'van',kombi:'kombi',hatchback:'hatchback',kabriolet:'sedan',cabriolet:'sedan',pickup:'suv'};
-        const btSelect = document.getElementById('bodyTypeSelect');
+        // Body-type select → swap the diagram silhouette.
+        const btMap = { sedan: 'sedan', suv: 'suv', 'coupé': 'coupe', coupe: 'coupe', bus: 'van', van: 'van', kombi: 'kombi', hatchback: 'hatchback', kabriolet: 'sedan', cabriolet: 'sedan', pickup: 'suv' };
+        const btSelect = document.getElementById('wzBodyTypeSelect');
         const dtImg = document.getElementById('wzDamageTopImg');
         if (btSelect && dtImg) {
             btSelect.addEventListener('change', () => {
@@ -2979,12 +2947,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 
         // Init
         wzRenderMarkers();
-        wzApplyDamageFilter();
-
-        // Active view button styling
-        const style = document.createElement('style');
-        style.textContent = `.wz-view-btn.active{background:var(--blue)!important;color:#fff!important;border-color:var(--blue)!important} .wz-view-btn:hover:not(.active){background:#f0f0f2!important} .wz-dtype-btn.active{font-weight:800!important}`;
-        document.head.appendChild(style);
+        wzUpdateCount();
     })();
 
     // ===================================================================
