@@ -392,12 +392,15 @@
 .cs-info-3card-ico svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .cs-info-3card-title{font-size:15px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0;line-height:1.3}
 .cs-info-3card-rows{flex:1;display:flex;flex-direction:column}
-.cs-info-3row-line{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid #f5f5f7;font-size:13px;line-height:1.4}
+.cs-info-3row-line{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid #f5f5f7;font-size:13.5px;line-height:1.4}
 .cs-info-3row-line:last-child{border-bottom:none}
-.cs-info-3row-line .lbl{color:#6b7280;font-weight:500;min-width:0;flex-shrink:1}
-.cs-info-3row-line .val{font-weight:700;color:#0a0a0a;text-align:right;word-break:break-word;flex-shrink:0;max-width:60%}
+.cs-info-3row-line .lbl{display:flex;align-items:flex-start;gap:10px;color:#6b7280;font-weight:500;min-width:0;flex:1;line-height:1.4}
+.cs-info-3row-line .lbl-ico{flex-shrink:0;width:26px;height:26px;border-radius:8px;background:#eff6ff;color:var(--blue);display:inline-flex;align-items:center;justify-content:center;margin-top:-2px}
+.cs-info-3row-line .lbl-ico svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.cs-info-3row-line .val{font-weight:700;color:#0a0a0a;text-align:right;word-break:break-word;flex-shrink:0;max-width:55%;align-self:center}
 .cs-info-3row-line .val.muted{color:#9ca3af;font-weight:500;font-style:italic}
 .cs-info-3row-line .val.ok{color:#15803d}
+.cs-info-3row-note{max-width:1200px;margin:14px auto 0;padding:0 24px;font-size:12.5px;color:#6b7280;line-height:1.6}
 @media(max-width:1024px){
     .cs-info-3row{grid-template-columns:1fr 1fr;gap:14px}
     .cs-info-3card{padding:18px 18px}
@@ -1733,28 +1736,38 @@
             <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
         </div>
         <div class="cs-data-body">
-            {{-- 14-field icon-led grid. Order is fixed; each row only
-                 renders when the backend has a real value, so cars with
-                 missing fields gracefully collapse (no empty cells). --}}
+            {{-- 16-field icon-led grid laid out in 4 columns of 4 rows to
+                 match the reference. Order is fixed by column (1: identity,
+                 2: history dates + VIN, 3: powertrain, 4: body). Each cell
+                 only renders when the backend has a real value, so cars
+                 with missing fields gracefully collapse (no empty cells). --}}
             @php
-                $emissionDisp = $rowOk($car->emission_class)
-                    ? preg_replace('/^(euro)\s*(\d.*)$/i', 'Euro $2', trim((string) $car->emission_class))
-                    : null;
+                $engineVersion = trim(implode(' ', array_filter([
+                    $rowOk($car->equipment_version) ? $car->equipment_version : null,
+                    $rowOk($car->transmission_detail) ? $car->transmission_detail : null,
+                ])));
+                $firstRegDate = $rowOk($car->first_registration) ? $car->first_registration : null;
+                $prodYear = null;
+                if ($firstRegDate && preg_match('/(\d{4})/', (string) $firstRegDate, $m)) {
+                    $prodYear = $m[1];
+                }
                 $dpRows = [];
                 if ($car->brand?->name)              $dpRows[] = ['badge-check',   'Marka',                $car->brand->name];
-                if ($rowOk($car->first_registration))$dpRows[] = ['calendar',      'Rok produkcji',        $car->first_registration];
-                if ($rowOk($car->model))             $dpRows[] = ['car',           'Model',                $car->model];
+                if ($firstRegDate)                   $dpRows[] = ['calendar',      'Pierwsza rejestracja', $firstRegDate];
                 if ($rowOk($dispFuel))               $dpRows[] = ['fuel',          'Paliwo',               $dispFuel];
-                if ($rowOk($dispTransmission))       $dpRows[] = ['settings',      'Skrzynia biegów',      $dispTransmission];
-                if ($rowOk($car->mileage))           $dpRows[] = ['gauge',         'Przebieg',             number_format((float) $car->mileage, 0, '', ' ') . ' km'];
-                if ($rowOk($car->engine_capacity))   $dpRows[] = ['activity',      'Pojemność skokowa',    number_format((float) $car->engine_capacity, 0, '', ' ') . ' cm³'];
-                if ($emissionDisp)                   $dpRows[] = ['leaf',          'Norma emisji spalin',  $emissionDisp];
-                if ($rowOk($car->power_hp))          $dpRows[] = ['zap',           'Moc',                  $car->power_hp . ' KM' . ($rowOk($car->power_kw) ? ' / ' . $car->power_kw . ' kW' : '')];
-                if ($rowOk($car->seats))             $dpRows[] = ['users',         'Liczba miejsc',        $car->seats];
                 if ($rowOk($dispBody))               $dpRows[] = ['car-front',     'Typ nadwozia',         $dispBody];
-                if ($rowOk($car->doors))             $dpRows[] = ['door-open',     'Liczba drzwi',         $car->doors];
-                if ($rowOk($car->color))             $dpRows[] = ['palette',       'Kolor nadwozia',       $car->color];
+                if ($rowOk($car->model))             $dpRows[] = ['car',           'Model',                $car->model];
+                if ($rowOk($car->mileage))           $dpRows[] = ['gauge',         'Przebieg',             number_format((float) $car->mileage, 0, '', ' ') . ' km'];
+                if ($rowOk($dispTransmission))       $dpRows[] = ['settings',      'Skrzynia biegów',      $dispTransmission];
+                if ($rowOk($car->seats))             $dpRows[] = ['users',         'Liczba miejsc',        $car->seats];
+                if ($engineVersion !== '')           $dpRows[] = ['cog',           'Wersja / silnik',      $engineVersion];
                 if ($rowOk($dispCountry))            $dpRows[] = ['globe',         'Kraj pochodzenia',     $dispCountry];
+                if ($rowOk($car->power_hp))          $dpRows[] = ['zap',           'Moc',                  $car->power_hp . ' KM' . ($rowOk($car->power_kw) ? ' / ' . $car->power_kw . ' kW' : '')];
+                if ($rowOk($car->doors))             $dpRows[] = ['door-open',     'Liczba drzwi',         $car->doors];
+                if ($prodYear)                       $dpRows[] = ['calendar-days', 'Rok produkcji',        $prodYear];
+                if ($rowOk($car->vin))               $dpRows[] = ['hash',          'VIN',                  strtoupper($car->vin)];
+                if ($rowOk($car->engine_capacity))   $dpRows[] = ['activity',      'Pojemność skokowa',    number_format((float) $car->engine_capacity, 0, '', ' ') . ' cm³'];
+                if ($rowOk($car->color))             $dpRows[] = ['palette',       'Kolor nadwozia',       $car->color];
             @endphp
             <div class="cs-dp-grid">
                 @foreach($dpRows as [$ico, $label, $value])
@@ -1770,23 +1783,24 @@
         </div>
     </div>
 
-    {{-- =================== 3-CARD SUMMARY ROW (Historia / Dokumenty / Formalności) =================== --}}
+    {{-- =================== 3-CARD SUMMARY ROW (Historia / Dokumenty / Serwisowanie) =================== --}}
     @php
-        // Pull the same labelled values used by the deeper accordion sections so
-        // the summary row stays in sync without re-deriving anything. All helpers
-        // are null-safe; muted "—" placeholders appear only when the field is
-        // genuinely empty in admin.
-        $svc3      = CarLabels::bool($car->service_book) ?: CarLabels::bool($car->service_documentation);
+        // Prefer the admin-entered free-text service_history; fall back to the
+        // Tak/Nie flags only when the longer description isn't set.
+        $svc3      = $rowOk($car->service_history)
+            ? $car->service_history
+            : (CarLabels::bool($car->service_book) ?: CarLabels::bool($car->service_documentation));
         $regCert3  = CarLabels::bool($car->registration_cert);
         $manual3   = CarLabels::bool($car->owners_manual);
         $bookSt3   = CarLabels::status($car->service_book_status) ?? $car->service_book_status;
-        $exciseSh  = match (strtolower((string) $car->taxation)) {
-            'paid', 'oplacona', 'opłacona' => 'Opłacona',
-            'unpaid', 'nieoplacona', 'nieopłacona' => 'Nieopłacona',
-            'na', 'nie_dotyczy', 'nie dotyczy' => 'Nie dotyczy',
-            default => $car->taxation ? ucfirst((string) $car->taxation) : null,
-        };
         $hasMuted = fn($v) => $v ?: '—';
+        // Heuristics for the right-most "Serwisowanie" card. The new admin
+        // fields take precedence; older rows fall back to the closest legacy
+        // field so existing inventory still renders sensibly.
+        $svcConfirmation = $rowOk($car->service_confirmation_type)
+            ? $car->service_confirmation_type
+            : ($bookSt3 ?: ($svc3 ?: null));
+        $odometerStatus = $rowOk($car->odometer_status) ? $car->odometer_status : null;
     @endphp
     <div class="cs-info-3row">
         {{-- A. HISTORIA POJAZDU --}}
@@ -1798,16 +1812,14 @@
                 <h3 class="cs-info-3card-title">Historia pojazdu</h3>
             </div>
             <div class="cs-info-3card-rows">
-                <div class="cs-info-3row-line"><span class="lbl">Pochodzenie</span><span class="val {{ $dispCountry ? '' : 'muted' }}">{{ $hasMuted($dispCountry) }}</span></div>
                 @php
-                    // Show specific import country when admin filled it AND it differs from
-                    // country_registration; otherwise fall back to the Tak/Nie summary.
                     $importedSpecific = ($rowOk($dispImportedFrom) && $car->imported_from !== $car->country_registration) ? $dispImportedFrom : null;
                 @endphp
-                <div class="cs-info-3row-line"><span class="lbl">Importowany</span><span class="val">{{ $importedSpecific ?? (($car->is_imported || $rowOk($car->imported_from)) ? 'Tak' : 'Nie') }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Liczba właścicieli</span><span class="val {{ $car->previous_owners === null ? 'muted' : '' }}">{{ $car->previous_owners === null ? '—' : ($car->previous_owners == 0 ? 'Pierwszy' : $car->previous_owners) }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Historia serwisowa</span><span class="val {{ $svc3 ? '' : 'muted' }}">{{ $hasMuted($svc3) }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Ostatni przegląd</span><span class="val {{ $rowOk($car->last_service) ? '' : 'muted' }}">{{ $hasMuted($car->last_service) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="globe" size="14"/></span>Pochodzenie</span><span class="val {{ $dispCountry ? '' : 'muted' }}">{{ $hasMuted($dispCountry) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="log-in" size="14"/></span>Importowany</span><span class="val">{{ $importedSpecific ?? (($car->is_imported || $rowOk($car->imported_from)) ? 'Tak' : 'Nie') }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="users" size="14"/></span>Liczba właścicieli</span><span class="val {{ $car->previous_owners === null ? 'muted' : '' }}">{{ $car->previous_owners === null ? '—' : ($car->previous_owners == 0 ? 'Pierwszy' : $car->previous_owners) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="file-text" size="14"/></span>Historia serwisowa</span><span class="val {{ $svc3 ? 'ok' : 'muted' }}">{{ $hasMuted($svc3) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="gauge" size="14"/></span>Stan licznika</span><span class="val {{ $odometerStatus ? 'ok' : 'muted' }}">{{ $hasMuted($odometerStatus) }}</span></div>
                 @if($rowOk($car->vehicle_history))
                 <div class="cs-info-3row-line" style="flex-direction:column;align-items:flex-start;gap:2px"><span class="lbl">Opis historii</span><span class="val" style="text-align:left;max-width:100%;font-weight:600;color:#374151">{{ $car->vehicle_history }}</span></div>
                 @endif
@@ -1823,158 +1835,41 @@
                 <h3 class="cs-info-3card-title">Dokumenty</h3>
             </div>
             <div class="cs-info-3card-rows">
-                <div class="cs-info-3row-line"><span class="lbl">Faktura</span><span class="val ok">VAT-marża</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Dowód rejestracyjny</span><span class="val ok">{{ $regCert3 ?: 'Dostępny' }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Liczba kluczyków</span><span class="val {{ $rowOk($car->number_of_keys) ? '' : 'muted' }}">{{ $rowOk($car->number_of_keys) ? $car->number_of_keys : '2' }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Książka serwisowa</span><span class="val ok">{{ $bookSt3 ?: 'Dostępna' }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Instrukcja obsługi</span><span class="val ok">{{ $manual3 ?: 'Jest' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="receipt" size="14"/></span>Faktura</span><span class="val">VAT-marża</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="file-check" size="14"/></span>Dowód rejestracyjny</span><span class="val ok">{{ $regCert3 ?: 'Dostępny' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="key" size="14"/></span>Liczba kluczyków</span><span class="val {{ $rowOk($car->number_of_keys) ? '' : 'muted' }}">{{ $rowOk($car->number_of_keys) ? $car->number_of_keys : '2' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="book-open" size="14"/></span>Książka serwisowa</span><span class="val ok">{{ $bookSt3 ?: 'Dostępna' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="book" size="14"/></span>Instrukcja obsługi</span><span class="val ok">{{ $manual3 ?: 'Jest' }}</span></div>
             </div>
         </div>
 
-        {{-- C. FORMALNOŚCI --}}
+        {{-- C. SERWISOWANIE --}}
         <div class="cs-info-3card">
             <div class="cs-info-3card-head">
                 <div class="cs-info-3card-ico" aria-hidden="true">
-                    <x-icon name="shield-check" size="18"/>
+                    <x-icon name="wrench" size="18"/>
                 </div>
-                <h3 class="cs-info-3card-title">Formalności</h3>
+                <h3 class="cs-info-3card-title">Serwisowanie</h3>
             </div>
             <div class="cs-info-3card-rows">
-                <div class="cs-info-3row-line"><span class="lbl">Akcyza</span><span class="val ok">{{ $exciseSh ?: 'Opłacona' }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Przegląd techniczny</span><span class="val ok">{{ $rowOk($car->next_inspection) ? $car->next_inspection : 'Wykonany' }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Przygotowany do rejestracji</span><span class="val ok">Tak</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">PCC 2%</span><span class="val ok">Kupujący zwolniony</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Koszt rejestracji</span><span class="val ok">Po stronie kupującego</span></div>
-                <div class="cs-info-3row-line"><span class="lbl">Możliwość transportu</span><span class="val ok">Dostępna po wcześniejszym ustaleniu</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="calendar" size="14"/></span>Ostatni serwis</span><span class="val {{ $rowOk($car->last_service) ? '' : 'muted' }}">{{ $hasMuted($car->last_service) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="gauge" size="14"/></span>Przebieg przy ostatnim serwisie</span><span class="val {{ $rowOk($car->last_service_mileage) ? '' : 'muted' }}">{{ $rowOk($car->last_service_mileage) ? number_format((float) $car->last_service_mileage, 0, '', ' ') . ' km' : '—' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="shield-check" size="14"/></span>Niemieckie badanie techniczne ważne do</span><span class="val {{ $rowOk($car->de_tech_valid_until) ? '' : 'muted' }}">{{ $hasMuted($car->de_tech_valid_until) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="file-text" size="14"/></span>Potwierdzenie serwisu</span><span class="val {{ $svcConfirmation ? 'ok' : 'muted' }}">{{ $hasMuted($svcConfirmation) }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="wrench" size="14"/></span>Zakres ostatniego serwisu</span><span class="val {{ $rowOk($car->last_service_scope) ? 'ok' : 'muted' }}">{{ $hasMuted($car->last_service_scope) }}</span></div>
             </div>
         </div>
     </div>
+    <p class="cs-info-3row-note">Informacje prezentujemy na podstawie posiadanych dokumentów i oględzin pojazdu.</p>
 
     {{-- (Historia pojazdu accordion removed — its content is already shown in the
          3-card summary row above. The unique fields below were merged into the
          summary card's "Historia pojazdu" tile (free-text + specific import
          country). Removed at render source, not hidden with CSS. --}}
 
-    {{-- =================== DETAIL 3-CARD ROW =================== --}}
-    {{-- Serwisowanie · Dokumenty · Zużycie paliwa as 3 equal sibling cards
-         on desktop (1·1·1) instead of stacked full-width strips.
-         Each remains a collapsible accordion on mobile. --}}
-    @php
-        // SERWISOWANIE visibility
-        $svcDoc = CarLabels::bool($car->service_documentation);
-        $asoSvc = CarLabels::bool($car->aso_serviced);
-        $showSvc = $rowOk($svcDoc) || $rowOk($asoSvc) || $rowOk($car->service_history) || $rowOk($car->last_service) || $rowOk($car->next_inspection);
-
-        // DOKUMENTY visibility
-        $cocDocs        = CarLabels::bool($car->coc_documents);
-        $svcBookStatus  = CarLabels::status($car->service_book_status) ?? $car->service_book_status;
-        $regCert        = CarLabels::bool($car->registration_cert);
-        $ownersManual   = CarLabels::bool($car->owners_manual);
-        $vehicleFolder  = CarLabels::bool($car->vehicle_folder);
-        $huAuReport     = CarLabels::bool($car->hu_au_report);
-        $showDocs       = $rowOk($cocDocs) || $rowOk($svcBookStatus) || $rowOk($regCert) || $rowOk($ownersManual) || $rowOk($vehicleFolder) || $rowOk($huAuReport);
-
-        // ZUŻYCIE PALIWA visibility
-        $showFuel = $rowOk($car->fuel_consumption) || $rowOk($car->co2_emission) || $rowOk($car->emission_class);
-
-        // Visible-card count drives the grid track count so missing data
-        // never leaves an awkward empty column. 3 = three even cards,
-        // 2 = two half-width cards, 1 = full-width card.
-        $detailCount = ($showSvc ? 1 : 0) + ($showDocs ? 1 : 0) + ($showFuel ? 1 : 0);
-    @endphp
-    @if($detailCount > 0)
-    <div class="cs-detail-3row cs-detail-3row--n{{ $detailCount }}">
-        @if($showSvc)
-        {{-- C. SERWISOWANIE --}}
-        <div class="cs-data-section cs-collapsible-mobile">
-            <div class="cs-data-header" onclick="csToggleAccordion(this)">
-                <h2><x-icon name="wrench" size="20"/>Serwisowanie</h2>
-                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
-            </div>
-            <div class="cs-data-body">
-                <div class="cs-data-grid-2col">
-                    @if($rowOk($asoSvc))
-                        <div class="cs-data-row"><span class="lbl">Serwis ASO</span><span class="val">{{ $asoSvc }}</span></div>
-                    @endif
-                    @if($rowOk($svcDoc))
-                        <div class="cs-data-row"><span class="lbl">Dokumentacja serwisowa</span><span class="val">{{ $svcDoc }}</span></div>
-                    @endif
-                    @if($rowOk($car->service_history))
-                        <div class="cs-data-row"><span class="lbl">Historia serwisowa</span><span class="val">{{ $car->service_history }}</span></div>
-                    @endif
-                    @if($rowOk($car->last_service))
-                        <div class="cs-data-row"><span class="lbl">Ostatni przegląd</span><span class="val">{{ $car->last_service }}@if($rowOk($car->last_service_mileage)) · {{ number_format((float) $car->last_service_mileage, 0, '', ' ') }} km @endif</span></div>
-                    @endif
-                    @if($rowOk($car->next_inspection))
-                        <div class="cs-data-row"><span class="lbl">Następny przegląd</span><span class="val">{{ $car->next_inspection }}</span></div>
-                    @endif
-                </div>
-            </div>
-        </div>
-        @endif
-
-        @if($showDocs)
-        {{-- D. DOKUMENTY --}}
-        <div class="cs-data-section cs-collapsible-mobile">
-            <div class="cs-data-header" onclick="csToggleAccordion(this)">
-                <h2><x-icon name="file-text" size="20"/>Dokumenty</h2>
-                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
-            </div>
-            <div class="cs-data-body">
-                <div class="cs-data-grid-2col">
-                    @if($rowOk($cocDocs))
-                        <div class="cs-data-row"><span class="lbl">Komplet dokumentów</span><span class="val">{{ $cocDocs }}</span></div>
-                    @endif
-                    @if($rowOk($svcBookStatus))
-                        <div class="cs-data-row"><span class="lbl">Książka serwisowa</span><span class="val">{{ $svcBookStatus }}</span></div>
-                    @endif
-                    @if($rowOk($regCert))
-                        <div class="cs-data-row"><span class="lbl">Dowód rejestracyjny</span><span class="val">{{ $regCert }}</span></div>
-                    @endif
-                    @if($rowOk($ownersManual))
-                        <div class="cs-data-row"><span class="lbl">Instrukcja obsługi</span><span class="val">{{ $ownersManual }}</span></div>
-                    @endif
-                    @if($rowOk($vehicleFolder))
-                        <div class="cs-data-row"><span class="lbl">Teczka pojazdu</span><span class="val">{{ $vehicleFolder }}</span></div>
-                    @endif
-                    @if($rowOk($huAuReport))
-                        <div class="cs-data-row"><span class="lbl">Raport HU/AU</span><span class="val">{{ $huAuReport }}</span></div>
-                    @endif
-                </div>
-            </div>
-        </div>
-        @endif
-
-        @if($showFuel)
-        {{-- E. ZUŻYCIE PALIWA --}}
-        <div class="cs-data-section cs-collapsible-mobile">
-            <div class="cs-data-header" onclick="csToggleAccordion(this)">
-                <h2><x-icon name="fuel" size="20"/>Zużycie paliwa</h2>
-                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
-            </div>
-            <div class="cs-data-body">
-                <div class="cs-data-grid-2col">
-                    @if($rowOk($car->fuel_consumption))
-                        @php
-                            // Strip any embedded "l/100 km" / "L/100km" the admin may have already typed,
-                            // and normalise decimal separator. Render the unit exactly once below.
-                            $fcRaw = trim(preg_replace('/\s*[lL]\s*\/\s*100\s*km\.?/u', '', (string) $car->fuel_consumption));
-                            $fcRaw = trim(str_replace(',', '.', $fcRaw));
-                        @endphp
-                        <div class="cs-data-row"><span class="lbl">Średnie zużycie</span><span class="val">{{ $fcRaw }} l/100 km</span></div>
-                    @endif
-                    @if($rowOk($car->co2_emission))
-                        <div class="cs-data-row"><span class="lbl">Emisja CO₂</span><span class="val">{{ $car->co2_emission }} g/km</span></div>
-                    @endif
-                    @if($rowOk($car->emission_class))
-                        <div class="cs-data-row"><span class="lbl">Norma emisji</span><span class="val">{{ $car->emission_class }}</span></div>
-                    @endif
-                </div>
-            </div>
-        </div>
-        @endif
-    </div>
-    @endif
+    {{-- The Serwisowanie / Dokumenty / Zużycie paliwa 3-card row was removed
+         here — Serwisowanie + Dokumenty are now in the upper 3-card summary
+         (see "3-CARD SUMMARY ROW" above), matching the reference 1:1. --}}
 
     {{-- E. WYPOSAŻENIE — rebuilt to match reference structure --}}
     @php
