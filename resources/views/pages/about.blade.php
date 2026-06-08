@@ -8,8 +8,15 @@
 /* ===== HERO (dark, flat) ===== */
 .about-hero{background:#0a1432;padding:96px 0 120px;position:relative;overflow:hidden;border-bottom:1px solid #131b3a}
 .about-hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
-.about-hero-carline{position:absolute;left:-3%;bottom:8%;width:60%;max-width:760px;opacity:.08;pointer-events:none}
-.about-hero-carline svg{width:100%;height:auto;display:block}
+/* Hero info pill (#98) sitting under the narrative paragraph — flat
+   bg + border, no glow, per the AI-tone-down direction. */
+.about-hero-pill{display:inline-flex;align-items:flex-start;gap:14px;margin-top:22px;padding:14px 18px;background:#0e1a3a;border:1px solid #1f2e58;border-radius:12px;max-width:520px;text-decoration:none;color:rgba(255,255,255,.78);transition:border-color .15s ease}
+.about-hero-pill:hover{border-color:#2a3d6e}
+.about-hero-pill-ico{flex-shrink:0;width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(95,161,255,.55);display:flex;align-items:center;justify-content:center;color:#5fa1ff}
+.about-hero-pill-ico svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2}
+.about-hero-pill-text{font-size:14.5px;line-height:1.55;letter-spacing:-.05px}
+.about-hero-pill-text b{color:#5fa1ff;font-weight:700}
+.about-hero-pill-text svg{width:14px;height:14px;stroke:#5fa1ff;fill:none;stroke-width:2.2;vertical-align:-2px;margin-left:4px}
 .about-hero-bottom{position:absolute;left:0;right:0;bottom:-1px;height:88px;background:#fff;clip-path:polygon(0 100%,100% 100%,100% 35%,50% 100%,0 35%);pointer-events:none}
 .about-hero-in{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
 .about-breadcrumb{display:flex;align-items:center;gap:8px;font-size:12.5px;color:rgba(255,255,255,.45);margin-bottom:24px}
@@ -26,8 +33,6 @@
 /* Right side — Standard CertiCars panel — flat dark navy, single border */
 .std-panel{position:relative;background:#0e1a3a;border:1px solid #1f2e58;border-radius:18px;padding:32px 32px 26px}
 .std-panel-head{margin-bottom:26px}
-.std-panel-eyebrow{font-size:10.5px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#5fa1ff;margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.std-panel-eyebrow svg{width:13px;height:13px;stroke:#5fa1ff;fill:none;stroke-width:2.2}
 .std-panel-title{font-size:24px;font-weight:800;color:#fff;letter-spacing:-.4px;margin:0 0 6px}
 .std-panel-sub{font-size:13px;color:rgba(255,255,255,.55);margin:0;line-height:1.5}
 .std-list{list-style:none;margin:0;padding:0}
@@ -112,7 +117,7 @@
    card at ~280 px tall and bottom:-16, that means the head + shoulders
    extend ~310 px above the card's top edge — the dramatic "break-out"
    look from the reference. */
-.about-cta-bohater{position:absolute;right:36px;bottom:-16px;width:42%;max-width:520px;min-width:360px;height:auto;z-index:5;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.about-cta-bohater{position:absolute;right:36px;bottom:-16px;width:42%;max-width:520px;min-width:360px;height:auto;object-fit:contain;z-index:5;pointer-events:none;user-select:none;-webkit-user-drag:none}
 
 /* ===== Responsive ===== */
 @media(max-width:1024px){
@@ -172,17 +177,6 @@
 {{-- ===== HERO (dark) ===== --}}
 <section class="about-hero">
     <div class="about-hero-dots"></div>
-    {{-- Faint line-art car silhouette behind the left narrative --}}
-    <div class="about-hero-carline" aria-hidden="true">
-        <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#5fa1ff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M40 150 L120 150 Q140 92 210 86 L460 84 Q540 86 580 150 L680 150"/>
-            <path d="M170 96 L210 96 L240 130 L160 130 Z"/>
-            <path d="M255 96 L380 96 L420 130 L255 130 Z"/>
-            <path d="M435 96 L545 96 L575 130 L435 130 Z"/>
-            <circle cx="220" cy="160" r="22"/><circle cx="220" cy="160" r="10"/>
-            <circle cx="540" cy="160" r="22"/><circle cx="540" cy="160" r="10"/>
-        </svg>
-    </div>
     <div class="about-section-in about-hero-in">
         <div>
             <nav class="about-breadcrumb" aria-label="Okruszki">
@@ -193,29 +187,32 @@
             <div class="about-hero-label">Nasza historia</div>
             <h1>Zmieniamy rynek<br>aut używanych.<br><em>Na lepsze.</em></h1>
             <p class="about-hero-desc">CertiCars powstało po to, żeby przywracać zaufanie do rynku samochodów używanych. Pokazujemy auta możliwie konkretnie — z informacjami o pochodzeniu, wyposażeniu, formalnościach i stanie pojazdu, tak aby klient mógł lepiej poznać samochód jeszcze przed przyjazdem.</p>
+            <a href="{{ route('home') }}#certicheck" class="about-hero-pill">
+                <span class="about-hero-pill-ico"><x-icon name="info" size="16"/></span>
+                <span class="about-hero-pill-text">Przy wybranych autach dodatkowe informacje przygotowujemy w&nbsp;ramach <b>CertiCheck.<x-icon name="arrow-up-right" size="14"/></b></span>
+            </a>
         </div>
         <aside class="std-panel" aria-label="Standard CertiCars">
             <div class="std-panel-head">
-                <div class="std-panel-eyebrow"><x-icon name="shield-check" size="13"/> Standard CertiCars</div>
                 <h2 class="std-panel-title">Standard CertiCars</h2>
                 <p class="std-panel-sub">Więcej konkretów przed przyjazdem.</p>
             </div>
             <ol class="std-list">
                 <li class="std-item">
                     <span class="std-num">01</span>
-                    <span class="std-text"><strong>Poznaj auto wcześniej</strong>Najważniejsze informacje pokazujemy jeszcze przed oględzinami.</span>
+                    <span class="std-text"><strong>Poznaj auto wcześniej —</strong>Najważniejsze informacje pokazujemy jeszcze przed oględzinami.</span>
                 </li>
                 <li class="std-item">
                     <span class="std-num">02</span>
-                    <span class="std-text"><strong>Mniej domysłów</strong>Opisujemy pochodzenie, wyposażenie, formalności, stan i ślady użytkowania.</span>
+                    <span class="std-text"><strong>Mniej domysłów —</strong>Opisujemy pochodzenie, wyposażenie, formalności, stan i ślady użytkowania.</span>
                 </li>
                 <li class="std-item">
                     <span class="std-num">03</span>
-                    <span class="std-text"><strong>Spokojniejsza decyzja</strong>Łatwiej oceniasz, czy dane auto pasuje do Twoich potrzeb.</span>
+                    <span class="std-text"><strong>Spokojniejsza decyzja —</strong>Łatwiej ocenisz, czy dane auto pasuje do Twoich potrzeb.</span>
                 </li>
                 <li class="std-item">
                     <span class="std-num">04</span>
-                    <span class="std-text"><strong>CertiCheck dla wybranych aut</strong>Dodatkowe informacje o pojeździe w ramach CertiCheck.</span>
+                    <span class="std-text"><strong>CertiCheck dla wybranych aut —</strong>Dodatkowe informacje o pojeździe w ramach CertiCheck.</span>
                 </li>
             </ol>
             <div class="std-callout">
@@ -330,7 +327,7 @@
                     </div>
                 </div>
             </div>
-            <img class="about-cta-bohater" src="/images/bohater.png" alt="" loading="lazy" decoding="async" width="1122" height="1402">
+            <img class="about-cta-bohater" src="/images/bohater.png" alt="Doradca CertiCars rozmawiający z klientem o aucie" loading="lazy" decoding="async" width="1122" height="1402">
         </div>
     </div>
 </section>
