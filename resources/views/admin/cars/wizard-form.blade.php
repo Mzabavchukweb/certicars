@@ -272,6 +272,37 @@
     transition: transform .2s;
 }
 .wz-toggle.active .wz-toggle-thumb { transform: translateX(18px); }
+
+/* ── Standard ogłoszenia picker ─────────────────────────────────────────
+   Two-card radio selector at the top of Step 1 that gates the visibility
+   of CertiCheck-only sub-sections later in the wizard. */
+.wz-std-picker { background: #fff; border: 1px solid var(--border-l, #eeeef0); border-radius: 14px; padding: 18px 20px; margin-bottom: 18px; }
+.wz-std-picker-head { margin-bottom: 14px; }
+.wz-std-picker-title { font-size: 14px; font-weight: 800; color: var(--text, #0a0a0a); letter-spacing: -.2px; margin-bottom: 4px; }
+.wz-std-picker-sub { font-size: 12.5px; color: var(--text-3, #6b7280); line-height: 1.5; }
+.wz-std-picker-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.wz-std-card { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 14px 16px 16px; border: 1.5px solid #e5e7eb; border-radius: 12px; cursor: pointer; transition: border-color .15s, background .15s; background: #fff; }
+.wz-std-card:hover { border-color: #cbd5e1; background: #fafbff; }
+.wz-std-card.active { border-color: var(--blue, #0066ff); background: rgba(0,102,255,.04); }
+.wz-std-card input[type="radio"] { display: none; }
+.wz-std-card-tick { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #d1d5db; display: flex; align-items: center; justify-content: center; background: #fff; transition: all .15s; }
+.wz-std-card-tick i { width: 12px; height: 12px; stroke: #fff; opacity: 0; transition: opacity .15s; }
+.wz-std-card.active .wz-std-card-tick { background: var(--blue, #0066ff); border-color: var(--blue, #0066ff); }
+.wz-std-card.active .wz-std-card-tick i { opacity: 1; }
+.wz-std-card-head { display: flex; gap: 10px; align-items: flex-start; padding-right: 32px; }
+.wz-std-card-ico { width: 18px; height: 18px; color: var(--blue, #0066ff); flex-shrink: 0; margin-top: 2px; }
+.wz-std-card-name { font-size: 14px; font-weight: 700; color: var(--text, #0a0a0a); letter-spacing: -.2px; }
+.wz-std-card-tag { font-size: 11.5px; font-weight: 600; color: var(--text-3, #6b7280); letter-spacing: .1px; }
+.wz-std-card-list { list-style: none; padding: 0; margin: 0; }
+.wz-std-card-list li { font-size: 12.5px; color: var(--text-2, #4b5563); padding: 3px 0 3px 16px; position: relative; line-height: 1.5; }
+.wz-std-card-list li::before { content: ''; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--blue, #0066ff); }
+@media (max-width: 700px) { .wz-std-picker-grid { grid-template-columns: 1fr; } }
+
+/* When the document is in "no-certicheck" mode (the "Zwykłe" standard
+   is picked), any element flagged data-certicheck-only="1" is collapsed.
+   The class is applied to <html> so the sidebar stepper (which lives
+   outside the form) is also gated. */
+html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 .wz-toggle-label {
     font-size: 13px;
     font-weight: 600;
@@ -676,6 +707,60 @@
      ╚══════════════════════════════════════════════════════════════╝ --}}
 <div class="wz-step active" data-step="1">
 
+    {{-- ⓿ Standard ogłoszenia — two-card selector wired to has_certicheck.
+         The big visual choice that gates which sub-sections appear in later
+         steps. Body gets `.wz-no-certicheck` when "Zwykłe" is selected and
+         sections marked `data-certicheck-only` collapse via CSS. --}}
+    @php $isCC = (bool) old('has_certicheck', $car?->has_certicheck); @endphp
+    <div class="wz-std-picker" id="wzStdPicker">
+        <div class="wz-std-picker-head">
+            <div class="wz-std-picker-title">Standard ogłoszenia</div>
+            <div class="wz-std-picker-sub">Zakres informacji prezentowanych klientowi. Można zmienić w każdej chwili.</div>
+        </div>
+        <div class="wz-std-picker-grid">
+            <label class="wz-std-card {{ !$isCC ? 'active' : '' }}" data-std="standard">
+                <input type="radio" name="has_certicheck_picker" value="0" {{ !$isCC ? 'checked' : '' }}>
+                <div class="wz-std-card-tick"><i data-lucide="check"></i></div>
+                <div class="wz-std-card-head">
+                    <i data-lucide="file-text" class="wz-std-card-ico"></i>
+                    <div>
+                        <div class="wz-std-card-name">Zwykłe ogłoszenie</div>
+                        <div class="wz-std-card-tag">Podstawowy zakres</div>
+                    </div>
+                </div>
+                <ul class="wz-std-card-list">
+                    <li>Galeria zdjęć</li>
+                    <li>Dane pojazdu i historia</li>
+                    <li>Dokumenty + serwisowanie</li>
+                    <li>Wyposażenie + stan techniczny</li>
+                </ul>
+            </label>
+            <label class="wz-std-card {{ $isCC ? 'active' : '' }} wz-std-card-cc" data-std="certicheck">
+                <input type="radio" name="has_certicheck_picker" value="1" {{ $isCC ? 'checked' : '' }}>
+                <div class="wz-std-card-tick"><i data-lucide="check"></i></div>
+                <div class="wz-std-card-head">
+                    <i data-lucide="shield-check" class="wz-std-card-ico"></i>
+                    <div>
+                        <div class="wz-std-card-name">Ogłoszenie z CertiCheck</div>
+                        <div class="wz-std-card-tag">Standard + dodatki</div>
+                    </div>
+                </div>
+                <ul class="wz-std-card-list">
+                    <li>Zawiera wszystko ze zwykłego</li>
+                    <li>360° wnętrza + zewnętrza</li>
+                    <li>Nagranie pracy silnika</li>
+                    <li>Pomiary lakieru + bieżnik opon</li>
+                    <li>Plakietka + broszura PDF</li>
+                </ul>
+            </label>
+        </div>
+    </div>
+
+    {{-- The real has_certicheck input — hidden, value mirrored from the
+         standard picker above by JS. Kept in markup so the form submit
+         contract doesn't change. --}}
+    <input type="hidden" name="has_certicheck" id="wzHasCertiCheckInput" value="{{ $isCC ? 1 : 0 }}">
+
     {{-- ⓪ Import z Otomoto --}}
     <div class="wz-section" style="background:linear-gradient(135deg,#eef2ff,#f5f3ff);border:1px solid #c7d2fe;margin-bottom:20px">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
@@ -937,15 +1022,8 @@
                 </div>
             </label>
 
-            <label class="wz-toggle {{ old('has_certicheck',$car?->has_certicheck) ? 'active' : '' }}" data-toggle>
-                <input type="hidden" name="has_certicheck" value="0">
-                <input type="checkbox" name="has_certicheck" value="1" {{ old('has_certicheck',$car?->has_certicheck)?'checked':'' }}>
-                <div class="wz-toggle-track"><div class="wz-toggle-thumb"></div></div>
-                <div>
-                    <div class="wz-toggle-label"><i data-lucide="shield-check" style="width:14px;height:14px;color:var(--blue)"></i> CertiCheck</div>
-                    <div class="wz-toggle-desc">Plakietka + broszura PDF</div>
-                </div>
-            </label>
+            {{-- CertiCheck toggle was here; replaced by the prominent
+                 "Standard ogłoszenia" card at the top of Step 1. --}}
 
             <label class="wz-toggle {{ old('has_gethelp',$car?->has_gethelp) ? 'active' : '' }}" data-toggle>
                 <input type="hidden" name="has_gethelp" value="0">
@@ -1029,12 +1107,12 @@
     </div>
 
     {{-- Damage photos --}}
-    <div class="wz-section">
+    <div class="wz-section" data-certicheck-only="1">
         <div class="wz-section-header">
             <div class="wz-section-badge">2</div>
             <div>
                 <div class="wz-section-title">Zdjęcia stanu wizualnego</div>
-                <div class="wz-section-subtitle">Zdjęcia dokumentujące stan wizualny pojazdu</div>
+                <div class="wz-section-subtitle">Zdjęcia dokumentujące stan wizualny pojazdu <span style="background:rgba(0,102,255,.1);color:var(--blue);padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:700;letter-spacing:.4px;margin-left:6px">CERTICHECK</span></div>
             </div>
         </div>
 
@@ -1073,7 +1151,7 @@
     </div>
 
     {{-- 360° interior — video (preferred, Copart-style) --}}
-    <div class="wz-media-section">
+    <div class="wz-media-section" data-certicheck-only="1">
         <div class="wz-media-header">
             <i data-lucide="film"></i>
             <h3>360° wnętrza — film</h3>
@@ -1117,7 +1195,7 @@
     </div>
 
     {{-- 360° interior panorama (legacy / fallback) --}}
-    <div class="wz-media-section">
+    <div class="wz-media-section" data-certicheck-only="1">
         <div class="wz-media-header">
             <i data-lucide="globe"></i>
             <h3>Panorama 360° — wnętrze <span style="font-size:11px;color:var(--text-3);font-weight:500">(zapas)</span></h3>
@@ -1143,7 +1221,7 @@
     </div>
 
     {{-- 360° exterior — video (preferred, Copart-style walk-around) --}}
-    <div class="wz-media-section">
+    <div class="wz-media-section" data-certicheck-only="1">
         <div class="wz-media-header">
             <i data-lucide="film"></i>
             <h3>360° zewnętrza — film</h3>
@@ -1187,7 +1265,7 @@
     </div>
 
     {{-- 360° exterior panorama (legacy / fallback) --}}
-    <div class="wz-media-section">
+    <div class="wz-media-section" data-certicheck-only="1">
         <div class="wz-media-header">
             <i data-lucide="scan"></i>
             <h3>Panorama 360° — zewnętrze <span style="font-size:11px;color:var(--text-3);font-weight:500">(zapas)</span></h3>
@@ -1213,7 +1291,7 @@
     </div>
 
     {{-- Engine video --}}
-    <div class="wz-media-section">
+    <div class="wz-media-section" data-certicheck-only="1">
         <div class="wz-media-header">
             <i data-lucide="film"></i>
             <h3>Film z pracy silnika</h3>
@@ -1543,11 +1621,11 @@
 {{-- ╔══════════════════════════════════════════════════════════════╗
      ║  STEP 7 — Stan wizualny i ślady użytkowania                ║
      ╚══════════════════════════════════════════════════════════════╝ --}}
-<div class="wz-step" data-step="7">
+<div class="wz-step" data-step="7" data-certicheck-only="1">
     <div class="wz-section">
         <div class="wz-section-header">
             <div class="wz-section-badge"><i data-lucide="scan-eye" style="width:16px;height:16px"></i></div>
-            <div><div class="wz-section-title">Stan wizualny i ślady użytkowania</div><div class="wz-section-subtitle">Kliknij na schemacie pojazdu, aby zaznaczyć uszkodzenie</div></div>
+            <div><div class="wz-section-title">Stan wizualny i ślady użytkowania</div><div class="wz-section-subtitle">Kliknij na schemacie pojazdu, aby zaznaczyć uszkodzenie <span style="background:rgba(0,102,255,.1);color:var(--blue);padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:700;letter-spacing:.4px;margin-left:6px">CERTICHECK</span></div></div>
         </div>
 
         {{-- Legend — 3 types like the reference --}}
@@ -1738,11 +1816,11 @@
 {{-- ╔══════════════════════════════════════════════════════════════╗
      ║  STEP 9 — Pomiary lakieru                                  ║
      ╚══════════════════════════════════════════════════════════════╝ --}}
-<div class="wz-step" data-step="9">
+<div class="wz-step" data-step="9" data-certicheck-only="1">
     <div class="wz-section">
         <div class="wz-section-header">
             <div class="wz-section-badge"><i data-lucide="paintbrush" style="width:16px;height:16px"></i></div>
-            <div><div class="wz-section-title">Pomiary grubości lakieru</div><div class="wz-section-subtitle">Wartości w µm — norma fabryczna: 90–150 µm</div></div>
+            <div><div class="wz-section-title">Pomiary grubości lakieru</div><div class="wz-section-subtitle">Wartości w µm — norma fabryczna: 90–150 µm <span style="background:rgba(0,102,255,.1);color:var(--blue);padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:700;letter-spacing:.4px;margin-left:6px">CERTICHECK</span></div></div>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:16px;font-size:11px;font-weight:600">
             <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#10b981"></span> Fabryczny (90–150 µm)</span>
@@ -1775,11 +1853,11 @@
 {{-- ╔══════════════════════════════════════════════════════════════╗
      ║  STEP 10 — Opony i bieżnik                                 ║
      ╚══════════════════════════════════════════════════════════════╝ --}}
-<div class="wz-step" data-step="10">
+<div class="wz-step" data-step="10" data-certicheck-only="1">
     <div class="wz-section">
         <div class="wz-section-header">
             <div class="wz-section-badge"><i data-lucide="circle-dot" style="width:16px;height:16px"></i></div>
-            <div><div class="wz-section-title">Opony i bieżnik</div><div class="wz-section-subtitle">Dodaj zestawy opon z informacją o stanie</div></div>
+            <div><div class="wz-section-title">Opony i bieżnik</div><div class="wz-section-subtitle">Dodaj zestawy opon z informacją o stanie <span style="background:rgba(0,102,255,.1);color:var(--blue);padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:700;letter-spacing:.4px;margin-left:6px">CERTICHECK</span></div></div>
         </div>
         <div id="wzTireSetsList">
             @forelse($existingTireSets as $ti => $ts)
@@ -2100,6 +2178,39 @@
     // Initial update
     setTimeout(updatePreview, 100);
 
+
+    // ===================================================================
+    //  STANDARD OGŁOSZENIA PICKER
+    //  Two big radio cards (Zwykłe / CertiCheck) at top of Step 1 wired
+    //  to the hidden has_certicheck input. Adds/removes the html-level
+    //  `.wz-no-certicheck` class so all `data-certicheck-only` elements
+    //  (sidebar steps, media sections, paint/tire steps) collapse for
+    //  the standard listing variant.
+    // ===================================================================
+    (function(){
+        const root  = document.documentElement;
+        const input = document.getElementById('wzHasCertiCheckInput');
+        const cards = document.querySelectorAll('.wz-std-card');
+        if (!input || !cards.length) return;
+
+        function apply(isCC){
+            input.value = isCC ? '1' : '0';
+            cards.forEach(c => c.classList.toggle('active', c.dataset.std === (isCC ? 'certicheck' : 'standard')));
+            root.classList.toggle('wz-no-certicheck', !isCC);
+            // Keep the live preview's badges in sync.
+            if (typeof updatePreview === 'function') updatePreview();
+        }
+
+        cards.forEach(card => {
+            card.addEventListener('click', e => {
+                e.preventDefault();
+                apply(card.dataset.std === 'certicheck');
+            });
+        });
+
+        // Initial sync with the value injected by the server.
+        apply(input.value === '1');
+    })();
 
     // ===================================================================
     //  INLINE BRAND CREATION

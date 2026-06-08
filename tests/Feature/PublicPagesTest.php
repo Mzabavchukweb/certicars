@@ -534,6 +534,8 @@ class PublicPagesTest extends TestCase
     public function test_pano360_cards_section_renders_both_when_both_assets_exist(): void
     {
         $car = $this->activeCar();
+        // 360° viewers + paint + tire are CertiCheck-only public sections.
+        $car->update(['has_certicheck' => true]);
         \App\Models\CarImage::create(['car_id' => $car->id, 'type' => 'pano360',     'path' => 'https://cdn.example.test/cars/'.$car->id.'/pano-interior.jpg', 'sort_order' => 0]);
         \App\Models\CarImage::create(['car_id' => $car->id, 'type' => 'pano360ext',  'path' => 'https://cdn.example.test/cars/'.$car->id.'/pano-exterior.jpg', 'sort_order' => 0]);
 
@@ -552,6 +554,7 @@ class PublicPagesTest extends TestCase
     public function test_pano360_cards_section_renders_single_when_only_one_asset(): void
     {
         $car = $this->activeCar();
+        $car->update(['has_certicheck' => true]);
         \App\Models\CarImage::create(['car_id' => $car->id, 'type' => 'pano360ext', 'path' => 'https://cdn.example.test/cars/'.$car->id.'/pano-exterior.jpg', 'sort_order' => 0]);
 
         $html = $this->get('/samochody/'.$car->slug)->assertOk()->getContent();
@@ -585,6 +588,7 @@ class PublicPagesTest extends TestCase
     public function test_paint_card_renders_status_colours_from_real_measurements(): void
     {
         $car = $this->activeCar();
+        $car->update(['has_certicheck' => true]);
         $car->update([
             'paint_measurements' => [
                 ['area' => 'Dach',  'value' => 120],   // 90–150 → ok
@@ -646,6 +650,7 @@ class PublicPagesTest extends TestCase
     public function test_tires_card_renders_stacked_rows_with_green_tread_pills(): void
     {
         $car = $this->activeCar();
+        $car->update(['has_certicheck' => true]);
         $set = \App\Models\CarTireSet::create([
             'car_id'     => $car->id,
             'set_number' => 1,
@@ -699,6 +704,7 @@ class PublicPagesTest extends TestCase
     public function test_tires_card_summary_flips_to_attention_when_any_tire_has_issue(): void
     {
         $car = $this->activeCar();
+        $car->update(['has_certicheck' => true]);
         $set = \App\Models\CarTireSet::create([
             'car_id' => $car->id, 'set_number' => 1, 'is_mounted' => true, 'tire_type' => '205/55 R16',
         ]);
