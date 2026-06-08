@@ -142,6 +142,24 @@
     grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 14px;
 }
+/* Step-1 4-column grid keeps a slightly wider gap so each column reads as
+   its own labelled group, matching the reference. */
+.wz-cols-4 { column-gap: 22px; }
+.wz-col { display: flex; flex-direction: column; gap: 12px; min-width: 0 }
+.wz-col .wz-field { margin-bottom: 0 }
+.wz-col-label {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-3, #6b7280);
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border-l, #eeeef0);
+}
+@media (max-width: 1100px) {
+    .wz-cols-4 { grid-template-columns: 1fr 1fr; }
+}
 @media (max-width: 700px) {
     .wz-grid-2, .wz-grid-3, .wz-grid-4 { grid-template-columns: 1fr; }
 }
@@ -687,149 +705,157 @@
         </div>
     </div>
 
-    {{-- ② Podstawowe informacje --}}
+    {{-- ② Dane podstawowe — 4-column reference layout ── Auto | Rejestracja
+         i przebieg | Silnik i skrzynia | Nadwozie i użytkowość. Each column
+         is a vertical stack of 4 inputs. --}}
     <div class="wz-section">
         <div class="wz-section-header">
             <div class="wz-section-badge">1</div>
             <div>
-                <div class="wz-section-title">Podstawowe informacje</div>
-                <div class="wz-section-subtitle">Marka, model, silnik i nadwozie</div>
+                <div class="wz-section-title">Dane podstawowe</div>
+                <div class="wz-section-subtitle">Podstawowe informacje o aucie</div>
             </div>
         </div>
 
-        <div class="wz-grid-2" style="margin-bottom:14px">
-            <div class="wz-field">
-                <label>Marka * <a href="#" id="wzBrandAddToggle" style="float:right;font-size:11px;font-weight:600;color:var(--blue);text-decoration:none;display:inline-flex;align-items:center;gap:4px;text-transform:none;letter-spacing:0"><i data-lucide="plus" style="width:12px;height:12px"></i> Dodaj nową</a></label>
-                <select name="brand_id" id="wzBrandSelect" required @error('brand_id') style="border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.12)" @enderror>
-                    <option value="">— wybierz —</option>
-                    @foreach($brands as $b)
-                        <option value="{{ $b->id }}" {{ old('brand_id',$car?->brand_id)==$b->id?'selected':'' }}>{{ $b->name }}</option>
-                    @endforeach
-                </select>
-                @error('brand_id')
-                <div style="color:#dc2626;font-size:12px;margin-top:4px;display:flex;align-items:center;gap:4px">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    {{ $message }}
+        <div class="wz-grid-4 wz-cols-4">
+            {{-- COLUMN 1 — Auto --}}
+            <div class="wz-col">
+                <div class="wz-col-label">Auto</div>
+                <div class="wz-field">
+                    <label>Marka * <a href="#" id="wzBrandAddToggle" style="float:right;font-size:11px;font-weight:600;color:var(--blue);text-decoration:none;display:inline-flex;align-items:center;gap:4px;text-transform:none;letter-spacing:0"><i data-lucide="plus" style="width:12px;height:12px"></i> Dodaj nową</a></label>
+                    <select name="brand_id" id="wzBrandSelect" required @error('brand_id') style="border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.12)" @enderror>
+                        <option value="">— wybierz —</option>
+                        @foreach($brands as $b)
+                            <option value="{{ $b->id }}" {{ old('brand_id',$car?->brand_id)==$b->id?'selected':'' }}>{{ $b->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('brand_id')
+                    <div style="color:#dc2626;font-size:12px;margin-top:4px;display:flex;align-items:center;gap:4px">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        {{ $message }}
+                    </div>
+                    @enderror
+                    <div id="wzBrandAddRow" style="display:none;margin-top:8px;gap:6px;align-items:stretch">
+                        <input type="text" id="wzBrandAddName" placeholder="Nazwa nowej marki" maxlength="255" style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px">
+                        <button type="button" id="wzBrandAddSubmit" class="btn btn-blue btn-sm" style="white-space:nowrap"><i data-lucide="check" style="width:14px;height:14px"></i> Dodaj</button>
+                        <button type="button" id="wzBrandAddCancel" class="btn btn-outline btn-sm" style="white-space:nowrap"><i data-lucide="x" style="width:14px;height:14px"></i></button>
+                    </div>
+                    <div id="wzBrandAddError" style="display:none;color:#dc2626;font-size:12px;margin-top:6px"></div>
                 </div>
-                @enderror
-                <div id="wzBrandAddRow" style="display:none;margin-top:8px;gap:6px;align-items:stretch">
-                    <input type="text" id="wzBrandAddName" placeholder="Nazwa nowej marki" maxlength="255" style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px">
-                    <button type="button" id="wzBrandAddSubmit" class="btn btn-blue btn-sm" style="white-space:nowrap"><i data-lucide="check" style="width:14px;height:14px"></i> Dodaj</button>
-                    <button type="button" id="wzBrandAddCancel" class="btn btn-outline btn-sm" style="white-space:nowrap"><i data-lucide="x" style="width:14px;height:14px"></i></button>
+                <div class="wz-field">
+                    <label>Model *</label>
+                    <input type="text" name="model" value="{{ old('model',$car?->model) }}" required @error('model') style="border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.12)" @enderror>
+                    @error('model')
+                    <div style="color:#dc2626;font-size:12px;margin-top:4px;display:flex;align-items:center;gap:4px">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        {{ $message }}
+                    </div>
+                    @enderror
                 </div>
-                <div id="wzBrandAddError" style="display:none;color:#dc2626;font-size:12px;margin-top:6px"></div>
+                <div class="wz-field">
+                    <label>Wersja / silnik</label>
+                    <input type="text" name="engine_version" value="{{ old('engine_version',$car?->engine_version) }}" maxlength="120" placeholder="np. 1.6 dCi 160 KM EDC">
+                </div>
+                <div class="wz-field">
+                    <label>Rok produkcji</label>
+                    <input type="number" name="production_year" value="{{ old('production_year',$car?->production_year) }}" min="1900" max="2100" placeholder="np. 2018">
+                </div>
             </div>
-            <div class="wz-field">
-                <label>Model *</label>
-                <input type="text" name="model" value="{{ old('model',$car?->model) }}" required @error('model') style="border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.12)" @enderror>
-                @error('model')
-                <div style="color:#dc2626;font-size:12px;margin-top:4px;display:flex;align-items:center;gap:4px">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    {{ $message }}
+
+            {{-- COLUMN 2 — Rejestracja i przebieg --}}
+            <div class="wz-col">
+                <div class="wz-col-label">Rejestracja i przebieg</div>
+                <div class="wz-field">
+                    <label>Pierwsza rejestracja</label>
+                    <input type="text" name="first_registration" value="{{ old('first_registration',$car?->first_registration) }}" placeholder="mm/rrrr">
                 </div>
-                @enderror
+                <div class="wz-field">
+                    <label>Przebieg (km)</label>
+                    <input type="number" name="mileage" value="{{ old('mileage',$car?->mileage) }}" min="0" placeholder="np. 136 000">
+                </div>
+                <div class="wz-field">
+                    <label>Kraj pochodzenia</label>
+                    <input type="text" name="country_registration" value="{{ old('country_registration',$car?->country_registration) }}" placeholder="Niemcy, Polska, USA...">
+                </div>
+                <div class="wz-field">
+                    <label>VIN</label>
+                    <input type="text" name="vin" value="{{ old('vin',$car?->vin) }}" maxlength="50" placeholder="np. VF1RFC00X54321012">
+                </div>
+            </div>
+
+            {{-- COLUMN 3 — Silnik i skrzynia --}}
+            <div class="wz-col">
+                <div class="wz-col-label">Silnik i skrzynia</div>
+                <div class="wz-field">
+                    <label>Paliwo</label>
+                    <select name="fuel_type">
+                        <option value="">— wybierz —</option>
+                        @foreach(['Benzyna','Diesel','Hybryda','Hybryda plug-in','Elektryczny','LPG','CNG'] as $ft)
+                        <option value="{{ $ft }}" {{ old('fuel_type',$car?->fuel_type)==$ft?'selected':'' }}>{{ $ft }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="wz-field">
+                    <label>Skrzynia biegów</label>
+                    <select name="transmission">
+                        <option value="">— wybierz —</option>
+                        @foreach(['Automatyczna','Manualna','CVT','Półautomatyczna (DSG/DCT)'] as $tr)
+                        <option value="{{ $tr }}" {{ old('transmission',$car?->transmission)==$tr?'selected':'' }}>{{ $tr }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="wz-field">
+                    <label>Moc (KM / kW)</label>
+                    <div style="display:flex;gap:6px">
+                        <input type="number" name="power_hp" value="{{ old('power_hp',$car?->power_hp) }}" min="0" placeholder="np. 160" style="flex:1;min-width:0">
+                        <input type="number" name="power_kw" value="{{ old('power_kw',$car?->power_kw) }}" min="0" placeholder="np. 118" style="flex:1;min-width:0">
+                    </div>
+                </div>
+                <div class="wz-field">
+                    <label>Pojemność skokowa (cm³)</label>
+                    <input type="number" name="engine_capacity" value="{{ old('engine_capacity',$car?->engine_capacity) }}" min="0" step="1" placeholder="np. 1598">
+                </div>
+            </div>
+
+            {{-- COLUMN 4 — Nadwozie i użytkowość --}}
+            <div class="wz-col">
+                <div class="wz-col-label">Nadwozie i użytkowość</div>
+                <div class="wz-field">
+                    <label>Typ nadwozia</label>
+                    <select name="body_type" id="wzBodyTypeSelect">
+                        <option value="">— wybierz —</option>
+                        @foreach(['Sedan','SUV','Coupé','Bus','Kombi','Hatchback','Kabriolet','Pickup'] as $bt)
+                        <option value="{{ $bt }}" {{ old('body_type',$car?->body_type)==$bt?'selected':'' }}>{{ $bt }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="wz-field">
+                    <label>Liczba miejsc</label>
+                    <input type="number" name="seats" value="{{ old('seats',$car?->seats) }}" min="1" placeholder="np. 5">
+                </div>
+                <div class="wz-field">
+                    <label>Liczba drzwi</label>
+                    <input type="number" name="doors" value="{{ old('doors',$car?->doors) }}" min="1" max="7" placeholder="np. 5">
+                </div>
+                <div class="wz-field">
+                    <label>Kolor nadwozia</label>
+                    <input type="text" name="color" value="{{ old('color',$car?->color) }}" placeholder="np. Szary metalik">
+                </div>
             </div>
         </div>
 
-        <div class="wz-grid-3" style="margin-bottom:14px">
-            <div class="wz-field">
-                <label>Wersja / szczegóły</label>
-                <input type="text" name="transmission_detail" value="{{ old('transmission_detail',$car?->transmission_detail) }}" placeholder="8-biegowa, DSG...">
-            </div>
-            <div class="wz-field">
-                <label>Pierwsza rejestracja</label>
-                <input type="text" name="first_registration" value="{{ old('first_registration',$car?->first_registration) }}" placeholder="11/2018">
-            </div>
-            <div class="wz-field">
-                <label>Przebieg (km)</label>
-                <input type="number" name="mileage" value="{{ old('mileage',$car?->mileage) }}" min="0">
-            </div>
-        </div>
-
-        <div class="wz-grid-3" style="margin-bottom:14px">
-            <div class="wz-field">
-                <label>Wersja / silnik</label>
-                <input type="text" name="engine_version" value="{{ old('engine_version',$car?->engine_version) }}" maxlength="120" placeholder="np. 1.6 dCi 160 KM EDC">
-                <small style="font-size:11px;color:var(--text-3);margin-top:4px;display:block">Wyświetlane w sekcji „Dane pojazdu” na karcie auta.</small>
-            </div>
+        {{-- Secondary row — fields not in the reference 4-col grid but still
+             needed (title formula uses equipment_version; drivetrain stays
+             editable; identifier stays read-only for reference). --}}
+        <div class="wz-grid-3" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border-l)">
             <div class="wz-field">
                 <label>Wersja wyposażenia</label>
                 <input type="text" name="equipment_version" value="{{ old('equipment_version',$car?->equipment_version) }}" maxlength="120" placeholder="np. Initiale Paris">
+                <small style="font-size:11px;color:var(--text-3);margin-top:4px;display:block">Wchodzi w skład tytułu ogłoszenia.</small>
             </div>
             <div class="wz-field">
                 <label>Napęd</label>
                 <input type="text" name="drivetrain" value="{{ old('drivetrain',$car?->drivetrain) }}" maxlength="80" placeholder="np. Na przednie koła (FWD)">
-            </div>
-        </div>
-
-        <div class="wz-grid-3" style="margin-bottom:14px">
-            <div class="wz-field">
-                <label>VIN</label>
-                <input type="text" name="vin" value="{{ old('vin',$car?->vin) }}" maxlength="50">
-            </div>
-            <div class="wz-field">
-                <label>Moc (KM)</label>
-                <input type="number" name="power_hp" value="{{ old('power_hp',$car?->power_hp) }}" min="0">
-            </div>
-            <div class="wz-field">
-                <label>Moc (kW)</label>
-                <input type="number" name="power_kw" value="{{ old('power_kw',$car?->power_kw) }}" min="0">
-            </div>
-        </div>
-
-        <div class="wz-grid-3" style="margin-bottom:14px">
-            <div class="wz-field">
-                <label>Paliwo</label>
-                <select name="fuel_type">
-                    <option value="">— wybierz —</option>
-                    @foreach(['Benzyna','Diesel','Hybryda','Hybryda plug-in','Elektryczny','LPG','CNG'] as $ft)
-                    <option value="{{ $ft }}" {{ old('fuel_type',$car?->fuel_type)==$ft?'selected':'' }}>{{ $ft }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="wz-field">
-                <label>Skrzynia biegów</label>
-                <select name="transmission">
-                    <option value="">— wybierz —</option>
-                    @foreach(['Automatyczna','Manualna','CVT','Półautomatyczna (DSG/DCT)'] as $tr)
-                    <option value="{{ $tr }}" {{ old('transmission',$car?->transmission)==$tr?'selected':'' }}>{{ $tr }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="wz-field">
-                <label>Pojemność (ccm)</label>
-                <input type="number" name="engine_capacity" value="{{ old('engine_capacity',$car?->engine_capacity) }}" min="0" step="1" placeholder="np. 1984">
-            </div>
-        </div>
-
-        <div class="wz-grid-3" style="margin-bottom:14px">
-            <div class="wz-field">
-                <label>Nadwozie</label>
-                <select name="body_type" id="wzBodyTypeSelect">
-                    <option value="">— wybierz —</option>
-                    @foreach(['Sedan','SUV','Coupé','Bus','Kombi','Hatchback','Kabriolet','Pickup'] as $bt)
-                    <option value="{{ $bt }}" {{ old('body_type',$car?->body_type)==$bt?'selected':'' }}>{{ $bt }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="wz-field">
-                <label>Kategoria</label>
-                <input type="text" name="category" value="{{ old('category',$car?->category) }}" placeholder="Sedan, SUV, Coupé...">
-            </div>
-            <div class="wz-field">
-                <label>Kolor</label>
-                <input type="text" name="color" value="{{ old('color',$car?->color) }}">
-            </div>
-        </div>
-
-        <div class="wz-grid-3">
-            <div class="wz-field">
-                <label>Drzwi</label>
-                <input type="number" name="doors" value="{{ old('doors',$car?->doors) }}" min="1" max="7">
-            </div>
-            <div class="wz-field">
-                <label>Siedzenia</label>
-                <input type="number" name="seats" value="{{ old('seats',$car?->seats) }}" min="1">
             </div>
             <div class="wz-field">
                 <label>Identyfikator</label>
@@ -838,34 +864,45 @@
         </div>
     </div>
 
-    {{-- ③ Cena i oferta --}}
+    {{-- ③ Cena i sprzedaż — 2×2 grid per reference --}}
     <div class="wz-section">
         <div class="wz-section-header">
             <div class="wz-section-badge">2</div>
             <div>
-                <div class="wz-section-title">Cena i oferta</div>
-                <div class="wz-section-subtitle">Cennik, waluta, typ</div>
+                <div class="wz-section-title">Cena i sprzedaż</div>
+                <div class="wz-section-subtitle">Ustal cenę i warunki oferty</div>
             </div>
         </div>
 
-        <div class="wz-grid-3" style="margin-bottom:14px">
+        <div class="wz-grid-2" style="margin-bottom:14px">
             <div class="wz-field">
-                <label>Cena</label>
-                <input type="number" name="price" value="{{ old('price',$car?->price) }}" step="0.01" min="0">
+                <label>Cena *</label>
+                <input type="number" name="price" value="{{ old('price',$car?->price) }}" step="0.01" min="0" placeholder="np. 69 900">
             </div>
             <div class="wz-field">
-                <label>Waluta</label>
-                <input type="text" name="currency" value="{{ old('currency',$car?->currency ?? 'PLN') }}" maxlength="5">
-            </div>
-            <div class="wz-field">
-                <label>Typ ceny</label>
-                <input type="text" name="price_type" value="{{ old('price_type',$car?->price_type) }}" placeholder="VAT marża, netto...">
+                <label>Waluta *</label>
+                <select name="currency">
+                    @foreach(['PLN','EUR','USD','GBP','CHF'] as $cur)
+                    <option value="{{ $cur }}" {{ old('currency',$car?->currency ?? 'PLN')==$cur?'selected':'' }}>{{ $cur }}</option>
+                    @endforeach
+                </select>
             </div>
         </div>
 
-        <div class="wz-field">
-            <label>Opodatkowanie (taxation)</label>
-            <input type="text" name="taxation" value="{{ old('taxation',$car?->taxation) }}" placeholder="np. Różnicowe opodatkowanie, FV netto">
+        <div class="wz-grid-2">
+            <div class="wz-field">
+                <label>Typ ceny *</label>
+                <select name="price_type">
+                    <option value="">— wybierz —</option>
+                    @foreach(['VAT marża','VAT 23%','Netto','Brutto','Cena do negocjacji'] as $pt)
+                    <option value="{{ $pt }}" {{ old('price_type',$car?->price_type)==$pt?'selected':'' }}>{{ $pt }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="wz-field">
+                <label>Dodatkowe informacje cenowe (opcjonalne)</label>
+                <input type="text" name="taxation" value="{{ old('taxation',$car?->taxation) }}" placeholder="np. cena do negocjacji, faktura VAT marża">
+            </div>
         </div>
     </div>
 
@@ -1232,19 +1269,16 @@
             </div>
         </div>
 
-        <div class="wz-grid-2" style="margin-bottom:14px">
-            <div class="wz-field"><label>Liczba właścicieli</label>
-                <select name="previous_owners">
-                    <option value="" {{ !old('previous_owners',$car?->previous_owners)?'selected':'' }}>— wybierz —</option>
-                    <option value="1" {{ old('previous_owners',$car?->previous_owners)==1?'selected':'' }}>1</option>
-                    <option value="2" {{ old('previous_owners',$car?->previous_owners)==2?'selected':'' }}>2</option>
-                    <option value="3" {{ old('previous_owners',$car?->previous_owners)==3?'selected':'' }}>3+</option>
-                    <option value="Brak danych" {{ old('previous_owners',$car?->previous_owners)=='Brak danych'?'selected':'' }}>Brak danych</option>
-                </select>
-            </div>
-            <div class="wz-field"><label>Kraj pochodzenia</label>
-                <input type="text" name="country_registration" value="{{ old('country_registration',$car?->country_registration) }}" placeholder="Niemcy, Polska, USA...">
-            </div>
+        <div class="wz-field" style="margin-bottom:14px">
+            <label>Liczba właścicieli</label>
+            <select name="previous_owners">
+                <option value="" {{ !old('previous_owners',$car?->previous_owners)?'selected':'' }}>— wybierz —</option>
+                <option value="1" {{ old('previous_owners',$car?->previous_owners)==1?'selected':'' }}>1</option>
+                <option value="2" {{ old('previous_owners',$car?->previous_owners)==2?'selected':'' }}>2</option>
+                <option value="3" {{ old('previous_owners',$car?->previous_owners)==3?'selected':'' }}>3+</option>
+                <option value="Brak danych" {{ old('previous_owners',$car?->previous_owners)=='Brak danych'?'selected':'' }}>Brak danych</option>
+            </select>
+            <small style="font-size:11px;color:var(--text-3);margin-top:4px;display:block">Kraj pochodzenia wpisz w kroku 1 „Dane podstawowe".</small>
         </div>
 
         <div class="wz-grid-2" style="margin-bottom:14px">

@@ -1755,8 +1755,11 @@
                 // fields describe the gearbox and trim level, not the engine.
                 $engineVersion = $rowOk($car->engine_version) ? $car->engine_version : '';
                 $firstRegDate = $rowOk($car->first_registration) ? $car->first_registration : null;
-                $prodYear = null;
-                if ($firstRegDate && preg_match('/(\d{4})/', (string) $firstRegDate, $m)) {
+                // Prefer the admin-entered production_year column (added by
+                // the wizard Step 1 layout PR). Falls back to the year parsed
+                // out of first_registration for older rows.
+                $prodYear = $rowOk($car->production_year) ? (string) $car->production_year : null;
+                if (!$prodYear && $firstRegDate && preg_match('/(\d{4})/', (string) $firstRegDate, $m)) {
                     $prodYear = $m[1];
                 }
                 $em = '—';
