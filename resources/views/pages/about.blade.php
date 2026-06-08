@@ -6,7 +6,7 @@
 .about-section-in{max-width:1200px;margin:0 auto;padding:0 24px;position:relative;width:100%;box-sizing:border-box}
 
 /* ===== HERO (dark, flat) ===== */
-.about-hero{background:#0a1432;padding:96px 0 120px;position:relative;overflow:hidden;border-bottom:1px solid #131b3a}
+.about-hero{background:#0a1432;padding:96px 0 120px;position:relative;overflow:hidden}
 .about-hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
 /* Hero info pill (#98) sitting under the narrative paragraph — flat
    bg + border, no glow, per the AI-tone-down direction. */
