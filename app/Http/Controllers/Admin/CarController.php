@@ -613,6 +613,7 @@ class CarController extends Controller
             'vin' => 'nullable|string|max:50',
             'body_type' => 'nullable|string|max:50',
             'first_registration' => 'nullable|string|max:20',
+            'production_year' => 'nullable|integer|min:1900|max:2100',
             'mileage' => 'nullable|integer|min:0',
             'previous_owners' => 'nullable|string|max:50',
             'business_use' => 'nullable|string|max:100',
