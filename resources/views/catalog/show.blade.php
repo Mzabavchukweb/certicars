@@ -1326,11 +1326,11 @@
                 <x-icon name="image" size="14" :strokeWidth="1.8"/>
                 Wszystkie zdjęcia
             </button>
-            <button type="button" class="cs-gallery-tab {{ ($car->hasExteriorFrames() || $car->exteriorPano360Image) ? '' : 'disabled' }}" data-gallery-filter="pano360ext" onclick="csFilterGallery(this,'pano360ext')" role="tab" aria-selected="false">
+            <button type="button" class="cs-gallery-tab {{ ($car->has_certicheck && ($car->hasExteriorFrames() || $car->exteriorPano360Image)) ? '' : 'disabled' }}" data-gallery-filter="pano360ext" onclick="csFilterGallery(this,'pano360ext')" role="tab" aria-selected="false">
                 <x-icon name="rotate-3d" size="14" :strokeWidth="1.8"/>
                 360° z zewnątrz
             </button>
-            <button type="button" class="cs-gallery-tab {{ ($car->hasInteriorFrames() || $car->pano360Image) ? '' : 'disabled' }}" data-gallery-filter="pano360" onclick="csFilterGallery(this,'pano360')" role="tab" aria-selected="false">
+            <button type="button" class="cs-gallery-tab {{ ($car->has_certicheck && ($car->hasInteriorFrames() || $car->pano360Image)) ? '' : 'disabled' }}" data-gallery-filter="pano360" onclick="csFilterGallery(this,'pano360')" role="tab" aria-selected="false">
                 <x-icon name="rotate-3d" size="14" :strokeWidth="1.8"/>
                 360° wnętrza
             </button>
@@ -1377,7 +1377,7 @@
                      produced N JPEGs, the user drag-scrubs through them client-side. Falls
                      through to the equirectangular Pannellum embed below when frames are
                      not ready (legacy or still-processing rows). --}}
-                @if($car->hasInteriorFrames())
+                @if($car->has_certicheck && $car->hasInteriorFrames())
                 <div class="cs-gallery-main cs-pano360 cs-interior-frames-pane" id="csInteriorFrames" style="background:#000"
                      data-frames='@json($car->interiorFrameUrls())'>
                     <img class="cs-interior-frames-img" alt="Wnętrze 360°" draggable="false" decoding="async">
@@ -1387,7 +1387,7 @@
                         Przeciągnij, aby obejrzeć wnętrze
                     </div>
                 </div>
-                @elseif($car->pano360Image)
+                @elseif($car->has_certicheck && $car->pano360Image)
                 <div class="cs-gallery-main cs-pano360" id="csPano360" style="background:#000">
                     <div id="csPanoramaContainer" style="width:100%;height:100%;background:#000" data-pano-src="{{ route('panorama.stream', $car->pano360Image) }}"></div>
                     <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(10,10,10,.78);color:#fff;font-size:12px;padding:7px 14px;border-radius:50px;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px);font-weight:600">
@@ -1402,7 +1402,7 @@
                      ExtractExteriorFramesJob produces N JPEGs, the user drag-scrubs
                      through them. Falls back to the equirectangular Pannellum embed
                      below when frames are not ready. --}}
-                @if($car->hasExteriorFrames())
+                @if($car->has_certicheck && $car->hasExteriorFrames())
                 <div class="cs-gallery-main cs-pano360ext cs-interior-frames-pane" id="csExteriorFrames" style="background:#000"
                      data-frames='@json($car->exteriorFrameUrls())'>
                     <img class="cs-interior-frames-img" alt="Zewnętrze 360°" draggable="false" decoding="async">
@@ -1412,7 +1412,7 @@
                         Przeciągnij, aby obejrzeć auto z zewnątrz
                     </div>
                 </div>
-                @elseif($car->exteriorPano360Image)
+                @elseif($car->has_certicheck && $car->exteriorPano360Image)
                 <div class="cs-gallery-main cs-pano360ext" id="csPano360ext" style="background:#000">
                     <div id="csPanoramaExtContainer" style="width:100%;height:100%;background:#000" data-pano-src="{{ route('panorama.stream', $car->exteriorPano360Image) }}"></div>
                     <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(10,10,10,.78);color:#fff;font-size:12px;padding:7px 14px;border-radius:50px;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px);font-weight:600">
@@ -2246,7 +2246,8 @@
             </div>
         </div>
 
-        {{-- RIGHT — Nagranie pracy silnika --}}
+        {{-- RIGHT — Nagranie pracy silnika (CertiCheck only) --}}
+        @if($car->has_certicheck)
         <div class="cs-tech-engine-card">
             <div class="cs-tech-engine-card-head">
                 <div class="cs-tech-engine-card-ico">
@@ -2274,6 +2275,7 @@
                 @endif
             </div>
         </div>
+        @endif
     </div>
     @endif
 
@@ -2292,7 +2294,7 @@
             ? ($car->exteriorFrameUrls()[0] ?? null)
             : ($car->exteriorPano360Image?->url);
     @endphp
-    @if($hasInteriorViewer || $hasExteriorViewerCard)
+    @if($car->has_certicheck && ($hasInteriorViewer || $hasExteriorViewerCard))
     <div class="cs-pano360-section-card">
         <div class="cs-pano360-section-head">
             <div class="cs-pano360-section-ico">
@@ -2362,7 +2364,7 @@
         $hasPaintData = $paintMeasurements->isNotEmpty();
         $hasTireData  = $car->tireSets && $car->tireSets->count() > 0;
     @endphp
-    @if($hasPaintData || $hasTireData)
+    @if($car->has_certicheck && ($hasPaintData || $hasTireData))
     <div class="cs-pt-row">
 
         {{-- LEFT — Pomiary grubości lakieru --}}
@@ -3029,7 +3031,7 @@ function csFilterGallery(btn,filter){
 }
 
 // ==== 360° PANORAMA VIEWER (gallery tab) ====
-@if($car->pano360Image)
+@if($car->has_certicheck && $car->pano360Image)
 window.csPano360Init = (function(){
     let initialized = false;
     return function(){
@@ -3083,7 +3085,7 @@ window.csPano360Init = (function(){
 // first one paints synchronously; the rest preload in the background so the
 // scrubber feels instant after the first ~half second. Used by both the
 // interior and exterior viewers.
-@if($car->hasInteriorFrames() || $car->hasExteriorFrames())
+@if($car->has_certicheck && ($car->hasInteriorFrames() || $car->hasExteriorFrames()))
 window.csMakeFramesScrubber = function(paneId){
     let initialized = false;
     return function(){
@@ -3160,15 +3162,15 @@ window.csMakeFramesScrubber = function(paneId){
     };
 };
 @endif
-@if($car->hasInteriorFrames())
+@if($car->has_certicheck && $car->hasInteriorFrames())
 window.csInteriorFramesInit = window.csMakeFramesScrubber('csInteriorFrames');
 @endif
-@if($car->hasExteriorFrames())
+@if($car->has_certicheck && $car->hasExteriorFrames())
 window.csExteriorFramesInit = window.csMakeFramesScrubber('csExteriorFrames');
 @endif
 
 // ==== 360° PANORAMA VIEWER (exterior gallery tab) ====
-@if($car->exteriorPano360Image)
+@if($car->has_certicheck && $car->exteriorPano360Image)
 window.csPano360ExtInit = (function(){
     let initialized = false;
     return function(){

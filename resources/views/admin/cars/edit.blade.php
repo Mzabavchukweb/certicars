@@ -2,7 +2,7 @@
 @section('title','Edycja: '.$car->title)
 
 @section('wizard-form-open')
-<form method="POST" action="{{ route('admin.cars.update',$car) }}" enctype="multipart/form-data" id="wizardForm">
+<form method="POST" action="{{ route('admin.cars.update',$car) }}" enctype="multipart/form-data" id="wizardForm" class="wz-form">
     @csrf @method('PUT')
 @endsection
 

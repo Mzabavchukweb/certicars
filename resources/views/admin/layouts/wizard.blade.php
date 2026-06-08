@@ -297,7 +297,7 @@
                 <span class="check"><i data-lucide="check"></i></span>
                 <span class="name">Wyposażenie</span>
             </div>
-            <div class="wiz-step" data-step="7" onclick="goToStep(7)">
+            <div class="wiz-step" data-step="7" data-certicheck-only="1" onclick="goToStep(7)">
                 <span class="num">7</span>
                 <span class="check"><i data-lucide="check"></i></span>
                 <span class="name">Stan wizualny</span>
@@ -307,12 +307,12 @@
                 <span class="check"><i data-lucide="check"></i></span>
                 <span class="name">Stan techniczny</span>
             </div>
-            <div class="wiz-step" data-step="9" onclick="goToStep(9)">
+            <div class="wiz-step" data-step="9" data-certicheck-only="1" onclick="goToStep(9)">
                 <span class="num">9</span>
                 <span class="check"><i data-lucide="check"></i></span>
                 <span class="name">Pomiary lakieru</span>
             </div>
-            <div class="wiz-step" data-step="10" onclick="goToStep(10)">
+            <div class="wiz-step" data-step="10" data-certicheck-only="1" onclick="goToStep(10)">
                 <span class="num">10</span>
                 <span class="check"><i data-lucide="check"></i></span>
                 <span class="name">Opony i bieżnik</span>
