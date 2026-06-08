@@ -285,12 +285,12 @@
             <div class="wiz-step" data-step="4" onclick="goToStep(4)">
                 <span class="num">4</span>
                 <span class="check"><i data-lucide="check"></i></span>
-                <span class="name">Serwisowanie</span>
+                <span class="name">Dokumenty</span>
             </div>
             <div class="wiz-step" data-step="5" onclick="goToStep(5)">
                 <span class="num">5</span>
                 <span class="check"><i data-lucide="check"></i></span>
-                <span class="name">Dokumenty</span>
+                <span class="name">Serwisowanie</span>
             </div>
             <div class="wiz-step" data-step="6" onclick="goToStep(6)">
                 <span class="num">6</span>
