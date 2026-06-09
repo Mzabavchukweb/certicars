@@ -3111,9 +3111,11 @@ window.csPano360Init = (function(){
 // scrubber feels instant after the first ~half second. Used by both the
 // interior and exterior viewers.
 @if($car->has_certicheck && ($car->hasInteriorFrames() || $car->hasExteriorFrames()))
-window.csMakeFramesScrubber = function(paneId, opts){
-    opts = opts || {};
-    var autoplay = !!opts.autoplay;       // exterior: true, interior: false
+// Manual scrubber only: user drags with mouse / finger to spin through
+// the frame sequence. No auto-rotate (the earlier autoplay path was
+// reverted per user feedback: "musi być 360 i user sobie przewija
+// myszką lub palcami a nie że to samo się przewija").
+window.csMakeFramesScrubber = function(paneId){
     var initialized = false;
     return function(){
         if(initialized) return;
@@ -3147,8 +3149,8 @@ window.csMakeFramesScrubber = function(paneId, opts){
 
         var current = 0, dragging = false, lastX = 0, accum = 0;
         function setFrame(i){
-            // Allow wrap-around for the autoplay loop. The drag path also
-            // wraps so the user can spin past frame 0/N without stopping.
+            // Wrap modulo frame count so the user can spin past 0/N without
+            // a hard stop — feels like a continuous 360° photo.
             var n = urls.length;
             i = ((i % n) + n) % n;
             if(i === current) return;
@@ -3163,37 +3165,11 @@ window.csMakeFramesScrubber = function(paneId, opts){
             return Math.max(4, w / urls.length);
         }
 
-        // Auto-rotate loop. ~90ms per frame ≈ 5.4s per full 60-frame turn,
-        // which matches the slow Copart-style exterior spin. Pauses while
-        // the user is dragging; resumes 1.6s after release so a quick
-        // inspection doesn't immediately get steamrolled by the loop.
-        var autoTimer = null;
-        var resumeTimer = null;
-        function autoplayTick(){ setFrame(current + 1); }
-        function autoplayStart(){
-            if(!autoplay || autoTimer) return;
-            autoTimer = setInterval(autoplayTick, 90);
-        }
-        function autoplayStop(){
-            if(autoTimer){ clearInterval(autoTimer); autoTimer = null; }
-        }
-        function autoplayPauseThenResume(){
-            autoplayStop();
-            if(resumeTimer) clearTimeout(resumeTimer);
-            resumeTimer = setTimeout(autoplayStart, 1600);
-        }
-        // Pause the spin when the tab is hidden (browsers throttle anyway
-        // but this avoids a thundering-herd "catch-up" on tab focus).
-        document.addEventListener('visibilitychange', function(){
-            if(document.hidden) autoplayStop(); else if(autoplay) autoplayStart();
-        });
-
         function onDown(e){
             dragging = true;
             pane.classList.add('is-dragging');
             lastX = (e.touches ? e.touches[0].clientX : e.clientX);
             accum = 0;
-            autoplayStop();
             if(e.cancelable) e.preventDefault();
         }
         function onMove(e){
@@ -3210,7 +3186,6 @@ window.csMakeFramesScrubber = function(paneId, opts){
             if(!dragging) return;
             dragging = false;
             pane.classList.remove('is-dragging');
-            if(autoplay) autoplayPauseThenResume();
         }
 
         pane.addEventListener('mousedown', onDown);
@@ -3220,14 +3195,6 @@ window.csMakeFramesScrubber = function(paneId, opts){
         pane.addEventListener('touchmove', onMove, { passive: false });
         pane.addEventListener('touchend', onUp);
         pane.addEventListener('touchcancel', onUp);
-
-        // Kick off the spin immediately after the first frame paints — no
-        // point spinning a blank canvas. For interior pages we never call
-        // autoplayStart so the manual drag path stays as before.
-        if(autoplay){
-            if(preloaded[0].complete) autoplayStart();
-            else preloaded[0].addEventListener('load', autoplayStart, { once: true });
-        }
     };
 };
 @endif
@@ -3235,7 +3202,7 @@ window.csMakeFramesScrubber = function(paneId, opts){
 window.csInteriorFramesInit = window.csMakeFramesScrubber('csInteriorFrames');
 @endif
 @if($car->has_certicheck && $car->hasExteriorFrames())
-window.csExteriorFramesInit = window.csMakeFramesScrubber('csExteriorFrames', { autoplay: true });
+window.csExteriorFramesInit = window.csMakeFramesScrubber('csExteriorFrames');
 @endif
 
 // ==== 360° PANORAMA VIEWER (exterior gallery tab) ====
@@ -3722,11 +3689,12 @@ function csShareToast(msg) {
 </div>
 <script>
 (function(){
-    // Per-pane scrubber instance map. We init lazily on first open so the
-    // huge JPG list isn't requested until the user actually asks for it.
-    var scrubberStarted = false;
+    // Each open creates a fresh scrubber instance bound to the active kind's
+    // URLs. The previous version cached one instance which broke when the
+    // user opened interior then exterior (or vice-versa) — the cached
+    // closure still pointed at the first kind's frame list.
+    var activeScrubberCleanup = null;
     var pannellumViewer = null;
-    var lastTrigger = null;
 
     function getUrlsForKind(kind){
         var sourcePane = kind === 'pano360'
@@ -3743,33 +3711,113 @@ function csShareToast(msg) {
         return el ? el.getAttribute('data-pano-src') : null;
     }
 
+    // Self-contained scrubber bound to the lightbox pane. Drag-only — never
+    // auto-rotates (per user feedback). Returns a cleanup function that
+    // detaches listeners; the lightbox close path calls it so listeners
+    // don't accumulate over repeated opens.
+    function bootLightboxScrubber(pane, urls){
+        var img = pane.querySelector('.cs-interior-frames-img');
+        var bar = pane.querySelector('.cs-interior-frames-progress span');
+        if(!img || !Array.isArray(urls) || urls.length < 2) return null;
+
+        var preloaded = new Array(urls.length);
+        function loadFrame(i){
+            if(preloaded[i]) return preloaded[i];
+            var p = new Image();
+            p.decoding = 'async';
+            p.src = urls[i];
+            preloaded[i] = p;
+            return p;
+        }
+        loadFrame(0);
+        if(preloaded[0].complete) img.src = urls[0];
+        else preloaded[0].addEventListener('load', function(){ img.src = urls[0]; }, { once: true });
+        var nextToPreload = 1;
+        (function preloadNext(){
+            if(nextToPreload >= urls.length) return;
+            var p = loadFrame(nextToPreload++);
+            p.addEventListener('load', preloadNext, { once: true });
+            p.addEventListener('error', preloadNext, { once: true });
+        })();
+
+        var current = 0, dragging = false, lastX = 0, accum = 0;
+        function setFrame(i){
+            var n = urls.length;
+            i = ((i % n) + n) % n;
+            if(i === current) return;
+            current = i;
+            var src = urls[i];
+            if(preloaded[i] && preloaded[i].complete) img.src = src;
+            else loadFrame(i).addEventListener('load', function(){ if(current === i) img.src = src; }, { once: true });
+            if(bar) bar.style.width = ((i / (urls.length - 1)) * 100) + '%';
+        }
+        function pixelsPerFrame(){
+            var w = pane.clientWidth || 800;
+            return Math.max(4, w / urls.length);
+        }
+        function onDown(e){
+            dragging = true;
+            pane.classList.add('is-dragging');
+            lastX = (e.touches ? e.touches[0].clientX : e.clientX);
+            accum = 0;
+            if(e.cancelable) e.preventDefault();
+        }
+        function onMove(e){
+            if(!dragging) return;
+            var x = (e.touches ? e.touches[0].clientX : e.clientX);
+            accum += (x - lastX);
+            lastX = x;
+            var step = pixelsPerFrame();
+            while(accum >= step){ setFrame(current + 1); accum -= step; }
+            while(accum <= -step){ setFrame(current - 1); accum += step; }
+            if(e.cancelable) e.preventDefault();
+        }
+        function onUp(){
+            if(!dragging) return;
+            dragging = false;
+            pane.classList.remove('is-dragging');
+        }
+        pane.addEventListener('mousedown', onDown);
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+        pane.addEventListener('touchstart', onDown, { passive: false });
+        pane.addEventListener('touchmove', onMove, { passive: false });
+        pane.addEventListener('touchend', onUp);
+        pane.addEventListener('touchcancel', onUp);
+
+        return function cleanup(){
+            pane.removeEventListener('mousedown', onDown);
+            window.removeEventListener('mousemove', onMove);
+            window.removeEventListener('mouseup', onUp);
+            pane.removeEventListener('touchstart', onDown, { passive: false });
+            pane.removeEventListener('touchmove', onMove, { passive: false });
+            pane.removeEventListener('touchend', onUp);
+            pane.removeEventListener('touchcancel', onUp);
+        };
+    }
+
     window.cs360OpenLightbox = function(kind){
         var box   = document.getElementById('cs360Lightbox');
         var pane  = document.getElementById('cs360LightboxPane');
         var pano  = document.getElementById('cs360LightboxPannellum');
         var title = document.querySelector('#cs360LightboxTitle span');
-        if(!box) return;
+        if(!box || !pane || !pano) return;
 
         var label = kind === 'pano360' ? '360° wnętrza' : '360° z zewnątrz';
         if(title) title.textContent = label;
 
-        // Prefer frame-scrubber when frames exist; fall back to Pannellum.
+        // Tear down anything from a previous open before we rebind for this kind.
+        if(activeScrubberCleanup){ try { activeScrubberCleanup(); } catch(_){} activeScrubberCleanup = null; }
+        if(pannellumViewer){ try { pannellumViewer.destroy(); } catch(_){} pannellumViewer = null; }
+        pano.innerHTML = '';
+
         var urls = getUrlsForKind(kind);
         if(urls && urls.length > 1){
             pane.style.display = '';
             pano.style.display = 'none';
-            pane.setAttribute('data-frames', JSON.stringify(urls));
             box.classList.add('open');
             document.body.style.overflow = 'hidden';
-            // Init scrubber on this pane the first time we open it. Exterior
-            // gets autoplay, interior doesn't — same call as the inline view.
-            if(!scrubberStarted && typeof window.csMakeFramesScrubber === 'function'){
-                var initFn = window.csMakeFramesScrubber('cs360LightboxPane', {
-                    autoplay: kind !== 'pano360'
-                });
-                initFn();
-                scrubberStarted = true;
-            }
+            activeScrubberCleanup = bootLightboxScrubber(pane, urls);
             return;
         }
 
@@ -3779,13 +3827,8 @@ function csShareToast(msg) {
             pano.style.display = '';
             box.classList.add('open');
             document.body.style.overflow = 'hidden';
-            // Lazy-load Pannellum the same way the inline viewer does.
             function boot(){
-                if(typeof pannellum === 'undefined'){
-                    setTimeout(boot, 80);
-                    return;
-                }
-                if(pannellumViewer){ try { pannellumViewer.destroy(); } catch(_){} }
+                if(typeof pannellum === 'undefined'){ setTimeout(boot, 80); return; }
                 pannellumViewer = pannellum.viewer(pano, {
                     type: 'equirectangular',
                     panorama: panoSrc,
@@ -3793,9 +3836,8 @@ function csShareToast(msg) {
                     showZoomCtrl: true,
                     showFullscreenCtrl: false,
                     compass: false,
-                    hfov: 100,
-                    autoRotate: kind === 'pano360' ? 0 : -2,
-                    autoRotateInactivityDelay: 2200,
+                    hfov: 100
+                    // autoRotate intentionally omitted — manual pan only.
                 });
             }
             if(typeof pannellum === 'undefined'){
@@ -3806,7 +3848,8 @@ function csShareToast(msg) {
                     l.dataset.pannellum = '1';
                     document.head.appendChild(l);
                 }
-                if(!document.querySelector('script[data-pannellum]')){
+                var existing = document.querySelector('script[data-pannellum]');
+                if(!existing){
                     var s = document.createElement('script');
                     s.src = 'https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js';
                     s.dataset.pannellum = '1';
@@ -3827,9 +3870,9 @@ function csShareToast(msg) {
         if(!box) return;
         box.classList.remove('open');
         document.body.style.overflow = '';
+        if(activeScrubberCleanup){ try { activeScrubberCleanup(); } catch(_){} activeScrubberCleanup = null; }
         if(pannellumViewer){ try { pannellumViewer.destroy(); } catch(_){} pannellumViewer = null; }
         if(pano) pano.innerHTML = '';
-        if(lastTrigger){ try { lastTrigger.focus(); } catch(_){} lastTrigger = null; }
     };
 
     // Close on ESC or backdrop click.
@@ -3839,9 +3882,12 @@ function csShareToast(msg) {
             if(box && box.classList.contains('open')) cs360CloseLightbox();
         }
     });
-    document.getElementById('cs360Lightbox')?.addEventListener('click', function(e){
-        if(e.target === this) cs360CloseLightbox();
-    });
+    var lbBox = document.getElementById('cs360Lightbox');
+    if(lbBox){
+        lbBox.addEventListener('click', function(e){
+            if(e.target === this) cs360CloseLightbox();
+        });
+    }
 })();
 </script>
 @endif
