@@ -120,6 +120,27 @@
 .cs-interior-frames-pane .cs-interior-frames-img{width:100%;height:100%;object-fit:cover;pointer-events:none}
 .cs-interior-frames-pane .cs-interior-frames-progress{position:absolute;left:18px;right:18px;bottom:14px;height:3px;background:rgba(255,255,255,.22);border-radius:2px;overflow:hidden;pointer-events:none}
 .cs-interior-frames-pane .cs-interior-frames-progress span{display:block;height:100%;width:0;background:#fff;transition:width .04s linear}
+/* Fullscreen 360° lightbox — shared between interior + exterior. */
+.cs-360-lightbox{display:none;position:fixed;inset:0;background:rgba(8,10,18,.96);z-index:10000;align-items:center;justify-content:center;padding:0}
+.cs-360-lightbox.open{display:flex}
+.cs-360-lightbox-stage{position:relative;width:min(96vw,1400px);height:min(86vh,800px);background:#000;border-radius:14px;overflow:hidden;box-shadow:0 30px 80px -20px rgba(0,0,0,.6)}
+.cs-360-lightbox-pane{position:absolute;inset:0;cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.cs-360-lightbox-pane.is-dragging{cursor:grabbing}
+.cs-360-lightbox-pane .cs-interior-frames-img{width:100%;height:100%;object-fit:contain;pointer-events:none;background:#000}
+.cs-360-lightbox-pane .cs-interior-frames-progress{position:absolute;left:24px;right:24px;bottom:20px;height:3px;background:rgba(255,255,255,.18);border-radius:2px;overflow:hidden;pointer-events:none}
+.cs-360-lightbox-pane .cs-interior-frames-progress span{display:block;height:100%;width:0;background:#fff;transition:width .04s linear}
+.cs-360-lightbox-pannellum{position:absolute;inset:0;width:100%;height:100%;background:#000}
+.cs-360-lightbox-close{position:absolute;top:18px;right:18px;width:44px;height:44px;background:rgba(255,255,255,.12);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:background .15s}
+.cs-360-lightbox-close:hover{background:rgba(255,255,255,.22)}
+.cs-360-lightbox-close svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2.4}
+.cs-360-lightbox-title{position:absolute;top:22px;left:24px;color:#fff;font-size:13px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:8px 14px;background:rgba(10,10,10,.55);border-radius:50px;backdrop-filter:blur(8px);display:flex;align-items:center;gap:8px;z-index:5}
+.cs-360-lightbox-title svg{width:14px;height:14px;stroke:#5fa1ff;fill:none;stroke-width:2.2}
+.cs-360-lightbox-hint{position:absolute;left:50%;bottom:42px;transform:translateX(-50%);color:rgba(255,255,255,.75);font-size:12px;font-weight:500;padding:6px 14px;background:rgba(10,10,10,.5);border-radius:50px;backdrop-filter:blur(6px);pointer-events:none;display:flex;align-items:center;gap:7px}
+.cs-360-lightbox-hint svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.4}
+@media (max-width:600px){
+    .cs-360-lightbox-stage{width:100vw;height:100vh;border-radius:0}
+    .cs-360-lightbox-title{font-size:11px;top:16px;left:16px}
+}
 .cs-gallery-main .empty{color:#9ca3af}
 .cs-gallery-main .empty i{width:80px;height:80px}
 .cs-gallery-counter{position:absolute;top:12px;right:12px;background:rgba(10,10,10,.75);color:#fff;padding:6px 12px;border-radius:50px;font-size:12px;display:flex;align-items:center;gap:5px;backdrop-filter:blur(10px);font-weight:600}
@@ -2944,18 +2965,22 @@ function cs360InitPano(){
 // Auto-init panorama on page load if 360 section is visible
 document.addEventListener('DOMContentLoaded', function(){ if(document.querySelector('.cs-pano360-embed')) cs360InitPano(); });
 
-// Cards in the "Widok 360° pojazdu" section: scroll up to the main gallery and
-// click the matching 360° tab. Reuses the existing csFilterGallery so the
-// Pannellum viewer lives in exactly one place.
+// Cards in the "Widok 360° pojazdu" section open the fullscreen 360°
+// lightbox. The lightbox prefers the frame scrubber when frames are
+// available and falls back to Pannellum for legacy equirectangular
+// uploads. We keep the gallery-tab swap behind a fallback for browsers
+// where the lightbox script hasn't loaded yet.
 function csOpenPano360(filter){
+    if(typeof window.cs360OpenLightbox === 'function'){
+        window.cs360OpenLightbox(filter);
+        return;
+    }
     var tab = document.querySelector('[data-gallery-filter="' + filter + '"]');
     var gallery = document.querySelector('.cs-gallery-stage');
     if (gallery) {
         gallery.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     if (tab && typeof csFilterGallery === 'function') {
-        // Delay so the scroll has time to start before the tab swap (Pannellum
-        // initialises lazily and we want it visible when it boots).
         setTimeout(function(){ csFilterGallery(tab, filter); }, 200);
     }
 }
@@ -3086,8 +3111,10 @@ window.csPano360Init = (function(){
 // scrubber feels instant after the first ~half second. Used by both the
 // interior and exterior viewers.
 @if($car->has_certicheck && ($car->hasInteriorFrames() || $car->hasExteriorFrames()))
-window.csMakeFramesScrubber = function(paneId){
-    let initialized = false;
+window.csMakeFramesScrubber = function(paneId, opts){
+    opts = opts || {};
+    var autoplay = !!opts.autoplay;       // exterior: true, interior: false
+    var initialized = false;
     return function(){
         if(initialized) return;
         initialized = true;
@@ -3120,8 +3147,10 @@ window.csMakeFramesScrubber = function(paneId){
 
         var current = 0, dragging = false, lastX = 0, accum = 0;
         function setFrame(i){
-            if(i < 0) i = 0;
-            if(i > urls.length - 1) i = urls.length - 1;
+            // Allow wrap-around for the autoplay loop. The drag path also
+            // wraps so the user can spin past frame 0/N without stopping.
+            var n = urls.length;
+            i = ((i % n) + n) % n;
             if(i === current) return;
             current = i;
             var src = urls[i];
@@ -3133,11 +3162,38 @@ window.csMakeFramesScrubber = function(paneId){
             var w = pane.clientWidth || 800;
             return Math.max(4, w / urls.length);
         }
+
+        // Auto-rotate loop. ~90ms per frame ≈ 5.4s per full 60-frame turn,
+        // which matches the slow Copart-style exterior spin. Pauses while
+        // the user is dragging; resumes 1.6s after release so a quick
+        // inspection doesn't immediately get steamrolled by the loop.
+        var autoTimer = null;
+        var resumeTimer = null;
+        function autoplayTick(){ setFrame(current + 1); }
+        function autoplayStart(){
+            if(!autoplay || autoTimer) return;
+            autoTimer = setInterval(autoplayTick, 90);
+        }
+        function autoplayStop(){
+            if(autoTimer){ clearInterval(autoTimer); autoTimer = null; }
+        }
+        function autoplayPauseThenResume(){
+            autoplayStop();
+            if(resumeTimer) clearTimeout(resumeTimer);
+            resumeTimer = setTimeout(autoplayStart, 1600);
+        }
+        // Pause the spin when the tab is hidden (browsers throttle anyway
+        // but this avoids a thundering-herd "catch-up" on tab focus).
+        document.addEventListener('visibilitychange', function(){
+            if(document.hidden) autoplayStop(); else if(autoplay) autoplayStart();
+        });
+
         function onDown(e){
             dragging = true;
             pane.classList.add('is-dragging');
             lastX = (e.touches ? e.touches[0].clientX : e.clientX);
             accum = 0;
+            autoplayStop();
             if(e.cancelable) e.preventDefault();
         }
         function onMove(e){
@@ -3150,7 +3206,12 @@ window.csMakeFramesScrubber = function(paneId){
             while(accum <= -step){ setFrame(current - 1); accum += step; }
             if(e.cancelable) e.preventDefault();
         }
-        function onUp(){ dragging = false; pane.classList.remove('is-dragging'); }
+        function onUp(){
+            if(!dragging) return;
+            dragging = false;
+            pane.classList.remove('is-dragging');
+            if(autoplay) autoplayPauseThenResume();
+        }
 
         pane.addEventListener('mousedown', onDown);
         window.addEventListener('mousemove', onMove);
@@ -3159,6 +3220,14 @@ window.csMakeFramesScrubber = function(paneId){
         pane.addEventListener('touchmove', onMove, { passive: false });
         pane.addEventListener('touchend', onUp);
         pane.addEventListener('touchcancel', onUp);
+
+        // Kick off the spin immediately after the first frame paints — no
+        // point spinning a blank canvas. For interior pages we never call
+        // autoplayStart so the manual drag path stays as before.
+        if(autoplay){
+            if(preloaded[0].complete) autoplayStart();
+            else preloaded[0].addEventListener('load', autoplayStart, { once: true });
+        }
     };
 };
 @endif
@@ -3166,7 +3235,7 @@ window.csMakeFramesScrubber = function(paneId){
 window.csInteriorFramesInit = window.csMakeFramesScrubber('csInteriorFrames');
 @endif
 @if($car->has_certicheck && $car->hasExteriorFrames())
-window.csExteriorFramesInit = window.csMakeFramesScrubber('csExteriorFrames');
+window.csExteriorFramesInit = window.csMakeFramesScrubber('csExteriorFrames', { autoplay: true });
 @endif
 
 // ==== 360° PANORAMA VIEWER (exterior gallery tab) ====
@@ -3624,4 +3693,156 @@ function csShareToast(msg) {
 
 </script>
 @endpush
+
+{{-- ===== Fullscreen 360° lightbox ===== --}}
+@if($car->has_certicheck && ($car->hasInteriorFrames() || $car->hasExteriorFrames() || $car->pano360Image || $car->exteriorPano360Image))
+<div class="cs-360-lightbox" id="cs360Lightbox" role="dialog" aria-modal="true" aria-label="Widok 360°">
+    <div class="cs-360-lightbox-stage">
+        <div class="cs-360-lightbox-title" id="cs360LightboxTitle">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg>
+            <span></span>
+        </div>
+        <button type="button" class="cs-360-lightbox-close" onclick="cs360CloseLightbox()" aria-label="Zamknij">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        {{-- Frame-scrubber pane (used when frames are available; takes
+             precedence over Pannellum for both interior + exterior). --}}
+        <div class="cs-360-lightbox-pane cs-interior-frames-pane" id="cs360LightboxPane" style="display:none">
+            <img class="cs-interior-frames-img" alt="" draggable="false" decoding="async">
+            <div class="cs-interior-frames-progress"><span></span></div>
+        </div>
+        {{-- Pannellum container — only used as a fallback when the car
+             only has legacy equirectangular pano images (no frame video). --}}
+        <div class="cs-360-lightbox-pannellum" id="cs360LightboxPannellum" style="display:none"></div>
+        <div class="cs-360-lightbox-hint" id="cs360LightboxHint">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg>
+            <span>Przeciągnij, aby obrócić</span>
+        </div>
+    </div>
+</div>
+<script>
+(function(){
+    // Per-pane scrubber instance map. We init lazily on first open so the
+    // huge JPG list isn't requested until the user actually asks for it.
+    var scrubberStarted = false;
+    var pannellumViewer = null;
+    var lastTrigger = null;
+
+    function getUrlsForKind(kind){
+        var sourcePane = kind === 'pano360'
+            ? document.getElementById('csInteriorFrames')
+            : document.getElementById('csExteriorFrames');
+        if(!sourcePane) return null;
+        try { return JSON.parse(sourcePane.getAttribute('data-frames') || '[]'); }
+        catch(_) { return null; }
+    }
+
+    function getPannellumSrcForKind(kind){
+        var sel = kind === 'pano360' ? '#csPanoramaContainer' : '#csPanoramaExtContainer';
+        var el = document.querySelector(sel);
+        return el ? el.getAttribute('data-pano-src') : null;
+    }
+
+    window.cs360OpenLightbox = function(kind){
+        var box   = document.getElementById('cs360Lightbox');
+        var pane  = document.getElementById('cs360LightboxPane');
+        var pano  = document.getElementById('cs360LightboxPannellum');
+        var title = document.querySelector('#cs360LightboxTitle span');
+        if(!box) return;
+
+        var label = kind === 'pano360' ? '360° wnętrza' : '360° z zewnątrz';
+        if(title) title.textContent = label;
+
+        // Prefer frame-scrubber when frames exist; fall back to Pannellum.
+        var urls = getUrlsForKind(kind);
+        if(urls && urls.length > 1){
+            pane.style.display = '';
+            pano.style.display = 'none';
+            pane.setAttribute('data-frames', JSON.stringify(urls));
+            box.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            // Init scrubber on this pane the first time we open it. Exterior
+            // gets autoplay, interior doesn't — same call as the inline view.
+            if(!scrubberStarted && typeof window.csMakeFramesScrubber === 'function'){
+                var initFn = window.csMakeFramesScrubber('cs360LightboxPane', {
+                    autoplay: kind !== 'pano360'
+                });
+                initFn();
+                scrubberStarted = true;
+            }
+            return;
+        }
+
+        var panoSrc = getPannellumSrcForKind(kind);
+        if(panoSrc){
+            pane.style.display = 'none';
+            pano.style.display = '';
+            box.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            // Lazy-load Pannellum the same way the inline viewer does.
+            function boot(){
+                if(typeof pannellum === 'undefined'){
+                    setTimeout(boot, 80);
+                    return;
+                }
+                if(pannellumViewer){ try { pannellumViewer.destroy(); } catch(_){} }
+                pannellumViewer = pannellum.viewer(pano, {
+                    type: 'equirectangular',
+                    panorama: panoSrc,
+                    autoLoad: true,
+                    showZoomCtrl: true,
+                    showFullscreenCtrl: false,
+                    compass: false,
+                    hfov: 100,
+                    autoRotate: kind === 'pano360' ? 0 : -2,
+                    autoRotateInactivityDelay: 2200,
+                });
+            }
+            if(typeof pannellum === 'undefined'){
+                if(!document.querySelector('link[data-pannellum]')){
+                    var l = document.createElement('link');
+                    l.rel = 'stylesheet';
+                    l.href = 'https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css';
+                    l.dataset.pannellum = '1';
+                    document.head.appendChild(l);
+                }
+                if(!document.querySelector('script[data-pannellum]')){
+                    var s = document.createElement('script');
+                    s.src = 'https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js';
+                    s.dataset.pannellum = '1';
+                    s.onload = boot;
+                    document.body.appendChild(s);
+                } else {
+                    boot();
+                }
+            } else {
+                boot();
+            }
+        }
+    };
+
+    window.cs360CloseLightbox = function(){
+        var box  = document.getElementById('cs360Lightbox');
+        var pano = document.getElementById('cs360LightboxPannellum');
+        if(!box) return;
+        box.classList.remove('open');
+        document.body.style.overflow = '';
+        if(pannellumViewer){ try { pannellumViewer.destroy(); } catch(_){} pannellumViewer = null; }
+        if(pano) pano.innerHTML = '';
+        if(lastTrigger){ try { lastTrigger.focus(); } catch(_){} lastTrigger = null; }
+    };
+
+    // Close on ESC or backdrop click.
+    document.addEventListener('keydown', function(e){
+        if(e.key === 'Escape'){
+            var box = document.getElementById('cs360Lightbox');
+            if(box && box.classList.contains('open')) cs360CloseLightbox();
+        }
+    });
+    document.getElementById('cs360Lightbox')?.addEventListener('click', function(e){
+        if(e.target === this) cs360CloseLightbox();
+    });
+})();
+</script>
+@endif
 @endsection
