@@ -1185,7 +1185,9 @@ class CarController extends Controller
 
     /**
      * Resize and re-compress an image stored on the public disk using PHP GD.
-     * Skips if GD is not available, file is missing, or width is already within limit.
+     * Also bakes EXIF orientation into pixel data so re-encoded JPEGs don't
+     * end up rotated 90/180° in the browser. Skips if GD is not available
+     * or the file is missing.
      */
     private function optimizeImage(string $storedPath, int $maxWidth): void
     {
@@ -1204,7 +1206,7 @@ class CarController extends Controller
         }
 
         $info = @getimagesize($fullPath);
-        if (!$info || $info[0] <= $maxWidth) {
+        if (!$info) {
             if ($isS3) @unlink($fullPath);
             return;
         }
@@ -1218,6 +1220,29 @@ class CarController extends Controller
             return;
         }
 
+        // Read EXIF orientation. Re-encoding without baking this in is what
+        // produced the "upside-down" thumbnails: browsers respect EXIF on the
+        // original JPEG, but the tag is dropped when GD re-encodes, leaving
+        // the pixel data oriented per the camera sensor not the desired view.
+        $orientation = 1;
+        if (function_exists('exif_read_data')) {
+            try {
+                $exif = @exif_read_data($fullPath);
+                if (is_array($exif) && isset($exif['Orientation'])) {
+                    $orientation = (int) $exif['Orientation'];
+                }
+            } catch (\Throwable) {
+                $orientation = 1;
+            }
+        }
+
+        $needsRotate = in_array($orientation, [3, 6, 8], true);
+        $needsResize = $width > $maxWidth;
+        if (!$needsRotate && !$needsResize) {
+            if ($isS3) @unlink($fullPath);
+            return;
+        }
+
         try {
             $src = imagecreatefromjpeg($fullPath);
             if (!$src) {
@@ -1225,11 +1250,38 @@ class CarController extends Controller
                 return;
             }
 
-            $newHeight = (int) round($height * $maxWidth / $width);
-            $dst = imagescale($src, $maxWidth, $newHeight, IMG_BICUBIC);
-            imagejpeg($dst, $fullPath, 85);
+            // Bake the EXIF rotation into pixel data BEFORE the resize so the
+            // resize math uses the post-rotation dimensions.
+            if ($needsRotate) {
+                $angle = match ($orientation) {
+                    3 => 180,
+                    6 => -90, // GD imagerotate is counter-clockwise
+                    8 => 90,
+                    default => 0,
+                };
+                if ($angle !== 0) {
+                    $rotated = imagerotate($src, $angle, 0);
+                    if ($rotated !== false) {
+                        imagedestroy($src);
+                        $src = $rotated;
+                        if (in_array($orientation, [6, 8], true)) {
+                            [$width, $height] = [$height, $width];
+                        }
+                    }
+                }
+            }
+
+            if ($width > $maxWidth) {
+                $newHeight = (int) round($height * $maxWidth / $width);
+                $dst = imagescale($src, $maxWidth, $newHeight, IMG_BICUBIC);
+                if ($dst !== false) {
+                    imagedestroy($src);
+                    $src = $dst;
+                }
+            }
+
+            imagejpeg($src, $fullPath, 85);
             imagedestroy($src);
-            imagedestroy($dst);
 
             if ($isS3) {
                 $disk->put($storedPath, file_get_contents($fullPath), 'public');
