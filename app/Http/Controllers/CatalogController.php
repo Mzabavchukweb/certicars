@@ -35,8 +35,21 @@ class CatalogController extends Controller
         if (!empty($filters['fuel_type']))    $query->where('fuel_type', $filters['fuel_type']);
         if (isset($filters['price_min']))     $query->where('price', '>=', $filters['price_min']);
         if (isset($filters['price_max']))     $query->where('price', '<=', $filters['price_max']);
-        if (!empty($filters['year_min']))     $query->where('first_registration', '>=', $filters['year_min']);
-        if (!empty($filters['year_max']))     $query->where('first_registration', '<=', $filters['year_max']);
+        // Year-range filtering needs an integer column. `first_registration` is
+        // stored as "MM/YYYY" — a lexicographic string compare misorders
+        // "10/2015" < "2/2024" and breaks the range. Prefer `production_year`
+        // (integer, filled by wizard Step 1); for legacy rows missing it, fall
+        // back to the 4-digit year parsed out of `first_registration` via SQL.
+        // SUBSTR works in both MySQL and SQLite; CAST AS INTEGER for SQLite,
+        // UNSIGNED for MySQL.
+        $intCast = \DB::connection()->getDriverName() === 'sqlite' ? 'INTEGER' : 'UNSIGNED';
+        $yearExpr = "COALESCE(production_year, CAST(SUBSTR(first_registration, -4) AS {$intCast}))";
+        if (!empty($filters['year_min'])) {
+            $query->whereRaw("{$yearExpr} >= ?", [(int) $filters['year_min']]);
+        }
+        if (!empty($filters['year_max'])) {
+            $query->whereRaw("{$yearExpr} <= ?", [(int) $filters['year_max']]);
+        }
         if (isset($filters['mileage_min']))   $query->where('mileage', '>=', $filters['mileage_min']);
         if (isset($filters['mileage_max']))   $query->where('mileage', '<=', $filters['mileage_max']);
         if (isset($filters['power_min']))     $query->where('power_hp', '>=', $filters['power_min']);

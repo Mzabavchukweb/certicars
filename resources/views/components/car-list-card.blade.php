@@ -74,7 +74,7 @@
                     @if($car->fuel_type)
                         <span class="lcard-spec">
                             <x-icon name="fuel" size="14"/>
-                            {{ $car->fuel_type }}
+                            {{ \App\Helpers\CarLabels::fuelType($car->fuel_type) ?? $car->fuel_type }}
                         </span>
                     @endif
                     @if($car->power_hp)
@@ -86,7 +86,7 @@
                     @if($car->transmission)
                         <span class="lcard-spec">
                             <x-icon name="settings" size="14"/>
-                            {{ $car->transmission }}
+                            {{ \App\Helpers\CarLabels::transmission($car->transmission) ?? $car->transmission }}
                         </span>
                     @endif
                 </div>

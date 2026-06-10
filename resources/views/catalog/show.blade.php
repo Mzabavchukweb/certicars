@@ -1878,11 +1878,11 @@
                 <h3 class="cs-info-3card-title">Dokumenty</h3>
             </div>
             <div class="cs-info-3card-rows">
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="receipt" size="14"/></span>Faktura</span><span class="val">VAT-marża</span></div>
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="file-check" size="14"/></span>Dowód rejestracyjny</span><span class="val ok">{{ $regCert3 ?: 'Dostępny' }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="key" size="14"/></span>Liczba kluczyków</span><span class="val {{ $rowOk($car->number_of_keys) ? '' : 'muted' }}">{{ $rowOk($car->number_of_keys) ? $car->number_of_keys : '2' }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="book-open" size="14"/></span>Książka serwisowa</span><span class="val ok">{{ $bookSt3 ?: 'Dostępna' }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="book" size="14"/></span>Instrukcja obsługi</span><span class="val ok">{{ $manual3 ?: 'Jest' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="receipt" size="14"/></span>Faktura</span><span class="val {{ $rowOk($car->taxation) ? '' : 'muted' }}">{{ $rowOk($car->taxation) ? $car->taxation : '—' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="file-check" size="14"/></span>Dowód rejestracyjny</span><span class="val {{ $regCert3 ? 'ok' : 'muted' }}">{{ $regCert3 ?: '—' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="key" size="14"/></span>Liczba kluczyków</span><span class="val {{ $rowOk($car->number_of_keys) ? '' : 'muted' }}">{{ $rowOk($car->number_of_keys) ? $car->number_of_keys : '—' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="book-open" size="14"/></span>Książka serwisowa</span><span class="val {{ $bookSt3 ? 'ok' : 'muted' }}">{{ $bookSt3 ?: '—' }}</span></div>
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="book" size="14"/></span>Instrukcja obsługi</span><span class="val {{ $manual3 ? 'ok' : 'muted' }}">{{ $manual3 ?: '—' }}</span></div>
             </div>
         </div>
 
