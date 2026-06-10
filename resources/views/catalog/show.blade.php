@@ -422,6 +422,11 @@
 .cs-info-3row-line .val.muted{color:#9ca3af;font-weight:500;font-style:italic}
 .cs-info-3row-line .val.ok{color:#15803d}
 .cs-info-3row-note{max-width:1200px;margin:14px auto 0;padding:0 24px;font-size:12.5px;color:#6b7280;line-height:1.6}
+/* Auto-fit variant for optional cards (drivetrain/emission + fuel). Collapses
+   from 2 → 1 column automatically below ~720px instead of overriding the
+   parent's responsive grid with inline styles. */
+.cs-info-3row.cs-info-3row-auto{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));max-width:calc(1200px - 48px)}
+.cs-info-3row.cs-info-3row-auto.is-single{max-width:720px}
 @media(max-width:1024px){
     .cs-info-3row{grid-template-columns:1fr 1fr;gap:14px}
     .cs-info-3card{padding:18px 18px}
@@ -1863,6 +1868,9 @@
                 <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="users" size="14"/></span>Liczba właścicieli</span><span class="val {{ $car->previous_owners === null ? 'muted' : '' }}">{{ $car->previous_owners === null ? '—' : ($car->previous_owners == 0 ? 'Pierwszy' : $car->previous_owners) }}</span></div>
                 <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="file-text" size="14"/></span>Historia serwisowa</span><span class="val {{ $svc3 ? 'ok' : 'muted' }}">{{ $hasMuted($svc3) }}</span></div>
                 <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="gauge" size="14"/></span>Stan licznika</span><span class="val {{ $odometerStatus ? 'ok' : 'muted' }}">{{ $hasMuted($odometerStatus) }}</span></div>
+                @if($rowOk($car->business_use))
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="briefcase" size="14"/></span>Sposób użytkowania</span><span class="val">{{ $car->business_use }}</span></div>
+                @endif
                 @if($rowOk($car->vehicle_history))
                 <div class="cs-info-3row-line" style="flex-direction:column;align-items:flex-start;gap:2px"><span class="lbl">Opis historii</span><span class="val" style="text-align:left;max-width:100%;font-weight:600;color:#374151">{{ $car->vehicle_history }}</span></div>
                 @endif
@@ -1898,12 +1906,64 @@
                 <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="calendar" size="14"/></span>Ostatni serwis</span><span class="val {{ $rowOk($car->last_service) ? '' : 'muted' }}">{{ $hasMuted($car->last_service) }}</span></div>
                 <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="gauge" size="14"/></span>Przebieg przy ostatnim serwisie</span><span class="val {{ $rowOk($car->last_service_mileage) ? '' : 'muted' }}">{{ $rowOk($car->last_service_mileage) ? number_format((float) $car->last_service_mileage, 0, '', ' ') . ' km' : '—' }}</span></div>
                 <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="shield-check" size="14"/></span>Niemieckie badanie techniczne ważne do</span><span class="val {{ $rowOk($car->de_tech_valid_until) ? '' : 'muted' }}">{{ $hasMuted($car->de_tech_valid_until) }}</span></div>
+                @if($rowOk($car->next_inspection))
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="calendar-clock" size="14"/></span>Następny przegląd</span><span class="val">{{ $car->next_inspection }}</span></div>
+                @endif
                 <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="file-text" size="14"/></span>Potwierdzenie serwisu</span><span class="val {{ $svcConfirmation ? 'ok' : 'muted' }}">{{ $hasMuted($svcConfirmation) }}</span></div>
                 <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="wrench" size="14"/></span>Zakres ostatniego serwisu</span><span class="val {{ $rowOk($car->last_service_scope) ? 'ok' : 'muted' }}">{{ $hasMuted($car->last_service_scope) }}</span></div>
+                @php $asoLabel = \App\Helpers\CarLabels::bool($car->aso_serviced); @endphp
+                @if($asoLabel !== null)
+                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="badge-check" size="14"/></span>Serwis ASO</span><span class="val {{ $asoLabel === 'Tak' ? 'ok' : '' }}">{{ $asoLabel }}</span></div>
+                @endif
             </div>
         </div>
     </div>
     <p class="cs-info-3row-note">Informacje prezentujemy na podstawie posiadanych dokumentów i oględzin pojazdu.</p>
+
+    {{-- =================== NAPĘD + SPALANIE I EMISJA =================== --}}
+    {{-- Two optional cards. Each card renders only when it has at least one row;
+         the whole section disappears when admin filled none of these fields,
+         keeping the layout identical to the old reference for legacy rows. --}}
+    @php
+        $driveRows = [];
+        if ($rowOk($car->drivetrain))      $driveRows[] = ['route', 'Napęd', $car->drivetrain];
+        $emClass = \App\Helpers\CarLabels::emissionClass($car->emission_class);
+        if ($emClass !== null)             $driveRows[] = ['leaf', 'Norma emisji spalin', $emClass];
+
+        $fuelRows = [];
+        $fcStr = \App\Helpers\CarLabels::fuelConsumption($car->fuel_consumption);
+        if ($fcStr !== null)               $fuelRows[] = ['fuel', 'Średnie zużycie', $fcStr];
+        $co2Str = \App\Helpers\CarLabels::co2Emission($car->co2_emission);
+        if ($co2Str !== null)              $fuelRows[] = ['cloud', 'Emisja CO₂', $co2Str];
+        if ($rowOk($car->fuel_procedure))  $fuelRows[] = ['flask-conical', 'Procedura pomiaru', $car->fuel_procedure];
+
+        $cards = array_filter([
+            $driveRows ? ['title' => 'Napęd i emisja', 'icon' => 'settings-2', 'rows' => $driveRows] : null,
+            $fuelRows  ? ['title' => 'Zużycie paliwa', 'icon' => 'fuel', 'rows' => $fuelRows] : null,
+        ]);
+    @endphp
+    @if(count($cards) > 0)
+    <div class="cs-info-3row cs-info-3row-auto {{ count($cards) === 1 ? 'is-single' : '' }}" style="margin-top:8px">
+        @foreach($cards as $card)
+            <div class="cs-info-3card">
+                <div class="cs-info-3card-head">
+                    <div class="cs-info-3card-ico" aria-hidden="true">
+                        <x-icon :name="$card['icon']" size="18"/>
+                    </div>
+                    <h3 class="cs-info-3card-title">{{ $card['title'] }}</h3>
+                </div>
+                <div class="cs-info-3card-rows">
+                    @foreach($card['rows'] as [$ico, $label, $val])
+                        <div class="cs-info-3row-line">
+                            <span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon :name="$ico" size="14"/></span>{{ $label }}</span>
+                            <span class="val">{{ $val }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endforeach
+    </div>
+    @endif
 
     {{-- (Historia pojazdu accordion removed — its content is already shown in the
          3-card summary row above. The unique fields below were merged into the

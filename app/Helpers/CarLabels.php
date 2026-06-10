@@ -335,4 +335,38 @@ class CarLabels
         // Empty / 'ok' / 'sprawny' / 'good' / 'pracuje prawidłowo' / 'bez zarzutu' / anything else → ok.
         return 'ok';
     }
+
+    /**
+     * Format fuel consumption as "X.Y l/100 km". Mirrors BrochureBuilder so PDF
+     * and the detail page show the exact same string. Returns null when admin
+     * left the field empty.
+     */
+    public static function fuelConsumption(?string $value): ?string
+    {
+        if ($value === null || trim((string) $value) === '') return null;
+        $raw = trim(preg_replace('/\s*[lL]\s*\/\s*100\s*km\.?/u', '', (string) $value));
+        $raw = trim(str_replace(',', '.', $raw));
+        return $raw !== '' ? $raw . ' l/100 km' : null;
+    }
+
+    /**
+     * Format CO₂ emission as "X g/km". Strips any embedded "g/km" the admin
+     * may have typed.
+     */
+    public static function co2Emission(?string $value): ?string
+    {
+        if ($value === null || trim((string) $value) === '') return null;
+        $raw = trim(preg_replace('/\s*g\s*\/\s*km\.?/iu', '', (string) $value));
+        return $raw !== '' ? $raw . ' g/km' : null;
+    }
+
+    /**
+     * Normalize emission-class label — "euro 6d" → "Euro 6d", "EURO6" → "Euro6".
+     */
+    public static function emissionClass(?string $value): ?string
+    {
+        if ($value === null || trim((string) $value) === '') return null;
+        $v = trim((string) $value);
+        return preg_replace('/^(euro)\s*(\d.*)$/i', 'Euro $2', $v);
+    }
 }

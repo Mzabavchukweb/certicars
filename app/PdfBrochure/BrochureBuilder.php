@@ -293,24 +293,16 @@ final class BrochureBuilder
     {
         $rows = [];
 
-        if ($car->fuel_consumption !== null && trim((string) $car->fuel_consumption) !== '') {
-            $raw = trim(preg_replace('/\s*[lL]\s*\/\s*100\s*km\.?/u', '', (string) $car->fuel_consumption));
-            $raw = trim(str_replace(',', '.', $raw));
-            if ($raw !== '') {
-                $this->kv($rows, 'Średnie zużycie', $raw . ' l/100 km');
-            }
-        }
+        // Single source of truth: CarLabels formatters used by both PDF and
+        // the public detail page. Keeps PDF ↔ detail strings byte-identical.
+        $fc = CarLabels::fuelConsumption($car->fuel_consumption);
+        if ($fc !== null) $this->kv($rows, 'Średnie zużycie', $fc);
 
-        if ($car->co2_emission !== null && trim((string) $car->co2_emission) !== '') {
-            $this->kv($rows, 'Emisja CO₂', trim((string) $car->co2_emission) . ' g/km');
-        }
+        $co2 = CarLabels::co2Emission($car->co2_emission);
+        if ($co2 !== null) $this->kv($rows, 'Emisja CO₂', $co2);
 
-        $emission = TextSanitizer::clean($car->emission_class);
-        if ($emission !== null) {
-            // "euro 6d" → "Euro 6d"
-            $emission = preg_replace('/^(euro)\s*(\d.*)$/i', 'Euro $2', $emission);
-            $this->kv($rows, 'Norma emisji', $emission);
-        }
+        $emission = CarLabels::emissionClass($car->emission_class);
+        if ($emission !== null) $this->kv($rows, 'Norma emisji', $emission);
 
         return $rows;
     }
