@@ -946,6 +946,8 @@
    .lcard-fav class. */
 .vcard-fuel-badge{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.96);color:#0a0a0a;font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;letter-spacing:.3px;display:inline-flex;align-items:center;gap:5px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 1px 4px rgba(0,0,0,.1);z-index:2}
 .vcard-fuel-badge svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+/* When Wyróżnione is present, push fuel badge below it to avoid overlap. */
+.vcard-badge ~ .vcard-fuel-badge{top:46px}
 
 /* Legal disclaimer bar — sits below the related cars section. */
 .cs-legal-bar{display:flex;align-items:flex-start;gap:10px;background:#eff6ff;border:1px solid #dbeafe;border-radius:12px;padding:12px 16px;max-width:calc(1200px - 48px);margin:0 auto 28px;font-size:12px;line-height:1.55;color:#475569}
@@ -962,6 +964,7 @@
     .cs-related-section{padding:18px 20px;border-radius:14px;border-color:#e5e7eb;box-shadow:0 2px 8px rgba(0,0,0,.06);width:auto;max-width:none}
     .cs-related-controls{width:100%;margin-left:0;justify-content:space-between}
     .vcard-fuel-badge{font-size:10px;padding:3px 8px;top:10px;left:10px}
+    .vcard-badge ~ .vcard-fuel-badge{top:42px}
 }
 
 .cs-related-grid{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px}
@@ -1668,7 +1671,11 @@
 
     {{-- =================== FINANSOWANIE + GETHELP (two-column row) =================== --}}
     @php
-        $activePkg = strtolower((string) ($car->gethelp_package ?? 'classic'));
+        // Highlight a package only if admin enabled GetHelp AND picked a plan.
+        // No has_gethelp / no plan → none of the 3 mini-cards gets .active.
+        $activePkg = $car->has_gethelp && $car->gethelp_package
+            ? strtolower((string) $car->gethelp_package)
+            : null;
         $gethelpPackages = [
             ['key' => 'classic', 'name' => 'GetHelp Classic', 'badge' => '12 mies.', 'price' => '1 000 zł / rok', 'desc' => 'Podstawowa ochrona układu napędowego oraz wsparcie assistance 24/7.'],
             ['key' => 'optimum', 'name' => 'GetHelp Optimum', 'badge' => '24 mies.', 'price' => '1 495 zł / rok', 'desc' => 'Rozszerzony zakres ochrony, w tym elektronika, klimatyzacja i komfort jazdy.'],
@@ -2604,14 +2611,14 @@
                     @else
                         <div class="vcard-placeholder"><svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></div>
                     @endif
-                    {{-- Fuel badge top-left (matches reference layout) --}}
+                    {{-- Wyróżnione first so .vcard-fuel-badge can use ~ selector to offset --}}
+                    @if($relCar->is_featured)<div class="vcard-badge">Wyróżnione</div>@endif
                     @if($relCar->fuel_type)
                     <span class="vcard-fuel-badge">
                         <svg viewBox="0 0 24 24"><line x1="3" x2="15" y1="22" y2="22"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>
                         {{ \App\Helpers\CarLabels::fuelType($relCar->fuel_type) ?? $relCar->fuel_type }}
                     </span>
                     @endif
-                    @if($relCar->is_featured)<div class="vcard-badge">Wyróżnione</div>@endif
                     {{-- Favorite heart (top-right) — same handler as the catalog --}}
                     <button class="lcard-fav" data-id="{{ $relCar->id }}" aria-label="Dodaj do ulubionych" onclick="event.preventDefault();event.stopPropagation();toggleFav(event,{{ $relCar->id }})">
                         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
