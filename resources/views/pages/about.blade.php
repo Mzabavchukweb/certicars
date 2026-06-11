@@ -92,8 +92,6 @@
 /* Shorter, more panoramic card: 36 top / 40 bottom padding (was 48/48). */
 .about-cta{position:relative;border-radius:18px;background:#0a1432;overflow:hidden;padding:36px 64px 40px;min-height:240px;border:1px solid #131b3a}
 .about-cta-sweep{display:none}
-.about-cta-carline{position:absolute;left:52%;bottom:8%;width:48%;max-width:560px;opacity:.09;pointer-events:none}
-.about-cta-carline svg{width:100%;height:auto;display:block}
 .about-cta-body{position:relative;z-index:2;max-width:520px}
 .about-cta-eyebrow{font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#5fa1ff;margin-bottom:14px;display:inline-flex;align-items:center;gap:10px}
 .about-cta-eyebrow::before{content:'';width:24px;height:2px;background:#5fa1ff;border-radius:2px}
@@ -301,17 +299,6 @@
         <div class="about-cta-shell">
             <div class="about-cta">
                 <div class="about-cta-sweep" aria-hidden="true"></div>
-                {{-- Faint car silhouette behind the character on the right --}}
-                <div class="about-cta-carline" aria-hidden="true">
-                    <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#5fa1ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M40 150 L120 150 Q140 92 210 86 L460 84 Q540 86 580 150 L680 150"/>
-                        <path d="M170 96 L240 96 L260 130 L160 130 Z"/>
-                        <path d="M275 96 L430 96 L450 130 L275 130 Z"/>
-                        <path d="M460 96 L545 96 L575 130 L460 130 Z"/>
-                        <circle cx="220" cy="160" r="20"/>
-                        <circle cx="540" cy="160" r="20"/>
-                    </svg>
-                </div>
                 <div class="about-cta-body">
                     <div class="about-cta-eyebrow">Masz pytania?</div>
                     <h2>Porozmawiajmy o aucie</h2>
