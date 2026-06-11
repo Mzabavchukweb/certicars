@@ -190,6 +190,7 @@ class BrochureBuilderTest extends TestCase
             'fuel_type'          => 'petrol',
             'transmission'       => 'automatic',
             'transmission_detail' => 'S tronic 7-bieg.',
+            'engine_version'      => '2.0 TFSI 252 KM',
             'vin'                => 'WAUZZZ8K9JA567890',
             'body_type'          => 'sedan',
             'doors'              => 4,
@@ -207,7 +208,7 @@ class BrochureBuilderTest extends TestCase
         // Every filled field appears as a row in Dane pojazdu, in Polish.
         $this->assertContains('Marka', $labels);
         $this->assertContains('Model', $labels);
-        $this->assertContains('Wersja', $labels);
+        $this->assertContains('Wersja / silnik', $labels);
         $this->assertContains('VIN', $labels);
         $this->assertContains('Typ nadwozia', $labels);
         $this->assertContains('Paliwo', $labels);
@@ -254,13 +255,16 @@ class BrochureBuilderTest extends TestCase
             'model'            => 'Espace',
             'status'           => 'active',
             'has_certicheck'   => true,
+            // Faktura row now mirrors $car->taxation (post-#117 detail page
+            // contract). Set it explicitly so the row appears in this test.
+            'taxation'         => 'VAT-marża',
             'service_book_status' => 'complete',  // → "Kompletna"
             'owners_manual'    => 'tak',
         ]);
 
         [$data] = $this->builder()->build($car, 'rid');
 
-        // Documents canonical row "Faktura: VAT-marża" is always present.
+        // Faktura row uses admin's `taxation` value byte-for-byte.
         $faktura = collect($data->documentItems)->firstWhere('label', 'Faktura');
         $this->assertSame('VAT-marża', $faktura['value']);
         // Service book status enum mapped to Polish.
