@@ -32,7 +32,29 @@ class CatalogController extends Controller
         $query = Car::with(['brand', 'images'])->available();
 
         if (!empty($filters['brand']))        $query->where('brand_id', $filters['brand']);
-        if (!empty($filters['fuel_type']))    $query->where('fuel_type', $filters['fuel_type']);
+        // Fuel-type filter normalised: dropdown emits a canonical Polish label
+        // ("Benzyna"/"Diesel"/"Hybryda"), DB rows may have raw input
+        // ("benzyna", "petrol", "elektryczny"). Pull every distinct raw value
+        // that normalises (via CarLabels::fuelType) to the selected canon and
+        // match against the union — covers case + synonym variance in one
+        // pass with a single whereIn.
+        if (!empty($filters['fuel_type'])) {
+            $canon = CarLabels::fuelType((string) $filters['fuel_type']) ?? $filters['fuel_type'];
+            $rawMatches = Car::query()
+                ->whereNotNull('fuel_type')
+                ->distinct()
+                ->pluck('fuel_type')
+                ->filter(fn($v) => (CarLabels::fuelType((string) $v) ?? $v) === $canon)
+                ->values()
+                ->all();
+            if ($rawMatches) {
+                $query->whereIn('fuel_type', $rawMatches);
+            } else {
+                // Selected fuel exists in dropdown but no rows currently store
+                // that canon — force empty result instead of returning all.
+                $query->whereRaw('1 = 0');
+            }
+        }
         if (isset($filters['price_min']))     $query->where('price', '>=', $filters['price_min']);
         if (isset($filters['price_max']))     $query->where('price', '<=', $filters['price_max']);
         // Year-range filtering needs an integer column. `first_registration` is
@@ -75,10 +97,37 @@ class CatalogController extends Controller
         $cars = $query->paginate(12)->withQueryString();
 
         [$brands, $categories, $fuelTypes] = Cache::remember('catalog.filters', 600, function () {
+            // Body-type dropdown sources from BOTH body_type (admin's current
+            // field) AND legacy category — normalised through CarLabels::bodyType
+            // so admin's "suv" / "SUV" / "Suv" / "wagon" collapse to one tile
+            // label and SUV-equipped cars stop being invisible because the
+            // dropdown previously sourced only from `category`.
+            $rawBodyTypes = Car::available()
+                ->whereRaw('(body_type IS NOT NULL OR category IS NOT NULL)')
+                ->selectRaw("COALESCE(NULLIF(TRIM(body_type), ''), NULLIF(TRIM(category), '')) as raw_bt")
+                ->distinct()
+                ->pluck('raw_bt');
+            $categories = $rawBodyTypes
+                ->map(fn($v) => CarLabels::bodyType((string) $v))
+                ->filter()
+                ->unique()
+                ->sort()
+                ->values();
+            // Fuel-type dropdown: same normalisation pass so "benzyna" and
+            // "Benzyna" collapse into one option labelled "Benzyna".
+            $fuelTypes = Car::available()
+                ->whereNotNull('fuel_type')
+                ->distinct()
+                ->pluck('fuel_type')
+                ->map(fn($v) => CarLabels::fuelType((string) $v) ?? $v)
+                ->filter()
+                ->unique()
+                ->sort()
+                ->values();
             return [
                 Brand::orderBy('name')->get(),
-                Car::available()->whereNotNull('category')->distinct()->pluck('category'),
-                Car::available()->whereNotNull('fuel_type')->distinct()->pluck('fuel_type'),
+                $categories,
+                $fuelTypes,
             ];
         });
 
