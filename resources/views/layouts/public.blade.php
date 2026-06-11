@@ -321,14 +321,22 @@
         .vcard-specs{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px}
         .vcard-specs span{background:#f0f2f5;padding:4px 10px;border-radius:8px;font-size:12px;color:#374151;display:inline-flex;align-items:center;gap:4px;font-weight:500;border:1px solid #e5e7eb}
         .vcard-specs span svg{width:12px;height:12px;stroke:#6b7280;stroke-width:1.8;fill:none}
-        .vcard-bottom{margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--border-l);gap:10px}
-        .vcard-price{font-size:21px;font-weight:900;color:#000;letter-spacing:-.5px;line-height:1.1}
+        .vcard-bottom{margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--border-l);gap:10px;flex-wrap:wrap}
+        .vcard-price{font-size:21px;font-weight:900;color:#000;letter-spacing:-.5px;line-height:1.1;white-space:nowrap}
         .vcard-price small{display:block;font-size:11px;font-weight:500;color:var(--text-3);letter-spacing:0;margin-top:1px}
         /* vcard-link is a real CTA button — keep its own hover state, but no
            longer driven by the parent .vcard:hover (which has been removed). */
         .vcard-link{font-size:12px;font-weight:700;color:#fff;background:var(--blue);padding:9px 16px;border-radius:8px;display:inline-flex;align-items:center;gap:8px;transition:background .15s;white-space:nowrap;flex-shrink:0}
         .vcard-link:hover{background:var(--blue-h)}
         .vcard-link svg{width:12px;height:12px;stroke:#fff;stroke-width:2.4;fill:none}
+        /* Narrow cards (carousel on tablet, listing on mobile): if price + CTA
+           don't fit side-by-side, stack them so neither has to break onto
+           multiple lines. flex-wrap on .vcard-bottom + width:100% on the CTA
+           below the wrap point. */
+        @media(max-width:780px){
+            .vcard-bottom{flex-direction:column;align-items:stretch;gap:12px}
+            .vcard-link{justify-content:center;width:100%}
+        }
 
         .section{padding:80px 0}
         .section-head{margin-bottom:32px;text-align:center}
