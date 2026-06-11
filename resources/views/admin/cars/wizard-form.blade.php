@@ -1376,8 +1376,14 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         </label>
     </div>
 
-    {{-- Engine video --}}
-    <div class="wz-media-section" data-certicheck-only="1">
+    {{-- Engine video — available for ALL listings (Zwykłe + CertiCheck).
+         Basic sales asset (engine startup / running sound / walkaround) admin
+         uploads OR links from YouTube/Vimeo. Previously gated to CertiCheck-
+         only which made the upload UI vanish on normal listings — users
+         could not add ANY video. The CertiCheck-specific 360° walkarounds
+         above stay gated (those need the frame extractor + Pannellum viewer
+         shipped with the CertiCheck UI on the public detail page). --}}
+    <div class="wz-media-section">
         <div class="wz-media-header">
             <i data-lucide="film"></i>
             <h3>Film z pracy silnika</h3>

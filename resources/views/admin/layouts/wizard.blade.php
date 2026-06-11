@@ -503,18 +503,44 @@ function goToStep(n) {
     window.dispatchEvent(new CustomEvent('wizard:step-changed', { detail: { step: currentStep } }));
 }
 
+// Skip steps that are hidden in the current listing variant (CertiCheck vs
+// Zwykłe). Sidebar items + content panes flagged data-certicheck-only="1"
+// are hidden by CSS in normal mode — without this guard, clicking "Dalej"
+// on Step 6 took users to a blank Step 7 with no content. They could keep
+// clicking, but every other Dalej showed empty middle pane → felt broken
+// → users gave up trying to add normal listings.
+function findVisibleStep(from, direction) {
+    let n = from;
+    while (n >= 1 && n <= totalSteps) {
+        const el = document.querySelector('.wiz-step[data-step="' + n + '"]');
+        if (!el) return n;
+        const hiddenByVariant = el.getAttribute('data-certicheck-only') === '1'
+            && document.documentElement.classList.contains('wz-no-certicheck');
+        if (!hiddenByVariant) return n;
+        n += direction;
+    }
+    return null;
+}
+
 function nextStep() {
     if (currentStep < totalSteps) {
-        goToStep(currentStep + 1);
-    } else {
-        // On last step, dispatch publish event
-        window.dispatchEvent(new CustomEvent('wizard:publish'));
+        const target = findVisibleStep(currentStep + 1, 1);
+        if (target !== null && target <= totalSteps) {
+            goToStep(target);
+            return;
+        }
     }
+    // Reached past the last visible step → publish event (Step 11 is always
+    // visible because Podgląd i publikacja has no data-certicheck-only).
+    window.dispatchEvent(new CustomEvent('wizard:publish'));
 }
 
 function prevStep() {
     if (currentStep > 1) {
-        goToStep(currentStep - 1);
+        const target = findVisibleStep(currentStep - 1, -1);
+        if (target !== null && target >= 1) {
+            goToStep(target);
+        }
     }
 }
 
