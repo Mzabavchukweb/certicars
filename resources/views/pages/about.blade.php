@@ -327,7 +327,7 @@
                     </div>
                 </div>
             </div>
-            <img class="about-cta-bohater" src="/images/bohater.png" alt="Doradca CertiCars rozmawiający z klientem o aucie" loading="lazy" decoding="async" width="1122" height="1402">
+            <img class="about-cta-bohater" src="/images/newoferta.png" alt="Doradca CertiCars rozmawiający z klientem o aucie" loading="lazy" decoding="async" width="1122" height="1402">
         </div>
     </div>
 </section>
