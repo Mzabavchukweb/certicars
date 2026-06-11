@@ -63,7 +63,11 @@ final class BrochureBuilder
             firstRegistration: TextSanitizer::clean($car->first_registration),
             receptionDate:     $car->reception_date ? $car->reception_date->format('d.m.Y') : null,
             fuelType:          Labels::fuelType($car->fuel_type),
-            transmission:      TextSanitizer::clean($car->transmission_detail) ?? Labels::transmission($car->transmission),
+            // Summary "Skrzynia biegów" must show the gearbox itself
+            // ("Automatyczna"/"Manualna"), not transmission_detail which is the
+            // gearbox model string ("S tronic 7-bieg.") — that one belongs in
+            // its own row in the main Dane pojazdu table.
+            transmission:      Labels::transmission($car->transmission) ?? TextSanitizer::clean($car->transmission_detail),
             powerHp:           $car->power_hp !== null ? (int) $car->power_hp : null,
             powerKw:           $car->power_kw !== null ? (int) $car->power_kw : null,
             engineCapacity:    $car->engine_capacity !== null ? (int) $car->engine_capacity : null,
@@ -126,19 +130,27 @@ final class BrochureBuilder
 
         $this->kv($rows, 'Marka', $car->brand?->name);
         $this->kv($rows, 'Model', TextSanitizer::clean($car->model));
-        $this->kv($rows, 'Wersja', TextSanitizer::clean($car->transmission_detail));
+        // engine_version is the dedicated admin field for the engine variant
+        // ("1.6 dCi 160 KM EDC"). Previous mapping used transmission_detail —
+        // which is the gearbox model, NOT the engine version — so the
+        // "Wersja" row was lying about the engine.
+        $this->kv($rows, 'Wersja / silnik', TextSanitizer::clean($car->engine_version));
         $this->kv($rows, 'Wersja wyposażenia', TextSanitizer::clean($car->equipment_version));
         // VIN is a 17-char structured identifier; profanity filtering would
         // false-positive on legitimate manufacturer codes (Audi's "WAUZZZ"
         // prefix matches the "zzz" placeholder stem). Validate shape only.
         $this->kv($rows, 'VIN', $this->cleanVin($car->vin));
         $this->kv($rows, 'Typ nadwozia', Labels::bodyType($car->body_type));
-        $this->kv($rows, 'Rok produkcji', TextSanitizer::clean($car->first_registration));
-        $this->kv(
-            $rows,
-            'Pierwsza rejestracja',
-            $car->reception_date ? $car->reception_date->format('d.m.Y') : null,
-        );
+        // Prefer the dedicated `production_year` integer column (wizard Step 1).
+        // For legacy rows that only have `first_registration` ("MM/YYYY"), parse
+        // the 4-digit year out — matches the public detail page logic so PDF
+        // never shows "05/2020" where the website shows "2020".
+        $prodYear = $car->production_year !== null ? (string) (int) $car->production_year : null;
+        if ($prodYear === null && is_string($car->first_registration) && preg_match('/(\d{4})/', $car->first_registration, $m)) {
+            $prodYear = $m[1];
+        }
+        $this->kv($rows, 'Rok produkcji', $prodYear);
+        $this->kv($rows, 'Pierwsza rejestracja', TextSanitizer::clean($car->first_registration));
         $this->kv(
             $rows,
             'Przebieg',
@@ -157,8 +169,21 @@ final class BrochureBuilder
                 ? (int) $car->power_hp . ' KM' . ($car->power_kw !== null ? ' / ' . (int) $car->power_kw . ' kW' : '')
                 : null,
         );
-        $this->kv($rows, 'Skrzynia biegów', Labels::transmission($car->transmission));
-        $this->kv($rows, 'Napęd', Labels::drive($car->drive_type));
+        // Skrzynia biegów = "Manualna"/"Automatyczna" canonical label; append
+        // the gearbox model from transmission_detail when admin filled it
+        // ("Manualna · S tronic 7-bieg.") so PDF readers see both pieces of
+        // info without inventing a separate row.
+        $gearLabel = Labels::transmission($car->transmission);
+        $gearDetail = TextSanitizer::clean($car->transmission_detail);
+        $gear = $gearLabel;
+        if ($gear && $gearDetail) $gear .= ' · ' . $gearDetail;
+        elseif (!$gear)           $gear = $gearDetail;
+        $this->kv($rows, 'Skrzynia biegów', $gear);
+        // Drivetrain field on Car is `drivetrain` (admin's wizard input —
+        // "AWD"/"FWD"/"Na przednie koła") — NOT `drive_type` which never
+        // existed as a column. The old call returned null silently so the
+        // Napęd row never appeared in any brochure.
+        $this->kv($rows, 'Napęd', TextSanitizer::clean($car->drivetrain) ?? Labels::drive($car->drivetrain));
         $this->kv($rows, 'Liczba drzwi', $car->doors !== null ? (string) (int) $car->doors : null);
         $this->kv($rows, 'Liczba miejsc', $car->seats !== null ? (string) (int) $car->seats : null);
 
@@ -203,18 +228,22 @@ final class BrochureBuilder
             $this->kv($rows, 'Liczba właścicieli', $value);
         }
 
+        $this->kv($rows, 'Sposób użytkowania', TextSanitizer::clean($car->business_use));
+
         return $rows;
     }
 
     /**
-     * Documents section. Faktura defaults to "VAT-marża" — that's the
-     * universal CertiCars sale form, same as the public single-car page.
+     * Documents section. Faktura takes its value from `$car->taxation` —
+     * the admin-typed value in the wizard. Old code hardcoded "VAT-marża"
+     * for every car which contradicted the public detail page (now fixed
+     * in #117 to use $car->taxation) and ignored admin's actual input.
      */
     private function buildDocumentItems(Car $car): array
     {
         $rows = [];
 
-        $this->kv($rows, 'Faktura', 'VAT-marża');
+        $this->kv($rows, 'Faktura', TextSanitizer::clean($car->taxation));
 
         $reg = CarLabels::bool($car->registration_cert) ?? CarLabels::status($car->registration_cert);
         $this->kv($rows, 'Dowód rejestracyjny', $reg);
@@ -240,25 +269,37 @@ final class BrochureBuilder
     }
 
     /**
-     * Formalities section. PCC / registration cost / transport are
-     * CertiCars-wide policy lines — they appear on every public car page
-     * and are shown unconditionally so the buyer has a complete summary.
+     * Formalities section. PCC / registration cost / transport are CertiCars
+     * standing offer terms — universally true for every CertiCars sale, so
+     * they're rendered unconditionally as policy lines.
+     *
+     * What is NOT universally true (and therefore not hardcoded any more):
+     *   - Akcyza: admin types it into the `taxation` field; if admin didn't
+     *     type anything, we DON'T claim it's paid.
+     *   - Przegląd techniczny: admin enters in `next_inspection`; without it,
+     *     we don't claim "Wykonany" — the row simply drops.
      */
     private function buildFormalItems(Car $car): array
     {
         $rows = [];
 
-        $excise = match (strtolower((string) $car->taxation)) {
-            'paid', 'oplacona', 'opłacona' => 'Opłacona',
-            'unpaid', 'nieoplacona', 'nieopłacona' => 'Nieopłacona',
-            'na', 'nie_dotyczy', 'nie dotyczy' => 'Nie dotyczy',
-            default => TextSanitizer::clean($car->taxation),
+        // Only render Akcyza when admin actually typed it AND it sounds like
+        // an excise statement (not a generic taxation note). Otherwise drop —
+        // never fabricate "Opłacona" as a polite default.
+        $tax = strtolower((string) $car->taxation);
+        $excise = match (true) {
+            str_contains($tax, 'oplacona') || str_contains($tax, 'opłacona') || str_contains($tax, 'paid') => 'Opłacona',
+            str_contains($tax, 'nieoplacona') || str_contains($tax, 'nieopłacona') || str_contains($tax, 'unpaid') => 'Nieopłacona',
+            str_contains($tax, 'nie dotyczy') || str_contains($tax, 'nie_dotyczy') || str_contains($tax, 'n/a') => 'Nie dotyczy',
+            default => null,
         };
-        $this->kv($rows, 'Akcyza', $excise ?: 'Opłacona');
+        $this->kv($rows, 'Akcyza', $excise);
 
-        $inspection = TextSanitizer::clean($car->next_inspection);
-        $this->kv($rows, 'Przegląd techniczny', $inspection ?: 'Wykonany');
+        $this->kv($rows, 'Przegląd techniczny', TextSanitizer::clean($car->next_inspection));
 
+        // CertiCars standing offer terms — every car gets these unless we
+        // change the business policy. Moving them to config would centralise
+        // but they're tied to legal copy that rarely changes.
         $this->kv($rows, 'Przygotowany do rejestracji', 'Tak');
         $this->kv($rows, 'PCC 2%', 'Kupujący zwolniony');
         $this->kv($rows, 'Koszt rejestracji', 'Po stronie kupującego');
@@ -275,6 +316,8 @@ final class BrochureBuilder
         $this->kv($rows, 'Serwis ASO', CarLabels::bool($car->aso_serviced));
         $this->kv($rows, 'Dokumentacja serwisowa', CarLabels::bool($car->service_documentation));
         $this->kv($rows, 'Historia serwisowa', TextSanitizer::clean($car->service_history));
+        $this->kv($rows, 'Stan licznika', TextSanitizer::clean($car->odometer_status));
+        $this->kv($rows, 'Potwierdzenie serwisu', TextSanitizer::clean($car->service_confirmation_type));
 
         $last = TextSanitizer::clean($car->last_service);
         if ($last !== null) {
@@ -284,6 +327,8 @@ final class BrochureBuilder
             }
             $this->kv($rows, 'Ostatni przegląd', $value);
         }
+        $this->kv($rows, 'Zakres ostatniego serwisu', TextSanitizer::clean($car->last_service_scope));
+        $this->kv($rows, 'DE-Tech ważny do', TextSanitizer::clean($car->de_tech_valid_until));
 
         return $rows;
     }
