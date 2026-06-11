@@ -955,8 +955,8 @@
 .vcard-badge ~ .vcard-fuel-badge{top:46px}
 
 /* Legal disclaimer bar — sits below the related cars section. */
-.cs-legal-bar{display:flex;align-items:flex-start;gap:10px;background:#eff6ff;border:1px solid #dbeafe;border-radius:12px;padding:12px 16px;max-width:calc(1200px - 48px);margin:0 auto 28px;font-size:12px;line-height:1.55;color:#475569}
-.cs-legal-bar-ico{flex-shrink:0;width:28px;height:28px;border-radius:8px;background:#dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.cs-legal-bar{display:flex;align-items:center;gap:10px;background:#eff6ff;border:1px solid #dbeafe;border-radius:12px;padding:12px 16px;max-width:calc(1200px - 48px);margin:0 auto 28px;font-size:12px;line-height:1.55;color:#475569}
+.cs-legal-bar-ico{flex-shrink:0;width:28px;height:28px;border-radius:8px;background:#dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center}
 .cs-legal-bar-ico svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
 .cs-legal-bar p{margin:0}
 .cs-legal-bar strong{color:#0a0a0a;font-weight:700}
