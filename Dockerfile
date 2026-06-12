@@ -61,7 +61,14 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
     && mkdir -p /var/www/html/database \
-    && mkdir -p /var/log/supervisor /run/nginx /run/php
+    && mkdir -p /var/log/supervisor /run/nginx /run/php \
+    # Defense in depth — even if HOME env in supervisord regresses, the
+    # puppeteer-core config dir must be readable by www-data. npm install ran
+    # as root and may have populated /root/.config/puppeteer; world-read the
+    # whole chain so EACCES never bites a brochure render again.
+    && mkdir -p /root/.config/puppeteer /var/www/html/.config/puppeteer \
+    && chmod -R 755 /root/.config /var/www/html/.config \
+    && chown -R www-data:www-data /var/www/html/.config
 
 COPY docker-start.sh /var/www/html/start.sh
 RUN chmod +x /var/www/html/start.sh
