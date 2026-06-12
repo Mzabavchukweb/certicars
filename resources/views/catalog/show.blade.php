@@ -1601,7 +1601,17 @@
         $rowOk = fn($v) => $v !== null && $v !== '' && $v !== false;
         // Pre-compute display values once.
         $dispFuel = CarLabels::fuelType($car->fuel_type);
-        $dispTransmission = CarLabels::transmission($car->transmission);
+        // Skrzynia biegów — Polish canonical ("Manualna"/"Automatyczna"). If
+        // admin filled `drivetrain` ("AWD"/"FWD"/"4×4"), append it as a
+        // suffix so the gearbox cell carries both pieces of information
+        // (mirrors BrochureBuilder line 161-167) and we don't need a
+        // standalone "Napęd" row that would orphan-render an emission card
+        // with one entry.
+        $gearLabel = CarLabels::transmission($car->transmission);
+        $drivetrain = $rowOk($car->drivetrain) ? trim((string) $car->drivetrain) : null;
+        if ($gearLabel && $drivetrain)      $dispTransmission = $gearLabel . ' · ' . $drivetrain;
+        elseif ($drivetrain && !$gearLabel) $dispTransmission = $drivetrain;
+        else                                $dispTransmission = $gearLabel;
         $dispBody = CarLabels::bodyType($car->body_type ?? $car->category);
         $dispCountry = CarLabels::country($car->country_registration);
         $dispImportedFrom = CarLabels::country($car->imported_from);
@@ -1924,48 +1934,41 @@
     </div>
     <p class="cs-info-3row-note">Informacje prezentujemy na podstawie posiadanych dokumentów i oględzin pojazdu.</p>
 
-    {{-- =================== NAPĘD + SPALANIE I EMISJA =================== --}}
-    {{-- Two optional cards. Each card renders only when it has at least one row;
-         the whole section disappears when admin filled none of these fields,
-         keeping the layout identical to the old reference for legacy rows. --}}
+    {{-- =================== SPALANIE I EMISJA ============================
+         One single card. Drivetrain is already in the "Skrzynia biegów" cell
+         of the 16-grid above (e.g. "Manualna · AWD"), so this card is
+         exclusively emission/fuel data. Renders ONLY when admin filled
+         at least 2 of {emission_class, fuel_consumption, co2_emission,
+         fuel_procedure} — a single isolated value (e.g. just CO₂) would
+         look like an orphan tile, so we hide it. ============================ --}}
     @php
-        $driveRows = [];
-        if ($rowOk($car->drivetrain))      $driveRows[] = ['route', 'Napęd', $car->drivetrain];
+        $emRows = [];
         $emClass = \App\Helpers\CarLabels::emissionClass($car->emission_class);
-        if ($emClass !== null)             $driveRows[] = ['leaf', 'Norma emisji spalin', $emClass];
-
-        $fuelRows = [];
+        if ($emClass !== null)              $emRows[] = ['leaf', 'Norma emisji spalin', $emClass];
         $fcStr = \App\Helpers\CarLabels::fuelConsumption($car->fuel_consumption);
-        if ($fcStr !== null)               $fuelRows[] = ['fuel', 'Średnie zużycie', $fcStr];
+        if ($fcStr !== null)                $emRows[] = ['fuel', 'Średnie zużycie', $fcStr];
         $co2Str = \App\Helpers\CarLabels::co2Emission($car->co2_emission);
-        if ($co2Str !== null)              $fuelRows[] = ['cloud', 'Emisja CO₂', $co2Str];
-        if ($rowOk($car->fuel_procedure))  $fuelRows[] = ['flask-conical', 'Procedura pomiaru', $car->fuel_procedure];
-
-        $cards = array_filter([
-            $driveRows ? ['title' => 'Napęd i emisja', 'icon' => 'settings-2', 'rows' => $driveRows] : null,
-            $fuelRows  ? ['title' => 'Zużycie paliwa', 'icon' => 'fuel', 'rows' => $fuelRows] : null,
-        ]);
+        if ($co2Str !== null)               $emRows[] = ['cloud', 'Emisja CO₂', $co2Str];
+        if ($rowOk($car->fuel_procedure))   $emRows[] = ['flask-conical', 'Procedura pomiaru', $car->fuel_procedure];
     @endphp
-    @if(count($cards) > 0)
-    <div class="cs-info-3row cs-info-3row-auto {{ count($cards) === 1 ? 'is-single' : '' }}" style="margin-top:8px">
-        @foreach($cards as $card)
-            <div class="cs-info-3card">
-                <div class="cs-info-3card-head">
-                    <div class="cs-info-3card-ico" aria-hidden="true">
-                        <x-icon :name="$card['icon']" size="18"/>
-                    </div>
-                    <h3 class="cs-info-3card-title">{{ $card['title'] }}</h3>
+    @if(count($emRows) >= 2)
+    <div class="cs-info-3row cs-info-3row-auto is-single" style="margin-top:8px">
+        <div class="cs-info-3card">
+            <div class="cs-info-3card-head">
+                <div class="cs-info-3card-ico" aria-hidden="true">
+                    <x-icon name="fuel" size="18"/>
                 </div>
-                <div class="cs-info-3card-rows">
-                    @foreach($card['rows'] as [$ico, $label, $val])
-                        <div class="cs-info-3row-line">
-                            <span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon :name="$ico" size="14"/></span>{{ $label }}</span>
-                            <span class="val">{{ $val }}</span>
-                        </div>
-                    @endforeach
-                </div>
+                <h3 class="cs-info-3card-title">Spalanie i emisja</h3>
             </div>
-        @endforeach
+            <div class="cs-info-3card-rows">
+                @foreach($emRows as [$ico, $label, $val])
+                    <div class="cs-info-3row-line">
+                        <span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon :name="$ico" size="14"/></span>{{ $label }}</span>
+                        <span class="val">{{ $val }}</span>
+                    </div>
+                @endforeach
+            </div>
+        </div>
     </div>
     @endif
 
