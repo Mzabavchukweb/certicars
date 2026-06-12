@@ -105,6 +105,33 @@ return [
             'processors' => [PsrLogMessageProcessor::class],
         ],
 
+        // Brochure pipeline channel — info level forced regardless of LOG_LEVEL
+        // so we ALWAYS see the dispatch / regen.start / chromium_ok markers
+        // in Railway stdout. Without this, prod's LOG_LEVEL=error swallows
+        // every customer-facing diagnostic so we can never tell whether the
+        // queue is processing or stuck. Two channels: file (laravel.log for
+        // longer retention) + stderr (Railway live stream).
+        'brochure' => [
+            'driver' => 'stack',
+            'channels' => ['brochure-file', 'brochure-stderr'],
+            'ignore_exceptions' => false,
+        ],
+        'brochure-file' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/laravel.log'),
+            'level' => 'info',
+            'replace_placeholders' => true,
+        ],
+        'brochure-stderr' => [
+            'driver' => 'monolog',
+            'level' => 'info',
+            'handler' => StreamHandler::class,
+            'with' => [
+                'stream' => 'php://stderr',
+            ],
+            'processors' => [PsrLogMessageProcessor::class],
+        ],
+
         'syslog' => [
             'driver' => 'syslog',
             'level' => env('LOG_LEVEL', 'debug'),

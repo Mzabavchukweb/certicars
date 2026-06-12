@@ -52,7 +52,7 @@ class BrochurePdfController extends Controller
         $exists  = $ready && Storage::disk('public')->exists($car->brochure_path);
         $size    = $exists ? (int) Storage::disk('public')->size($car->brochure_path) : null;
 
-        Log::info('pdf_brochure.download.request', [
+        Log::channel('brochure')->info('pdf_brochure.download.request', [
             'report_id'   => $reportId,
             'car_id'      => $car->id,
             'route'       => $routeName,
@@ -82,7 +82,7 @@ class BrochurePdfController extends Controller
                 'brochure_path'   => null,
                 'brochure_error'  => 'file missing on disk',
             ])->saveQuietly();
-            Log::warning('pdf_brochure.download.file_missing_on_disk', [
+            Log::channel('brochure')->warning('pdf_brochure.download.file_missing_on_disk', [
                 'report_id' => $reportId,
                 'car_id'    => $car->id,
                 'path'      => $car->brochure_path,
@@ -97,7 +97,7 @@ class BrochurePdfController extends Controller
                 'brochure_status' => 'failed',
                 'brochure_error'  => 'cached file did not start with %PDF',
             ])->saveQuietly();
-            Log::error('pdf_brochure.download.cached_bytes_invalid', [
+            Log::channel('brochure')->error('pdf_brochure.download.cached_bytes_invalid', [
                 'report_id' => $reportId,
                 'car_id'    => $car->id,
                 'path'      => $car->brochure_path,
@@ -107,7 +107,7 @@ class BrochurePdfController extends Controller
 
         $filename = 'CertiCars-' . ($car->identifier ?? 'brochure') . '-' . $car->slug . '.pdf';
 
-        Log::info('pdf_brochure.download.served', [
+        Log::channel('brochure')->info('pdf_brochure.download.served', [
             'report_id'    => $reportId,
             'car_id'       => $car->id,
             'pdf_size'     => strlen($pdf),

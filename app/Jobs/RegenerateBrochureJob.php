@@ -56,7 +56,7 @@ class RegenerateBrochureJob implements ShouldQueue
         $car = Car::find($this->carId);
         if (!$car) {
             // Car was deleted between dispatch and job execution. Nothing to do.
-            Log::info('pdf_brochure.job.car_missing', ['car_id' => $this->carId]);
+            Log::channel('brochure')->info('pdf_brochure.job.car_missing', ['car_id' => $this->carId]);
             return;
         }
 
@@ -67,7 +67,7 @@ class RegenerateBrochureJob implements ShouldQueue
             // Swallowing here mirrors the pre-async observer try/catch so a
             // QUEUE_CONNECTION=sync deploy (local dev, tests) doesn't crash
             // the admin save when Chromium is missing or transiently broken.
-            Log::warning('pdf_brochure.job.regen_failed_swallowed', [
+            Log::channel('brochure')->warning('pdf_brochure.job.regen_failed_swallowed', [
                 'car_id'    => $car->id,
                 'exception' => get_class($e),
                 'message'   => $e->getMessage(),

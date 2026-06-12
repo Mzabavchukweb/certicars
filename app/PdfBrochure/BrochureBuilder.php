@@ -98,7 +98,7 @@ final class BrochureBuilder
             interiorPanoUrl: $car->pano360Image ? url('/samochody/' . $car->slug) : null,
         );
 
-        Log::info('pdf_brochure.built', [
+        Log::channel('brochure')->info('pdf_brochure.built', [
             'report_id'         => $reportId,
             'car_id'            => $car->id,
             'gallery_count'     => count($data->galleryImages),

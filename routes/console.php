@@ -41,4 +41,9 @@ Schedule::command('brochures:rebuild --missing')
     ->everyTenMinutes()
     ->withoutOverlapping(20)
     ->onOneServer()
-    ->runInBackground();
+    // Append to a dedicated log file so the rebuild output (per-car ok/fail
+    // counts, error messages) is visible AFTER the schedule tick — without
+    // this the output goes to /dev/null and we can't diagnose why a backlog
+    // isn't clearing. The file is appended to so multiple ticks add lines
+    // instead of overwriting.
+    ->appendOutputTo(storage_path('logs/brochure-rebuild.log'));

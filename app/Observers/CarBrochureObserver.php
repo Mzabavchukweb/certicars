@@ -86,7 +86,7 @@ class CarBrochureObserver
         // "preparing" modals we can correlate timestamps with the absence
         // of `pdf_brochure.job.started` markers — pinpointing whether the
         // bottleneck is dispatch (queue insert), worker pickup, or render.
-        Log::info('pdf_brochure.observer.dispatched', [
+        Log::channel('brochure')->info('pdf_brochure.observer.dispatched', [
             'car_id'  => $car->id,
             'reason'  => $needsBecauseNew ? 'new_car_or_missing_path' : 'trigger_field_changed',
             'changed' => array_values($relevantChanges),
