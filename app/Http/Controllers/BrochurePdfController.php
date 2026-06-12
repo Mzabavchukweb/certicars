@@ -219,6 +219,84 @@ class BrochurePdfController extends Controller
         }
     }
 
+    /**
+     * P0 production debug — wszystkie CertiCheck cars z ich brochure state
+     * w jednym JSON-ie. Otwórz w przeglądarce zalogowany jako admin:
+     *   https://certicars.pl/admin/brochures/status
+     *
+     * Zwraca:
+     *   - summary: count per status (ready/missing/generating/failed)
+     *   - cars: per row {id, slug, status, has_path, path_exists_on_disk,
+     *           error, generated_at, size}
+     *   - queue: count pending jobs + count failed_jobs (queue health)
+     *   - chromium: assertReady ok/fail (Chromium binary check)
+     *
+     * Z tego widać DOKŁADNIE gdzie pipeline pęka bez czekania na logi.
+     */
+    public function statusOverview(ChromiumRenderer $renderer): JsonResponse
+    {
+        if (!auth()->user()?->is_admin) {
+            abort(403);
+        }
+
+        $cars = Car::query()
+            ->where('has_certicheck', true)
+            ->orderByDesc('updated_at')
+            ->get(['id', 'slug', 'brochure_status', 'brochure_path', 'brochure_size', 'brochure_generated_at', 'brochure_error', 'updated_at']);
+
+        $summary = ['ready' => 0, 'generating' => 0, 'missing' => 0, 'failed' => 0, 'other' => 0];
+        $rows = [];
+
+        foreach ($cars as $car) {
+            $st = $car->brochure_status ?? 'missing';
+            if (isset($summary[$st])) $summary[$st]++;
+            else                       $summary['other']++;
+
+            $pathExists = null;
+            if (!empty($car->brochure_path)) {
+                try { $pathExists = \Storage::disk('public')->exists($car->brochure_path); }
+                catch (\Throwable $e) { $pathExists = 'check_failed: ' . $e->getMessage(); }
+            }
+
+            $rows[] = [
+                'id'                  => $car->id,
+                'slug'                => $car->slug,
+                'status'              => $st,
+                'has_path'            => !empty($car->brochure_path),
+                'path'                => $car->brochure_path,
+                'path_exists_on_disk' => $pathExists,
+                'size_bytes'          => $car->brochure_size,
+                'error'               => $car->brochure_error,
+                'generated_at'        => optional($car->brochure_generated_at)->toIso8601String(),
+                'updated_at'          => optional($car->updated_at)->toIso8601String(),
+                'minutes_since_update'=> optional($car->updated_at)?->diffInMinutes(now()),
+            ];
+        }
+
+        // Queue health
+        $pendingJobs = 0;
+        $failedJobs  = 0;
+        try { $pendingJobs = (int) \DB::table('jobs')->count(); }       catch (\Throwable) {}
+        try { $failedJobs  = (int) \DB::table('failed_jobs')->count(); } catch (\Throwable) {}
+
+        // Chromium binary check
+        $chromium = ['ok' => null, 'message' => null];
+        try {
+            $renderer->assertReady('status-overview');
+            $chromium = ['ok' => true, 'message' => 'binary executable found'];
+        } catch (\Throwable $e) {
+            $chromium = ['ok' => false, 'message' => $e->getMessage()];
+        }
+
+        return response()->json([
+            'now'      => now()->toIso8601String(),
+            'summary'  => $summary,
+            'queue'    => ['pending_jobs' => $pendingJobs, 'failed_jobs' => $failedJobs],
+            'chromium' => $chromium,
+            'cars'     => $rows,
+        ], 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
     private function newBuilder(string $reportId): BrochureBuilder
     {
         $isS3       = config('filesystems.disks.public.driver') === 's3';

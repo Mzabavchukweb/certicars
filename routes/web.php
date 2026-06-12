@@ -69,6 +69,12 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     // Dockerfile / runtime to confirm the binary is actually executable
     // before customers report broken downloads.
     Route::get('pdf/health', [BrochurePdfController::class, 'health'])->name('admin.pdf.health');
+    // P0 production debug: list ALL CertiCheck cars with their current
+    // brochure state in a single JSON response. Hit when customers report
+    // a stuck "preparing" modal — we see at a glance which row is stuck
+    // in which phase (missing/generating/failed/ready) and any recorded
+    // error. Admin-only via the surrounding middleware group.
+    Route::get('brochures/status', [BrochurePdfController::class, 'statusOverview'])->name('admin.brochures.status');
     Route::post('otomoto-import', [OtomotoImportController::class, 'scrape'])->name('admin.otomoto.import');
 
     Route::resource('brands', AdminBrandController::class)->names('admin.brands')->except(['create', 'show', 'edit']);
