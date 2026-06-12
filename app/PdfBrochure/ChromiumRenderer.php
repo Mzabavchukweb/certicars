@@ -36,7 +36,7 @@ class ChromiumRenderer
     {
         $path = $this->resolveChromiumPath();
         if ($path === null) {
-            Log::error('pdf_brochure.chromium_not_ready', [
+            Log::channel('brochure')->error('pdf_brochure.chromium_not_ready', [
                 'report_id' => $reportId,
                 'reason'    => 'no_binary_found',
                 'env_path'  => env('PUPPETEER_EXECUTABLE_PATH'),
@@ -45,7 +45,7 @@ class ChromiumRenderer
                 'Chromium binary not found. Check PUPPETEER_EXECUTABLE_PATH or install /usr/bin/chromium.'
             );
         }
-        Log::info('pdf_brochure.chromium_ready', [
+        Log::channel('brochure')->info('pdf_brochure.chromium_ready', [
             'report_id' => $reportId,
             'path'      => $path,
         ]);
@@ -76,7 +76,7 @@ class ChromiumRenderer
             // CouldNotTakeBrowsershot, but its internals throw Symfony
             // ProcessFailedException / ProcessTimedOutException. Production
             // hit the latter and they were never caught.
-            Log::error('pdf_brochure.chromium_failed', [
+            Log::channel('brochure')->error('pdf_brochure.chromium_failed', [
                 'report_id' => $reportId,
                 'exception' => get_class($e),
                 'message'   => $e->getMessage(),
@@ -93,7 +93,7 @@ class ChromiumRenderer
             // Browsershot returned something that isn't a PDF. This was
             // never observed locally but: belt-and-braces against shipping
             // bytes that Chrome will save as a broken file.
-            Log::error('pdf_brochure.chromium_bad_output', [
+            Log::channel('brochure')->error('pdf_brochure.chromium_bad_output', [
                 'report_id'    => $reportId,
                 'bytes_length' => is_string($bytes) ? strlen($bytes) : 0,
                 'head_hex'     => is_string($bytes) ? bin2hex(substr($bytes, 0, 16)) : '',
@@ -101,7 +101,7 @@ class ChromiumRenderer
             throw new BrochureRenderException('Chromium produced a non-PDF response.');
         }
 
-        Log::info('pdf_brochure.chromium_ok', [
+        Log::channel('brochure')->info('pdf_brochure.chromium_ok', [
             'report_id'   => $reportId,
             'duration_ms' => (int) ((microtime(true) - $start) * 1000),
             'bytes'       => strlen($bytes),

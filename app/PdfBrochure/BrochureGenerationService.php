@@ -67,7 +67,7 @@ class BrochureGenerationService
             return;
         }
 
-        Log::info('pdf_brochure.regen.start', [
+        Log::channel('brochure')->info('pdf_brochure.regen.start', [
             'report_id' => $reportId,
             'car_id'    => $car->id,
         ]);
@@ -99,7 +99,7 @@ class BrochureGenerationService
             //    serving the new file the moment this row update lands.
             $this->markStatus($car, 'ready', $path, strlen($pdf), null);
 
-            Log::info('pdf_brochure.regen.ok', [
+            Log::channel('brochure')->info('pdf_brochure.regen.ok', [
                 'report_id'   => $reportId,
                 'car_id'      => $car->id,
                 'path'        => $path,
@@ -109,7 +109,7 @@ class BrochureGenerationService
         } catch (\Throwable $e) {
             $this->markStatus($car, 'failed', null, null, $this->shortMessage($e));
 
-            Log::error('pdf_brochure.regen.failed', [
+            Log::channel('brochure')->error('pdf_brochure.regen.failed', [
                 'report_id'   => $reportId,
                 'car_id'      => $car->id,
                 'exception'   => get_class($e),
@@ -132,7 +132,7 @@ class BrochureGenerationService
             try {
                 Storage::disk('public')->delete($car->brochure_path);
             } catch (\Throwable $e) {
-                Log::warning('pdf_brochure.regen.delete_failed', [
+                Log::channel('brochure')->warning('pdf_brochure.regen.delete_failed', [
                     'car_id'  => $car->id,
                     'path'    => $car->brochure_path,
                     'message' => $e->getMessage(),
