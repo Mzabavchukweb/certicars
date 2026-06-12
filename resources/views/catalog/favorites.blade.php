@@ -88,7 +88,7 @@
                 @endif
                 @if($car->has_certicheck)
                 <div class="fav-lcard-certi-wrap">
-                    <x-certicheck-cta :slug="$car->slug" :ready="$car->brochureIsReady()" size="sm"/>
+                    <x-certicheck-cta :slug="$car->slug" :status="$car->brochureCustomerStatus()" size="sm"/>
                 </div>
                 @endif
                 <button class="fav-remove" data-id="{{ $car->id }}" aria-label="Usuń z obserwowanych" onclick="removeFav(event, {{ $car->id }})">

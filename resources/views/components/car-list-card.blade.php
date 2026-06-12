@@ -93,7 +93,7 @@
 
                 @if($car->has_certicheck)
                     <div class="lcard-certicheck">
-                        <x-certicheck-cta :slug="$car->slug" :ready="$car->brochureIsReady()" size="sm"/>
+                        <x-certicheck-cta :slug="$car->slug" :status="$car->brochureCustomerStatus()" size="sm"/>
                     </div>
                 @endif
             </div>

@@ -58,6 +58,28 @@ class Car extends Model
             && !empty($this->brochure_path);
     }
 
+    /**
+     * Customer-facing brochure state enum — drives the public CertiCheck CTA
+     * pill behaviour. Returns one of:
+     *   ready      → cached PDF on storage; click downloads instantly
+     *   processing → queue regen in flight; click should surface premium
+     *                "raport jest w przygotowaniu" modal, never a 404
+     *   failed     → last regen threw; treat as missing for the customer
+     *                (admin sees the real error in diagnostic endpoint)
+     *   missing    → no brochure has ever been generated for this car
+     * For cars without CertiCheck the CTA never renders at all, so this
+     * method is only meaningful when has_certicheck is true.
+     */
+    public function brochureCustomerStatus(): string
+    {
+        if ($this->brochureIsReady()) return 'ready';
+        return match ($this->brochure_status) {
+            'generating', 'pending' => 'processing',
+            'failed' => 'failed',
+            default  => 'missing',
+        };
+    }
+
     protected static function booted(): void
     {
         static::creating(function (Car $car) {
@@ -130,6 +152,25 @@ class Car extends Model
     }
 
     /**
+     * Customer-facing 360° interior viewer state — mirrors brochureCustomerStatus
+     * so the public gallery tab can render a single switch instead of per-call
+     * checks on raw status + count + path. One of:
+     *   ready      → frame scrubber renders + tab is enabled
+     *   processing → frame extractor job in queue; tab is disabled with
+     *                "Widok 360° jest przygotowywany" message
+     *   pano       → no frames but admin uploaded the legacy equirectangular
+     *                pano → Pannellum viewer renders
+     *   missing    → nothing to show; tab MUST be hidden completely
+     */
+    public function interior360CustomerStatus(): string
+    {
+        if ($this->hasInteriorFrames())                                   return 'ready';
+        if (in_array($this->interior_frames_status, ['pending', 'processing'], true)) return 'processing';
+        if ($this->pano360Image)                                          return 'pano';
+        return 'missing';
+    }
+
+    /**
      * Build a sequenced list of public URLs for the extracted interior frames.
      * Used by the catalog page's drag-scrubber. Returns [] when frames are not
      * ready so the Blade view can fall back to the equirectangular interior
@@ -149,6 +190,15 @@ class Car extends Model
         return $this->exterior_frames_status === 'ready'
             && (int) $this->exterior_frames_count > 0
             && !empty($this->exterior_frames_dir);
+    }
+
+    /** @see interior360CustomerStatus() — identical contract for the exterior side. */
+    public function exterior360CustomerStatus(): string
+    {
+        if ($this->hasExteriorFrames())                                   return 'ready';
+        if (in_array($this->exterior_frames_status, ['pending', 'processing'], true)) return 'processing';
+        if ($this->exteriorPano360Image)                                  return 'pano';
+        return 'missing';
     }
 
     /**
