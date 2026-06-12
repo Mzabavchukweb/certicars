@@ -387,11 +387,21 @@ class PublicPagesTest extends TestCase
         $this->assertNull($data->heroImage);
     }
 
-    public function test_car_image_alt_falls_back_to_car_title(): void
+    public function test_car_image_alt_falls_back_to_car_title_when_car_eager_loaded(): void
     {
+        // The alt accessor weaves the car title in ONLY when the `car`
+        // relation (and `brand` on it) is already loaded — otherwise the
+        // public detail page would fire a Car+Brand lookup per gallery
+        // thumb (5+5 N+1 confirmed via SQL profile). Test both branches.
         $car = $this->activeCar();
         $image = $car->images->first();
 
+        // Branch 1: car relation NOT eager-loaded → bare type fallback.
+        $this->assertStringContainsString('Samochód', $image->alt);
+        $this->assertStringContainsString('zdjęcie', $image->alt);
+
+        // Branch 2: car + brand eager-loaded → full title weaving.
+        $image->load('car.brand');
         $this->assertStringContainsString('Audi', $image->alt);
         $this->assertStringContainsString('zdjęcie', $image->alt);
     }
