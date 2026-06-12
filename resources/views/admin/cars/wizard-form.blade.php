@@ -696,6 +696,33 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
     padding: 24px;
     margin-bottom: 18px;
 }
+
+/* 360° type toggle (Film vs Panorama). Dwie wzajemnie wykluczające się
+   karty wyboru — admin klika jedną, druga się dezaktywuje, pokazuje się
+   tylko panel z uploaderem dla wybranego trybu. */
+.wz-360-toggle {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+}
+.wz-360-toggle-card {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+}
+.wz-360-toggle-card:hover { border-color: #cbd5e1; background: #fafbff; }
+.wz-360-toggle-card.active { border-color: var(--blue, #0066ff); background: rgba(0,102,255,.04); }
+.wz-360-toggle-card i { width: 22px; height: 22px; color: var(--blue, #0066ff); flex-shrink: 0; margin-top: 2px; }
+.wz-360-toggle-title { font-size: 14px; font-weight: 700; color: #0a0a0a; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.wz-360-toggle-sub { font-size: 12px; color: var(--text-3, #6b7280); line-height: 1.5; }
+.wz-360-panel { animation: wzFadeIn .15s ease; }
 .wz-media-header {
     display: flex;
     align-items: center;
@@ -1236,145 +1263,178 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         <div id="wzDamageUploadedGrid" class="wz-file-preview-grid"></div>
     </div>
 
-    {{-- 360° interior — video (preferred, Copart-style) --}}
-    <div class="wz-media-section" data-certicheck-only="1">
-        <div class="wz-media-header">
-            <i data-lucide="film"></i>
-            <h3>360° wnętrza — film</h3>
-        </div>
-        <p style="font-size:12px;color:var(--text-3);margin:0 0 14px">
-            Wgraj krótki obrót kamerą wewnątrz pojazdu (3–6 s, MP4/WebM/MOV, max 200 MB).
-            System sam wytnie {{ \App\Services\InteriorFrameExtractor::FRAME_COUNT }} klatek do interaktywnego przeglądania w katalogu.
-            Status zmienia się na „gotowe” po przetworzeniu w tle.
-        </p>
+    {{-- 360° interior — jedna sekcja z radio toggle: Film vs Panorama.
+         Stary układ miał DWIE niezależne sekcje (film + panorama-zapas) →
+         klienci nie wiedzieli czego użyć, niektórzy wgrywali oba, panorama
+         zawsze zostawała w DB jako orphan asset.
 
-        @if($car?->interior_video_path)
-        @php
-            $intStatus = $car->interior_frames_status;
-            $intPill = match($intStatus) {
-                'ready' => ['#10b981','#ecfdf5','Gotowe — '.$car->interior_frames_count.' klatek'],
-                'processing' => ['#0066ff','#eff6ff','Przetwarzanie…'],
-                'pending' => ['#6b7280','#f3f4f6','W kolejce'],
-                'failed' => ['#b91c1c','#fef2f2','Błąd ekstrakcji'],
-                default => ['#6b7280','#f3f4f6','Stan nieznany'],
-            };
-        @endphp
-        <div style="background:#fafafb;border:1px solid var(--border-l);border-radius:10px;padding:12px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
-            <div style="flex:1;min-width:240px">
-                <div style="font-weight:600;font-size:13px;margin-bottom:6px">
-                    <span style="display:inline-block;padding:3px 9px;border-radius:50px;font-size:11.5px;font-weight:700;color:{{ $intPill[0] }};background:{{ $intPill[1] }}">{{ $intPill[2] }}</span>
+         Default: Film (zalecane). Edit existing car z saved video → Film
+         pre-selected. Z saved pano → Panorama pre-selected. Z OBU →
+         Film (priorytet konsumpcji na detalu). --}}
+    @php
+        $intInitialMode = $car?->interior_video_path ? 'video' : ($car?->pano360Image ? 'pano' : 'video');
+        $intStatus = $car?->interior_video_path ? $car->interior_frames_status : null;
+        $intPill = $intStatus ? match($intStatus) {
+            'ready' => ['#10b981','#ecfdf5','Gotowe — '.$car->interior_frames_count.' klatek'],
+            'processing' => ['#0066ff','#eff6ff','Przetwarzanie…'],
+            'pending' => ['#6b7280','#f3f4f6','W kolejce'],
+            'failed' => ['#b91c1c','#fef2f2','Błąd ekstrakcji'],
+            default => ['#6b7280','#f3f4f6','Stan nieznany'],
+        } : null;
+    @endphp
+    <div class="wz-media-section wz-360-section" data-certicheck-only="1" data-360-side="interior">
+        <div class="wz-media-header">
+            <i data-lucide="orbit"></i>
+            <h3>360° wnętrze pojazdu <span style="font-size:11px;color:var(--text-3);font-weight:500">(opcjonalne)</span></h3>
+        </div>
+        <p style="font-size:12px;color:var(--text-3);margin:0 0 14px">Wybierz typ prezentacji — system użyje TYLKO wybranego źródła. Możesz w każdej chwili zmienić wybór.</p>
+
+        {{-- Mode toggle: 2 radio cards --}}
+        <div class="wz-360-toggle" role="radiogroup" aria-label="Typ 360° wnętrza">
+            <label class="wz-360-toggle-card {{ $intInitialMode === 'video' ? 'active' : '' }}" data-360-mode="video">
+                <input type="radio" name="interior_360_mode" value="video" {{ $intInitialMode === 'video' ? 'checked' : '' }} style="position:absolute;opacity:0">
+                <i data-lucide="film"></i>
+                <div>
+                    <div class="wz-360-toggle-title">Film 360° <span style="color:#0066ff;font-size:11px">zalecane</span></div>
+                    <div class="wz-360-toggle-sub">Krótki obrót kamerą (3–6 s) — system wytnie {{ \App\Services\InteriorFrameExtractor::FRAME_COUNT }} klatek do interaktywnego przeglądania.</div>
                 </div>
-                <div style="font-size:11.5px;color:var(--text-3);word-break:break-all;margin-bottom:8px">{{ $car->interior_video_path }}</div>
-                @if($intStatus === 'failed' && $car->interior_frames_error)
-                <div style="font-size:11px;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:6px 8px;margin-bottom:8px">{{ $car->interior_frames_error }}</div>
-                @endif
-                <label class="wz-inline-label" style="color:#b91c1c;font-size:12px"><input type="checkbox" name="remove_interior_video" value="1"> Usuń film i wszystkie klatki przy zapisie</label>
-            </div>
-        </div>
-        @endif
-
-        <label class="wz-file-drop" id="wzInteriorVidDrop">
-            <i data-lucide="film"></i>
-            <div class="drop-title">Kliknij lub przeciągnij <strong>film z wnętrza</strong> (MP4, WebM, MOV — max 200 MB)</div>
-            <input type="file" name="interior_video_file" accept="video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska">
-        </label>
-    </div>
-
-    {{-- 360° interior panorama (legacy / fallback) --}}
-    <div class="wz-media-section" data-certicheck-only="1">
-        <div class="wz-media-header">
-            <i data-lucide="globe"></i>
-            <h3>Panorama 360° — wnętrze <span style="font-size:11px;color:var(--text-3);font-weight:500">(zapas)</span></h3>
-        </div>
-        <p style="font-size:12px;color:var(--text-3);margin:0 0 14px">Pojedyncze zdjęcie equirectangular (format 2:1, np. 4096×2048 px). Pokaże się tylko, gdy film z wnętrza nie został wgrany.</p>
-
-        @if($car?->pano360Image)
-        <div style="background:#fafafb;border:1px solid var(--border-l);border-radius:10px;padding:12px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start">
-            <img src="{{ $car->pano360Image->url }}" alt="" style="width:200px;height:100px;object-fit:cover;border-radius:8px;background:#000">
-            <div style="flex:1;min-width:0">
-                <div style="font-weight:600;font-size:13px;margin-bottom:4px"><i data-lucide="check-circle" style="width:14px;height:14px;color:#10b981;vertical-align:-2px"></i> Panorama aktywna</div>
-                <div style="font-size:11.5px;color:var(--text-3);word-break:break-all;margin-bottom:8px">{{ $car->pano360Image->path }}</div>
-                <label class="wz-inline-label" style="color:#b91c1c;font-size:12px"><input type="checkbox" name="remove_pano360" value="1"> Usuń panoramę przy zapisie</label>
-            </div>
-        </div>
-        @endif
-
-        <label class="wz-file-drop" id="wzPano360Drop">
-            <i data-lucide="globe"></i>
-            <div class="drop-title">Kliknij lub przeciągnij <strong>jedno</strong> zdjęcie panoramiczne (max 15 MB)</div>
-            <input type="file" name="pano360_image" accept="image/jpeg,image/png,image/webp">
-        </label>
-    </div>
-
-    {{-- 360° exterior — video (preferred, Copart-style walk-around) --}}
-    <div class="wz-media-section" data-certicheck-only="1">
-        <div class="wz-media-header">
-            <i data-lucide="film"></i>
-            <h3>360° zewnętrza — film</h3>
-        </div>
-        <p style="font-size:12px;color:var(--text-3);margin:0 0 14px">
-            Wgraj krótki obrót kamerą wokół pojazdu (3–6 s, MP4/WebM/MOV, max 200 MB).
-            System sam wytnie {{ \App\Services\InteriorFrameExtractor::FRAME_COUNT }} klatek do interaktywnego oglądania auta z każdej strony.
-            Status zmienia się na „gotowe” po przetworzeniu w tle.
-        </p>
-
-        @if($car?->exterior_video_path)
-        @php
-            $extStatus = $car->exterior_frames_status;
-            $extPill = match($extStatus) {
-                'ready' => ['#10b981','#ecfdf5','Gotowe — '.$car->exterior_frames_count.' klatek'],
-                'processing' => ['#0066ff','#eff6ff','Przetwarzanie…'],
-                'pending' => ['#6b7280','#f3f4f6','W kolejce'],
-                'failed' => ['#b91c1c','#fef2f2','Błąd ekstrakcji'],
-                default => ['#6b7280','#f3f4f6','Stan nieznany'],
-            };
-        @endphp
-        <div style="background:#fafafb;border:1px solid var(--border-l);border-radius:10px;padding:12px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
-            <div style="flex:1;min-width:240px">
-                <div style="font-weight:600;font-size:13px;margin-bottom:6px">
-                    <span style="display:inline-block;padding:3px 9px;border-radius:50px;font-size:11.5px;font-weight:700;color:{{ $extPill[0] }};background:{{ $extPill[1] }}">{{ $extPill[2] }}</span>
+            </label>
+            <label class="wz-360-toggle-card {{ $intInitialMode === 'pano' ? 'active' : '' }}" data-360-mode="pano">
+                <input type="radio" name="interior_360_mode" value="pano" {{ $intInitialMode === 'pano' ? 'checked' : '' }} style="position:absolute;opacity:0">
+                <i data-lucide="globe"></i>
+                <div>
+                    <div class="wz-360-toggle-title">Panorama 360°</div>
+                    <div class="wz-360-toggle-sub">Pojedyncze zdjęcie equirectangular (format 2:1, np. 4096×2048 px).</div>
                 </div>
-                <div style="font-size:11.5px;color:var(--text-3);word-break:break-all;margin-bottom:8px">{{ $car->exterior_video_path }}</div>
-                @if($extStatus === 'failed' && $car->exterior_frames_error)
-                <div style="font-size:11px;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:6px 8px;margin-bottom:8px">{{ $car->exterior_frames_error }}</div>
-                @endif
-                <label class="wz-inline-label" style="color:#b91c1c;font-size:12px"><input type="checkbox" name="remove_exterior_video" value="1"> Usuń film i wszystkie klatki przy zapisie</label>
-            </div>
+            </label>
         </div>
-        @endif
 
-        <label class="wz-file-drop" id="wzExteriorVidDrop">
-            <i data-lucide="film"></i>
-            <div class="drop-title">Kliknij lub przeciągnij <strong>film dookoła auta</strong> (MP4, WebM, MOV — max 200 MB)</div>
-            <input type="file" name="exterior_video_file" accept="video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska">
-        </label>
+        {{-- Video panel (visible when interior_360_mode=video) --}}
+        <div class="wz-360-panel" data-360-panel="video" style="margin-top:16px;{{ $intInitialMode === 'video' ? '' : 'display:none' }}">
+            @if($car?->interior_video_path)
+            <div style="background:#fafafb;border:1px solid var(--border-l);border-radius:10px;padding:12px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+                <div style="flex:1;min-width:240px">
+                    <div style="font-weight:600;font-size:13px;margin-bottom:6px">
+                        <span style="display:inline-block;padding:3px 9px;border-radius:50px;font-size:11.5px;font-weight:700;color:{{ $intPill[0] }};background:{{ $intPill[1] }}">{{ $intPill[2] }}</span>
+                    </div>
+                    <div style="font-size:11.5px;color:var(--text-3);word-break:break-all;margin-bottom:8px">{{ $car->interior_video_path }}</div>
+                    @if($intStatus === 'failed' && $car->interior_frames_error)
+                    <div style="font-size:11px;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:6px 8px;margin-bottom:8px">{{ $car->interior_frames_error }}</div>
+                    @endif
+                    <label class="wz-inline-label" style="color:#b91c1c;font-size:12px"><input type="checkbox" name="remove_interior_video" value="1"> Usuń film i wszystkie klatki przy zapisie</label>
+                </div>
+            </div>
+            @endif
+            <label class="wz-file-drop" id="wzInteriorVidDrop">
+                <i data-lucide="film"></i>
+                <div class="drop-title">Kliknij lub przeciągnij <strong>film z wnętrza</strong> (MP4, WebM, MOV — max 200 MB)</div>
+                <input type="file" name="interior_video_file" accept="video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska">
+            </label>
+        </div>
+
+        {{-- Panorama panel (visible when interior_360_mode=pano) --}}
+        <div class="wz-360-panel" data-360-panel="pano" style="margin-top:16px;{{ $intInitialMode === 'pano' ? '' : 'display:none' }}">
+            @if($car?->pano360Image)
+            <div style="background:#fafafb;border:1px solid var(--border-l);border-radius:10px;padding:12px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start">
+                <img src="{{ $car->pano360Image->url }}" alt="" style="width:200px;height:100px;object-fit:cover;border-radius:8px;background:#000">
+                <div style="flex:1;min-width:0">
+                    <div style="font-weight:600;font-size:13px;margin-bottom:4px"><i data-lucide="check-circle" style="width:14px;height:14px;color:#10b981;vertical-align:-2px"></i> Panorama aktywna</div>
+                    <div style="font-size:11.5px;color:var(--text-3);word-break:break-all;margin-bottom:8px">{{ $car->pano360Image->path }}</div>
+                    <label class="wz-inline-label" style="color:#b91c1c;font-size:12px"><input type="checkbox" name="remove_pano360" value="1"> Usuń panoramę przy zapisie</label>
+                </div>
+            </div>
+            @endif
+            <label class="wz-file-drop" id="wzPano360Drop">
+                <i data-lucide="globe"></i>
+                <div class="drop-title">Kliknij lub przeciągnij <strong>jedno</strong> zdjęcie panoramiczne (max 15 MB)</div>
+                <input type="file" name="pano360_image" accept="image/jpeg,image/png,image/webp">
+            </label>
+        </div>
     </div>
 
-    {{-- 360° exterior panorama (legacy / fallback) --}}
-    <div class="wz-media-section" data-certicheck-only="1">
+    {{-- 360° exterior — analogicznie do interior: jedna sekcja, radio
+         toggle, dwa exclusywne panele. --}}
+    @php
+        $extInitialMode = $car?->exterior_video_path ? 'video' : ($car?->exteriorPano360Image ? 'pano' : 'video');
+        $extStatus = $car?->exterior_video_path ? $car->exterior_frames_status : null;
+        $extPill = $extStatus ? match($extStatus) {
+            'ready' => ['#10b981','#ecfdf5','Gotowe — '.$car->exterior_frames_count.' klatek'],
+            'processing' => ['#0066ff','#eff6ff','Przetwarzanie…'],
+            'pending' => ['#6b7280','#f3f4f6','W kolejce'],
+            'failed' => ['#b91c1c','#fef2f2','Błąd ekstrakcji'],
+            default => ['#6b7280','#f3f4f6','Stan nieznany'],
+        } : null;
+    @endphp
+    <div class="wz-media-section wz-360-section" data-certicheck-only="1" data-360-side="exterior">
         <div class="wz-media-header">
             <i data-lucide="scan"></i>
-            <h3>Panorama 360° — zewnętrze <span style="font-size:11px;color:var(--text-3);font-weight:500">(zapas)</span></h3>
+            <h3>360° na zewnątrz pojazdu <span style="font-size:11px;color:var(--text-3);font-weight:500">(opcjonalne)</span></h3>
         </div>
-        <p style="font-size:12px;color:var(--text-3);margin:0 0 14px">Pojedyncze zdjęcie equirectangular obejmujące pełny widok dookoła pojazdu. Pokaże się tylko, gdy film z zewnętrza nie został wgrany.</p>
+        <p style="font-size:12px;color:var(--text-3);margin:0 0 14px">Wybierz typ prezentacji — system użyje TYLKO wybranego źródła.</p>
 
-        @if($car?->exteriorPano360Image)
-        <div style="background:#fafafb;border:1px solid var(--border-l);border-radius:10px;padding:12px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start">
-            <img src="{{ $car->exteriorPano360Image->url }}" alt="" style="width:200px;height:100px;object-fit:cover;border-radius:8px;background:#000">
-            <div style="flex:1;min-width:0">
-                <div style="font-weight:600;font-size:13px;margin-bottom:4px"><i data-lucide="check-circle" style="width:14px;height:14px;color:#10b981;vertical-align:-2px"></i> Panorama zewnętrzna aktywna</div>
-                <div style="font-size:11.5px;color:var(--text-3);word-break:break-all;margin-bottom:8px">{{ $car->exteriorPano360Image->path }}</div>
-                <label class="wz-inline-label" style="color:#b91c1c;font-size:12px"><input type="checkbox" name="remove_pano360ext" value="1"> Usuń panoramę przy zapisie</label>
+        <div class="wz-360-toggle" role="radiogroup" aria-label="Typ 360° zewnątrz">
+            <label class="wz-360-toggle-card {{ $extInitialMode === 'video' ? 'active' : '' }}" data-360-mode="video">
+                <input type="radio" name="exterior_360_mode" value="video" {{ $extInitialMode === 'video' ? 'checked' : '' }} style="position:absolute;opacity:0">
+                <i data-lucide="film"></i>
+                <div>
+                    <div class="wz-360-toggle-title">Film 360° <span style="color:#0066ff;font-size:11px">zalecane</span></div>
+                    <div class="wz-360-toggle-sub">Krótki obrót kamerą wokół pojazdu (3–6 s) — system wytnie klatki do interaktywnego oglądania.</div>
+                </div>
+            </label>
+            <label class="wz-360-toggle-card {{ $extInitialMode === 'pano' ? 'active' : '' }}" data-360-mode="pano">
+                <input type="radio" name="exterior_360_mode" value="pano" {{ $extInitialMode === 'pano' ? 'checked' : '' }} style="position:absolute;opacity:0">
+                <i data-lucide="globe"></i>
+                <div>
+                    <div class="wz-360-toggle-title">Panorama 360°</div>
+                    <div class="wz-360-toggle-sub">Pojedyncze zdjęcie equirectangular obejmujące pełny widok dookoła pojazdu.</div>
+                </div>
+            </label>
+        </div>
+
+        <div class="wz-360-panel" data-360-panel="video" style="margin-top:16px;{{ $extInitialMode === 'video' ? '' : 'display:none' }}">
+            @if($car?->exterior_video_path)
+            <div style="background:#fafafb;border:1px solid var(--border-l);border-radius:10px;padding:12px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+                <div style="flex:1;min-width:240px">
+                    <div style="font-weight:600;font-size:13px;margin-bottom:6px">
+                        <span style="display:inline-block;padding:3px 9px;border-radius:50px;font-size:11.5px;font-weight:700;color:{{ $extPill[0] }};background:{{ $extPill[1] }}">{{ $extPill[2] }}</span>
+                    </div>
+                    <div style="font-size:11.5px;color:var(--text-3);word-break:break-all;margin-bottom:8px">{{ $car->exterior_video_path }}</div>
+                    @if($extStatus === 'failed' && $car->exterior_frames_error)
+                    <div style="font-size:11px;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:6px 8px;margin-bottom:8px">{{ $car->exterior_frames_error }}</div>
+                    @endif
+                    <label class="wz-inline-label" style="color:#b91c1c;font-size:12px"><input type="checkbox" name="remove_exterior_video" value="1"> Usuń film i wszystkie klatki przy zapisie</label>
+                </div>
             </div>
+            @endif
+            <label class="wz-file-drop" id="wzExteriorVidDrop">
+                <i data-lucide="film"></i>
+                <div class="drop-title">Kliknij lub przeciągnij <strong>film dookoła auta</strong> (MP4, WebM, MOV — max 200 MB)</div>
+                <input type="file" name="exterior_video_file" accept="video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska">
+            </label>
         </div>
-        @endif
 
-        <label class="wz-file-drop" id="wzPano360extDrop">
-            <i data-lucide="scan"></i>
-            <div class="drop-title">Kliknij lub przeciągnij <strong>jedno</strong> zdjęcie panoramiczne zewnętrzne (max 15 MB)</div>
-            <input type="file" name="pano360ext_image" accept="image/jpeg,image/png,image/webp">
-        </label>
+        <div class="wz-360-panel" data-360-panel="pano" style="margin-top:16px;{{ $extInitialMode === 'pano' ? '' : 'display:none' }}">
+            @if($car?->exteriorPano360Image)
+            <div style="background:#fafafb;border:1px solid var(--border-l);border-radius:10px;padding:12px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start">
+                <img src="{{ $car->exteriorPano360Image->url }}" alt="" style="width:200px;height:100px;object-fit:cover;border-radius:8px;background:#000">
+                <div style="flex:1;min-width:0">
+                    <div style="font-weight:600;font-size:13px;margin-bottom:4px"><i data-lucide="check-circle" style="width:14px;height:14px;color:#10b981;vertical-align:-2px"></i> Panorama zewnętrzna aktywna</div>
+                    <div style="font-size:11.5px;color:var(--text-3);word-break:break-all;margin-bottom:8px">{{ $car->exteriorPano360Image->path }}</div>
+                    <label class="wz-inline-label" style="color:#b91c1c;font-size:12px"><input type="checkbox" name="remove_pano360ext" value="1"> Usuń panoramę przy zapisie</label>
+                </div>
+            </div>
+            @endif
+            <label class="wz-file-drop" id="wzPano360ExtDrop">
+                <i data-lucide="globe"></i>
+                <div class="drop-title">Kliknij lub przeciągnij <strong>jedno</strong> zdjęcie panoramiczne zewnętrzne (max 15 MB)</div>
+                <input type="file" name="pano360ext_image" accept="image/jpeg,image/png,image/webp">
+            </label>
+        </div>
     </div>
+
+    {{-- Old standalone „Panorama 360° — zewnętrze (zapas)" section removed —
+         pano360ext upload teraz wbudowany w wz-360-section above (exterior),
+         pokazywany gdy admin wybierze radio „Panorama 360°". --}}
 
     {{-- Engine video — available for ALL listings (Zwykłe + CertiCheck).
          Basic sales asset (engine startup / running sound / walkaround) admin
@@ -2363,6 +2423,49 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 
         // Initial sync with the value injected by the server.
         apply(input.value === '1');
+    })();
+
+    // ===================================================================
+    //  360° SECTION — Film vs Panorama toggle
+    //  Każda sekcja .wz-360-section (interior + exterior) ma dwa
+    //  wzajemnie wykluczające panele. Klik na .wz-360-toggle-card →
+    //  pokaż odpowiedni panel, ukryj drugi, wyczyść file input ukrytego
+    //  panelu (admin nie wgra nieświadomie obu źródeł).
+    // ===================================================================
+    (function(){
+        document.querySelectorAll('.wz-360-section').forEach(function(section){
+            const cards  = section.querySelectorAll('.wz-360-toggle-card');
+            const panels = section.querySelectorAll('.wz-360-panel');
+            if (!cards.length || !panels.length) return;
+
+            function apply(mode){
+                cards.forEach(function(c){
+                    const isActive = c.dataset['360Mode'] === mode;
+                    c.classList.toggle('active', isActive);
+                    const radio = c.querySelector('input[type="radio"]');
+                    if (radio) radio.checked = isActive;
+                });
+                panels.forEach(function(p){
+                    const isVisible = p.dataset['360Panel'] === mode;
+                    p.style.display = isVisible ? '' : 'none';
+                    if (!isVisible) {
+                        // Wyczyść file input ukrytego panelu — admin nie
+                        // wyśle pliku ze schowanej sekcji.
+                        p.querySelectorAll('input[type="file"]').forEach(function(f){ f.value = ''; });
+                    }
+                });
+            }
+
+            cards.forEach(function(card){
+                card.addEventListener('click', function(e){
+                    // Label wraps a radio — kliknięcie naturalnie zaznacza,
+                    // ale chcemy też bouncec sync paneli, więc preventDefault
+                    // i ręcznie apply.
+                    e.preventDefault();
+                    apply(card.dataset['360Mode']);
+                });
+            });
+        });
     })();
 
     // ===================================================================
