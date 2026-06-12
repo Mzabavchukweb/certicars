@@ -50,7 +50,11 @@
         ];
         $schema = array_filter($schema, fn($v) => $v !== null && $v !== '');
     @endphp
-    <script type="application/ld+json">{!! json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}</script>
+    {{-- JSON_HEX_TAG / JSON_UNESCAPED_SLASHES off: keeps "</script>" inside any
+         admin-typed string from breaking out of this <script> block. Without
+         this, a car model like `"></script><script>alert(1)</script>` would
+         have rendered raw stored XSS on every visitor's session. --}}
+    <script type="application/ld+json">{!! json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_PRETTY_PRINT) !!}</script>
     <script type="application/ld+json">{!! json_encode([
         '@context' => 'https://schema.org',
         '@type' => 'BreadcrumbList',
@@ -59,7 +63,7 @@
             ['@type' => 'ListItem', 'position' => 2, 'name' => 'Oferta samochodów', 'item' => url('/samochody')],
             ['@type' => 'ListItem', 'position' => 3, 'name' => $car->title, 'item' => url('/samochody/'.$car->slug)],
         ],
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+    ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
 @endsection
 
 @section('styles')

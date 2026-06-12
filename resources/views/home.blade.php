@@ -15,7 +15,7 @@
             'target' => url('/samochody').'?q={search_term_string}',
             'query-input' => 'required name=search_term_string',
         ],
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+    ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}
     </script>
 @endsection
 
