@@ -26,7 +26,7 @@
 <a
     href="{{ route('car.pdf', $slug) }}"
     {{ $attributes->merge([
-        'class' => 'cs-certi-cta' . ($isSmall ? ' cs-certi-cta--sm' : ''),
+        'class' => 'cs-certi-cta cs-certi-cta--ready' . ($isSmall ? ' cs-certi-cta--sm' : ''),
         'download' => true,
         'title' => 'Pobierz raport CertiCheck (PDF)',
         'aria-label' => 'Pobierz raport CertiCheck (PDF)',
@@ -36,6 +36,14 @@
     <x-icon name="badge-check" :size="$isSmall ? 12 : 14" :strokeWidth="2.4" class="cs-certi-cta-leading"/>
     <span>CertiCheck</span>
     <span class="cs-certi-cta-sep" aria-hidden="true"></span>
+    {{-- Explicit "Pobierz PDF" label so customers know clicking the pill
+         saves the PDF — previously only a download icon, customers asked
+         for clearer signposting („chciałbym opcję zapisz PDF"). On the
+         small variant (catalog cards) we keep the icon-only treatment to
+         preserve the existing tight layout. --}}
+    @if(!$isSmall)
+        <span class="cs-certi-cta-action">Pobierz PDF</span>
+    @endif
     <x-icon name="download" :size="$isSmall ? 13 : 15" :strokeWidth="2.4" class="cs-certi-cta-trailing"/>
 </a>
 @else
@@ -62,6 +70,7 @@
 .cs-certi-cta .cs-certi-cta-leading{stroke:#4ea3ff!important;color:#4ea3ff}
 .cs-certi-cta .cs-certi-cta-trailing{stroke:#fff!important;color:#fff}
 .cs-certi-cta .cs-certi-cta-sep{display:inline-block;width:1px;height:14px;background:rgba(255,255,255,.22);margin:0 -2px;flex-shrink:0}
+.cs-certi-cta .cs-certi-cta-action{font-weight:700;letter-spacing:.2px}
 .cs-certi-cta--sm{font-size:10.5px;padding:6px 10px;gap:6px;min-height:28px}
 .cs-certi-cta--sm .cs-certi-cta-sep{height:12px}
 /* Pending state — same shape so layout never shifts; muted palette + clock
