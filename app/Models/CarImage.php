@@ -22,9 +22,16 @@ class CarImage extends Model
     public function getAltAttribute(): string
     {
         if (!empty($this->alt_text)) return $this->alt_text;
-        $title = $this->car?->title ?? 'Samochód';
         $typeLabel = ['gallery' => 'zdjęcie', 'damage' => 'zdjęcie uszkodzenia', 'exterior' => 'zdjęcie', 'interior' => 'wnętrze'][$this->type] ?? 'zdjęcie';
-        return trim($title . ' — ' . $typeLabel);
+        // Don't lazy-load car/brand for the alt fallback — every gallery thumb
+        // in the catalog detail page would fire a Car+Brand lookup. Public
+        // page profile showed 5×{cars,brands} N+1 traceable to this single
+        // accessor. We only weave the title in when `car` is already
+        // eager-loaded, otherwise return the bare type label.
+        if ($this->relationLoaded('car') && $this->car && $this->car->relationLoaded('brand')) {
+            return trim($this->car->title . ' — ' . $typeLabel);
+        }
+        return 'Samochód — ' . $typeLabel;
     }
 
     public function getUrlAttribute(): string
