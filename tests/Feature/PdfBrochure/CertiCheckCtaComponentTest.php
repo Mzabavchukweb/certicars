@@ -21,9 +21,9 @@ class CertiCheckCtaComponentTest extends TestCase
     public function test_ready_state_renders_a_link_with_download_attribute(): void
     {
         $html = $this->markupOnly(view('components.certicheck-cta', [
-            'slug'  => 'audi-a4',
-            'ready' => true,
-            'size'  => 'md',
+            'slug'   => 'audi-a4',
+            'status' => 'ready',
+            'size'   => 'md',
         ])->render());
 
         $this->assertStringContainsString('<a', $html);
@@ -35,28 +35,44 @@ class CertiCheckCtaComponentTest extends TestCase
         $this->assertStringNotContainsString('cs-certi-cta--pending', $html);
     }
 
-    public function test_pending_state_renders_a_span_with_no_link_no_download(): void
+    public function test_processing_state_renders_clickable_button_that_opens_modal(): void
     {
         $html = $this->markupOnly(view('components.certicheck-cta', [
-            'slug'  => 'audi-a4',
-            'ready' => false,
-            'size'  => 'md',
+            'slug'   => 'audi-a4',
+            'status' => 'processing',
+            'size'   => 'md',
         ])->render());
 
-        // No anchor → no clickable affordance → no broken download attempt.
-        $this->assertStringNotContainsString('<a ', $html);
+        // No anchor — never a broken download attempt.
         $this->assertStringNotContainsString('href=', $html);
         $this->assertStringNotContainsString('download="download"', $html);
-        $this->assertStringNotContainsString('cs-certi-cta-trailing', $html,
-            'download icon must NOT be present in the pending state');
+        // But a real <button> so click opens the premium pending modal.
+        $this->assertStringContainsString('<button', $html);
+        $this->assertStringContainsString('csOpenCertiCheckPending', $html);
         $this->assertStringContainsString('cs-certi-cta--pending', $html);
         $this->assertStringContainsString('CertiCheck', $html);
     }
 
-    public function test_pending_is_default_so_callers_must_opt_in(): void
+    public function test_failed_and_missing_states_also_render_pending_button(): void
     {
-        // If a caller forgets to pass :ready, the safe default is "not
-        // ready" → pending pill. Belt-and-braces guarantee against new
+        foreach (['failed', 'missing'] as $status) {
+            $html = $this->markupOnly(view('components.certicheck-cta', [
+                'slug'   => 'audi-a4',
+                'status' => $status,
+                'size'   => 'md',
+            ])->render());
+            $this->assertStringContainsString('<button', $html,
+                "status=$status must render the pending button (never a dead link)");
+            $this->assertStringNotContainsString('download="download"', $html,
+                "status=$status must NOT expose a download link");
+            $this->assertStringContainsString('cs-certi-cta--pending', $html);
+        }
+    }
+
+    public function test_missing_is_default_so_callers_must_opt_in(): void
+    {
+        // If a caller forgets to pass :status, the safe default is "missing"
+        // → pending button + modal. Belt-and-braces guarantee against new
         // callsites accidentally exposing a broken link.
         $html = $this->markupOnly(view('components.certicheck-cta', [
             'slug' => 'audi-a4',
@@ -65,5 +81,6 @@ class CertiCheckCtaComponentTest extends TestCase
         $this->assertStringContainsString('cs-certi-cta--pending', $html);
         $this->assertStringNotContainsString('download="download"', $html);
         $this->assertStringNotContainsString('<a ', $html);
+        $this->assertStringContainsString('<button', $html);
     }
 }

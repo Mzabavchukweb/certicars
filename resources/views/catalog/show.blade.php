@@ -501,6 +501,22 @@
 .cs-pano360-card:hover .cs-pano360-card-img{transform:scale(1.04)}
 .cs-pano360-card-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,.05) 0%,rgba(10,10,10,.5) 60%,rgba(10,10,10,.85) 100%)}
 .cs-pano360-card-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);font-size:13px;letter-spacing:.3px;background:linear-gradient(135deg,#1a1a2e,#0a0a0a)}
+
+/* Premium "360° w przygotowaniu" modal — same visual surface as the
+   CertiCheck pending modal so customers recognise it instantly. Shown when
+   gallery tab is in `processing` state and the user clicks it; never shown
+   automatically. */
+.cs-360-modal{position:fixed;inset:0;background:rgba(8,10,20,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;animation:cs360FadeIn .18s ease-out}
+.cs-360-modal.is-open{display:flex}
+.cs-360-modal-box{background:#fff;border-radius:18px;padding:28px 26px 24px;max-width:420px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.32);text-align:center;animation:cs360SlideUp .25s cubic-bezier(.16,1,.3,1)}
+.cs-360-modal-ico{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#0066ff;margin:0 auto 14px;display:flex;align-items:center;justify-content:center}
+.cs-360-modal-ico svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.8}
+.cs-360-modal-title{font-size:18px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:0 0 8px;line-height:1.3}
+.cs-360-modal-body{font-size:13.5px;color:#475569;line-height:1.55;margin:0 0 20px}
+.cs-360-modal-cta{display:inline-block;background:#0a0a0a;color:#fff;border:none;padding:11px 22px;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
+.cs-360-modal-cta:hover{background:#1a1a1a}
+@keyframes cs360FadeIn{from{opacity:0}to{opacity:1}}
+@keyframes cs360SlideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .cs-pano360-card-mark{position:absolute;top:18px;left:18px;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.16);color:#fff;font-size:11px;font-weight:700;padding:6px 11px;border-radius:50px;letter-spacing:.4px;text-transform:uppercase;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .cs-pano360-card-mark svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.2}
 .cs-pano360-card-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:78px;height:78px;border-radius:50%;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;color:#fff;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:transform .25s ease,background .25s ease}
@@ -1364,14 +1380,34 @@
                 <x-icon name="image" size="14" :strokeWidth="1.8"/>
                 Wszystkie zdjęcia
             </button>
-            <button type="button" class="cs-gallery-tab {{ ($car->has_certicheck && ($car->hasExteriorFrames() || $car->exteriorPano360Image)) ? '' : 'disabled' }}" data-gallery-filter="pano360ext" onclick="csFilterGallery(this,'pano360ext')" role="tab" aria-selected="false">
+            @php $extStatus = $car->has_certicheck ? $car->exterior360CustomerStatus() : 'missing'; @endphp
+            @if($extStatus !== 'missing')
+            <button type="button"
+                    class="cs-gallery-tab {{ $extStatus === 'processing' ? 'disabled' : '' }}"
+                    data-gallery-filter="pano360ext"
+                    data-360-status="{{ $extStatus }}"
+                    onclick="cs360TabClick(this,'pano360ext','{{ $extStatus }}')"
+                    role="tab"
+                    aria-selected="false"
+                    {{ $extStatus === 'processing' ? 'aria-disabled=true title="Widok 360° jest przygotowywany"' : '' }}>
                 <x-icon name="rotate-3d" size="14" :strokeWidth="1.8"/>
                 360° z zewnątrz
             </button>
-            <button type="button" class="cs-gallery-tab {{ ($car->has_certicheck && ($car->hasInteriorFrames() || $car->pano360Image)) ? '' : 'disabled' }}" data-gallery-filter="pano360" onclick="csFilterGallery(this,'pano360')" role="tab" aria-selected="false">
+            @endif
+            @php $intStatus = $car->has_certicheck ? $car->interior360CustomerStatus() : 'missing'; @endphp
+            @if($intStatus !== 'missing')
+            <button type="button"
+                    class="cs-gallery-tab {{ $intStatus === 'processing' ? 'disabled' : '' }}"
+                    data-gallery-filter="pano360"
+                    data-360-status="{{ $intStatus }}"
+                    onclick="cs360TabClick(this,'pano360','{{ $intStatus }}')"
+                    role="tab"
+                    aria-selected="false"
+                    {{ $intStatus === 'processing' ? 'aria-disabled=true title="Widok 360° jest przygotowywany"' : '' }}>
                 <x-icon name="rotate-3d" size="14" :strokeWidth="1.8"/>
                 360° wnętrza
             </button>
+            @endif
             <button type="button" class="cs-gallery-tab {{ $damageImgList->count() ? '' : 'disabled' }}" data-gallery-filter="damage" onclick="csFilterGallery(this,'damage')" role="tab" aria-selected="false">
                 <x-icon name="search" size="14" :strokeWidth="1.8"/>
                 Zdjęcia stanu pojazdu
@@ -1509,7 +1545,7 @@
                             <div class="cs-price-meta">Cena brutto / VAT-Marża</div>
                         </div>
                         @if($car->has_certicheck)
-                            <x-certicheck-cta :slug="$car->slug" :ready="$car->brochureIsReady()"/>
+                            <x-certicheck-cta :slug="$car->slug" :status="$car->brochureCustomerStatus()"/>
                         @endif
                     </div>
                 </div>
@@ -3026,6 +3062,11 @@ function cs360InitPano(){
                 type: 'equirectangular',
                 panorama: src,
                 autoLoad: true,
+                // CRITICAL UX: Pannellum's default loading box exposes the raw
+                // image fetch progress ("Loading 5 MB / 18 MB") to customers,
+                // making the site look broken. We hide it — the embed shows a
+                // black surface until the panorama is decoded, then snaps in.
+                showLoadingBox: false,
                 showZoomCtrl: true,
                 showFullscreenCtrl: true,
                 compass: false,
@@ -3069,6 +3110,18 @@ function csOpenPano360(filter){
     if (tab && typeof csFilterGallery === 'function') {
         setTimeout(function(){ csFilterGallery(tab, filter); }, 200);
     }
+}
+
+// 360° tab click — branch on customer-facing status. Missing tabs are not
+// rendered at all (server omits them), so we only see ready/processing/pano
+// here. Processing opens a premium modal; ready/pano delegate to the
+// normal gallery filter.
+function cs360TabClick(btn, filter, status){
+    if (status === 'processing') {
+        if (typeof window.csOpen360Processing === 'function') window.csOpen360Processing();
+        return false;
+    }
+    csFilterGallery(btn, filter);
 }
 
 // Gallery tab filtering (COS style)
@@ -3167,6 +3220,11 @@ window.csPano360Init = (function(){
                 type: 'equirectangular',
                 panorama: src,
                 autoLoad: true,
+                // CRITICAL UX: Pannellum's default loading box exposes the raw
+                // image fetch progress ("Loading 5 MB / 18 MB") to customers,
+                // making the site look broken. We hide it — the embed shows a
+                // black surface until the panorama is decoded, then snaps in.
+                showLoadingBox: false,
                 showZoomCtrl: true,
                 showFullscreenCtrl: true,
                 compass: false,
@@ -3316,6 +3374,11 @@ window.csPano360ExtInit = (function(){
                 type: 'equirectangular',
                 panorama: src,
                 autoLoad: true,
+                // CRITICAL UX: Pannellum's default loading box exposes the raw
+                // image fetch progress ("Loading 5 MB / 18 MB") to customers,
+                // making the site look broken. We hide it — the embed shows a
+                // black surface until the panorama is decoded, then snaps in.
+                showLoadingBox: false,
                 showZoomCtrl: true,
                 showFullscreenCtrl: true,
                 compass: false,
@@ -3919,6 +3982,7 @@ function csShareToast(msg) {
                     type: 'equirectangular',
                     panorama: panoSrc,
                     autoLoad: true,
+                    showLoadingBox: false, // hide raw MB progress
                     showZoomCtrl: true,
                     showFullscreenCtrl: false,
                     compass: false,
@@ -3977,4 +4041,39 @@ function csShareToast(msg) {
 })();
 </script>
 @endif
+
+{{-- 360° "w przygotowaniu" modal — shown when a customer clicks a 360 tab
+     whose frame extractor job is still queued. Same visual surface as the
+     CertiCheck pending modal. Rendered once per page; opened by
+     cs360TabClick(... 'processing'). --}}
+<div id="cs360PendingModal" class="cs-360-modal" role="dialog" aria-modal="true" aria-labelledby="cs360PendingTitle" onclick="if(event.target===this)window.csClose360Processing&&window.csClose360Processing()">
+    <div class="cs-360-modal-box">
+        <div class="cs-360-modal-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+            </svg>
+        </div>
+        <h3 id="cs360PendingTitle" class="cs-360-modal-title">Widok 360° jest przygotowywany</h3>
+        <p class="cs-360-modal-body">Przetwarzamy klatki do interaktywnej prezentacji pojazdu. To zwykle zajmuje kilka chwil — wróć tu za moment.</p>
+        <button type="button" class="cs-360-modal-cta" onclick="window.csClose360Processing&&window.csClose360Processing()">Rozumiem</button>
+    </div>
+</div>
+<script>
+(function(){
+    var modal = document.getElementById('cs360PendingModal');
+    if (!modal) return;
+    window.csOpen360Processing = function(){
+        modal.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+    };
+    window.csClose360Processing = function(){
+        modal.classList.remove('is-open');
+        document.body.style.overflow = '';
+    };
+    document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape' && modal.classList.contains('is-open')) window.csClose360Processing();
+    });
+})();
+</script>
 @endsection
