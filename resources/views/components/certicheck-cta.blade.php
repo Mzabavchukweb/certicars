@@ -23,28 +23,28 @@
 
      ZERO state ever shows a 404 page or a dead click. --}}
 @if ($status === 'ready')
+{{-- Klik w pill OTWIERA raport HTML (nie wymusza downloadu) — customer
+     widzi pełną broszurę w przeglądarce, a wewnątrz tej strony jest
+     wyraźny przycisk „Pobierz w PDF" który dopiero zapisuje plik
+     (route catalog.certicheck → blade z download-att linkiem do car.pdf).
+     Bez tego rozdziału klik downloadował plik silnie, customer nie miał
+     szansy podejrzeć zawartości — feedback klienta: „po otwarciu broszury
+     pobierz w pdf i to się zapisywało jako plik". --}}
 <a
-    href="{{ route('car.pdf', $slug) }}"
+    href="{{ route('catalog.certicheck', $slug) }}"
     {{ $attributes->merge([
         'class' => 'cs-certi-cta cs-certi-cta--ready' . ($isSmall ? ' cs-certi-cta--sm' : ''),
-        'download' => true,
-        'title' => 'Pobierz raport CertiCheck (PDF)',
-        'aria-label' => 'Pobierz raport CertiCheck (PDF)',
+        'title' => 'Otwórz raport CertiCheck',
+        'aria-label' => 'Otwórz raport CertiCheck',
+        'target' => '_blank',
+        'rel' => 'noopener',
     ]) }}
     onclick="event.stopPropagation()"
 >
     <x-icon name="badge-check" :size="$isSmall ? 12 : 14" :strokeWidth="2.4" class="cs-certi-cta-leading"/>
     <span>CertiCheck</span>
     <span class="cs-certi-cta-sep" aria-hidden="true"></span>
-    {{-- Explicit "Pobierz PDF" label so customers know clicking the pill
-         saves the PDF — previously only a download icon, customers asked
-         for clearer signposting („chciałbym opcję zapisz PDF"). On the
-         small variant (catalog cards) we keep the icon-only treatment to
-         preserve the existing tight layout. --}}
-    @if(!$isSmall)
-        <span class="cs-certi-cta-action">Pobierz PDF</span>
-    @endif
-    <x-icon name="download" :size="$isSmall ? 13 : 15" :strokeWidth="2.4" class="cs-certi-cta-trailing"/>
+    <x-icon name="external-link" :size="$isSmall ? 13 : 15" :strokeWidth="2.4" class="cs-certi-cta-trailing"/>
 </a>
 @else
 <button
