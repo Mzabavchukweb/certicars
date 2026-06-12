@@ -22,3 +22,23 @@ Schedule::command('brochures:reap-stuck')
     ->everyFiveMinutes()
     ->withoutOverlapping()
     ->onOneServer();
+
+// Synchronous safety-net rebuild every 10 minutes. The primary path is the
+// queue worker pickup of `RegenerateBrochureJob` (PR #129), but if the
+// worker is somehow not running (Railway container restart loop, supervisord
+// misconfig, queue:work silent crash), brochures never become `ready` and
+// customers see the "preparing" modal indefinitely. This sweep finds any
+// CertiCheck car that is NOT in `ready` state (missing, generating, failed)
+// and re-runs generation synchronously. It's the same code the queue worker
+// would execute — just guaranteed to run by the scheduler.
+//
+// `--missing` covers all non-ready states (see RebuildBrochuresCommand). With
+// `withoutOverlapping(20)` two scheduler ticks won't dogpile on a slow
+// Chromium render. Each car render is 4-15s so a backlog of 10 missing
+// brochures takes ~2 min to clear — still safely inside the 10-minute
+// interval.
+Schedule::command('brochures:rebuild --missing')
+    ->everyTenMinutes()
+    ->withoutOverlapping(20)
+    ->onOneServer()
+    ->runInBackground();
