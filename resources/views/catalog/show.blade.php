@@ -852,6 +852,11 @@
    stacked-list look within each column; the grid's column-gap keeps the
    four columns visually separate without needing vertical dividers. */
 .cs-dp-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:24px;row-gap:0}
+/* When the grid has a leftover lone cell (17th = drivetrain alone), span it
+   across all 4 columns so the row stays visually balanced. Triggers only on
+   total counts of 4n+1 (i.e. 5,9,13,17…) — the normal 16-cell layout is
+   untouched because last child sits at position 16 = 4n. */
+.cs-dp-grid > .cs-dp-item:last-child:nth-child(4n+1){grid-column:1 / -1}
 .cs-dp-item{display:grid;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #f3f4f6;min-width:0}
 .cs-dp-ico{width:32px;height:32px;border-radius:9px;background:#eff6ff;color:var(--blue);display:flex;align-items:center;justify-content:center}
 .cs-dp-ico svg,.cs-dp-ico i[data-lucide]{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}
@@ -1601,17 +1606,13 @@
         $rowOk = fn($v) => $v !== null && $v !== '' && $v !== false;
         // Pre-compute display values once.
         $dispFuel = CarLabels::fuelType($car->fuel_type);
-        // Skrzynia biegów — Polish canonical ("Manualna"/"Automatyczna"). If
-        // admin filled `drivetrain` ("AWD"/"FWD"/"4×4"), append it as a
-        // suffix so the gearbox cell carries both pieces of information
-        // (mirrors BrochureBuilder line 161-167) and we don't need a
-        // standalone "Napęd" row that would orphan-render an emission card
-        // with one entry.
-        $gearLabel = CarLabels::transmission($car->transmission);
+        // Skrzynia biegów — Polish canonical ("Manualna"/"Automatyczna") ONLY.
+        // Drivetrain is rendered as its own dedicated row (see Napęd below or
+        // the "Spalanie i emisja" card) — never concatenated into the gearbox
+        // cell, which previously caused "Skrzynia biegów" to wrap vertically
+        // when the combined string was too long for the 4-col grid cell.
+        $dispTransmission = CarLabels::transmission($car->transmission);
         $drivetrain = $rowOk($car->drivetrain) ? trim((string) $car->drivetrain) : null;
-        if ($gearLabel && $drivetrain)      $dispTransmission = $gearLabel . ' · ' . $drivetrain;
-        elseif ($drivetrain && !$gearLabel) $dispTransmission = $drivetrain;
-        else                                $dispTransmission = $gearLabel;
         $dispBody = CarLabels::bodyType($car->body_type ?? $car->category);
         $dispCountry = CarLabels::country($car->country_registration);
         $dispImportedFrom = CarLabels::country($car->imported_from);
@@ -1832,6 +1833,26 @@
                     ['activity',      'Pojemność skokowa',    $rowOk($car->engine_capacity) ? number_format((float) $car->engine_capacity, 0, '', ' ') . ' cm³' : $em],
                     ['palette',       'Kolor nadwozia',       $rowOk($car->color) ? $car->color : $em],
                 ];
+
+                // Drivetrain & efficiency rows — card-eligible set.
+                $emClass = \App\Helpers\CarLabels::emissionClass($car->emission_class);
+                $fcStr   = \App\Helpers\CarLabels::fuelConsumption($car->fuel_consumption);
+                $co2Str  = \App\Helpers\CarLabels::co2Emission($car->co2_emission);
+                $deRows = [];
+                if ($drivetrain) $deRows[] = ['route', 'Napęd', $drivetrain];
+                if ($emClass)    $deRows[] = ['leaf', 'Norma emisji spalin', $emClass];
+                if ($co2Str)     $deRows[] = ['cloud', 'Emisja CO₂', $co2Str];
+                if ($fcStr)      $deRows[] = ['fuel', 'Średnie zużycie', $fcStr];
+
+                $renderCard = count($deRows) >= 2;
+                $drivetrainAloneInGrid = $drivetrain && !$renderCard;
+                if ($drivetrainAloneInGrid) {
+                    // Only drivetrain among card-eligible fields was filled —
+                    // append as a 17th cell to the Vehicle Information grid so
+                    // it has visible representation. Spans full row so the lone
+                    // cell doesn't look broken next to the 4×4 structure above.
+                    $dpRows[] = ['route', 'Napęd', $drivetrain];
+                }
             @endphp
             <div class="cs-dp-grid">
                 @foreach($dpRows as [$ico, $label, $value])
@@ -1934,34 +1955,25 @@
     </div>
     <p class="cs-info-3row-note">Informacje prezentujemy na podstawie posiadanych dokumentów i oględzin pojazdu.</p>
 
-    {{-- =================== SPALANIE I EMISJA ============================
-         One single card. Drivetrain is already in the "Skrzynia biegów" cell
-         of the 16-grid above (e.g. "Manualna · AWD"), so this card is
-         exclusively emission/fuel data. Renders ONLY when admin filled
-         at least 2 of {emission_class, fuel_consumption, co2_emission,
-         fuel_procedure} — a single isolated value (e.g. just CO₂) would
-         look like an orphan tile, so we hide it. ============================ --}}
-    @php
-        $emRows = [];
-        $emClass = \App\Helpers\CarLabels::emissionClass($car->emission_class);
-        if ($emClass !== null)              $emRows[] = ['leaf', 'Norma emisji spalin', $emClass];
-        $fcStr = \App\Helpers\CarLabels::fuelConsumption($car->fuel_consumption);
-        if ($fcStr !== null)                $emRows[] = ['fuel', 'Średnie zużycie', $fcStr];
-        $co2Str = \App\Helpers\CarLabels::co2Emission($car->co2_emission);
-        if ($co2Str !== null)               $emRows[] = ['cloud', 'Emisja CO₂', $co2Str];
-        if ($rowOk($car->fuel_procedure))   $emRows[] = ['flask-conical', 'Procedura pomiaru', $car->fuel_procedure];
-    @endphp
-    @if(count($emRows) >= 2)
+    {{-- =================== NAPĘD I SPALANIE ============================
+         Single-card row matching Historia / Dokumenty / Serwisowanie style
+         pixel-identycznie (cs-info-3card + cs-info-3row-line). Renderuje się
+         TYLKO gdy ≥2 z 4 pól card-eligible jest wypełnione:
+            drivetrain · emission_class · co2_emission · fuel_consumption
+         Gdy tylko drivetrain → przeszedł do Vehicle Information grid jako
+         dedykowany row (patrz $drivetrainAloneInGrid wyżej). Gdy tylko jedno
+         z emission/co2/fuel → ukrywamy całość. ============================ --}}
+    @if($renderCard)
     <div class="cs-info-3row cs-info-3row-auto is-single" style="margin-top:8px">
         <div class="cs-info-3card">
             <div class="cs-info-3card-head">
                 <div class="cs-info-3card-ico" aria-hidden="true">
                     <x-icon name="fuel" size="18"/>
                 </div>
-                <h3 class="cs-info-3card-title">Spalanie i emisja</h3>
+                <h3 class="cs-info-3card-title">Napęd i spalanie</h3>
             </div>
             <div class="cs-info-3card-rows">
-                @foreach($emRows as [$ico, $label, $val])
+                @foreach($deRows as [$ico, $label, $val])
                     <div class="cs-info-3row-line">
                         <span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon :name="$ico" size="14"/></span>{{ $label }}</span>
                         <span class="val">{{ $val }}</span>
