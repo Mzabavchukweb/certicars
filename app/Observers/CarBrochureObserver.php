@@ -75,19 +75,12 @@ class CarBrochureObserver
             return; // nothing the brochure cares about changed
         }
 
-        try {
-            $this->service->generate($car);
-        } catch (\Throwable $e) {
-            // Service already logged + flipped brochure_status to 'failed'.
-            // Don't rethrow — admin save must not bounce because of a
-            // transient Chromium issue.
-            Log::warning('pdf_brochure.observer.regen_failed_swallowed', [
-                'car_id'    => $car->id,
-                'exception' => get_class($e),
-                'message'   => $e->getMessage(),
-                'changed'   => array_values($relevantChanges),
-            ]);
-        }
+        // Async via job — saving the car returns immediately to admin even
+        // when the brochure regen takes 3-15s. Public download endpoint still
+        // serves the cached file synchronously so customers never wait either.
+        // With QUEUE_CONNECTION=sync (no worker available) the job runs inline
+        // — behaviour identical to the previous synchronous call.
+        \App\Jobs\RegenerateBrochureJob::dispatch($car->id);
     }
 
     public function deleted(Car $car): void
