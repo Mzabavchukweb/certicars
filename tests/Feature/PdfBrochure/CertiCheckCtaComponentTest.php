@@ -32,6 +32,8 @@ class CertiCheckCtaComponentTest extends TestCase
             'ready state must emit a real <a download> link');
         $this->assertStringContainsString('cs-certi-cta-trailing', $html,
             'download icon must be present in the ready state');
+        $this->assertStringContainsString('Pobierz PDF', $html,
+            'ready state on md variant must show explicit „Pobierz PDF" label so customers know what the click does');
         $this->assertStringNotContainsString('cs-certi-cta--pending', $html);
     }
 
