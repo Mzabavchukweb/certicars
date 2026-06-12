@@ -137,10 +137,17 @@
     </div>
 
     {{-- ACTION BUTTONS --}}
+    {{-- Kluczowe: `download` attribute na anchor + Content-Disposition:
+         attachment w controllerze (BrochurePdfController::download) razem
+         wymuszają natychmiastowy save-as-file na same-origin URL. Bez
+         `download` browser pokazywał PDF inline w nowej karcie zamiast
+         go zapisać — customer musiał wtedy klikać save w PDF viewerze. --}}
     <div class="cc-actions no-print">
-        <a href="{{ route('car.pdf', $car->slug) }}" class="btn btn-primary">
+        <a href="{{ route('car.pdf', $car->slug) }}"
+           download="CertiCars-{{ $car->identifier ?? $car->slug }}.pdf"
+           class="btn btn-primary">
             <x-icon name="download" size="16"/>
-            Pobierz PDF
+            Pobierz w PDF
         </a>
         <button onclick="window.print()" class="btn btn-secondary">
             <x-icon name="printer" size="16"/>

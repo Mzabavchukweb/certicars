@@ -18,7 +18,7 @@ class CertiCheckCtaComponentTest extends TestCase
         return preg_replace('#<style.*?</style>#s', '', $html) ?? '';
     }
 
-    public function test_ready_state_renders_a_link_with_download_attribute(): void
+    public function test_ready_state_renders_link_that_opens_html_brochure_view(): void
     {
         $html = $this->markupOnly(view('components.certicheck-cta', [
             'slug'   => 'audi-a4',
@@ -26,14 +26,18 @@ class CertiCheckCtaComponentTest extends TestCase
             'size'   => 'md',
         ])->render());
 
+        // Klik w pill OTWIERA raport HTML w nowej karcie — dopiero tam
+        // jest wyraźny przycisk „Pobierz w PDF" który zapisuje plik.
+        // Customer feedback: chce widzieć broszurę PRZED zapisem, nie
+        // dostać silent file download bez podglądu.
         $this->assertStringContainsString('<a', $html);
         $this->assertStringContainsString('href=', $html);
-        $this->assertStringContainsString('download="download"', $html,
-            'ready state must emit a real <a download> link');
-        $this->assertStringContainsString('cs-certi-cta-trailing', $html,
-            'download icon must be present in the ready state');
-        $this->assertStringContainsString('Pobierz PDF', $html,
-            'ready state on md variant must show explicit „Pobierz PDF" label so customers know what the click does');
+        $this->assertStringContainsString('/certicheck', $html,
+            'ready state must link to the HTML brochure view (catalog.certicheck), NOT the raw PDF route');
+        $this->assertStringContainsString('target="_blank"', $html,
+            'open in new tab so the customer keeps the listing page open');
+        $this->assertStringNotContainsString('download="download"', $html,
+            'pill should not force download — the HTML brochure has its own „Pobierz w PDF" button');
         $this->assertStringNotContainsString('cs-certi-cta--pending', $html);
     }
 

@@ -278,12 +278,13 @@ class PublicPagesTest extends TestCase
         $car = $this->activeCar();
         $car->update(['has_certicheck' => true]);
 
-        // The single unified CertiCheck CTA in the price row now links straight to the
-        // PDF download endpoint (one button, one tap to download). The HTML report
-        // page remains reachable directly via /samochody/{slug}/certicheck.
+        // CTA pill opens the HTML brochure view (catalog.certicheck) — customer
+        // sees the full report in a new tab, then clicks „Pobierz w PDF" inside
+        // that view to save the file. Direct PDF route is still reachable from
+        // the brochure view's download button + admin panel.
         $this->get('/samochody/'.$car->slug)
             ->assertOk()
-            ->assertSee(route('car.pdf', $car->slug), false)
+            ->assertSee(route('catalog.certicheck', $car->slug), false)
             ->assertSee('CertiCheck', false);
 
         // Both report routes remain functional independently.
