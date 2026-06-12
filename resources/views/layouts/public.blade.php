@@ -56,7 +56,7 @@
         ],
         'areaServed' => 'PL',
         'priceRange' => '$$',
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+    ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}
     </script>
     <style>
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}

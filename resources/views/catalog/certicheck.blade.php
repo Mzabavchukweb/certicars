@@ -20,7 +20,7 @@
             ['@type' => 'ListItem', 'position' => 3, 'name' => $car->title, 'item' => url('/samochody/'.$car->slug)],
             ['@type' => 'ListItem', 'position' => 4, 'name' => 'CertiCheck', 'item' => url('/samochody/'.$car->slug.'/certicheck')],
         ],
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+    ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
 @endsection
 
 @section('styles')
