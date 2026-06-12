@@ -224,13 +224,16 @@
 <div id="wizRestoreBanner" role="status" aria-live="polite"
      style="display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:#fef3c7;border-bottom:2px solid #f59e0b;padding:12px 16px;box-shadow:0 2px 12px rgba(0,0,0,.08);font-family:'Inter',system-ui,sans-serif">
     <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-        <strong style="color:#92400e;font-size:14px;font-weight:700">Znaleziono niezapisane dane formularza.</strong>
+        <strong style="color:#92400e;font-size:14px;font-weight:700">
+            Mamy niedokończoną wersję tego ogłoszenia
+            <span id="wizRestoreTimestamp" style="font-weight:600"></span>.
+        </strong>
         <span id="wizRestoreFilesHint" style="color:#92400e;font-size:13px;display:none;flex:1;min-width:240px"></span>
         <span style="flex:1"></span>
         <button type="button" id="wizRestoreAccept"
-                style="background:#92400e;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">Przywróć</button>
+                style="background:#92400e;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">Przywróć wersję roboczą</button>
         <button type="button" id="wizRestoreDiscard"
-                style="background:transparent;color:#92400e;border:1.5px solid #92400e;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Odrzuć</button>
+                style="background:transparent;color:#92400e;border:1.5px solid #92400e;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Kontynuuj z zapisaną wersją</button>
     </div>
 </div>
 
@@ -758,20 +761,84 @@ function wizFormatFileHint(filenames) {
     return 'Do ponownego dodania: ' + first.join(', ') + (more > 0 ? ' (i ' + more + ' więcej)' : '') + '.';
 }
 
+// 7 dni — drafts starsze są usuwane bez pytania. Klient zostawia szkic
+// rano, wraca po tygodniu — przez ten czas DB version'a zwykle przeszła
+// edycje, więc restore zalałby świeższe dane. Lepsza UX = clean slate.
+const WIZ_DRAFT_STALE_MS = 7 * 24 * 60 * 60 * 1000;
+
+// Sformatuj timestamp jako "12 czerwca o 14:32" — naturalne polskie
+// określenie czasu, nie surowe "2026-06-12 14:32".
+function wizFormatSavedAt(ms) {
+    if (!ms || !isFinite(ms)) return '';
+    try {
+        const d = new Date(ms);
+        const today = new Date();
+        const sameDay = d.getFullYear() === today.getFullYear()
+                     && d.getMonth() === today.getMonth()
+                     && d.getDate() === today.getDate();
+        const hhmm = d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+        if (sameDay) return ' zapisaną dzisiaj o ' + hhmm;
+        const dateStr = d.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long' });
+        return ' z ' + dateStr + ' o ' + hhmm;
+    } catch(_) { return ''; }
+}
+
+// Czy draft niesie wystarczająco danych żeby zaproponować restore?
+// Bez tego sprawdzenia banner wyskakuje gdy klient ledwo otworzy formularz,
+// JS nasłuchuje pierwszy `change` event z pustym selectem (e.g. status=draft
+// auto-pickup) i serializuje. Restore z 1-polową wersją jest bardziej
+// dezorientujący niż pomocny. Filtrujemy puste stringi + domyślne wartości
+// statusu/has_certicheck żeby liczyć tylko faktycznie wypełnione pola.
+function wizDraftHasMeaningfulData(payload) {
+    if (!payload || !payload.values) return false;
+    const trivial = new Set(['_token','status','has_certicheck','has_certicheck_picker','noindex','is_featured','is_sold','active_tab','currency']);
+    let n = 0;
+    for (const k of Object.keys(payload.values)) {
+        if (trivial.has(k)) continue;
+        const v = payload.values[k];
+        if (Array.isArray(v)) { if (v.length > 0 && v.some(x => x !== '' && x !== null)) n++; }
+        else if (typeof v === 'string' && v.trim() !== '') n++;
+        else if (v !== null && v !== undefined && v !== '') n++;
+        if (n >= 3) return true;
+    }
+    return false;
+}
+
 function wizInitAutosave() {
     const form = wizForm();
     if (!form) return;
     const key = wizStorageKey();
     if (!key) return;
 
-    // restore banner
+    // Restore banner — pokaż TYLKO gdy wszystkie 3 warunki spełnione:
+    //   1. draft istnieje i ma znaczącą zawartość (≥3 wypełnione pola
+    //      poza trivialnymi defaultami), żeby nowy formularz z 1-2
+    //      auto-checkboxami nie wyświetlał alarmu;
+    //   2. draft nie jest stale (< 7 dni) — starsze zostają usunięte,
+    //      bo DB i tak ma świeższą wersję, restore zalałby gorszą;
+    //   3. sesja wygasła LUB draft jest nowszy niż updated_at z DB
+    //      (czyli klient zaczął edycję po ostatnim zapisie).
+    // Bez 1+2 banner wyskakiwał przy każdym otwarciu /create — false-
+    // positive który stracił adminów zaufanie do mechanizmu.
     const draft = wizLoadDraft();
     const carUpdated = wizCarUpdatedAt();
     const sessionExpired = document.querySelector('meta[name="wizard-session-expired"]')?.content === '1';
-    if (draft && (sessionExpired || draft.saved_at > carUpdated)) {
+    const draftAge = draft && draft.saved_at ? (Date.now() - draft.saved_at) : Infinity;
+    const isStale = draftAge > WIZ_DRAFT_STALE_MS;
+
+    if (draft && isStale) {
+        // Stale draft — usuń bez pytania. Klient i tak nie pamięta co
+        // wpisał tydzień temu, a wyświetlanie banneru z odległą datą
+        // generuje więcej szumu niż wartości.
+        wizClearDraft();
+    } else if (draft
+            && wizDraftHasMeaningfulData(draft)
+            && (sessionExpired || draft.saved_at > carUpdated)) {
         const banner = document.getElementById('wizRestoreBanner');
         const filesHint = document.getElementById('wizRestoreFilesHint');
+        const tsLabel  = document.getElementById('wizRestoreTimestamp');
         if (banner) {
+            if (tsLabel) tsLabel.textContent = wizFormatSavedAt(draft.saved_at);
             const hint = wizFormatFileHint(draft.filenames || []);
             if (filesHint && hint) { filesHint.textContent = hint; filesHint.style.display = ''; }
             banner.style.display = '';

@@ -64,7 +64,10 @@ class WizardDataLossSafetyTest extends TestCase
         $response->assertSee('id="wizRestoreBanner"', false);
         $response->assertSee('id="wizRestoreAccept"', false);
         $response->assertSee('id="wizRestoreDiscard"', false);
-        $response->assertSee('Znaleziono niezapisane dane formularza');
+        // Banner copy: nowa wersja z miejscem na timestamp + jasne CTA names.
+        $response->assertSee('Mamy niedokończoną wersję tego ogłoszenia', false);
+        $response->assertSee('Przywróć wersję roboczą', false);
+        $response->assertSee('Kontynuuj z zapisaną wersją', false);
     }
 
     public function test_wizard_renders_session_warning_dom_for_expiry_banner(): void
