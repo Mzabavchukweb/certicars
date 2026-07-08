@@ -23,6 +23,11 @@ class PageController extends Controller
         return view('pages.contact');
     }
 
+    public function certicheckLanding()
+    {
+        return view('pages.certicheck');
+    }
+
 
     public function contactSubmit(Request $request)
     {
