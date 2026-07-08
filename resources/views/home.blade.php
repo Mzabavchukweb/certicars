@@ -117,18 +117,19 @@
 .cs-cc{position:relative;background:#fafbff;padding:60px 0;overflow:hidden;isolation:isolate}
 .cs-cc::before{content:'';position:absolute;top:-30%;right:-10%;width:55%;height:120%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(0,102,255,.12) 0%,rgba(0,102,255,.04) 45%,rgba(0,102,255,0) 70%);pointer-events:none;z-index:0}
 .cs-cc > .container{position:relative;z-index:1}
-/* Grid wg reference.PNG 3-kolumnowy: LEWA content ~34%, ŚRODEK 4 karty
-   2×2 ~34%, PRAWA bohater ~32% (może wychodzić poza container overflow).
-   `.cs-cc` outer section ma overflow:hidden — bohater po prawej może
-   wypełniać przestrzeń poza max-width 1200px kontenera i nie łamie
-   layout'u. */
-.cs-cc-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:center}
-.cs-cc-hero{position:relative;min-height:560px;display:flex;align-items:center;justify-content:flex-end}
-/* Bohater "wychodzi" na prawo — nie jest ograniczony szerokością kolumny,
-   tylko wysokością sekcji; szeroki obraz zajmuje prawą stronę viewportu. */
-.cs-cc-hero img{height:100%;max-height:640px;width:auto;object-fit:contain;display:block}
-.cs-cc-hero .cs-cc-hero-desktop{display:block}
-.cs-cc-hero .cs-cc-hero-mobile{display:none}
+/* Grid wg reference.PNG 3-kolumnowy — proporcje:
+   LEWA content ~37%, ŚRODEK 4 karty kompaktowe kwadraty ~26%, PRAWA
+   bohater portrait ~37% (dominujący wysoki wizerunek). Karty muszą
+   być KWADRATOWE (nie wysokie/wąskie) — aspect-ratio ustawia to
+   niezależnie od gap kolumn. */
+.cs-cc-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.4fr);gap:32px;align-items:center}
+.cs-cc-hero{position:relative;display:flex;align-items:center;justify-content:center}
+/* Bohater PORTRAIT używany na desktop — landscape byłby za szeroki dla
+   pionowej kolumny, portrait wypełnia wysokość jak w reference.PNG.
+   `bohater-mobile.png` jest 941×1672 portrait — pasuje idealnie. */
+.cs-cc-hero img{width:100%;max-width:480px;height:auto;object-fit:contain;display:block}
+.cs-cc-hero .cs-cc-hero-desktop{display:none}
+.cs-cc-hero .cs-cc-hero-mobile{display:block}
 .cs-cc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:16px}
 .cs-cc-kicker::before{content:'';width:22px;height:1.5px;background:#0066ff;border-radius:1px}
 .cs-cc-left h2{font-size:42px;font-weight:900;color:#0a0a0a;letter-spacing:-.8px;line-height:1.08;margin:0 0 20px}
@@ -143,15 +144,16 @@
 .cs-cc-info-ico{flex-shrink:0;width:24px;height:24px;border-radius:6px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
 .cs-cc-info-ico svg,.cs-cc-info-ico i[data-lucide]{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
 
-/* 4 karty jako środkowa kolumna 3-kolumnowego layoutu — kwadratowe kafle
-   2×2. Padding większy niż wcześniej — kafle bardziej dominujące. */
-.cs-cc-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.cs-cc-card{position:relative;background:#fff;border:1px solid #eaf0fc;border-radius:16px;padding:22px 20px 24px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 6px 20px rgba(15,32,80,.05);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+/* 4 karty w środkowej kolumnie — kwadratowe kafle 2×2 wg reference.
+   aspect-ratio:1 zamiast min-height żeby karty pozostały square
+   niezależnie od szerokości kolumny (zoom, wąski viewport itp). */
+.cs-cc-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cs-cc-card{position:relative;background:#fff;border:1px solid #eaf0fc;border-radius:14px;padding:16px 16px 18px;aspect-ratio:1;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.04),0 6px 20px rgba(15,32,80,.05);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
 .cs-cc-card:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,.04),0 12px 32px rgba(15,32,80,.1);border-color:#cfdcf5}
-.cs-cc-card-ico{width:44px;height:44px;border-radius:50%;background:#eff6ff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
-.cs-cc-card-ico svg,.cs-cc-card-ico i[data-lucide]{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8}
-.cs-cc-card h3{font-size:15px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0 0 6px;line-height:1.25}
-.cs-cc-card p{font-size:13px;color:#4b5563;line-height:1.55;margin:0}
+.cs-cc-card-ico{width:38px;height:38px;border-radius:10px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-bottom:auto}
+.cs-cc-card-ico svg,.cs-cc-card-ico i[data-lucide]{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+.cs-cc-card h3{font-size:13.5px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:12px 0 5px;line-height:1.25}
+.cs-cc-card p{font-size:11.5px;color:#4b5563;line-height:1.5;margin:0}
 .cs-cc-card-arrow{position:absolute;top:20px;right:20px;width:26px;height:26px;border-radius:50%;background:#fff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center;opacity:.55;transition:opacity .18s ease,transform .18s ease}
 .cs-cc-card-arrow svg,.cs-cc-card-arrow i[data-lucide]{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4}
 .cs-cc-card:hover .cs-cc-card-arrow{opacity:1;transform:translateX(2px) translateY(-2px)}
