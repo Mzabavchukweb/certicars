@@ -117,13 +117,16 @@
 .cs-cc{position:relative;background:#fafbff;padding:60px 0;overflow:hidden;isolation:isolate}
 .cs-cc::before{content:'';position:absolute;top:-30%;right:-10%;width:55%;height:120%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(0,102,255,.12) 0%,rgba(0,102,255,.04) 45%,rgba(0,102,255,0) 70%);pointer-events:none;z-index:0}
 .cs-cc > .container{position:relative;z-index:1}
-/* Grid wg reference.PNG: content + 4 karty po LEWEJ (55%), bohater po
-   PRAWEJ (45%). Karty są sub-gridem 2×2 osadzonym w kolumnie content
-   pod info box'em — bohater z tabletem stanowi dominującą wizualną
-   prawą stronę. Alignment items:center żeby bohater nie „latał". */
-.cs-cc-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:48px;align-items:center}
-.cs-cc-hero{position:relative;min-height:520px;display:flex;align-items:center;justify-content:center}
-.cs-cc-hero img{width:100%;max-width:640px;height:auto;object-fit:contain;display:block}
+/* Grid wg reference.PNG 3-kolumnowy: LEWA content ~34%, ŚRODEK 4 karty
+   2×2 ~34%, PRAWA bohater ~32% (może wychodzić poza container overflow).
+   `.cs-cc` outer section ma overflow:hidden — bohater po prawej może
+   wypełniać przestrzeń poza max-width 1200px kontenera i nie łamie
+   layout'u. */
+.cs-cc-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:center}
+.cs-cc-hero{position:relative;min-height:560px;display:flex;align-items:center;justify-content:flex-end}
+/* Bohater "wychodzi" na prawo — nie jest ograniczony szerokością kolumny,
+   tylko wysokością sekcji; szeroki obraz zajmuje prawą stronę viewportu. */
+.cs-cc-hero img{height:100%;max-height:640px;width:auto;object-fit:contain;display:block}
 .cs-cc-hero .cs-cc-hero-desktop{display:block}
 .cs-cc-hero .cs-cc-hero-mobile{display:none}
 .cs-cc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:16px}
@@ -140,8 +143,9 @@
 .cs-cc-info-ico{flex-shrink:0;width:24px;height:24px;border-radius:6px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
 .cs-cc-info-ico svg,.cs-cc-info-ico i[data-lucide]{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
 
-/* 4 karty jako sub-grid 2×2 pod info box — kompaktowe kafle. */
-.cs-cc-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+/* 4 karty jako środkowa kolumna 3-kolumnowego layoutu — kwadratowe kafle
+   2×2. Padding większy niż wcześniej — kafle bardziej dominujące. */
+.cs-cc-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .cs-cc-card{position:relative;background:#fff;border:1px solid #eaf0fc;border-radius:16px;padding:22px 20px 24px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 6px 20px rgba(15,32,80,.05);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
 .cs-cc-card:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,.04),0 12px 32px rgba(15,32,80,.1);border-color:#cfdcf5}
 .cs-cc-card-ico{width:44px;height:44px;border-radius:50%;background:#eff6ff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
@@ -158,13 +162,21 @@
     .cs-jwz-benefits{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
     .cs-jwz-head h2{font-size:28px}
     .cs-cc{padding:48px 0}
-    .cs-cc-grid{grid-template-columns:1fr;gap:36px}
+    /* Tablet: 3-col → 2-col grid, karty pod content, bohater w drugiej
+       kolumnie po prawej. */
+    .cs-cc-grid{grid-template-columns:1fr 1fr;gap:28px}
+    .cs-cc-left{grid-column:1 / -1}
+    .cs-cc-cards{grid-column:1 / 2}
+    .cs-cc-hero{grid-column:2 / 3;min-height:auto}
+    .cs-cc-hero img{max-height:520px}
     .cs-cc-left h2{font-size:32px}
-    .cs-cc-cards{grid-template-columns:1fr 1fr;gap:12px}
-    /* Mobile stack: bohater przechodzi NAD content (order -1), portrait
-       PNG lepiej pasuje do wąskiej kolumny. */
-    .cs-cc-hero{order:-1;min-height:auto}
-    .cs-cc-hero img{max-width:340px}
+}
+@media(max-width:768px){
+    /* Mobile: stack column, bohater na górze (portrait), karty, content. */
+    .cs-cc-grid{grid-template-columns:1fr;gap:32px}
+    .cs-cc-left,.cs-cc-cards,.cs-cc-hero{grid-column:1 / -1}
+    .cs-cc-hero{order:-1;min-height:auto;justify-content:center}
+    .cs-cc-hero img{height:auto;width:100%;max-width:340px;max-height:none}
     .cs-cc-hero .cs-cc-hero-desktop{display:none}
     .cs-cc-hero .cs-cc-hero-mobile{display:block}
 }
@@ -556,25 +568,25 @@
                 <span class="cs-cc-info-ico" aria-hidden="true"><x-icon name="shield-check" size="13" :strokeWidth="2"/></span>
                 CertiCheck to wewnętrzny standard kontroli jakości CertiCars, a nie opinia rzeczoznawcy. Opis dotyczy stanu pojazdu na dzień oględzin i obejmuje elementy możliwe do oceny bez specjalistycznego demontażu podzespołów.
             </div>
+        </div>
 
-            <div class="cs-cc-cards">
-                @php
-                    $ccCards = [
-                        ['scan-line',     'Pomiary lakieru',   'Wskazujemy pomiary i ewentualne różnice grubości powłoki w punktach kontrolnych.'],
-                        ['wrench',        'Stan techniczny',   'Opisujemy widoczne elementy techniczne i podstawowe obserwacje z oględzin pojazdu.'],
-                        ['search',        'Ślady użytkowania', 'Pokazujemy widoczne ślady eksploatacji i ich lokalizację.'],
-                        ['file-text',     'Raport PDF',        'Czytelne podsumowanie ze zdjęciami i danymi do pobrania.'],
-                    ];
-                @endphp
-                @foreach($ccCards as [$ico, $title, $desc])
-                    <div class="cs-cc-card">
-                        <div class="cs-cc-card-ico" aria-hidden="true"><x-icon :name="$ico" size="20" :strokeWidth="1.8"/></div>
-                        <h3>{{ $title }}</h3>
-                        <p>{{ $desc }}</p>
-                        <span class="cs-cc-card-arrow" aria-hidden="true"><x-icon name="arrow-up-right" size="13" :strokeWidth="2.4"/></span>
-                    </div>
-                @endforeach
-            </div>
+        <div class="cs-cc-cards">
+            @php
+                $ccCards = [
+                    ['scan-line',     'Pomiary lakieru',   'Wskazujemy pomiary i ewentualne różnice grubości powłoki w punktach kontrolnych.'],
+                    ['wrench',        'Stan techniczny',   'Opisujemy widoczne elementy techniczne i podstawowe obserwacje z oględzin pojazdu.'],
+                    ['search',        'Ślady użytkowania', 'Pokazujemy widoczne ślady eksploatacji i ich lokalizację.'],
+                    ['file-text',     'Raport PDF',        'Czytelne podsumowanie ze zdjęciami i danymi do pobrania.'],
+                ];
+            @endphp
+            @foreach($ccCards as [$ico, $title, $desc])
+                <div class="cs-cc-card">
+                    <div class="cs-cc-card-ico" aria-hidden="true"><x-icon :name="$ico" size="20" :strokeWidth="1.8"/></div>
+                    <h3>{{ $title }}</h3>
+                    <p>{{ $desc }}</p>
+                    <span class="cs-cc-card-arrow" aria-hidden="true"><x-icon name="arrow-up-right" size="13" :strokeWidth="2.4"/></span>
+                </div>
+            @endforeach
         </div>
 
         <div class="cs-cc-hero" aria-hidden="true">
