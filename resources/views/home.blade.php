@@ -117,7 +117,15 @@
 .cs-cc{position:relative;background:#fafbff;padding:60px 0;overflow:hidden;isolation:isolate}
 .cs-cc::before{content:'';position:absolute;top:-30%;right:-10%;width:55%;height:120%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(0,102,255,.12) 0%,rgba(0,102,255,.04) 45%,rgba(0,102,255,0) 70%);pointer-events:none;z-index:0}
 .cs-cc > .container{position:relative;z-index:1}
-.cs-cc-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1.1fr;gap:60px;align-items:center}
+/* Grid wg reference.PNG: content + 4 karty po LEWEJ (55%), bohater po
+   PRAWEJ (45%). Karty są sub-gridem 2×2 osadzonym w kolumnie content
+   pod info box'em — bohater z tabletem stanowi dominującą wizualną
+   prawą stronę. Alignment items:center żeby bohater nie „latał". */
+.cs-cc-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:48px;align-items:center}
+.cs-cc-hero{position:relative;min-height:520px;display:flex;align-items:center;justify-content:center}
+.cs-cc-hero img{width:100%;max-width:640px;height:auto;object-fit:contain;display:block}
+.cs-cc-hero .cs-cc-hero-desktop{display:block}
+.cs-cc-hero .cs-cc-hero-mobile{display:none}
 .cs-cc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:16px}
 .cs-cc-kicker::before{content:'';width:22px;height:1.5px;background:#0066ff;border-radius:1px}
 .cs-cc-left h2{font-size:42px;font-weight:900;color:#0a0a0a;letter-spacing:-.8px;line-height:1.08;margin:0 0 20px}
@@ -132,7 +140,8 @@
 .cs-cc-info-ico{flex-shrink:0;width:24px;height:24px;border-radius:6px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
 .cs-cc-info-ico svg,.cs-cc-info-ico i[data-lucide]{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
 
-.cs-cc-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+/* 4 karty jako sub-grid 2×2 pod info box — kompaktowe kafle. */
+.cs-cc-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
 .cs-cc-card{position:relative;background:#fff;border:1px solid #eaf0fc;border-radius:16px;padding:22px 20px 24px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 6px 20px rgba(15,32,80,.05);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
 .cs-cc-card:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,.04),0 12px 32px rgba(15,32,80,.1);border-color:#cfdcf5}
 .cs-cc-card-ico{width:44px;height:44px;border-radius:50%;background:#eff6ff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
@@ -152,6 +161,12 @@
     .cs-cc-grid{grid-template-columns:1fr;gap:36px}
     .cs-cc-left h2{font-size:32px}
     .cs-cc-cards{grid-template-columns:1fr 1fr;gap:12px}
+    /* Mobile stack: bohater przechodzi NAD content (order -1), portrait
+       PNG lepiej pasuje do wąskiej kolumny. */
+    .cs-cc-hero{order:-1;min-height:auto}
+    .cs-cc-hero img{max-width:340px}
+    .cs-cc-hero .cs-cc-hero-desktop{display:none}
+    .cs-cc-hero .cs-cc-hero-mobile{display:block}
 }
 @media(max-width:600px){
     .cs-jwz{padding:36px 0}
@@ -541,25 +556,30 @@
                 <span class="cs-cc-info-ico" aria-hidden="true"><x-icon name="shield-check" size="13" :strokeWidth="2"/></span>
                 CertiCheck to wewnętrzny standard kontroli jakości CertiCars, a nie opinia rzeczoznawcy. Opis dotyczy stanu pojazdu na dzień oględzin i obejmuje elementy możliwe do oceny bez specjalistycznego demontażu podzespołów.
             </div>
+
+            <div class="cs-cc-cards">
+                @php
+                    $ccCards = [
+                        ['scan-line',     'Pomiary lakieru',   'Wskazujemy pomiary i ewentualne różnice grubości powłoki w punktach kontrolnych.'],
+                        ['wrench',        'Stan techniczny',   'Opisujemy widoczne elementy techniczne i podstawowe obserwacje z oględzin pojazdu.'],
+                        ['search',        'Ślady użytkowania', 'Pokazujemy widoczne ślady eksploatacji i ich lokalizację.'],
+                        ['file-text',     'Raport PDF',        'Czytelne podsumowanie ze zdjęciami i danymi do pobrania.'],
+                    ];
+                @endphp
+                @foreach($ccCards as [$ico, $title, $desc])
+                    <div class="cs-cc-card">
+                        <div class="cs-cc-card-ico" aria-hidden="true"><x-icon :name="$ico" size="20" :strokeWidth="1.8"/></div>
+                        <h3>{{ $title }}</h3>
+                        <p>{{ $desc }}</p>
+                        <span class="cs-cc-card-arrow" aria-hidden="true"><x-icon name="arrow-up-right" size="13" :strokeWidth="2.4"/></span>
+                    </div>
+                @endforeach
+            </div>
         </div>
 
-        <div class="cs-cc-cards">
-            @php
-                $ccCards = [
-                    ['scan-line',     'Pomiary lakieru',   'Wskazujemy pomiary i ewentualne różnice grubości powłoki w punktach kontrolnych.'],
-                    ['wrench',        'Stan techniczny',   'Opisujemy widoczne elementy techniczne i podstawowe obserwacje z oględzin pojazdu.'],
-                    ['search',        'Ślady użytkowania', 'Pokazujemy widoczne ślady eksploatacji i ich lokalizację.'],
-                    ['file-text',     'Raport PDF',        'Czytelne podsumowanie ze zdjęciami i danymi do pobrania.'],
-                ];
-            @endphp
-            @foreach($ccCards as [$ico, $title, $desc])
-                <div class="cs-cc-card">
-                    <div class="cs-cc-card-ico" aria-hidden="true"><x-icon :name="$ico" size="20" :strokeWidth="1.8"/></div>
-                    <h3>{{ $title }}</h3>
-                    <p>{{ $desc }}</p>
-                    <span class="cs-cc-card-arrow" aria-hidden="true"><x-icon name="arrow-up-right" size="13" :strokeWidth="2.4"/></span>
-                </div>
-            @endforeach
+        <div class="cs-cc-hero" aria-hidden="true">
+            <img class="cs-cc-hero-desktop" src="/images/bohater-desktop.png" alt="" width="1672" height="941" loading="lazy" decoding="async">
+            <img class="cs-cc-hero-mobile" src="/images/bohater-mobile.png" alt="" width="941" height="1672" loading="lazy" decoding="async">
         </div>
     </div>
     </div>
