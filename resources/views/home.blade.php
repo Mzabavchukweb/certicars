@@ -114,21 +114,30 @@
 .cs-jwz-cta svg,.cs-jwz-cta i[data-lucide]{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2}
 
 /* ============ CERTICHECK SECTION (homepage, redesigned) ============ */
-/* Tło sekcji dopasowane do tła PNG bohatera (jasno-niebieski gradient
-   #e0e4f9 → #edf0f8) — bohater się „zlewa" z tłem zamiast mieć widoczną
-   prostokątną krawędź jego wewnętrznego backgroundu. Sample kolorów PNG:
-   corner (237,239,248), center (224,228,249), right edge (194,210,248). */
-.cs-cc{position:relative;background:linear-gradient(90deg,#f7f9ff 0%,#edf1fc 55%,#e3ebfa 100%);padding:60px 0;overflow:hidden;isolation:isolate}
-.cs-cc::before{content:'';position:absolute;top:-30%;right:-10%;width:55%;height:120%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(0,102,255,.08) 0%,rgba(0,102,255,.03) 45%,rgba(0,102,255,0) 70%);pointer-events:none;z-index:0}
+/* Tło sekcji — jednolity, delikatny niebieski light. Bez agresywnego
+   diagonalnego gradientu. Radial „spotlight" za bohaterem tworzy
+   naturalną poświatę która płynnie łączy PNG z tłem sekcji (patrz
+   .cs-cc::after). */
+.cs-cc{position:relative;background:#eef2fa;padding:60px 0;overflow:hidden;isolation:isolate}
+.cs-cc::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,#f4f6fc 0%,#eef2fa 40%,#e8edf7 100%);pointer-events:none;z-index:0}
+/* Spotlight za bohaterem — duża soft radial która wypełnia się dokładnie
+   za PNG bohatera po prawej. Kolory dopasowane do PNG (samples: outer
+   #c1d1f7, inner #e0e4f9). Efekt „aureola" która wciąga PNG w sekcję. */
+.cs-cc::after{content:'';position:absolute;top:50%;right:-4%;transform:translateY(-50%);width:52%;height:110%;background:radial-gradient(ellipse 55% 60% at 50% 50%,rgba(202,215,246,.6) 0%,rgba(202,215,246,.35) 35%,rgba(202,215,246,.12) 60%,rgba(202,215,246,0) 85%);pointer-events:none;z-index:0}
 .cs-cc > .container{position:relative;z-index:1}
 /* Grid 3-kolumnowy z proporcjami żeby karty miały wystarczająco miejsca
    dla 3-4 linii tekstu w opisie: content 32%, karty 38% (szersza żeby
    każda karta była ~180×180 zamiast 142×142), bohater 30%. */
 .cs-cc-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,.95fr);gap:28px;align-items:center}
 .cs-cc-hero{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
-/* height explicit + width auto — obraz portrait nie przekroczy szerokości
-   kolumny gridu, karty w środkowej kolumnie NIE są zasłaniane. */
-.cs-cc-hero img{height:520px;width:auto;max-width:100%;object-fit:contain;display:block}
+/* Radial mask + spotlight w tle sekcji (`.cs-cc::after`) razem sprawiają
+   że PNG bohatera stapia się z tłem bez widocznej prostokątnej krawędzi.
+   Mask ma szeroki fade od 40% (pełny obraz) do 90% (całkowicie transparent),
+   więc krawędzie PNG (jego wewnętrzne tło) wygasają dużo wcześniej niż
+   sam prostokąt zdjęcia się kończy. */
+.cs-cc-hero img{height:520px;width:auto;max-width:100%;object-fit:contain;display:block;
+    -webkit-mask-image:radial-gradient(ellipse 60% 72% at center,#000 40%,rgba(0,0,0,.75) 60%,rgba(0,0,0,.35) 78%,transparent 92%);
+    mask-image:radial-gradient(ellipse 60% 72% at center,#000 40%,rgba(0,0,0,.75) 60%,rgba(0,0,0,.35) 78%,transparent 92%)}
 .cs-cc-hero .cs-cc-hero-desktop{display:none}
 .cs-cc-hero .cs-cc-hero-mobile{display:block}
 .cs-cc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:16px}
@@ -165,23 +174,57 @@
     .cs-jwz-benefits{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
     .cs-jwz-head h2{font-size:28px}
     .cs-cc{padding:48px 0}
-    /* Tablet: 3-col → 2-col grid, karty pod content, bohater w drugiej
-       kolumnie po prawej. */
-    .cs-cc-grid{grid-template-columns:1fr 1fr;gap:28px}
+    /* Tablet 1024px: 3-col → 2-col grid. Content na górze pełna szerokość,
+       poniżej 2 kolumny: karty | bohater. */
+    .cs-cc-grid{grid-template-columns:1fr 1fr;gap:32px}
     .cs-cc-left{grid-column:1 / -1}
     .cs-cc-cards{grid-column:1 / 2}
-    .cs-cc-hero{grid-column:2 / 3;min-height:auto}
-    .cs-cc-hero img{max-height:520px}
+    .cs-cc-hero{grid-column:2 / 3}
+    .cs-cc-hero img{height:auto;max-height:440px;width:auto;max-width:100%}
     .cs-cc-left h2{font-size:32px}
+    .cs-cc-card{min-height:170px}
 }
 @media(max-width:768px){
-    /* Mobile: stack column, bohater na górze (portrait), karty, content. */
-    .cs-cc-grid{grid-template-columns:1fr;gap:32px}
+    /* Mobile: pełny stack DOM order — content → karty → bohater na dole.
+       (Bez `order:-1` — naturalny flow HTML daje żądaną kolejność.)
+       Karty kompaktowe (mniejsze min-height, mniejszy padding), bohater
+       zmniejszony żeby nie tworzył ogromnej pustej przestrzeni. */
+    .cs-cc{padding:40px 0}
+    .cs-cc-grid{grid-template-columns:1fr;gap:24px}
     .cs-cc-left,.cs-cc-cards,.cs-cc-hero{grid-column:1 / -1}
-    .cs-cc-hero{order:-1;min-height:auto;justify-content:center}
-    .cs-cc-hero img{height:auto;width:100%;max-width:340px;max-height:none}
-    .cs-cc-hero .cs-cc-hero-desktop{display:none}
-    .cs-cc-hero .cs-cc-hero-mobile{display:block}
+    .cs-cc-left h2{font-size:28px;margin-bottom:14px}
+    .cs-cc-left p{font-size:14px;margin-bottom:20px}
+    .cs-cc-ctas{margin-bottom:16px}
+    .cs-cc-info{margin-bottom:0}
+    .cs-cc-cards{grid-template-columns:1fr 1fr;gap:10px}
+    .cs-cc-card{min-height:auto;padding:14px 13px 16px}
+    .cs-cc-card-ico{width:34px;height:34px;margin-bottom:10px}
+    .cs-cc-card-ico svg,.cs-cc-card-ico i[data-lucide]{width:16px;height:16px}
+    .cs-cc-card h3{font-size:12.5px;margin:6px 0 4px}
+    .cs-cc-card p{font-size:11px;line-height:1.45}
+    .cs-cc-card-arrow{top:14px;right:14px;width:22px;height:22px}
+    .cs-cc-card-arrow svg,.cs-cc-card-arrow i[data-lucide]{width:11px;height:11px}
+    /* Bohater na dole — smaller, wycentrowany. Spotlight w tle sekcji
+       przesunięty niżej żeby aureola była za PNG (nie w prawym górnym). */
+    .cs-cc-hero{justify-content:center;padding:0 20px}
+    .cs-cc-hero img{height:auto;width:100%;max-width:280px;max-height:none}
+}
+@media(max-width:768px){
+    /* Spotlight tła — reposition dla mobile żeby aureola była pod bohaterem */
+    .cs-cc::after{top:auto;bottom:-5%;right:50%;transform:translateX(50%);width:80%;height:40%}
+}
+@media(max-width:480px){
+    /* Small mobile 480px: dalej 2×2 karty ale jeszcze tighter. Bohater
+       najmniejszy — 220px żeby nie zajmował 60% viewportu. */
+    .cs-cc-left h2{font-size:24px}
+    .cs-cc-cards{gap:8px}
+    .cs-cc-card{padding:12px 11px 14px}
+    .cs-cc-hero img{max-width:220px}
+}
+@media(max-width:390px){
+    /* Very small — karty stack 1-col żeby tekst był czytelny. */
+    .cs-cc-cards{grid-template-columns:1fr}
+    .cs-cc-hero img{max-width:200px}
 }
 @media(max-width:600px){
     .cs-jwz{padding:36px 0}
