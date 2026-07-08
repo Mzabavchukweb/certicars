@@ -114,20 +114,21 @@
 .cs-jwz-cta svg,.cs-jwz-cta i[data-lucide]{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2}
 
 /* ============ CERTICHECK SECTION (homepage, redesigned) ============ */
-.cs-cc{position:relative;background:#fafbff;padding:60px 0;overflow:hidden;isolation:isolate}
-.cs-cc::before{content:'';position:absolute;top:-30%;right:-10%;width:55%;height:120%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(0,102,255,.12) 0%,rgba(0,102,255,.04) 45%,rgba(0,102,255,0) 70%);pointer-events:none;z-index:0}
+/* Tło sekcji dopasowane do tła PNG bohatera (jasno-niebieski gradient
+   #e0e4f9 → #edf0f8) — bohater się „zlewa" z tłem zamiast mieć widoczną
+   prostokątną krawędź jego wewnętrznego backgroundu. Sample kolorów PNG:
+   corner (237,239,248), center (224,228,249), right edge (194,210,248). */
+.cs-cc{position:relative;background:linear-gradient(90deg,#f7f9ff 0%,#edf1fc 55%,#e3ebfa 100%);padding:60px 0;overflow:hidden;isolation:isolate}
+.cs-cc::before{content:'';position:absolute;top:-30%;right:-10%;width:55%;height:120%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(0,102,255,.08) 0%,rgba(0,102,255,.03) 45%,rgba(0,102,255,0) 70%);pointer-events:none;z-index:0}
 .cs-cc > .container{position:relative;z-index:1}
-/* Grid wg reference.PNG 3-kolumnowy — proporcje:
-   LEWA content ~37%, ŚRODEK 4 karty kompaktowe kwadraty ~26%, PRAWA
-   bohater portrait ~37% (dominujący wysoki wizerunek). Karty muszą
-   być KWADRATOWE (nie wysokie/wąskie) — aspect-ratio ustawia to
-   niezależnie od gap kolumn. */
-.cs-cc-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.4fr);gap:32px;align-items:center}
-.cs-cc-hero{position:relative;display:flex;align-items:center;justify-content:center}
-/* Bohater PORTRAIT używany na desktop — landscape byłby za szeroki dla
-   pionowej kolumny, portrait wypełnia wysokość jak w reference.PNG.
-   `bohater-mobile.png` jest 941×1672 portrait — pasuje idealnie. */
-.cs-cc-hero img{width:100%;max-width:480px;height:auto;object-fit:contain;display:block}
+/* Grid 3-kolumnowy z proporcjami żeby karty miały wystarczająco miejsca
+   dla 3-4 linii tekstu w opisie: content 32%, karty 38% (szersza żeby
+   każda karta była ~180×180 zamiast 142×142), bohater 30%. */
+.cs-cc-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,.95fr);gap:28px;align-items:center}
+.cs-cc-hero{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+/* height explicit + width auto — obraz portrait nie przekroczy szerokości
+   kolumny gridu, karty w środkowej kolumnie NIE są zasłaniane. */
+.cs-cc-hero img{height:520px;width:auto;max-width:100%;object-fit:contain;display:block}
 .cs-cc-hero .cs-cc-hero-desktop{display:none}
 .cs-cc-hero .cs-cc-hero-mobile{display:block}
 .cs-cc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:16px}
@@ -144,11 +145,11 @@
 .cs-cc-info-ico{flex-shrink:0;width:24px;height:24px;border-radius:6px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
 .cs-cc-info-ico svg,.cs-cc-info-ico i[data-lucide]{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
 
-/* 4 karty w środkowej kolumnie — kwadratowe kafle 2×2 wg reference.
-   aspect-ratio:1 zamiast min-height żeby karty pozostały square
-   niezależnie od szerokości kolumny (zoom, wąski viewport itp). */
+/* 4 karty w środkowej kolumnie 2×2. Bez aspect-ratio bo tekst 3-4
+   linii z tytułem NIE mieści się w małym kwadracie — min-height 200px
+   daje kartom stałą wysokość, szerokość wynika z kolumny 1.2fr. */
 .cs-cc-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.cs-cc-card{position:relative;background:#fff;border:1px solid #eaf0fc;border-radius:14px;padding:16px 16px 18px;aspect-ratio:1;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.04),0 6px 20px rgba(15,32,80,.05);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.cs-cc-card{position:relative;background:#fff;border:1px solid #eaf0fc;border-radius:14px;padding:18px 18px 20px;min-height:200px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.04),0 6px 20px rgba(15,32,80,.05);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
 .cs-cc-card:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,.04),0 12px 32px rgba(15,32,80,.1);border-color:#cfdcf5}
 .cs-cc-card-ico{width:38px;height:38px;border-radius:10px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-bottom:auto}
 .cs-cc-card-ico svg,.cs-cc-card-ico i[data-lucide]{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
