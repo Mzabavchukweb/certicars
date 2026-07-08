@@ -411,20 +411,22 @@
 
 /* ============ 3-card bottom row (Historia / Dokumenty / Formalności) ============ */
 .cs-info-3row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box;align-items:stretch}
-.cs-info-3card{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:22px 24px;display:flex;flex-direction:column;min-width:0;height:100%}
-.cs-info-3card-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #f0f0f2}
-.cs-info-3card-ico{flex-shrink:0;width:38px;height:38px;border-radius:10px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
-.cs-info-3card-ico svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.cs-info-3card-title{font-size:15px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0;line-height:1.3}
+.cs-info-3card{background:#fff;border:1px solid #eef1f6;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:22px 24px;display:flex;flex-direction:column;min-width:0;height:100%}
+.cs-info-3card-head{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #eef1f6}
+.cs-info-3card-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#e8f0ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-info-3card-ico svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.cs-info-3card-title{font-size:16px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0;line-height:1.3}
 .cs-info-3card-rows{flex:1;display:flex;flex-direction:column}
-.cs-info-3row-line{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid #f5f5f7;font-size:13.5px;line-height:1.4}
-.cs-info-3row-line:last-child{border-bottom:none}
-.cs-info-3row-line .lbl{display:flex;align-items:flex-start;gap:10px;color:#6b7280;font-weight:500;min-width:0;flex:1;line-height:1.4}
-.cs-info-3row-line .lbl-ico{flex-shrink:0;width:26px;height:26px;border-radius:8px;background:#eff6ff;color:var(--blue);display:inline-flex;align-items:center;justify-content:center;margin-top:-2px}
-.cs-info-3row-line .lbl-ico svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
-.cs-info-3row-line .val{font-weight:700;color:#0a0a0a;text-align:right;word-break:break-word;flex-shrink:0;max-width:55%;align-self:center}
-.cs-info-3row-line .val.muted{color:#9ca3af;font-weight:500;font-style:italic}
-.cs-info-3row-line .val.ok{color:#15803d}
+.cs-info-3row-line{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #f2f4f8;font-size:14px;line-height:1.45}
+.cs-info-3row-line:last-child{border-bottom:none;padding-bottom:2px}
+.cs-info-3row-line:first-child{padding-top:4px}
+.cs-info-3row-line .lbl{display:flex;align-items:center;gap:12px;color:#6b7280;font-weight:500;min-width:0;flex:1;line-height:1.4;font-size:14px}
+.cs-info-3row-line .lbl-ico{flex-shrink:0;width:30px;height:30px;border-radius:9px;background:#e8f0ff;color:var(--blue);display:inline-flex;align-items:center;justify-content:center}
+.cs-info-3row-line .lbl-ico svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+.cs-info-3row-line .val{font-weight:700;color:#0a0a0a;text-align:right;word-break:break-word;flex-shrink:0;max-width:55%;font-size:14.5px;letter-spacing:-.1px}
+.cs-info-3row-line .val.muted{color:#94a3b8;font-weight:500;font-style:normal}
+.cs-info-3row-line .val.ok{color:#16a34a;font-weight:800;display:inline-flex;align-items:center;gap:6px}
+.cs-info-3row-line .val.ok::after{content:'';display:inline-block;width:16px;height:16px;border-radius:50%;background:#dcfce7 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2316a34a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/10px 10px no-repeat;flex-shrink:0}
 .cs-info-3row-note{max-width:1200px;margin:14px auto 0;padding:0 24px;font-size:12.5px;color:#6b7280;line-height:1.6}
 /* Auto-fit variant for optional cards (drivetrain/emission + fuel). Collapses
    from 2 → 1 column automatically below ~720px instead of overriding the
@@ -837,13 +839,13 @@
 .cs-col-left,.cs-col-right{display:flex;flex-direction:column;gap:16px;min-width:0;align-content:start;overflow:hidden}
 /* Unified section card — matches cs-info-3card and cs-equip-cat so every
    detail block on the page shares the same border/radius/shadow language. */
-.cs-data-section{background:#fff;border:1px solid #eeeef0;border-radius:18px;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);max-width:100%}
+.cs-data-section{background:#fff;border:1px solid #eef1f6;border-radius:18px;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);max-width:100%}
 .cs-wrap > .cs-data-section,.cs-wrap > div:not(.container) > .cs-data-section{max-width:calc(1200px - 48px);margin-left:auto;margin-right:auto}
-.cs-data-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;user-select:none;border-bottom:1px solid #f0f0f2;background:#fff}
-.cs-data-header h2{font-size:16px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;display:flex;align-items:center;gap:12px;margin:0;line-height:1.3;font-family:'Inter',sans-serif}
+.cs-data-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;user-select:none;border-bottom:1px solid #eef1f6;background:#fff}
+.cs-data-header h2{font-size:16px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;display:flex;align-items:center;gap:14px;margin:0;line-height:1.3;font-family:'Inter',sans-serif}
 .cs-data-header h2 i,.cs-data-header h2 svg{display:inline-flex;align-items:center;justify-content:center}
-/* Header icon: 38x38 contained pill (matches cs-info-3card-ico / cs-equip-cat-ico) */
-.cs-data-header h2 svg,.cs-data-header h2 i[data-lucide],.cs-data-header h2 i.cs-icon{width:18px;height:18px;flex-shrink:0;color:#0066ff;stroke-width:2;box-sizing:content-box;padding:10px;background:#eff6ff;border-radius:10px}
+/* Header icon: 44x44 contained pill (matches cs-info-3card-ico / cs-equip-cat-ico) */
+.cs-data-header h2 svg,.cs-data-header h2 i[data-lucide],.cs-data-header h2 i.cs-icon{width:20px;height:20px;flex-shrink:0;color:#0066ff;stroke-width:1.9;box-sizing:content-box;padding:12px;background:#e8f0ff;border-radius:12px}
 .cs-data-header .chev{display:none}
 /* Collapsible accordion behavior — applied only at mobile breakpoint */
 @media(max-width:1024px){
@@ -867,18 +869,18 @@
    pill-like tile: soft-blue ikona w rounded box po lewej, label (mała
    szara) i value (bold) w kolumnie po prawej. Grid gap zamiast bottom
    border — jasne kafelki się nawzajem oddzielają wizualnie bez linii. */
-.cs-dp-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.cs-dp-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 /* Lone 17th cell (drivetrain alone) → spans full row 4n+1 pattern. */
 .cs-dp-grid > .cs-dp-item:last-child:nth-child(4n+1){grid-column:1 / -1}
-.cs-dp-item{display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:14px;padding:14px 16px;border-radius:12px;background:#fafbfd;border:1px solid #f0f2f6;min-width:0;transition:background .15s ease}
-.cs-dp-item:hover{background:#f4f6fb}
-.cs-dp-ico{width:48px;height:48px;border-radius:12px;background:#eef3ff;color:var(--blue);display:flex;align-items:center;justify-content:center}
-.cs-dp-ico svg,.cs-dp-ico i[data-lucide]{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8}
-.cs-dp-body{display:flex;flex-direction:column;min-width:0;gap:3px}
+.cs-dp-item{display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:16px;padding:16px 18px;border-radius:14px;background:#fafbfd;border:1px solid #eef1f6;min-width:0;transition:background .15s ease,border-color .15s ease}
+.cs-dp-item:hover{background:#f4f7fc;border-color:#e0e6f2}
+.cs-dp-ico{width:48px;height:48px;border-radius:12px;background:#e8f0ff;color:var(--blue);display:flex;align-items:center;justify-content:center}
+.cs-dp-ico svg,.cs-dp-ico i[data-lucide]{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9}
+.cs-dp-body{display:flex;flex-direction:column;min-width:0;gap:4px}
 .cs-dp-lbl{font-size:12.5px;color:#6b7280;font-weight:500;line-height:1.3;letter-spacing:.1px}
-.cs-dp-val{font-size:14.5px;color:#0a0a0a;font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cs-dp-val.ok{color:#15803d}
-.cs-dp-val.muted{color:#9ca3af;font-weight:500}
+.cs-dp-val{font-size:15px;color:#0a0a0a;font-weight:800;line-height:1.3;letter-spacing:-.15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-dp-val.ok{color:#16a34a}
+.cs-dp-val.muted{color:#94a3b8;font-weight:500}
 @media(max-width:1024px){
     .cs-dp-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 }
