@@ -113,8 +113,12 @@
         .header-logo-sep{width:1px;height:36px;background:#d4d4d8;flex-shrink:0;margin:0 2px}
         .header-logo-tagline{display:flex;flex-direction:column;gap:0;line-height:1.3}
         .header-logo-tagline span{font-size:12px;font-weight:400;color:#9ca3af;letter-spacing:0}
-        .header-nav{display:flex;align-items:center;gap:4px}
-        .header-nav .nav-link{font-size:14.5px;font-weight:500;color:var(--text);padding:10px 16px;border-radius:8px;transition:color .15s,background .15s;line-height:1}
+        .header-nav{display:flex;align-items:center;gap:2px;flex-wrap:nowrap;flex-shrink:0}
+        /* `white-space:nowrap` + `flex-shrink:0` na kazdym linku - "O nas"
+           i inne 2-slowowe pozycje nigdy nie zawijaja na dwie linie.
+           Padding zmniejszony do 12px zeby wszystkie linki miescily sie
+           w top navie na tighter viewportach (1280-1440). */
+        .header-nav .nav-link{font-size:14.5px;font-weight:500;color:var(--text);padding:10px 12px;border-radius:8px;transition:color .15s,background .15s;line-height:1;white-space:nowrap;flex-shrink:0}
         .header-nav .nav-link:hover{color:var(--blue)}
         .header-nav .nav-link.active{color:var(--blue);font-weight:700;background:var(--blue-bg)}
         .header-cta{background:var(--blue);color:#fff;padding:12px 22px;border-radius:50px;font-weight:600;font-size:13.5px;display:inline-flex;align-items:center;gap:7px;transition:all .2s;line-height:1;flex-shrink:0;box-shadow:0 4px 14px rgba(0,102,255,.35)}
