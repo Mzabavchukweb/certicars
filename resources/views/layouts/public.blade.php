@@ -434,6 +434,7 @@
             <nav class="header-nav" aria-label="Główna nawigacja">
                 <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home')?'active':'' }}">Strona główna</a>
                 <a href="{{ route('catalog') }}" class="nav-link {{ request()->routeIs('catalog*')?'active':'' }}">Oferta</a>
+                <a href="{{ route('certicheck.landing') }}" class="nav-link {{ request()->routeIs('certicheck.landing')?'active':'' }}">CertiCheck</a>
                 <a href="{{ route('about') }}" class="nav-link {{ request()->routeIs('about')?'active':'' }}">O nas</a>
                 <a href="{{ route('contact') }}" class="nav-link {{ request()->routeIs('contact')?'active':'' }}">Kontakt</a>
                 <a href="{{ route('favorites') }}" class="nav-link {{ request()->routeIs('favorites')?'active':'' }}" id="navFavLink" style="display:flex;align-items:center;gap:6px">
@@ -457,6 +458,10 @@
             <a href="{{ route('catalog') }}" class="nav-link {{ request()->routeIs('catalog*')?'active':'' }}">
                 <x-icon name="car" size="16"/>
                 Oferta samochodów
+            </a>
+            <a href="{{ route('certicheck.landing') }}" class="nav-link {{ request()->routeIs('certicheck.landing')?'active':'' }}">
+                <x-icon name="badge-check" size="16"/>
+                CertiCheck
             </a>
             <a href="{{ route('about') }}" class="nav-link {{ request()->routeIs('about')?'active':'' }}">
                 <x-icon name="info" size="16"/>
@@ -563,7 +568,7 @@
                 <ul class="footer-nav-list">
                     <li><a href="{{ route('home') }}"><x-icon name="chevron-right" size="11"/>Strona główna</a></li>
                     <li><a href="{{ route('catalog') }}"><x-icon name="chevron-right" size="11"/>Oferta samochodów</a></li>
-                    <li><a href="{{ route('home') }}#certicheck"><x-icon name="chevron-right" size="11"/>CertiCheck</a></li>
+                    <li><a href="{{ route('certicheck.landing') }}"><x-icon name="chevron-right" size="11"/>CertiCheck</a></li>
                     <li><a href="{{ route('about') }}"><x-icon name="chevron-right" size="11"/>Jak wygląda zakup</a></li>
                     <li><a href="{{ route('about') }}"><x-icon name="chevron-right" size="11"/>O nas</a></li>
                     <li><a href="{{ route('contact') }}"><x-icon name="chevron-right" size="11"/>Kontakt</a></li>

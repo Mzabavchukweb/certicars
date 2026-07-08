@@ -23,6 +23,18 @@ class PageController extends Controller
         return view('pages.contact');
     }
 
+    /**
+     * Marketing landing dla feature CertiCheck — dostępny z menu głównego
+     * jako `/certicheck`. Oddzielna od `catalog.certicheck` (raport per-car
+     * na URL `/samochody/{slug}/certicheck`), która pokazuje broszurę
+     * konkretnego pojazdu. Ta landing wyjaśnia co to jest CertiCheck i
+     * linkuje do katalogu z filtrem CertiCheck.
+     */
+    public function certicheckLanding()
+    {
+        return view('pages.certicheck');
+    }
+
     public function contactSubmit(Request $request)
     {
         $validated = $request->validate([

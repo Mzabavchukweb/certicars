@@ -863,30 +863,30 @@
 @media(max-width:1024px){.cs-data-grid-4col{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px}}
 @media(max-width:600px){.cs-data-grid-4col{grid-template-columns:1fr;column-gap:0}}
 
-/* 4×N grid matching the reference. Each cell is its own inline row:
-   [icon] [Label:]  ………  [value]. A hairline beneath each cell creates the
-   stacked-list look within each column; the grid's column-gap keeps the
-   four columns visually separate without needing vertical dividers. */
-.cs-dp-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:24px;row-gap:0}
-/* When the grid has a leftover lone cell (17th = drivetrain alone), span it
-   across all 4 columns so the row stays visually balanced. Triggers only on
-   total counts of 4n+1 (i.e. 5,9,13,17…) — the normal 16-cell layout is
-   untouched because last child sits at position 16 = 4n. */
+/* 4×N grid — nowy layout wg reference (pola.PNG). Każda komórka to
+   pill-like tile: soft-blue ikona w rounded box po lewej, label (mała
+   szara) i value (bold) w kolumnie po prawej. Grid gap zamiast bottom
+   border — jasne kafelki się nawzajem oddzielają wizualnie bez linii. */
+.cs-dp-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+/* Lone 17th cell (drivetrain alone) → spans full row 4n+1 pattern. */
 .cs-dp-grid > .cs-dp-item:last-child:nth-child(4n+1){grid-column:1 / -1}
-.cs-dp-item{display:grid;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #f3f4f6;min-width:0}
-.cs-dp-ico{width:32px;height:32px;border-radius:9px;background:#eff6ff;color:var(--blue);display:flex;align-items:center;justify-content:center}
-.cs-dp-ico svg,.cs-dp-ico i[data-lucide]{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}
-.cs-dp-lbl{font-size:13px;color:#6b7280;font-weight:500;line-height:1.35;min-width:0;word-break:normal;overflow-wrap:anywhere}
-.cs-dp-lbl::after{content:':'}
-.cs-dp-val{font-size:13.5px;color:#0a0a0a;font-weight:700;line-height:1.35;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.cs-dp-item{display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:14px;padding:14px 16px;border-radius:12px;background:#fafbfd;border:1px solid #f0f2f6;min-width:0;transition:background .15s ease}
+.cs-dp-item:hover{background:#f4f6fb}
+.cs-dp-ico{width:48px;height:48px;border-radius:12px;background:#eef3ff;color:var(--blue);display:flex;align-items:center;justify-content:center}
+.cs-dp-ico svg,.cs-dp-ico i[data-lucide]{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8}
+.cs-dp-body{display:flex;flex-direction:column;min-width:0;gap:3px}
+.cs-dp-lbl{font-size:12.5px;color:#6b7280;font-weight:500;line-height:1.3;letter-spacing:.1px}
+.cs-dp-val{font-size:14.5px;color:#0a0a0a;font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cs-dp-val.ok{color:#15803d}
 .cs-dp-val.muted{color:#9ca3af;font-weight:500}
 @media(max-width:1024px){
-    .cs-dp-grid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:28px}
+    .cs-dp-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 }
 @media(max-width:520px){
-    .cs-dp-grid{grid-template-columns:1fr;column-gap:0}
-    .cs-dp-item{padding:10px 0}
+    .cs-dp-grid{grid-template-columns:1fr;gap:8px}
+    .cs-dp-item{padding:12px 14px}
+    .cs-dp-ico{width:44px;height:44px;border-radius:11px}
+    .cs-dp-ico svg,.cs-dp-ico i[data-lucide]{width:20px;height:20px}
 }
 
 /* TECH CONDITION LIST — fixed icon column, no text-icon collision */
@@ -1893,9 +1893,11 @@
             <div class="cs-dp-grid">
                 @foreach($dpRows as [$ico, $label, $value])
                     <div class="cs-dp-item">
-                        <span class="cs-dp-ico" aria-hidden="true"><x-icon :name="$ico" size="18" :strokeWidth="1.8"/></span>
-                        <span class="cs-dp-lbl">{{ $label }}</span>
-                        <span class="cs-dp-val {{ $value === $em ? 'muted' : '' }}" title="{{ $value }}">{{ $value }}</span>
+                        <span class="cs-dp-ico" aria-hidden="true"><x-icon :name="$ico" size="22" :strokeWidth="1.8"/></span>
+                        <span class="cs-dp-body">
+                            <span class="cs-dp-lbl">{{ $label }}</span>
+                            <span class="cs-dp-val {{ $value === $em ? 'muted' : '' }}" title="{{ $value }}">{{ $value }}</span>
+                        </span>
                     </div>
                 @endforeach
             </div>
