@@ -606,7 +606,7 @@
                     <x-icon name="search" size="15" :strokeWidth="2.2"/>
                     Zobacz auta z CertiCheck
                 </a>
-                <a class="cs-cc-cta-secondary" href="{{ route('about') }}">
+                <a class="cs-cc-cta-secondary" href="{{ route('certicheck.landing') }}">
                     Jak działa CertiCheck?
                     <x-icon name="arrow-right" size="14" :strokeWidth="2.2"/>
                 </a>
