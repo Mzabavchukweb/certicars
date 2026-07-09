@@ -234,12 +234,25 @@
     /* Pudelko WASKIE i WYSOKIE — proporcja bliska portretowi 941x1672. Kwadrat
        + cover skalowalby zdjecie po szerokosci i ucinal bohatera w pasie. */
     .cs-cc-hero{position:relative;overflow:hidden;min-height:0;height:480px;width:100%;max-width:340px;margin:0 auto}
-    /* Promienie elipsy MUSZA byc < 50% wymiaru pudelka, inaczej krawedzie
-       pudelka wypadaja wewnatrz elipsy i maska jest tam wciaz nieprzezroczysta
-       — stad widoczny prostokat PNG. 60%/56% + wczesny fade wygasza rogi. */
+    /* TRZY maski zlozone przez mask-composite:intersect (piksel jest widoczny
+       tylko tam, gdzie przepuszczaja go wszystkie warstwy):
+         1. elipsa — wygasza rogi. Promienie MUSZA byc < 50% wymiaru pudelka,
+            inaczej krawedzie wypadaja wewnatrz elipsy, gdzie maska jest wciaz
+            nieprzezroczysta, i widac prostokat PNG.
+         2. gradient od dolu — bohater rozplywa sie w tle zamiast konczyc cieciem.
+         3. gradient od prawej — to samo dla prawej krawedzi.
+       -webkit-mask-composite:source-in to odpowiednik intersect dla Safari. */
     .cs-cc-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 20%;
-        -webkit-mask-image:radial-gradient(ellipse 60% 56% at 50% 48%,#000 42%,rgba(0,0,0,.92) 62%,rgba(0,0,0,.5) 80%,transparent 100%);
-        mask-image:radial-gradient(ellipse 60% 56% at 50% 48%,#000 42%,rgba(0,0,0,.92) 62%,rgba(0,0,0,.5) 80%,transparent 100%)}
+        -webkit-mask-image:
+            radial-gradient(ellipse 60% 56% at 50% 46%,#000 42%,rgba(0,0,0,.92) 62%,rgba(0,0,0,.5) 80%,transparent 100%),
+            linear-gradient(to top,transparent 0,rgba(0,0,0,.35) 10%,rgba(0,0,0,.85) 24%,#000 40%),
+            linear-gradient(to left,transparent 0,rgba(0,0,0,.5) 6%,rgba(0,0,0,.95) 16%,#000 26%);
+        mask-image:
+            radial-gradient(ellipse 60% 56% at 50% 46%,#000 42%,rgba(0,0,0,.92) 62%,rgba(0,0,0,.5) 80%,transparent 100%),
+            linear-gradient(to top,transparent 0,rgba(0,0,0,.35) 10%,rgba(0,0,0,.85) 24%,#000 40%),
+            linear-gradient(to left,transparent 0,rgba(0,0,0,.5) 6%,rgba(0,0,0,.95) 16%,#000 26%);
+        -webkit-mask-composite:source-in;
+        mask-composite:intersect}
     .cs-cc-left h2{font-size:32px}
     .cs-cc-card{min-height:170px}
 }
