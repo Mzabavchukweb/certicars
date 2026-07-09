@@ -118,7 +118,7 @@
    diagonalnego gradientu. Radial „spotlight" za bohaterem tworzy
    naturalną poświatę która płynnie łączy PNG z tłem sekcji (patrz
    .cs-cc::after). */
-.cs-cc{position:relative;background:#eef2fa;padding:44px 0;overflow:hidden;isolation:isolate}
+.cs-cc{position:relative;background:#eef2fa;padding:56px 0;overflow:hidden;isolation:isolate}
 .cs-cc::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,#f4f6fc 0%,#eef2fa 40%,#e8edf7 100%);pointer-events:none;z-index:0}
 /* Spotlight za bohaterem — duża soft radial która wypełnia się dokładnie
    za PNG bohatera po prawej. Kolory dopasowane do PNG (samples: outer
@@ -129,7 +129,7 @@
    (nie zagnieżdżony w .cs-cc-left) żeby na mobile mógł trafić między
    karty a hero. Desktop: info sittuje pod content w lewej kolumnie
    za pomocą grid-area assignment. */
-.cs-cc-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1fr);grid-template-areas:"content cards hero" "info    cards hero";gap:14px 28px;align-items:start}
+.cs-cc-grid{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr) minmax(0,1.15fr);grid-template-areas:"content cards hero" "info    cards hero";gap:16px 32px;align-items:center}
 .cs-cc-left{grid-area:content}
 .cs-cc-cards{grid-area:cards;align-self:center}
 .cs-cc-hero{grid-area:hero;align-self:center}
@@ -140,15 +140,15 @@
    wcześniej niż sam prostokąt zdjęcia. Wcześniej 72% vertical zostawiało
    ostre górne/dolne krawędzie widoczne — teraz 62% + wcześniejszy start
    fade (od 30%) daje płynne wtopienie w tło. */
-.cs-cc-hero img{height:400px;width:auto;max-width:100%;object-fit:contain;display:block;
-    -webkit-mask-image:radial-gradient(ellipse 50% 62% at center,#000 30%,rgba(0,0,0,.9) 45%,rgba(0,0,0,.55) 62%,rgba(0,0,0,.2) 78%,transparent 95%);
-    mask-image:radial-gradient(ellipse 50% 62% at center,#000 30%,rgba(0,0,0,.9) 45%,rgba(0,0,0,.55) 62%,rgba(0,0,0,.2) 78%,transparent 95%)}
+.cs-cc-hero img{height:600px;width:auto;max-width:100%;object-fit:contain;display:block;
+    -webkit-mask-image:radial-gradient(ellipse 55% 65% at center,#000 35%,rgba(0,0,0,.92) 50%,rgba(0,0,0,.6) 65%,rgba(0,0,0,.25) 80%,transparent 96%);
+    mask-image:radial-gradient(ellipse 55% 65% at center,#000 35%,rgba(0,0,0,.92) 50%,rgba(0,0,0,.6) 65%,rgba(0,0,0,.25) 80%,transparent 96%)}
 .cs-cc-hero .cs-cc-hero-desktop{display:none}
 .cs-cc-hero .cs-cc-hero-mobile{display:block}
 .cs-cc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:12px}
 .cs-cc-kicker::before{content:'';width:22px;height:1.5px;background:#0066ff;border-radius:1px}
-.cs-cc-left h2{font-size:38px;font-weight:900;color:#0a0a0a;letter-spacing:-.8px;line-height:1.06;margin:0 0 16px}
-.cs-cc-left p{font-size:14.5px;color:#475569;line-height:1.65;margin:0 0 18px;max-width:440px}
+.cs-cc-left h2{font-size:44px;font-weight:900;color:#0a0a0a;letter-spacing:-1px;line-height:1.05;margin:0 0 18px}
+.cs-cc-left p{font-size:15px;color:#475569;line-height:1.65;margin:0 0 20px;max-width:420px}
 .cs-cc-ctas{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 .cs-cc-cta-primary{display:inline-flex;align-items:center;gap:8px;background:#0066ff;color:#fff;padding:12px 22px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;transition:all .18s ease;box-shadow:0 4px 16px rgba(0,102,255,.3)}
 .cs-cc-cta-primary:hover{background:#0052cc;box-shadow:0 6px 20px rgba(0,102,255,.42);transform:translateY(-1px);color:#fff}
@@ -162,15 +162,15 @@
 /* 4 karty w środkowej kolumnie 2×2. Bez aspect-ratio bo tekst 3-4
    linii z tytułem NIE mieści się w małym kwadracie — min-height 200px
    daje kartom stałą wysokość, szerokość wynika z kolumny 1.2fr. */
-.cs-cc-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.cs-cc-card{position:relative;background:#fff;border:1px solid #eaf0fc;border-radius:14px;padding:16px 16px 18px;min-height:172px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.04),0 6px 20px rgba(15,32,80,.05);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
-.cs-cc-card:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,.04),0 12px 32px rgba(15,32,80,.1);border-color:#cfdcf5}
-.cs-cc-card-ico{width:36px;height:36px;border-radius:10px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-bottom:auto}
-.cs-cc-card-ico svg,.cs-cc-card-ico i[data-lucide]{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
-.cs-cc-card h3{font-size:13.5px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:10px 0 4px;line-height:1.25}
-.cs-cc-card p{font-size:11.5px;color:#4b5563;line-height:1.45;margin:0}
-.cs-cc-card-arrow{position:absolute;top:16px;right:16px;width:24px;height:24px;border-radius:50%;background:#fff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center;opacity:.55;transition:opacity .18s ease,transform .18s ease}
-.cs-cc-card-arrow svg,.cs-cc-card-arrow i[data-lucide]{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4}
+.cs-cc-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cs-cc-card{position:relative;background:#fff;border:1px solid #eaf0fc;border-radius:18px;padding:22px 22px 24px;min-height:230px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.04),0 8px 24px rgba(15,32,80,.06);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.cs-cc-card:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,.04),0 14px 36px rgba(15,32,80,.1);border-color:#cfdcf5}
+.cs-cc-card-ico{width:48px;height:48px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-bottom:auto}
+.cs-cc-card-ico svg,.cs-cc-card-ico i[data-lucide]{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9}
+.cs-cc-card h3{font-size:16px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:14px 0 6px;line-height:1.25}
+.cs-cc-card p{font-size:13px;color:#4b5563;line-height:1.55;margin:0}
+.cs-cc-card-arrow{position:absolute;top:22px;right:22px;width:32px;height:32px;border-radius:50%;background:#fff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center;opacity:.65;transition:opacity .18s ease,transform .18s ease}
+.cs-cc-card-arrow svg,.cs-cc-card-arrow i[data-lucide]{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.4}
 .cs-cc-card:hover .cs-cc-card-arrow{opacity:1;transform:translateX(2px) translateY(-2px)}
 
 @media(max-width:1024px){
