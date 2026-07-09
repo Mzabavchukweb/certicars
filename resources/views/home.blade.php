@@ -130,21 +130,21 @@
    prawej krawedzi bez padding-right. */
 .cs-cc > .container{position:relative;z-index:1;max-width:none;width:100%;padding:0}
 .cs-cc-grid{width:100%;max-width:none;margin:0;padding-left:clamp(24px,4vw,72px);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,.95fr) minmax(0,1.25fr);grid-template-areas:"content cards hero" "info    cards hero";gap:16px 32px;align-items:center}
-.cs-cc-left{grid-area:content;padding:48px 0 48px}
-.cs-cc-cards{grid-area:cards;align-self:center;padding:48px 0 48px}
+.cs-cc-left{grid-area:content;padding:32px 0 32px}
+.cs-cc-cards{grid-area:cards;align-self:center;padding:32px 0 32px}
 .cs-cc-hero{grid-area:hero;align-self:end}
 .cs-cc-info{grid-area:info;align-self:start}
 /* Bohater align-self:end (dolna krawedz sekcji) + justify-content:flex-start
    (wysuniety w LEWO w kolumnie zeby byl blisko kart) + margin-left ujemny
    zeby wchodzil na strefe kart jak w reference. Bez padding-bottom sekcji
    stopy bohatera sa na dole. */
-.cs-cc-hero{position:relative;display:flex;align-items:flex-end;justify-content:flex-start;overflow:visible;margin-left:-40px}
+.cs-cc-hero{position:relative;display:flex;align-items:flex-end;justify-content:flex-start;overflow:visible;margin-left:32px}
 /* MASK — tighter ellipse (45% × 62%) + agresywne fade steps sprawiają
    że TOP i BOTTOM PNG (najdłuższe strony bo portrait) wygasają dużo
    wcześniej niż sam prostokąt zdjęcia. Wcześniej 72% vertical zostawiało
    ostre górne/dolne krawędzie widoczne — teraz 62% + wcześniejszy start
    fade (od 30%) daje płynne wtopienie w tło. */
-.cs-cc-hero img{height:640px;width:auto;max-width:100%;object-fit:contain;display:block;
+.cs-cc-hero img{height:560px;width:auto;max-width:100%;object-fit:contain;display:block;
     -webkit-mask-image:radial-gradient(ellipse 60% 72% at 50% 50%,#000 42%,rgba(0,0,0,.95) 57%,rgba(0,0,0,.7) 70%,rgba(0,0,0,.3) 84%,transparent 97%);
     mask-image:radial-gradient(ellipse 60% 72% at 50% 50%,#000 42%,rgba(0,0,0,.95) 57%,rgba(0,0,0,.7) 70%,rgba(0,0,0,.3) 84%,transparent 97%)}
 .cs-cc-hero .cs-cc-hero-desktop{display:none}
