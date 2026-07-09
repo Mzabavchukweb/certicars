@@ -124,17 +124,19 @@
    za PNG bohatera po prawej. Kolory dopasowane do PNG (samples: outer
    #c1d1f7, inner #e0e4f9). Efekt „aureola" która wciąga PNG w sekcję. */
 .cs-cc::after{content:'';position:absolute;top:50%;right:-4%;transform:translateY(-50%);width:52%;height:110%;background:radial-gradient(ellipse 55% 60% at 50% 50%,rgba(202,215,246,.6) 0%,rgba(202,215,246,.35) 35%,rgba(202,215,246,.12) 60%,rgba(202,215,246,0) 85%);pointer-events:none;z-index:0}
-.cs-cc > .container{position:relative;z-index:1}
-/* Grid 3-kolumnowy z template-areas. Info-box jest osobnym elementem
-   (nie zagnieżdżony w .cs-cc-left) żeby na mobile mógł trafić między
-   karty a hero. Desktop: info sittuje pod content w lewej kolumnie
-   za pomocą grid-area assignment. */
-.cs-cc-grid{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr) minmax(0,1.15fr);grid-template-areas:"content cards hero" "info    cards hero";gap:16px 32px;align-items:center}
+/* Full-bleed layout - .container jest nadpisany, sekcja rozciaga sie
+   od lewej do prawej krawedzi viewportu jak w reference screenshot.
+   Content i cards maja padding-left od krawedzi, bohater siega do
+   prawej krawedzi bez padding-right. */
+.cs-cc > .container{position:relative;z-index:1;max-width:none;width:100%;padding:0}
+.cs-cc-grid{width:100%;max-width:none;margin:0;padding-left:clamp(24px,4vw,72px);display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1fr) minmax(0,1.15fr);grid-template-areas:"content cards hero" "info    cards hero";gap:16px 40px;align-items:center}
 .cs-cc-left{grid-area:content}
 .cs-cc-cards{grid-area:cards;align-self:center}
 .cs-cc-hero{grid-area:hero;align-self:center}
 .cs-cc-info{grid-area:info;align-self:start}
-.cs-cc-hero{position:relative;display:flex;align-items:center;justify-content:center;overflow:visible}
+/* Bohater justify-content flex-end + overflow visible - PNG siega
+   do prawej krawedzi viewportu tak jak w reference screenshot. */
+.cs-cc-hero{position:relative;display:flex;align-items:center;justify-content:flex-end;overflow:visible}
 /* MASK — tighter ellipse (45% × 62%) + agresywne fade steps sprawiają
    że TOP i BOTTOM PNG (najdłuższe strony bo portrait) wygasają dużo
    wcześniej niż sam prostokąt zdjęcia. Wcześniej 72% vertical zostawiało
@@ -182,7 +184,8 @@
     /* Tablet 1024px: content full width top, potem karty | hero, info full
        width przed hero. Grid-areas explicit żeby info nie utknęło w
        lewej kolumnie. */
-    .cs-cc-grid{grid-template-columns:1fr 1fr;grid-template-areas:"content content" "cards hero" "info info";gap:24px 32px}
+    .cs-cc-grid{padding-left:24px;padding-right:24px;grid-template-columns:1fr 1fr;grid-template-areas:"content content" "cards hero" "info info";gap:24px 32px}
+    .cs-cc-hero{justify-content:center}
     .cs-cc-hero img{height:auto;max-height:440px;width:auto;max-width:100%}
     .cs-cc-left h2{font-size:32px}
     .cs-cc-card{min-height:170px}
