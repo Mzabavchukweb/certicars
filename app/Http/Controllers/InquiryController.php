@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\InquiryConfirmation;
 use App\Mail\InquiryReceived;
 use App\Models\Car;
+use App\Models\Event;
 use App\Models\Inquiry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -48,6 +49,10 @@ class InquiryController extends Controller
             'utm_campaign'=> $this->sanitizeShort($request->input('utm_campaign')),
             'utm_content' => $this->sanitizeShort($request->input('utm_content')),
             'utm_term'    => $this->sanitizeShort($request->input('utm_term')),
+        ]);
+
+        Event::record('inquiry_submitted', $request, $inquiry->car_id, [
+            'type' => $inquiry->type,
         ]);
 
         // Admin notification — track delivery status

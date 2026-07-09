@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
+use App\Models\Event;
 use App\PdfBrochure\BrochureBuilder;
 use App\PdfBrochure\BrochureGenerationService;
 use App\PdfBrochure\ChromiumRenderer;
@@ -106,6 +107,12 @@ class BrochurePdfController extends Controller
         }
 
         $filename = 'CertiCars-' . ($car->identifier ?? 'brochure') . '-' . $car->slug . '.pdf';
+
+        // Analityka: pobranie raportu to jeden z mocniejszych sygnałów zakupowych.
+        // Zdarzenie serwerowe, bo tylko tutaj wiemy, że plik faktycznie poszedł.
+        if (!auth()->user()?->is_admin) {
+            Event::record('pdf_download', request(), $car->id);
+        }
 
         Log::channel('brochure')->info('pdf_brochure.download.served', [
             'report_id'    => $reportId,

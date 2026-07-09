@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\CarLabels;
 use App\Models\Brand;
 use App\Models\Car;
+use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -187,6 +188,10 @@ class CatalogController extends Controller
             abort(404);
         }
 
+        if (!$isAdmin) {
+            Event::record('certicheck_open', request(), $car->id);
+        }
+
         $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages.photos', 'tireSets.tires', 'pano360Image', 'exteriorPano360Image');
 
         return view('catalog.certicheck', compact('car'));
@@ -196,18 +201,17 @@ class CatalogController extends Controller
     {
         if (auth()->user()?->is_admin) return;
 
-        $ua = strtolower((string) $request->userAgent());
-        if ($ua === '') return;
-        foreach (['bot', 'crawl', 'spider', 'slurp', 'bing', 'duckduck', 'lighthouse', 'headless', 'curl', 'wget'] as $p) {
-            if (str_contains($ua, $p)) return;
-        }
+        if (\App\Support\Analytics::isBot($request->userAgent())) return;
 
+        $ua        = strtolower((string) $request->userAgent());
         $carId     = $car->id;
         $sessionId = $request->hasSession() ? $request->session()->getId() : null;
+        $visitorId = \App\Support\Analytics::existingVisitorId($request);
+        $device    = \App\Support\Analytics::device($ua);
         $ip        = $request->ip();
         $referer   = substr((string) $request->headers->get('referer'), 0, 500) ?: null;
 
-        defer(function () use ($carId, $sessionId, $ip, $referer, $ua) {
+        defer(function () use ($carId, $sessionId, $visitorId, $device, $ip, $referer, $ua) {
             try {
                 $already = \App\Models\CarView::where('car_id', $carId)
                     ->where('session_id', $sessionId)
@@ -219,6 +223,8 @@ class CatalogController extends Controller
                 \App\Models\CarView::create([
                     'car_id'     => $carId,
                     'session_id' => $sessionId,
+                    'visitor_id' => $visitorId,
+                    'device'     => $device,
                     'ip'         => $ip,
                     'referer'    => $referer,
                     'user_agent' => substr($ua, 0, 500) ?: null,

@@ -686,9 +686,11 @@
         if (favs.includes(id)) {
             favs = favs.filter(f => f !== id);
             document.querySelectorAll(`[data-id="${id}"]`).forEach(b => b.classList.remove('active'));
+            if (window.csTrack) window.csTrack('favorite_remove', {}, id);
         } else {
             favs.push(id);
             document.querySelectorAll(`[data-id="${id}"]`).forEach(b => b.classList.add('active'));
+            if (window.csTrack) window.csTrack('favorite_add', {}, id);
         }
         setFavs(favs);
         const badge = document.getElementById('navFavBadge');
@@ -885,6 +887,45 @@
             });
         };
         document.addEventListener('DOMContentLoaded',initLightbox);
+    })();
+    </script>
+
+    {{-- ============ ANALITYKA — beacon zdarzeń ============
+         window.csTrack(nazwa, meta) wysyła zdarzenie do POST /zdarzenie.
+         sendBeacon przeżywa nawigację (klik w tel: natychmiast opuszcza
+         stronę), fetch keepalive jest fallbackiem. Nazwy zdarzeń waliduje
+         serwer — tutaj nic nie jest tajne.
+
+         Auto-wiązanie:
+           • każdy <a href="tel:..."> → phone_click
+           • dowolny element [data-track="nazwa"] → ta nazwa,
+             opcjonalnie data-track-meta='{"klucz":"wartosc"}' --}}
+    <script>
+    (function(){
+        var ENDPOINT = @json(route('track.store'));
+        var slug     = @json(request()->route('car') instanceof \App\Models\Car ? request()->route('car')->slug : null);
+
+        window.csTrack = function(name, meta, carId){
+            try{
+                var body = JSON.stringify({name:name, slug:slug, car_id:carId||null, meta:meta||{}});
+                var blob = new Blob([body], {type:'application/json'});
+                if(navigator.sendBeacon && navigator.sendBeacon(ENDPOINT, blob)) return;
+                fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:body,keepalive:true});
+            }catch(e){/* pomiar nigdy nie psuje strony */}
+        };
+
+        document.addEventListener('click', function(e){
+            if(!e.target.closest) return;
+
+            var tel = e.target.closest('a[href^="tel:"]');
+            if(tel){ window.csTrack('phone_click', {href: tel.getAttribute('href')}); return; }
+
+            var el = e.target.closest('[data-track]');
+            if(!el) return;
+            var meta = {};
+            try{ meta = JSON.parse(el.getAttribute('data-track-meta') || '{}'); }catch(_){}
+            window.csTrack(el.getAttribute('data-track'), meta);
+        }, true);
     })();
     </script>
     @stack('scripts')
