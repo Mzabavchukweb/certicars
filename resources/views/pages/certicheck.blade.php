@@ -1,6 +1,9 @@
 @extends('layouts.public')
+@section('meta_title_full','CertiCheck — rozszerzony opis wybranych aut | CertiCars')
 @section('title','CertiCheck — rozszerzony opis wybranych aut')
-@section('description','CertiCheck to wewnętrzny standard opisu wybranych pojazdów w CertiCars. Dowiedz się, co obejmuje, jak wygląda proces i co dostajesz w raporcie.')
+@section('description','CertiCheck to wewnętrzny standard opisu wybranych pojazdów w CertiCars. Sprawdź, co obejmuje, jak wygląda proces i co znajdziesz w raporcie PDF.')
+@section('og_title','CertiCheck — rozszerzony opis wybranych aut | CertiCars')
+@section('og_description','CertiCheck to wewnętrzny standard opisu wybranych pojazdów w CertiCars. Sprawdź, co obejmuje, jak wygląda proces i co znajdziesz w raporcie PDF.')
 
 @section('styles')
 :root{--cc-blue:#0066ff;--cc-blue-d:#0052cc;--cc-bg:#eef2fa;--cc-text:#0a0a0a;--cc-muted:#475569}

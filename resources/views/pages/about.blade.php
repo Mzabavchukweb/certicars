@@ -1,6 +1,9 @@
 @extends('layouts.public')
+@section('meta_title_full','O nas — komis samochodowy pod Stargardem | CertiCars')
 @section('title','O nas')
-@section('description','Poznaj historię CertiCars — platformy certyfikowanych samochodów używanych. Transparentność, jakość i pełna dokumentacja każdego pojazdu.')
+@section('description','Poznaj CertiCars — komis samochodów używanych w Lipniku koło Stargardu. Przejrzysty opis stanu, jazda próbna i możliwość sprawdzenia auta przed zakupem.')
+@section('og_title','O nas — komis samochodowy pod Stargardem | CertiCars')
+@section('og_description','Poznaj CertiCars — komis samochodów używanych w Lipniku koło Stargardu. Przejrzysty opis stanu, jazda próbna i możliwość sprawdzenia auta przed zakupem.')
 @section('styles')
 /* ===== ABOUT PAGE — premium refresh ===== */
 .about-section-in{max-width:1200px;margin:0 auto;padding:0 24px;position:relative;width:100%;box-sizing:border-box}

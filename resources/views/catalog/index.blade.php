@@ -1,6 +1,9 @@
 @extends('layouts.public')
+@section('meta_title_full','Samochody używane Stargard — oferta | CertiCars')
 @section('title','Oferta samochodów')
-@section('description','Przeglądaj certyfikowane samochody używane z pełną inspekcją, historią lakieru i dokumentacją.')
+@section('description','Przeglądaj sprawdzone samochody używane z Lipnika koło Stargardu. Przejrzysty opis stanu, historia i dokumentacja. Wybrane auta z rozszerzonym opisem CertiCheck.')
+@section('og_title','Samochody używane Stargard — oferta | CertiCars')
+@section('og_description','Przeglądaj sprawdzone samochody używane z Lipnika koło Stargardu. Przejrzysty opis stanu, historia i dokumentacja. Wybrane auta z rozszerzonym opisem CertiCheck.')
 @section('styles')
 /* ===== CATALOG HEADER (Otomoto-style: compact, functional) ===== */
 .cat-header{background:#fff;border-bottom:1px solid var(--border-l);padding:20px 0 0}
