@@ -193,6 +193,29 @@
 .cs-cc-card-arrow svg,.cs-cc-card-arrow i[data-lucide]{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.4}
 .cs-cc-card:hover .cs-cc-card-arrow{opacity:1;transform:translateX(2px) translateY(-2px)}
 
+/* ---- Desktop posredni (1025-1600px) ----------------------------------
+   Reference to render przy 1880px. Ponizej tej szerokosci typografia i karty
+   zostawaly w rozmiarach z 1880px, wiec zajmowaly proporcjonalnie wiecej
+   miejsca: naglowek lamal sie agresywniej, karty rosly, sekcja puchla w pionie
+   i bohater wygladal na mniejszego. Tu skalujemy caly uklad w dol, zeby przy
+   ~1380px (typowe okno Chrome na 15" Retina) czytal sie jak reference. */
+@media(min-width:1025px) and (max-width:1600px){
+    .cs-cc-grid{gap:14px 24px}
+    .cs-cc-left{padding-top:48px}
+    .cs-cc-cards{padding:48px 0;gap:12px}
+    .cs-cc-left h2{font-size:36px;letter-spacing:-.8px;margin-bottom:14px}
+    .cs-cc-left p{font-size:14px;line-height:1.6;margin-bottom:16px;max-width:380px}
+    .cs-cc-info{font-size:11.5px;padding:10px 12px;max-width:440px}
+    .cs-cc-card{min-height:190px;padding:18px 18px 20px;border-radius:16px}
+    .cs-cc-card-ico{width:42px;height:42px;border-radius:11px}
+    .cs-cc-card-ico svg,.cs-cc-card-ico i[data-lucide]{width:19px;height:19px}
+    .cs-cc-card h3{font-size:14.5px;margin:12px 0 5px}
+    .cs-cc-card p{font-size:12px;line-height:1.5}
+    .cs-cc-card-arrow{top:18px;right:18px;width:28px;height:28px}
+    .cs-cc-card-arrow svg,.cs-cc-card-arrow i[data-lucide]{width:13px;height:13px}
+    .cs-cc-hero{min-height:600px}
+}
+
 @media(max-width:1024px){
     .cs-jwz{padding:48px 0}
     .cs-jwz-steps{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
