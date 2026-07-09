@@ -118,7 +118,7 @@
    diagonalnego gradientu. Radial „spotlight" za bohaterem tworzy
    naturalną poświatę która płynnie łączy PNG z tłem sekcji (patrz
    .cs-cc::after). */
-.cs-cc{position:relative;background:#eef2fa;padding:56px 0;overflow:hidden;isolation:isolate}
+.cs-cc{position:relative;background:#eef2fa;padding:56px 0 0;overflow:hidden;isolation:isolate}
 .cs-cc::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,#f4f6fc 0%,#eef2fa 40%,#e8edf7 100%);pointer-events:none;z-index:0}
 /* Spotlight za bohaterem — duża soft radial która wypełnia się dokładnie
    za PNG bohatera po prawej. Kolory dopasowane do PNG (samples: outer
@@ -129,22 +129,24 @@
    Content i cards maja padding-left od krawedzi, bohater siega do
    prawej krawedzi bez padding-right. */
 .cs-cc > .container{position:relative;z-index:1;max-width:none;width:100%;padding:0}
-.cs-cc-grid{width:100%;max-width:none;margin:0;padding-left:clamp(24px,4vw,72px);display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1fr) minmax(0,1.15fr);grid-template-areas:"content cards hero" "info    cards hero";gap:16px 40px;align-items:center}
-.cs-cc-left{grid-area:content}
-.cs-cc-cards{grid-area:cards;align-self:center}
-.cs-cc-hero{grid-area:hero;align-self:center}
+.cs-cc-grid{width:100%;max-width:none;margin:0;padding-left:clamp(24px,4vw,72px);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,.95fr) minmax(0,1.25fr);grid-template-areas:"content cards hero" "info    cards hero";gap:16px 32px;align-items:center}
+.cs-cc-left{grid-area:content;padding-bottom:56px}
+.cs-cc-cards{grid-area:cards;align-self:center;padding-bottom:56px}
+.cs-cc-hero{grid-area:hero;align-self:end}
 .cs-cc-info{grid-area:info;align-self:start}
-/* Bohater justify-content flex-end + overflow visible - PNG siega
-   do prawej krawedzi viewportu tak jak w reference screenshot. */
-.cs-cc-hero{position:relative;display:flex;align-items:center;justify-content:flex-end;overflow:visible}
+/* Bohater align-self:end (dolna krawedz sekcji) + justify-content:flex-start
+   (wysuniety w LEWO w kolumnie zeby byl blisko kart) + margin-left ujemny
+   zeby wchodzil na strefe kart jak w reference. Bez padding-bottom sekcji
+   stopy bohatera sa na dole. */
+.cs-cc-hero{position:relative;display:flex;align-items:flex-end;justify-content:flex-start;overflow:visible;margin-left:-40px}
 /* MASK — tighter ellipse (45% × 62%) + agresywne fade steps sprawiają
    że TOP i BOTTOM PNG (najdłuższe strony bo portrait) wygasają dużo
    wcześniej niż sam prostokąt zdjęcia. Wcześniej 72% vertical zostawiało
    ostre górne/dolne krawędzie widoczne — teraz 62% + wcześniejszy start
    fade (od 30%) daje płynne wtopienie w tło. */
-.cs-cc-hero img{height:600px;width:auto;max-width:100%;object-fit:contain;display:block;
-    -webkit-mask-image:radial-gradient(ellipse 55% 65% at center,#000 35%,rgba(0,0,0,.92) 50%,rgba(0,0,0,.6) 65%,rgba(0,0,0,.25) 80%,transparent 96%);
-    mask-image:radial-gradient(ellipse 55% 65% at center,#000 35%,rgba(0,0,0,.92) 50%,rgba(0,0,0,.6) 65%,rgba(0,0,0,.25) 80%,transparent 96%)}
+.cs-cc-hero img{height:760px;width:auto;max-width:100%;object-fit:contain;display:block;
+    -webkit-mask-image:radial-gradient(ellipse 60% 72% at 50% 45%,#000 40%,rgba(0,0,0,.95) 55%,rgba(0,0,0,.7) 68%,rgba(0,0,0,.3) 82%,transparent 96%);
+    mask-image:radial-gradient(ellipse 60% 72% at 50% 45%,#000 40%,rgba(0,0,0,.95) 55%,rgba(0,0,0,.7) 68%,rgba(0,0,0,.3) 82%,transparent 96%)}
 .cs-cc-hero .cs-cc-hero-desktop{display:none}
 .cs-cc-hero .cs-cc-hero-mobile{display:block}
 .cs-cc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:12px}
@@ -189,7 +191,8 @@
        width przed hero. Grid-areas explicit żeby info nie utknęło w
        lewej kolumnie. */
     .cs-cc-grid{padding-left:24px;padding-right:24px;grid-template-columns:1fr 1fr;grid-template-areas:"content content" "cards hero" "info info";gap:24px 32px}
-    .cs-cc-hero{justify-content:center}
+    .cs-cc-left,.cs-cc-cards{padding-bottom:0}
+    .cs-cc-hero{align-items:center;justify-content:center;margin-left:0}
     .cs-cc-hero img{height:auto;max-height:440px;width:auto;max-width:100%}
     .cs-cc-left h2{font-size:32px}
     .cs-cc-card{min-height:170px}
