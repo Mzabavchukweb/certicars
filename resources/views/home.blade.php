@@ -129,12 +129,17 @@
    Content i cards maja padding-left od krawedzi, bohater siega do
    prawej krawedzi bez padding-right. */
 .cs-cc > .container{position:relative;z-index:1;max-width:none;width:100%;padding:0}
-/* Kolumna bohatera ma TWARDY sufit szerokosci. Przy 1.25fr na ekranie 2560px
-   dostawala ~1000px, a object-fit:cover skalowal portret 941x1672 do ~1780px
-   wysokosci i scinal glowe (zglosozone z iMaca). minmax(360px,560px) trzyma
-   kadr identyczny od ~1280px w gore — nadmiar szerokosci idzie w tlo sekcji,
-   nie w bohatera. max-width na gridzie centruje calosc na ultrawide. */
-.cs-cc-grid{width:100%;max-width:1800px;margin:0 auto;padding-left:clamp(24px,4vw,72px);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,.95fr) minmax(360px,560px);grid-template-areas:"content cards hero" "info    cards hero";gap:16px 32px;align-items:center;
+/* max-width:1800px to CALE lekarstwo na ultrawide. Wczesniej grid byl
+   full-bleed, wiec przy 2560px kolumna bohatera (1.25fr) dostawala ~1000px,
+   cover skalowal portret 941x1672 do ~1780px wysokosci i scinal glowe.
+   Z sufitem 1800px kolumna nigdy nie przekracza ~730px — tyle samo co przy
+   1880px, gdzie kadr byl poprawny.
+   NIE wstawiac tu sztywnego px na kolumne bohatera: przy 1380px (typowe okno
+   Chrome na 15" Retina) 560px zjadalo polowe i sciskalo kolumne kart. */
+/* Proporcje wg reference: tekst ~23%, karty ~39%, bohater ~29%. Wczesniejsze
+   .8/.95/1.25 dawaly bohaterowi 38%, a karty sciskaly sie do 29% — opisy
+   lamaly sie na 4 linie i sekcja rosla w pionie. */
+.cs-cc-grid{width:100%;max-width:1800px;margin:0 auto;padding-left:clamp(24px,4vw,72px);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.35fr) minmax(0,1fr);grid-template-areas:"content cards hero" "info    cards hero";gap:16px 32px;align-items:center;
     /* align-content:center — bez tego nadmiar wysokosci sekcji (bohater ma
        min-height:700px) rozpycha wiersze i ramka z disclaimerem zjezdza na
        stopke. Teraz tekst + ramka trzymaja sie razem, wysrodkowane. */
