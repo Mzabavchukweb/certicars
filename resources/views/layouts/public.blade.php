@@ -9,6 +9,10 @@
     <title>@yield('title','Certyfikowane samochody używane') — CertiCars</title>
     @endif
     <meta name="description" content="@yield('description','CertiCars — platforma komisowa certyfikowanych samochodów używanych z pełną inspekcją techniczną.')">
+    {{-- Domyslnie indeksujemy. Strony bez wartosci dla wyszukiwarki (np. lista
+         obserwowanych, ktora zyje w localStorage i dla kazdego jest pusta)
+         nadpisuja to przez @section('robots','noindex,follow'). --}}
+    <meta name="robots" content="@yield('robots','index,follow')">
     <meta name="theme-color" content="#0066ff">
     <meta property="og:type" content="@yield('og_type','website')">
     <meta property="og:site_name" content="CertiCars">
@@ -89,7 +93,8 @@
         .container{max-width:1200px;margin:0 auto;padding:0 24px}
 
         /* ============ TOP BAR ============ */
-        .topbar{background:var(--blue);color:rgba(255,255,255,.9);font-size:13px;font-weight:400;line-height:1;border-bottom:none}
+        /* Granat #0a1838 — ten sam odcien co hero i stopka. Wczesniej var(--blue). */
+        .topbar{background:#0a1838;color:rgba(255,255,255,.9);font-size:13px;font-weight:400;line-height:1;border-bottom:none}
         .topbar-in{max-width:1200px;margin:0 auto;padding:0 24px;height:40px;display:flex;align-items:center;justify-content:space-between;gap:28px}
         .topbar-left,.topbar-right{display:flex;align-items:center;gap:20px}
         .topbar a,.topbar .tb-item{display:inline-flex;align-items:center;gap:7px;color:rgba(255,255,255,.9);transition:color .15s;text-decoration:none;font-size:13px;font-weight:500}

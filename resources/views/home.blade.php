@@ -1,6 +1,14 @@
 @extends('layouts.public')
-@section('title','Certyfikowane samochody używane')
-@section('description','CertiCars — komis premium z pełną inspekcją techniczną. '.$totalCars.' certyfikowanych pojazdów w ofercie.')
+{{-- meta_title_full nadpisuje CALY <title>. Uzyte zamiast @section('title'),
+     bo layout doklejalby " — CertiCars" z polpauza, a tu ma byc "|". --}}
+@section('meta_title_full','Sprawdzone samochody używane Stargard | CertiCars')
+@section('title','Sprawdzone samochody używane Stargard')
+@section('description','Kup auto używane z większym spokojem. Przejrzysty opis, jazda próbna i możliwość sprawdzenia przed zakupem. Wybrane auta opisujemy dodatkowo w ramach CertiCheck.')
+{{-- og_title / og_description zasilaja zarowno metatagi og:*, jak i twitter:*
+     (patrz layout). Bez tego link wklejony na FB czy Messengera pokazywalby
+     domyslne teksty z layoutu, niespojne z title i description powyzej. --}}
+@section('og_title','Sprawdzone samochody używane Stargard | CertiCars')
+@section('og_description','Kup auto używane z większym spokojem. Przejrzysty opis, jazda próbna i możliwość sprawdzenia przed zakupem. Wybrane auta opisujemy dodatkowo w ramach CertiCheck.')
 
 @section('extra_head')
     <link rel="preload" as="image" href="/img/hero.png" fetchpriority="high">

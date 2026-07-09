@@ -1,6 +1,10 @@
 @extends('layouts.public')
+@section('meta_title_full','Obserwowane auta | CertiCars')
 @section('title','Obserwowane')
-@section('description','Twoje obserwowane samochody na CertiCars.')
+@section('description','Twoja lista obserwowanych samochodów w CertiCars.')
+{{-- noindex: lista zyje w localStorage przegladarki, wiec dla Googlebota ta
+     strona jest zawsze pusta. follow zostaje, zeby linki z niej mialy wartosc. --}}
+@section('robots','noindex,follow')
 @section('styles')
 /* Favorites page */
 .fav-header{background:#fff;border-bottom:1px solid var(--border-l);padding:28px 0}

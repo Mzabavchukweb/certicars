@@ -32,9 +32,12 @@ class SitemapController extends Controller
         $urls = [
             ['loc' => url('/'),          'priority' => '1.0', 'changefreq' => 'daily'],
             ['loc' => url('/samochody'), 'priority' => '0.9', 'changefreq' => 'daily'],
+            // Zakladka CertiCheck — wczesniej jej tu brakowalo.
+            ['loc' => url('/certicheck'),'priority' => '0.7', 'changefreq' => 'monthly'],
             ['loc' => url('/o-nas'),     'priority' => '0.5', 'changefreq' => 'monthly'],
             ['loc' => url('/kontakt'),   'priority' => '0.6', 'changefreq' => 'monthly'],
         ];
+        // /obserwowane celowo pominiete — noindex (lista zyje w localStorage).
 
         foreach ($cars as $car) {
             $entry = [
