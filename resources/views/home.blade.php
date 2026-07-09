@@ -129,24 +129,26 @@
    Content i cards maja padding-left od krawedzi, bohater siega do
    prawej krawedzi bez padding-right. */
 .cs-cc > .container{position:relative;z-index:1;max-width:none;width:100%;padding:0}
-.cs-cc-grid{width:100%;max-width:none;margin:0;padding-left:clamp(24px,4vw,72px);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,.95fr) minmax(0,1.25fr);grid-template-areas:"content cards hero" "info    cards hero";gap:16px 32px;align-items:center}
-.cs-cc-left{grid-area:content;padding:32px 0 32px}
-.cs-cc-cards{grid-area:cards;align-self:center;padding:32px 0 32px}
-.cs-cc-hero{grid-area:hero;align-self:end}
+.cs-cc-grid{width:100%;max-width:none;margin:0;padding-left:clamp(24px,4vw,72px);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,.95fr) minmax(0,1.25fr);grid-template-areas:"content cards hero" "info    cards hero";gap:16px 32px;align-items:center;
+    /* align-content:center — bez tego nadmiar wysokosci sekcji (bohater ma
+       min-height:700px) rozpycha wiersze i ramka z disclaimerem zjezdza na
+       stopke. Teraz tekst + ramka trzymaja sie razem, wysrodkowane. */
+    grid-template-rows:auto auto;align-content:center}
+.cs-cc-left{grid-area:content;padding:60px 0 0}
+.cs-cc-cards{grid-area:cards;align-self:center;padding:60px 0}
+.cs-cc-hero{grid-area:hero;align-self:stretch}
 .cs-cc-info{grid-area:info;align-self:start}
-/* Bohater align-self:end (dolna krawedz sekcji) + justify-content:flex-start
-   (wysuniety w LEWO w kolumnie zeby byl blisko kart) + margin-left ujemny
-   zeby wchodzil na strefe kart jak w reference. Bez padding-bottom sekcji
-   stopy bohatera sa na dole. */
-.cs-cc-hero{position:relative;display:flex;align-items:flex-end;justify-content:flex-start;overflow:visible;margin-left:32px}
-/* MASK — tighter ellipse (45% × 62%) + agresywne fade steps sprawiają
-   że TOP i BOTTOM PNG (najdłuższe strony bo portrait) wygasają dużo
-   wcześniej niż sam prostokąt zdjęcia. Wcześniej 72% vertical zostawiało
-   ostre górne/dolne krawędzie widoczne — teraz 62% + wcześniejszy start
-   fade (od 30%) daje płynne wtopienie w tło. */
-.cs-cc-hero img{height:560px;width:auto;max-width:100%;object-fit:contain;display:block;
-    -webkit-mask-image:radial-gradient(ellipse 60% 72% at 50% 50%,#000 42%,rgba(0,0,0,.95) 57%,rgba(0,0,0,.7) 70%,rgba(0,0,0,.3) 84%,transparent 97%);
-    mask-image:radial-gradient(ellipse 60% 72% at 50% 50%,#000 42%,rgba(0,0,0,.95) 57%,rgba(0,0,0,.7) 70%,rgba(0,0,0,.3) 84%,transparent 97%)}
+/* Bohater wypełnia CAŁĄ prawą kolumnę (align-self:stretch + absolutny img
+   z object-fit:cover). Sekcja przycina PNG: góra tuż nad głową, dół na
+   wysokości kolan — dokładnie jak w reference. Bohater dochodzi do prawej
+   krawedzi viewportu (bez margin-left / padding-right). */
+.cs-cc-hero{position:relative;overflow:hidden;min-height:700px}
+/* Bez owalnej maski — PNG ma własne jasnoniebieskie tło zgodne z tłem
+   sekcji, więc wystarczy pionowy fade na LEWEJ krawędzi żeby zniknął szew
+   między zdjęciem a sekcją. Radial ellipse ścinał głowę i stopy. */
+.cs-cc-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:58% 12%;display:block;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%);
+    mask-image:linear-gradient(90deg,transparent 0,#000 22%)}
 .cs-cc-hero .cs-cc-hero-desktop{display:none}
 .cs-cc-hero .cs-cc-hero-mobile{display:block}
 .cs-cc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:12px}
@@ -192,8 +194,10 @@
        lewej kolumnie. */
     .cs-cc-grid{padding-left:24px;padding-right:24px;grid-template-columns:1fr 1fr;grid-template-areas:"content content" "cards hero" "info info";gap:24px 32px}
     .cs-cc-left,.cs-cc-cards{padding-bottom:0}
-    .cs-cc-hero{align-items:center;justify-content:center;margin-left:0}
-    .cs-cc-hero img{height:auto;max-height:440px;width:auto;max-width:100%}
+    /* Tablet/mobile: bohater wraca do normalnego flow (pełny PNG, bez
+       kadrowania) — kolumna nie ma już pełnej wysokości sekcji. */
+    .cs-cc-hero{display:flex;align-items:center;justify-content:center;overflow:visible;min-height:0}
+    .cs-cc-hero img{position:static;height:auto;max-height:440px;width:auto;max-width:100%;object-fit:contain;-webkit-mask-image:none;mask-image:none}
     .cs-cc-left h2{font-size:32px}
     .cs-cc-card{min-height:170px}
 }
@@ -218,7 +222,7 @@
     /* Bohater na dole — smaller, wycentrowany. Spotlight w tle sekcji
        przesunięty niżej żeby aureola była za PNG (nie w prawym górnym). */
     .cs-cc-hero{justify-content:center;padding:0 20px}
-    .cs-cc-hero img{height:auto;width:100%;max-width:280px;max-height:none}
+    .cs-cc-hero img{position:static;height:auto;width:100%;max-width:280px;max-height:none;object-fit:contain}
 }
 @media(max-width:768px){
     /* Spotlight tła — reposition dla mobile żeby aureola była pod bohaterem */
