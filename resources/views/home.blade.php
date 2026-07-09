@@ -164,8 +164,12 @@
 /* 4 karty w środkowej kolumnie 2×2. Bez aspect-ratio bo tekst 3-4
    linii z tytułem NIE mieści się w małym kwadracie — min-height 200px
    daje kartom stałą wysokość, szerokość wynika z kolumny 1.2fr. */
-.cs-cc-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.cs-cc-card{position:relative;background:#fff;border:1px solid #eaf0fc;border-radius:18px;padding:22px 22px 24px;min-height:230px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.04),0 8px 24px rgba(15,32,80,.06);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+/* grid-auto-rows:1fr - wszystkie 2 wiersze RÓWNE wysokości niezależnie
+   od dlugosci tekstu w kartach. Bez tego karty z krotszym opisem sa
+   nizsze niz z dluzszym w innym wierszu (patrz screenshot ref: wszystkie
+   4 karty maja identyczna wysokosc). */
+.cs-cc-cards{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:16px}
+.cs-cc-card{position:relative;background:#fff;border:1px solid #eaf0fc;border-radius:18px;padding:22px 22px 24px;min-height:230px;height:100%;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.04),0 8px 24px rgba(15,32,80,.06);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
 .cs-cc-card:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,.04),0 14px 36px rgba(15,32,80,.1);border-color:#cfdcf5}
 .cs-cc-card-ico{width:48px;height:48px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-bottom:auto}
 .cs-cc-card-ico svg,.cs-cc-card-ico i[data-lucide]{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9}
