@@ -9,7 +9,7 @@ class CarView extends Model
 {
     public $timestamps = false;
 
-    protected $fillable = ['car_id', 'session_id', 'ip', 'referer', 'user_agent', 'created_at'];
+    protected $fillable = ['car_id', 'session_id', 'visitor_id', 'device', 'ip', 'referer', 'user_agent', 'created_at'];
 
     protected $casts = ['created_at' => 'datetime'];
 

@@ -129,7 +129,12 @@
    Content i cards maja padding-left od krawedzi, bohater siega do
    prawej krawedzi bez padding-right. */
 .cs-cc > .container{position:relative;z-index:1;max-width:none;width:100%;padding:0}
-.cs-cc-grid{width:100%;max-width:none;margin:0;padding-left:clamp(24px,4vw,72px);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,.95fr) minmax(0,1.25fr);grid-template-areas:"content cards hero" "info    cards hero";gap:16px 32px;align-items:center;
+/* Kolumna bohatera ma TWARDY sufit szerokosci. Przy 1.25fr na ekranie 2560px
+   dostawala ~1000px, a object-fit:cover skalowal portret 941x1672 do ~1780px
+   wysokosci i scinal glowe (zglosozone z iMaca). minmax(360px,560px) trzyma
+   kadr identyczny od ~1280px w gore — nadmiar szerokosci idzie w tlo sekcji,
+   nie w bohatera. max-width na gridzie centruje calosc na ultrawide. */
+.cs-cc-grid{width:100%;max-width:1800px;margin:0 auto;padding-left:clamp(24px,4vw,72px);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,.95fr) minmax(360px,560px);grid-template-areas:"content cards hero" "info    cards hero";gap:16px 32px;align-items:center;
     /* align-content:center — bez tego nadmiar wysokosci sekcji (bohater ma
        min-height:700px) rozpycha wiersze i ramka z disclaimerem zjezdza na
        stopke. Teraz tekst + ramka trzymaja sie razem, wysrodkowane. */
@@ -147,8 +152,8 @@
    sekcji, więc wystarczy pionowy fade na LEWEJ krawędzi żeby zniknął szew
    między zdjęciem a sekcją. Radial ellipse ścinał głowę i stopy. */
 .cs-cc-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:58% 12%;display:block;
-    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%);
-    mask-image:linear-gradient(90deg,transparent 0,#000 22%)}
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%,#000 94%,transparent 100%);
+    mask-image:linear-gradient(90deg,transparent 0,#000 22%,#000 94%,transparent 100%)}
 .cs-cc-hero .cs-cc-hero-desktop{display:none}
 .cs-cc-hero .cs-cc-hero-mobile{display:block}
 .cs-cc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:12px}
@@ -194,10 +199,19 @@
        lewej kolumnie. */
     .cs-cc-grid{padding-left:24px;padding-right:24px;grid-template-columns:1fr 1fr;grid-template-areas:"content content" "cards hero" "info info";gap:24px 32px}
     .cs-cc-left,.cs-cc-cards{padding-bottom:0}
-    /* Tablet/mobile: bohater wraca do normalnego flow (pełny PNG, bez
-       kadrowania) — kolumna nie ma już pełnej wysokości sekcji. */
-    .cs-cc-hero{display:flex;align-items:center;justify-content:center;overflow:visible;min-height:0}
-    .cs-cc-hero img{position:static;height:auto;max-height:440px;width:auto;max-width:100%;object-fit:contain;-webkit-mask-image:none;mask-image:none}
+    /* Tablet/mobile: ten sam kadr co desktop (cover + przyciecie), tylko w
+       nizszym pudelku. Wczesniej lecial pelny PNG w normalnym flow — na tle
+       sekcji widac bylo prostokat zdjecia z jego wlasnym tlem. Maska-winieta
+       wygasza wszystkie cztery krawedzie, wiec PNG wtapia sie w sekcje. */
+    /* Pudelko WASKIE i WYSOKIE — proporcja bliska portretowi 941x1672. Kwadrat
+       + cover skalowalby zdjecie po szerokosci i ucinal bohatera w pasie. */
+    .cs-cc-hero{position:relative;overflow:hidden;min-height:0;height:480px;width:100%;max-width:340px;margin:0 auto}
+    /* Promienie elipsy MUSZA byc < 50% wymiaru pudelka, inaczej krawedzie
+       pudelka wypadaja wewnatrz elipsy i maska jest tam wciaz nieprzezroczysta
+       — stad widoczny prostokat PNG. 60%/56% + wczesny fade wygasza rogi. */
+    .cs-cc-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 20%;
+        -webkit-mask-image:radial-gradient(ellipse 60% 56% at 50% 48%,#000 42%,rgba(0,0,0,.92) 62%,rgba(0,0,0,.5) 80%,transparent 100%);
+        mask-image:radial-gradient(ellipse 60% 56% at 50% 48%,#000 42%,rgba(0,0,0,.92) 62%,rgba(0,0,0,.5) 80%,transparent 100%)}
     .cs-cc-left h2{font-size:32px}
     .cs-cc-card{min-height:170px}
 }
@@ -219,27 +233,27 @@
     .cs-cc-card p{font-size:11px;line-height:1.45}
     .cs-cc-card-arrow{top:14px;right:14px;width:22px;height:22px}
     .cs-cc-card-arrow svg,.cs-cc-card-arrow i[data-lucide]{width:11px;height:11px}
-    /* Bohater na dole — smaller, wycentrowany. Spotlight w tle sekcji
-       przesunięty niżej żeby aureola była za PNG (nie w prawym górnym). */
-    .cs-cc-hero{justify-content:center;padding:0 20px}
-    .cs-cc-hero img{position:static;height:auto;width:100%;max-width:280px;max-height:none;object-fit:contain}
+    /* Bohater na dole — wycentrowany. Kadr i maska dziedzicza z bloku 1024px,
+       tu zmienia sie tylko rozmiar pudelka (proporcja zostaje wasko-wysoka). */
+    .cs-cc-hero{height:450px;max-width:310px}
 }
 @media(max-width:768px){
     /* Spotlight tła — reposition dla mobile żeby aureola była pod bohaterem */
     .cs-cc::after{top:auto;bottom:-5%;right:50%;transform:translateX(50%);width:80%;height:40%}
 }
 @media(max-width:480px){
-    /* Small mobile 480px: dalej 2×2 karty ale jeszcze tighter. Bohater
-       najmniejszy — 220px żeby nie zajmował 60% viewportu. */
+    /* Small mobile 480px: dalej 2×2 karty ale jeszcze tighter. Bohater nizszy
+       zeby nie zajmowal polowy viewportu. Skalujemy PUDELKO, nie <img> —
+       obrazek jest absolutny (cover), wiec max-width na nim nic nie robi. */
     .cs-cc-left h2{font-size:24px}
     .cs-cc-cards{gap:8px}
     .cs-cc-card{padding:12px 11px 14px}
-    .cs-cc-hero img{max-width:220px}
+    .cs-cc-hero{height:420px;max-width:285px}
 }
 @media(max-width:390px){
     /* Very small — karty stack 1-col żeby tekst był czytelny. */
     .cs-cc-cards{grid-template-columns:1fr}
-    .cs-cc-hero img{max-width:200px}
+    .cs-cc-hero{height:400px;max-width:270px}
 }
 @media(max-width:600px){
     .cs-jwz{padding:36px 0}

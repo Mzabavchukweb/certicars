@@ -17,6 +17,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\PanoramaController;
 use App\Http\Controllers\BrochurePdfController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\TrackController;
 use Illuminate\Support\Facades\Route;
 
 // Public
@@ -37,6 +38,10 @@ Route::get('/certicheck', [PageController::class, 'certicheckLanding'])->name('c
 Route::post('/zapytanie', [InquiryController::class, 'store'])->middleware('throttle:10,1')->name('inquiry.store');
 Route::get('/pano/{carImage}', [PanoramaController::class, 'stream'])->name('panorama.stream');
 Route::get('/obserwowane', [FavoritesController::class, 'index'])->name('favorites');
+// Zdarzenia z przeglądarki (sendBeacon). Throttle bo endpoint jest publiczny.
+Route::post('/zdarzenie', [TrackController::class, 'store'])
+    ->middleware('throttle:60,1')
+    ->name('track.store');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // Auth

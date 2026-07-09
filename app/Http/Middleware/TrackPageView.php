@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\PageView;
+use App\Support\Analytics;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,9 +12,7 @@ class TrackPageView
 {
     private const DEDUPE_MINUTES = 30;
 
-    private const SKIP_PATH_PREFIXES = ['admin', 'storage', 'up', '_debugbar', 'livewire', '_ping'];
-
-    private const BOT_PATTERNS = ['bot', 'crawl', 'spider', 'slurp', 'bing', 'duckduck', 'lighthouse', 'headless', 'curl', 'wget'];
+    private const SKIP_PATH_PREFIXES = ['admin', 'storage', 'up', '_debugbar', 'livewire', '_ping', 'zdarzenie'];
 
     public function handle(Request $request, Closure $next): Response
     {
@@ -23,15 +22,21 @@ class TrackPageView
             return $response;
         }
 
+        // Musi się wykonać PRZED defer() — Cookie::queue() dokłada ciasteczko
+        // do tej odpowiedzi, a defer odpala się już po jej wysłaniu.
+        $visitorId = Analytics::visitorId($request);
+
         $sessionId = $request->hasSession() ? $request->session()->getId() : null;
         $path      = $request->path();
         $routeName = $request->route()?->getName();
         $ip        = $request->ip();
         $referer   = substr((string) $request->headers->get('referer'), 0, 500) ?: null;
         $ua        = substr((string) $request->userAgent(), 0, 500) ?: null;
+        $device    = Analytics::device($ua);
+        $utm       = Analytics::utm($request);
 
         // Defer DB writes until after the response is sent to the client.
-        defer(function () use ($sessionId, $path, $routeName, $ip, $referer, $ua) {
+        defer(function () use ($sessionId, $visitorId, $path, $routeName, $ip, $referer, $ua, $device, $utm) {
             try {
                 $alreadyLogged = PageView::where('session_id', $sessionId)
                     ->where('path', $path)
@@ -44,10 +49,12 @@ class TrackPageView
                     'path'       => substr($path, 0, 500),
                     'route_name' => $routeName,
                     'session_id' => $sessionId,
+                    'visitor_id' => $visitorId,
+                    'device'     => $device,
                     'ip'         => $ip,
                     'referer'    => $referer,
                     'user_agent' => $ua,
-                ]);
+                ] + $utm);
             } catch (\Throwable) {
                 // Don't break the site on tracking failures.
             }
@@ -66,12 +73,6 @@ class TrackPageView
             if ($path === $prefix || str_starts_with($path, $prefix . '/')) return false;
         }
 
-        $ua = strtolower((string) $request->userAgent());
-        if ($ua === '') return false;
-        foreach (self::BOT_PATTERNS as $p) {
-            if (str_contains($ua, $p)) return false;
-        }
-
-        return true;
+        return !Analytics::isBot($request->userAgent());
     }
 }

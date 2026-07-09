@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ContactMessage;
+use App\Models\Event;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -45,6 +46,8 @@ class PageController extends Controller
             'ip'         => $request->ip(),
             'user_agent' => substr((string) $request->userAgent(), 0, 500),
         ]);
+
+        Event::record('contact_submitted', $request);
 
         return back()->with('success', 'Dziękujemy! Odezwiemy się wkrótce.');
     }

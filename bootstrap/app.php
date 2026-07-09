@@ -19,6 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\TrackPageView::class,
             \App\Http\Middleware\SecurityHeaders::class,
         ]);
+        // Beacon analityczny leci przez navigator.sendBeacon, który nie umie
+        // dołożyć nagłówka CSRF. Endpoint jest write-only, z listą dozwolonych
+        // nazw zdarzeń i throttlem — nie ma tu nic do CSRF-ochrony.
+        $middleware->validateCsrfTokens(except: ['zdarzenie']);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // CSRF / session-expired (419) — return a friendly Polish message
