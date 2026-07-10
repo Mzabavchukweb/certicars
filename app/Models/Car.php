@@ -111,6 +111,25 @@ class Car extends Model
                 $car->status = 'active';
             }
         });
+
+        // Sitemapa jest cache'owana na godzine. Bez tego usuniete albo sprzedane
+        // auto wisialoby w niej do 60 minut, a nowe tyle samo czekalo na
+        // pojawienie sie. Kazdy zapis i kazde usuniecie czysci cache, wiec
+        // sitemap.xml i sitemap.txt zawsze odzwierciedlaja stan bazy.
+        //
+        // Typ zwracany `: void` jest KRYTYCZNY. Cache::forget() zwraca false gdy
+        // klucza nie ma w cache'u, a dispatcher Laravela przerywa lancuch
+        // listenerow, gdy ktorys zwroci false. Arrow function propagowalaby te
+        // wartosc i blokowala CarBrochureObserver::saved(), przez co broszura
+        // CertiCheck nigdy by sie nie wygenerowala.
+        $forgetSitemap = function (Car $car): void {
+            \Illuminate\Support\Facades\Cache::forget(
+                \App\Http\Controllers\SitemapController::CACHE_KEY
+            );
+        };
+
+        static::saved($forgetSitemap);
+        static::deleted($forgetSitemap);
     }
 
     public function brand(): BelongsTo
