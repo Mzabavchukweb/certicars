@@ -75,6 +75,10 @@
             'longitude' => 14.9399374,
         ],
         'hasMap' => 'https://www.openstreetmap.org/?mlat=53.3502947&mlon=14.9399374#map=15/53.3502947/14.9399374',
+        // sameAs laczy witryne z oficjalnymi profilami marki — wzmacnia
+        // rozpoznawanie encji przez Google i modele jezykowe. Parametry
+        // sledzace (?igsh=...) sa celowo obciete, bo nie sa czescia URL profilu.
+        'sameAs' => ['https://www.instagram.com/certicars.pl'],
         'openingHoursSpecification' => [
             ['@type' => 'OpeningHoursSpecification', 'dayOfWeek' => ['Monday','Tuesday','Wednesday','Thursday','Friday'], 'opens' => '09:00', 'closes' => '18:00'],
             ['@type' => 'OpeningHoursSpecification', 'dayOfWeek' => ['Saturday','Sunday'], 'opens' => '10:00', 'closes' => '15:00'],

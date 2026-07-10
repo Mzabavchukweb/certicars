@@ -147,13 +147,16 @@
    NIE wstawiac sztywnego px na kolumne bohatera bez minmax: przy 1380px
    (typowe okno Chrome na 15" Retina) 560px zjadalo polowe i sciskalo karty.
    Proporcje wg reference: tekst ~23%, karty ~39%, bohater ~29%. */
-.cs-cc-grid{width:100%;max-width:none;margin:0;padding-left:clamp(24px,4vw,72px);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.35fr) minmax(0,1fr);grid-template-areas:"content cards hero" "info    cards hero";gap:16px 32px;align-items:center;
+.cs-cc-grid{width:100%;max-width:1560px;margin:0 auto;padding-left:clamp(24px,4vw,72px);display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.3fr) minmax(0,1fr);grid-template-areas:"content cards hero" "info    cards hero";gap:12px 28px;align-items:center;
     /* align-content:center — bez tego nadmiar wysokosci sekcji (bohater ma
        min-height:700px) rozpycha wiersze i ramka z disclaimerem zjezdza na
        stopke. Teraz tekst + ramka trzymaja sie razem, wysrodkowane. */
     grid-template-rows:auto auto;align-content:center}
-.cs-cc-left{grid-area:content;padding:60px 0 0}
-.cs-cc-cards{grid-area:cards;align-self:center;padding:60px 0}
+/* align-self:end — wiersz jest wyzszy od tekstu (wysokosc dyktuja karty), a
+   align-items:center zostawialo pod tekstem duza dziure przed ramka
+   disclaimera. Dosuniety do dolu wiersza tekst styka sie z ramka. */
+.cs-cc-left{grid-area:content;align-self:end;padding:56px 0 0}
+.cs-cc-cards{grid-area:cards;align-self:center;padding:56px 0}
 .cs-cc-hero{grid-area:hero;align-self:stretch}
 .cs-cc-info{grid-area:info;align-self:start}
 /* Bohater wypełnia CAŁĄ prawą kolumnę (align-self:stretch + absolutny img
@@ -166,7 +169,13 @@
    widac pionowego odciecia jego tla.
    Maska siedzi na KONTENERZE, nie na <img>, bo obrazek jest od niego szerszy
    (patrz nizej) — na img lewy fade wypadlby poza widocznym obszarem. */
+/* Grid jest wycentrowany i ograniczony do 1560px, wiec na szerokich ekranach
+   konczy sie przed krawedzia viewportu. Ujemny margines wypycha bohatera z
+   powrotem NA te krawedz — inaczej prawy brzeg PNG (ktory ma wlasne,
+   prostokatne tlo) wypadalby w srodku ekranu i widac byloby odciecie blekitu.
+   min() zeruje efekt ponizej 1560px, gdzie grid i tak siega krawedzi. */
 .cs-cc-hero{position:relative;overflow:hidden;min-height:800px;width:100%;max-width:560px;justify-self:end;
+    margin-right:min(0px, calc((1560px - 100vw) / 2));
     -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%);
     mask-image:linear-gradient(90deg,transparent 0,#000 22%)}
 /* Bez owalnej maski — PNG ma własne jasnoniebieskie tło zgodne z tłem
@@ -203,11 +212,13 @@
    nizsze niz z dluzszym w innym wierszu (patrz screenshot ref: wszystkie
    4 karty maja identyczna wysokosc). */
 .cs-cc-cards{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:16px}
-.cs-cc-card{position:relative;background:#fff;border:1px solid #eaf0fc;border-radius:18px;padding:22px 22px 24px;min-height:230px;height:100%;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.04),0 8px 24px rgba(15,32,80,.06);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.cs-cc-card{position:relative;background:#fff;border:1px solid #eaf0fc;border-radius:18px;padding:20px 20px 22px;min-height:0;height:100%;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.04),0 8px 24px rgba(15,32,80,.06);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
 .cs-cc-card:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,.04),0 14px 36px rgba(15,32,80,.1);border-color:#cfdcf5}
-.cs-cc-card-ico{width:48px;height:48px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-bottom:auto}
+/* Bez margin-bottom:auto — to on wypychal tytul i opis na sam dol karty,
+   zostawiajac dziure pod ikona. Teraz blok trzyma sie razem od gory. */
+.cs-cc-card-ico{width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-bottom:14px;flex-shrink:0}
 .cs-cc-card-ico svg,.cs-cc-card-ico i[data-lucide]{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9}
-.cs-cc-card h3{font-size:16px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:14px 0 6px;line-height:1.25}
+.cs-cc-card h3{font-size:16px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0 0 6px;line-height:1.25}
 .cs-cc-card p{font-size:13px;color:#4b5563;line-height:1.55;margin:0}
 .cs-cc-card-arrow{position:absolute;top:22px;right:22px;width:32px;height:32px;border-radius:50%;background:#fff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center;opacity:.65;transition:opacity .18s ease,transform .18s ease}
 .cs-cc-card-arrow svg,.cs-cc-card-arrow i[data-lucide]{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.4}
