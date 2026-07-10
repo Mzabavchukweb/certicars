@@ -367,8 +367,14 @@
             .mmb{display:flex}
             .header-nav,.header-cta{display:none}
             .header-in{height:64px;padding:0 20px;gap:0}
-            .header-logo{margin-right:0}
+            .header-logo{margin-right:0;min-width:0}
             .header-logo-tagline span{font-size:10px}
+            /* Ponizej 360px dopisek przy logo rozpychal naglowek i wypychal
+               hamburgera poza ekran (cala strona jechala w prawo o 30px na
+               iPhone SE). aria-label na logo niesie te sama informacje. */
+            @media(max-width:359px){
+                .header-logo-tagline{display:none}
+            }
             .nav-mobile{position:fixed;top:64px;left:0;right:0;bottom:0;background:#fff;padding:24px 20px;display:none;flex-direction:column;gap:4px;z-index:99;overflow-y:auto;animation:slideDown .25s ease}
             .nav-mobile.open{display:flex}
             .nav-mobile .nav-link{font-size:16px;padding:16px 18px;border-radius:12px;color:var(--text);font-weight:500;border:1px solid var(--border-l);display:flex;align-items:center;gap:10px}
@@ -812,8 +818,12 @@
         .lcard-img{width:100%;min-width:0;height:190px}
         .lcard-content{padding:14px 16px;gap:10px}
         .lcard-main{flex-direction:column;align-items:stretch;gap:12px}
-        .lcard-actions{min-width:0;width:100%;flex-direction:row;align-items:center;justify-content:space-between;gap:12px;padding-top:10px;border-top:1px solid #f1f5f9}
-        .lcard-price{font-size:20px}
+        /* flex-wrap — bez tego cena i CTA (oba white-space:nowrap) daja karcie
+           min-content 340px. Grid katalogu nie moze zwezic kolumny ponizej
+           min-content swojego dziecka, wiec cala strona wyjezdzala w prawo na
+           waskich telefonach. Gdy brakuje miejsca, CTA schodzi pod cene. */
+        .lcard-actions{min-width:0;width:100%;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-top:10px;border-top:1px solid #f1f5f9}
+        .lcard-price{font-size:20px;min-width:0}
         .lcard-cta{flex-shrink:0}
         .lcard-spec{font-size:12px;padding-right:8px;margin-right:8px}
     }
