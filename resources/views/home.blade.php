@@ -137,17 +137,17 @@
    Content i cards maja padding-left od krawedzi, bohater siega do
    prawej krawedzi bez padding-right. */
 .cs-cc > .container{position:relative;z-index:1;max-width:none;width:100%;padding:0}
-/* max-width:1800px to CALE lekarstwo na ultrawide. Wczesniej grid byl
-   full-bleed, wiec przy 2560px kolumna bohatera (1.25fr) dostawala ~1000px,
-   cover skalowal portret 941x1672 do ~1780px wysokosci i scinal glowe.
-   Z sufitem 1800px kolumna nigdy nie przekracza ~730px — tyle samo co przy
-   1880px, gdzie kadr byl poprawny.
-   NIE wstawiac tu sztywnego px na kolumne bohatera: przy 1380px (typowe okno
-   Chrome na 15" Retina) 560px zjadalo polowe i sciskalo kolumne kart. */
-/* Proporcje wg reference: tekst ~23%, karty ~39%, bohater ~29%. Wczesniejsze
-   .8/.95/1.25 dawaly bohaterowi 38%, a karty sciskaly sie do 29% — opisy
-   lamaly sie na 4 linie i sekcja rosla w pionie. */
-.cs-cc-grid{width:100%;max-width:1800px;margin:0 auto;padding-left:clamp(24px,4vw,72px);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.35fr) minmax(0,1fr);grid-template-areas:"content cards hero" "info    cards hero";gap:16px 32px;align-items:center;
+/* Grid jest FULL-BLEED (bez max-width) i to jest celowe: PNG bohatera ma
+   wlasne, prostokatne tlo. Gdy grid konczyl sie na 1800px, prawy brzeg zdjecia
+   wypadal na srodku ekranu i bylo widac pionowe odciecie blekitu. Przy pelnej
+   szerokosci brzeg wychodzi poza viewport i szew znika.
+   Ultrawide zabezpieczaja SUFITY na kolumnach: bohater nigdy szerszy niz 720px
+   (przy 1.25fr na 2560px dostawal ~1000px i cover scinal mu glowe), tekst i
+   karty tez maja gorne ograniczenia, zeby linie nie robily sie nieczytelne.
+   NIE wstawiac sztywnego px na kolumne bohatera bez minmax: przy 1380px
+   (typowe okno Chrome na 15" Retina) 560px zjadalo polowe i sciskalo karty.
+   Proporcje wg reference: tekst ~23%, karty ~39%, bohater ~29%. */
+.cs-cc-grid{width:100%;max-width:none;margin:0;padding-left:clamp(24px,4vw,72px);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.35fr) minmax(0,1fr);grid-template-areas:"content cards hero" "info    cards hero";gap:16px 32px;align-items:center;
     /* align-content:center — bez tego nadmiar wysokosci sekcji (bohater ma
        min-height:700px) rozpycha wiersze i ramka z disclaimerem zjezdza na
        stopke. Teraz tekst + ramka trzymaja sie razem, wysrodkowane. */
@@ -160,13 +160,25 @@
    z object-fit:cover). Sekcja przycina PNG: góra tuż nad głową, dół na
    wysokości kolan — dokładnie jak w reference. Bohater dochodzi do prawej
    krawedzi viewportu (bez margin-left / padding-right). */
-.cs-cc-hero{position:relative;overflow:hidden;min-height:700px}
+/* max-width + justify-self:end — bohater ma sufit szerokosci (inaczej na
+   3840px cover scinalby mu glowe), ale zostaje PRZYKLEJONY do prawej krawedzi
+   viewportu. Dzieki temu prawy brzeg PNG zawsze wypada poza ekranem i nie
+   widac pionowego odciecia jego tla.
+   Maska siedzi na KONTENERZE, nie na <img>, bo obrazek jest od niego szerszy
+   (patrz nizej) — na img lewy fade wypadlby poza widocznym obszarem. */
+.cs-cc-hero{position:relative;overflow:hidden;min-height:800px;width:100%;max-width:560px;justify-self:end;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%);
+    mask-image:linear-gradient(90deg,transparent 0,#000 22%)}
 /* Bez owalnej maski — PNG ma własne jasnoniebieskie tło zgodne z tłem
    sekcji, więc wystarczy pionowy fade na LEWEJ krawędzi żeby zniknął szew
    między zdjęciem a sekcją. Radial ellipse ścinał głowę i stopy. */
-.cs-cc-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:58% 12%;display:block;
-    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%,#000 94%,transparent 100%);
-    mask-image:linear-gradient(90deg,transparent 0,#000 22%,#000 94%,transparent 100%)}
+/* width:112% + prawa kotwica — obrazek jest szerszy niz pudelko, wiec cover
+   skaluje go mocniej i bohater jest wiekszy (jak w reference). Nadmiar wychodzi
+   w LEWO, gdzie i tak wygasza go maska kontenera.
+   object-position bottom — sylwetka stoi na dolnej krawedzi sekcji, przycieta
+   przez stopke. Kotwica u gory zostawiala pusta przestrzen pod nogami i przez
+   to bohater wygladal na mniejszego. */
+.cs-cc-hero img{position:absolute;top:0;bottom:0;right:0;left:auto;width:112%;height:100%;object-fit:cover;object-position:50% 100%;display:block}
 .cs-cc-hero .cs-cc-hero-desktop{display:none}
 .cs-cc-hero .cs-cc-hero-mobile{display:block}
 .cs-cc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:12px}
@@ -241,7 +253,10 @@
        wygasza wszystkie cztery krawedzie, wiec PNG wtapia sie w sekcje. */
     /* Pudelko WASKIE i WYSOKIE — proporcja bliska portretowi 941x1672. Kwadrat
        + cover skalowalby zdjecie po szerokosci i ucinal bohatera w pasie. */
-    .cs-cc-hero{position:relative;overflow:hidden;min-height:0;height:480px;width:100%;max-width:340px;margin:0 auto}
+    /* mask/justify-self:end zerowane — to reguly desktopowe. Tu maska siedzi
+       na <img> (winieta ponizej), a bohater ma byc wysrodkowany. */
+    .cs-cc-hero{position:relative;overflow:hidden;min-height:0;height:480px;width:100%;max-width:340px;margin:0 auto;justify-self:center;
+        -webkit-mask-image:none;mask-image:none}
     /* TRZY maski zlozone przez mask-composite:intersect (piksel jest widoczny
        tylko tam, gdzie przepuszczaja go wszystkie warstwy):
          1. elipsa — wygasza rogi. Promienie MUSZA byc < 50% wymiaru pudelka,
