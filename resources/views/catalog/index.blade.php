@@ -33,7 +33,10 @@
 .cat-bt-card:hover .cat-bt-icon img.flip,.cat-bt-card.active .cat-bt-icon img.flip{transform:scaleX(-1) translateY(-2px)}
 
 /* Grid + results background */
-.cat-wrap{max-width:1200px;margin:0 auto;padding:24px 24px 64px;display:grid;grid-template-columns:270px 1fr;gap:28px;align-items:start}
+/* minmax(0,1fr) zamiast 1fr — domyslne min-width:auto na kolumnie gridu
+   sprawia, ze nie moze ona zwezic sie ponizej min-content zawartosci. Jedna
+   szeroka karta rozpychala wtedy cala strone w prawo. */
+.cat-wrap{max-width:1200px;margin:0 auto;padding:24px 24px 64px;display:grid;grid-template-columns:270px minmax(0,1fr);gap:28px;align-items:start}
 
 /* Sidebar */
 .cat-sidebar{}
@@ -97,7 +100,7 @@
 .cat-cards-wrap{background:transparent}
 
 @media(max-width:900px){
-    .cat-wrap{grid-template-columns:1fr}
+    .cat-wrap{grid-template-columns:minmax(0,1fr)}
     .cat-sidebar{position:static;max-height:none;overflow:visible}
     .cat-mob-toggle{display:flex}
     .cat-panel{display:none}
