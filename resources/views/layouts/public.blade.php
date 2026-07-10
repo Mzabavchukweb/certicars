@@ -20,11 +20,18 @@
     <meta property="og:title" content="@yield('og_title','CertiCars — certyfikowane samochody używane')">
     <meta property="og:description" content="@yield('og_description','Platforma komisowa certyfikowanych samochodów używanych z pełną inspekcją techniczną.')">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:image" content="@yield('og_image', asset('img/og-default.jpg'))">
+    {{-- Nowa nazwa pliku (-v2) jest celowa: Facebook i LinkedIn cache'uja
+         podglad po URL obrazka, wiec nadpisanie starego og-default.jpg nie
+         odswiezyloby juz udostepnionych linkow. --}}
+    <meta property="og:image" content="@yield('og_image', asset('img/og-default-v2.jpg'))">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="CertiCars — pewne auta, przejrzyste opisy. Sprawdzone samochody używane.">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('og_title','CertiCars — certyfikowane samochody używane')">
     <meta name="twitter:description" content="@yield('og_description','Platforma komisowa certyfikowanych samochodów używanych z pełną inspekcją techniczną.')">
-    <meta name="twitter:image" content="@yield('og_image', asset('img/og-default.jpg'))">
+    <meta name="twitter:image" content="@yield('og_image', asset('img/og-default-v2.jpg'))">
     <link rel="canonical" href="{{ url()->current() }}">
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -46,7 +53,7 @@
         'description' => 'Platforma komisowa certyfikowanych samochodów używanych z pełną inspekcją techniczną.',
         'url' => url('/'),
         'logo' => asset('favicon.svg'),
-        'image' => asset('img/og-default.jpg'),
+        'image' => asset('img/og-default-v2.jpg'),
         'telephone' => '+48515440623',
         'email' => 'kontakt@certicars.pl',
         'address' => [
