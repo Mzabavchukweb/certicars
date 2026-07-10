@@ -6,21 +6,45 @@ use App\Models\Car;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * Sitemapa w dwoch formatach z JEDNEGO zrodla prawdy (metoda urls()).
+ *
+ *   GET /sitemap.xml — pelny format z lastmod, priority i obrazkami
+ *   GET /sitemap.txt — plaska lista URL-i, jeden na linie
+ *
+ * Lista jest cache'owana pod kluczem CACHE_KEY. Model Car czysci ten klucz
+ * na kazdy zapis i kazde usuniecie (patrz Car::booted), wiec auta pojawiaja
+ * sie i znikaja z sitemapy natychmiast, a nie po wygasnieciu godzinnego TTL.
+ */
 class SitemapController extends Controller
 {
+    public const CACHE_KEY = 'sitemap.urls';
+
     public function index(): Response
     {
-        $xml = Cache::remember('sitemap.xml', now()->addHour(), function () {
-            return $this->build();
-        });
-
-        return response($xml, 200, [
+        return response($this->buildXml(), 200, [
             'Content-Type'  => 'application/xml; charset=utf-8',
             'Cache-Control' => 'public, max-age=3600',
         ]);
     }
 
-    private function build(): string
+    /** Plaska lista URL-i — format obslugiwany przez Google i Bing. */
+    public function text(): Response
+    {
+        $body = collect($this->urls())->pluck('loc')->implode("\n") . "\n";
+
+        return response($body, 200, [
+            'Content-Type'  => 'text/plain; charset=utf-8',
+            'Cache-Control' => 'public, max-age=3600',
+        ]);
+    }
+
+    private function urls(): array
+    {
+        return Cache::remember(self::CACHE_KEY, now()->addHour(), fn () => $this->build());
+    }
+
+    private function build(): array
     {
         $cars = Car::with(['images'])
             ->where('status', 'active')
@@ -65,9 +89,14 @@ class SitemapController extends Controller
             }
         }
 
+        return $urls;
+    }
+
+    private function buildXml(): string
+    {
         $xml  = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'."\n";
-        foreach ($urls as $u) {
+        foreach ($this->urls() as $u) {
             $xml .= "  <url>\n";
             $xml .= '    <loc>'.e($u['loc']).'</loc>'."\n";
             if (!empty($u['lastmod'])) $xml .= '    <lastmod>'.$u['lastmod'].'</lastmod>'."\n";

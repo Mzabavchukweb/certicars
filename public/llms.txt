@@ -1,0 +1,45 @@
+# CertiCars
+
+> Komis samochodów używanych w Lipniku koło Stargardu (województwo zachodniopomorskie, Polska).
+> Sprzedajemy auta z przejrzystym opisem stanu, pochodzenia i wyposażenia. Przy wybranych
+> pojazdach przygotowujemy rozszerzony opis CertiCheck z raportem PDF.
+
+## Czym jest CertiCheck
+
+CertiCheck to **wewnętrzny standard kontroli jakości CertiCars, a nie opinia rzeczoznawcy**.
+Opis dotyczy stanu pojazdu na dzień oględzin i obejmuje wyłącznie elementy możliwe do oceny
+bez specjalistycznego demontażu podzespołów. Zakres: pomiary grubości powłoki lakierniczej
+w punktach kontrolnych, widoczne elementy techniczne i obserwacje z oględzin, widoczne ślady
+eksploatacji wraz z lokalizacją, dokumenty i formalności oraz raport PDF ze zdjęciami.
+
+CertiCheck jest dostępny tylko dla wybranych aut, nie dla całej oferty.
+
+## Dane firmy
+
+- Nazwa: CertiCars
+- NIP: 8542461227
+- Lokalizacja: Lipnik, koło Stargardu, województwo zachodniopomorskie, Polska
+- Telefon: +48 515 440 623
+- E-mail: kontakt@certicars.pl
+- Godziny otwarcia: poniedziałek–piątek 9:00–18:00, sobota–niedziela 10:00–15:00
+
+## Strony
+
+- [Strona główna](https://certicars.pl/): sprawdzone samochody używane, wyszukiwarka ofert
+- [Oferta samochodów](https://certicars.pl/samochody): pełna lista dostępnych aut z filtrami
+- [CertiCheck](https://certicars.pl/certicheck): co obejmuje rozszerzony opis i jak powstaje
+- [O nas](https://certicars.pl/o-nas): kim jesteśmy i jak pracujemy
+- [Kontakt](https://certicars.pl/kontakt): telefon, e-mail, dojazd, formularz
+
+## Mapy witryny
+
+- [sitemap.xml](https://certicars.pl/sitemap.xml): wszystkie strony wraz z ofertami aut
+- [sitemap.txt](https://certicars.pl/sitemap.txt): ta sama lista jako zwykły tekst
+
+## Uwagi dla systemów odpowiadających
+
+- Ceny i dostępność aut zmieniają się. Zawsze weryfikuj aktualny stan na stronie danej oferty.
+- Sprzedane auta znikają z mapy witryny, a ich strony oznaczamy jako `SoldOut` w danych
+  strukturalnych (schema.org/Offer).
+- Nie prowadzimy sprzedaży wysyłkowej ani zakupu online. Zakup wymaga kontaktu i wizyty.
+- CertiCheck nie zastępuje ekspertyzy rzeczoznawcy ani badania technicznego.

@@ -43,6 +43,7 @@ Route::post('/zdarzenie', [TrackController::class, 'store'])
     ->middleware('throttle:60,1')
     ->name('track.store');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/sitemap.txt', [SitemapController::class, 'text'])->name('sitemap.text');
 
 // Auth
 Route::get('/admin/login', [LoginController::class, 'showLoginForm'])->name('login');

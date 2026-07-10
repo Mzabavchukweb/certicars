@@ -5,10 +5,14 @@ Disallow: /login
 Disallow: /logout
 Disallow: /password/
 Disallow: /storage/
-Disallow: /obserwowane
 Disallow: /*?sort=
 Disallow: /*?dir=
 Disallow: /*?page=
 Disallow: /*/pdf
 
+# /obserwowane celowo NIE jest tu blokowane. Strona ma <meta name="robots"
+# content="noindex,follow">, a zablokowany crawl uniemozliwilby Googlebotowi
+# odczytanie tego tagu — URL moglby wtedy trafic do indeksu bez tresci.
+
 Sitemap: https://certicars.pl/sitemap.xml
+Sitemap: https://certicars.pl/sitemap.txt

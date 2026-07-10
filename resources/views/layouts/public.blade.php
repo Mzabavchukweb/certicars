@@ -46,26 +46,47 @@
     <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@700;800;900&display=swap" rel="stylesheet"></noscript>
     <script src="https://unpkg.com/lucide@latest" defer></script>
     <script type="application/ld+json">
+    {{-- AutoDealer jest podtypem LocalBusiness. @id daje encji stabilny
+         identyfikator, do ktorego moga sie odwolywac inne schematy. geo i
+         hasMap to najmocniejsze sygnaly lokalne zaraz po samym adresie. --}}
     {!! json_encode([
         '@context' => 'https://schema.org',
         '@type' => 'AutoDealer',
+        '@id' => url('/') . '#organizacja',
         'name' => 'CertiCars',
-        'description' => 'Platforma komisowa certyfikowanych samochodów używanych z pełną inspekcją techniczną.',
+        'description' => 'Komis samochodów używanych w Lipniku koło Stargardu. Przejrzysty opis stanu, jazda próbna i możliwość sprawdzenia auta przed zakupem.',
         'url' => url('/'),
         'logo' => asset('favicon.svg'),
         'image' => asset('img/og-default-v2.jpg'),
         'telephone' => '+48515440623',
         'email' => 'kontakt@certicars.pl',
+        'vatID' => 'PL8542461227',
+        'taxID' => '8542461227',
         'address' => [
             '@type' => 'PostalAddress',
             'addressLocality' => 'Lipnik',
+            'addressRegion' => 'zachodniopomorskie',
             'addressCountry' => 'PL',
         ],
+        // Wspolrzedne pinezki z mapy w stopce.
+        'geo' => [
+            '@type' => 'GeoCoordinates',
+            'latitude' => 53.3502947,
+            'longitude' => 14.9399374,
+        ],
+        'hasMap' => 'https://www.openstreetmap.org/?mlat=53.3502947&mlon=14.9399374#map=15/53.3502947/14.9399374',
         'openingHoursSpecification' => [
             ['@type' => 'OpeningHoursSpecification', 'dayOfWeek' => ['Monday','Tuesday','Wednesday','Thursday','Friday'], 'opens' => '09:00', 'closes' => '18:00'],
             ['@type' => 'OpeningHoursSpecification', 'dayOfWeek' => ['Saturday','Sunday'], 'opens' => '10:00', 'closes' => '15:00'],
         ],
-        'areaServed' => 'PL',
+        'areaServed' => [
+            ['@type' => 'City', 'name' => 'Stargard'],
+            ['@type' => 'City', 'name' => 'Szczecin'],
+            ['@type' => 'AdministrativeArea', 'name' => 'zachodniopomorskie'],
+            ['@type' => 'Country', 'name' => 'Polska'],
+        ],
+        'currenciesAccepted' => 'PLN',
+        'paymentAccepted' => 'Gotówka, Przelew bankowy, Leasing, Kredyt samochodowy',
         'priceRange' => '$$',
     ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}
     </script>

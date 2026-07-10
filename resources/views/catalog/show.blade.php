@@ -8,8 +8,10 @@
 @section('og_image',$car->primaryImage->url)
 @endif
 @section('og_type','product')
+{{-- Przez @section, nie surowym <meta> w extra_head: layout emituje tag robots
+     zawsze, wiec inaczej strona auta miala DWA konkurujace tagi. --}}
+@if($car->noindex)@section('robots','noindex,nofollow')@endif
 @section('extra_head')
-    @if($car->noindex)<meta name="robots" content="noindex,nofollow">@endif
     @php
         $schema = [
             '@context' => 'https://schema.org',
