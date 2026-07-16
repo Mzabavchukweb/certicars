@@ -21,7 +21,7 @@ class Car extends Model
         'fuel_consumption', 'fuel_procedure', 'co2_emission', 'emission_class',
         'service_book', 'coc_documents', 'vehicle_folder', 'hu_au_report',
         'service_book_status', 'registration_cert', 'owners_manual', 'aso_serviced', 'service_history',
-        'paint_measurements', 'technical_conditions', 'equipment', 'highlighted_equipment', 'engine_video_url', 'engine_video_path',
+        'paint_measurements', 'technical_conditions', 'equipment', 'highlighted_equipment',
         // Interior 360° (Copart-style frame scrubber) — see migration add_interior_360_video_to_cars_table.
         'interior_video_path', 'interior_frames_status', 'interior_frames_count', 'interior_frames_dir', 'interior_frames_error',
         // Exterior 360° walk-around (same scrubber pipeline) — see migration add_exterior_360_video_to_cars_table.
@@ -283,13 +283,6 @@ class Car extends Model
         if (!$this->price) return 'Cena na zapytanie';
         $symbol = $this->currency === 'PLN' ? 'zł' : $this->currency;
         return number_format($this->price, 0, ',', ' ') . ' ' . $symbol;
-    }
-
-    public function getEngineVideoFileUrlAttribute(): ?string
-    {
-        if (!$this->engine_video_path) return null;
-        if (str_starts_with($this->engine_video_path, 'http')) return $this->engine_video_path;
-        return \Illuminate\Support\Facades\Storage::disk('public')->url($this->engine_video_path);
     }
 
     public function getTitleAttribute(): string

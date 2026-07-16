@@ -54,7 +54,6 @@ class CarSeeder extends Seeder
             'fuel_procedure' => 'WLTP',
             'co2_emission' => '163',
             'emission_class' => 'Euro 6d',
-            'engine_video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
             'seller_name' => 'CertiCars Sp. z o.o.',
             'seller_phone' => '+48 22 123 45 67',
             'seller_email' => 'sprzedaz@certicars.pl',

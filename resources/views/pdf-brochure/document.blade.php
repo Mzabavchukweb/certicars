@@ -742,12 +742,11 @@
 @endif
 
 {{-- ── 16. Materiały online ────────────────────────────────────── --}}
-@if($b->engineVideoUrl || $b->exteriorPanoUrl || $b->interiorPanoUrl)
+@if($b->exteriorPanoUrl || $b->interiorPanoUrl)
 <section>
 <div class="sh">Materiały online</div>
-<div class="sh-sub">Pełna dokumentacja wideo i panoramy 360° dostępne w wersji online raportu.</div>
+<div class="sh-sub">Panoramy 360° dostępne w wersji online raportu.</div>
 <table class="media">
-    @if($b->engineVideoUrl)<tr><td class="lbl">Nagranie pracy silnika</td><td class="val">{{ $b->engineVideoUrl }}</td></tr>@endif
     @if($b->exteriorPanoUrl)<tr><td class="lbl">Panorama 360° na zewnątrz</td><td class="val">{{ $b->exteriorPanoUrl }}</td></tr>@endif
     @if($b->interiorPanoUrl)<tr><td class="lbl">Panorama 360° wewnątrz</td><td class="val">{{ $b->interiorPanoUrl }}</td></tr>@endif
 </table>

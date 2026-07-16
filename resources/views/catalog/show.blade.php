@@ -461,7 +461,7 @@
 }
 
 /* ============ TECH + ENGINE-VIDEO TWO-COLUMN ROW ============ */
-.cs-tech-engine-row{display:grid;grid-template-columns:1.15fr 1fr;gap:20px;margin-bottom:16px;align-items:stretch;max-width:calc(1200px - 48px);margin-left:auto;margin-right:auto;width:100%;box-sizing:border-box}
+.cs-tech-engine-row{display:grid;grid-template-columns:1fr;gap:20px;margin-bottom:16px;align-items:stretch;max-width:calc(1200px - 48px);margin-left:auto;margin-right:auto;width:100%;box-sizing:border-box}
 .cs-tech-engine-card{background:#fff;border:1px solid #eeeef0;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:24px 26px;display:flex;flex-direction:column;min-width:0;height:100%}
 .cs-tech-engine-card-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
 .cs-tech-engine-card-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
@@ -673,12 +673,7 @@
     .cs-pt-tire-list{grid-template-columns:1fr 1fr}
 }
 
-/* Engine video panel (inside right card) */
-.cs-engine-video-panel{position:relative;border-radius:14px;overflow:hidden;background:#0a0a0a;aspect-ratio:16/10;flex:1;min-height:280px}
-.cs-engine-video-panel iframe,.cs-engine-video-panel video{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000}
-.cs-engine-video-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);font-size:13px;letter-spacing:.3px;text-align:center;padding:30px}
-
-/* Tablet/mobile — stack the two cards vertically */
+/* Tablet/mobile — stack the tech card responsively */
 @media(max-width:1024px){
     .cs-tech-engine-row{grid-template-columns:1fr;gap:14px}
     .cs-tech-engine-card{padding:20px}
@@ -689,7 +684,6 @@
     .cs-tech-list-ico svg{width:16px;height:16px}
     .cs-tech-list-name{font-size:13.5px}
     .cs-tech-list-status{font-size:12px}
-    .cs-engine-video-panel{aspect-ratio:16/9;min-height:0}
 }
 @media(max-width:500px){
     .cs-tech-engine-card{padding:18px 16px;border-radius:14px}
@@ -792,7 +786,7 @@
 /* Top 8 highlighted tiles */
 /* 8 top highlight tiles — uniform min-height so multi-line labels don't
    leave row-to-row gaps on mobile (2- and 4-col grids). */
-.cs-equip-tiles{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px;margin-bottom:20px;align-items:stretch}
+.cs-equip-tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:20px;align-items:stretch}
 .cs-equip-tile{background:#fff;border:1px solid #eeeef0;border-radius:14px;padding:18px 10px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;gap:10px;min-width:0;min-height:112px;transition:border-color .15s,box-shadow .15s}
 .cs-equip-tile:hover{border-color:#cbd5e1;box-shadow:0 4px 12px rgba(0,0,0,.06)}
 .cs-equip-tile-ico{width:46px;height:46px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -818,9 +812,9 @@
 .cs-equip-show-all .cs-equip-show-all-chev{transition:transform .2s}
 .cs-equip-section.expanded .cs-equip-show-all .cs-equip-show-all-chev{transform:rotate(180deg)}
 
-/* Tablet: 4-col top tiles, 2-col category cards */
+/* Tablet: 3-col top tiles, 2-col category cards */
 @media(max-width:1024px){
-    .cs-equip-tiles{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+    .cs-equip-tiles{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
     .cs-equip-cats{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 }
 /* Mobile: 2-col tiles, single-col cards */
@@ -1371,7 +1365,6 @@
         $galleryList = $car->galleryImages->count() ? $car->galleryImages : ($car->primaryImage ? collect([$car->primaryImage]) : collect());
         $damageImgList = $car->damageImages ?? collect();
         $allMediaCount = $galleryList->count() + $damageImgList->count();
-        $hasEngineVideo = $car->engine_video_url || $car->engine_video_path;
     @endphp
 
     <div class="cs-grid">
@@ -1394,7 +1387,7 @@
                 <x-icon name="image" size="14" :strokeWidth="1.8"/>
                 Wszystkie zdjęcia
             </button>
-            @php $extStatus = $car->has_certicheck ? $car->exterior360CustomerStatus() : 'missing'; @endphp
+            @php $extStatus = $car->exterior360CustomerStatus(); @endphp
             @if($extStatus !== 'missing')
             <button type="button"
                     class="cs-gallery-tab {{ $extStatus === 'processing' ? 'disabled' : '' }}"
@@ -1408,7 +1401,7 @@
                 360° z zewnątrz
             </button>
             @endif
-            @php $intStatus = $car->has_certicheck ? $car->interior360CustomerStatus() : 'missing'; @endphp
+            @php $intStatus = $car->interior360CustomerStatus(); @endphp
             @if($intStatus !== 'missing')
             <button type="button"
                     class="cs-gallery-tab {{ $intStatus === 'processing' ? 'disabled' : '' }}"
@@ -1429,10 +1422,6 @@
             <button type="button" class="cs-gallery-tab" data-gallery-filter="documents" onclick="csFilterGallery(this,'documents')" role="tab" aria-selected="false">
                 <x-icon name="file-text" size="14" :strokeWidth="1.8"/>
                 Dokumenty
-            </button>
-            <button type="button" class="cs-gallery-tab {{ $hasEngineVideo ? '' : 'disabled' }}" data-gallery-filter="video" onclick="csFilterGallery(this,'video')" role="tab" aria-selected="false">
-                <x-icon name="play" size="14" :strokeWidth="1.8"/>
-                Wideo pracy silnika
             </button>
             <button type="button" class="cs-gallery-tab" data-gallery-filter="paint" onclick="csFilterGallery(this,'paint')" role="tab" aria-selected="false">
                 <x-icon name="paintbrush" size="14" :strokeWidth="1.8"/>
@@ -1465,7 +1454,7 @@
                      produced N JPEGs, the user drag-scrubs through them client-side. Falls
                      through to the equirectangular Pannellum embed below when frames are
                      not ready (legacy or still-processing rows). --}}
-                @if($car->has_certicheck && $car->hasInteriorFrames())
+                @if($car->hasInteriorFrames())
                 <div class="cs-gallery-main cs-pano360 cs-interior-frames-pane" id="csInteriorFrames" style="background:#000"
                      data-frames='@json($car->interiorFrameUrls())'>
                     <img class="cs-interior-frames-img" alt="Wnętrze 360°" draggable="false" decoding="async">
@@ -1475,7 +1464,7 @@
                         Przeciągnij, aby obejrzeć wnętrze
                     </div>
                 </div>
-                @elseif($car->has_certicheck && $car->pano360Image)
+                @elseif($car->pano360Image)
                 <div class="cs-gallery-main cs-pano360" id="csPano360" style="background:#000">
                     <div id="csPanoramaContainer" style="width:100%;height:100%;background:#000" data-pano-src="{{ route('panorama.stream', $car->pano360Image) }}"></div>
                     <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(10,10,10,.78);color:#fff;font-size:12px;padding:7px 14px;border-radius:50px;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px);font-weight:600">
@@ -1490,7 +1479,7 @@
                      ExtractExteriorFramesJob produces N JPEGs, the user drag-scrubs
                      through them. Falls back to the equirectangular Pannellum embed
                      below when frames are not ready. --}}
-                @if($car->has_certicheck && $car->hasExteriorFrames())
+                @if($car->hasExteriorFrames())
                 <div class="cs-gallery-main cs-pano360ext cs-interior-frames-pane" id="csExteriorFrames" style="background:#000"
                      data-frames='@json($car->exteriorFrameUrls())'>
                     <img class="cs-interior-frames-img" alt="Zewnętrze 360°" draggable="false" decoding="async">
@@ -1500,7 +1489,7 @@
                         Przeciągnij, aby obejrzeć auto z zewnątrz
                     </div>
                 </div>
-                @elseif($car->has_certicheck && $car->exteriorPano360Image)
+                @elseif($car->exteriorPano360Image)
                 <div class="cs-gallery-main cs-pano360ext" id="csPano360ext" style="background:#000">
                     <div id="csPanoramaExtContainer" style="width:100%;height:100%;background:#000" data-pano-src="{{ route('panorama.stream', $car->exteriorPano360Image) }}"></div>
                     <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(10,10,10,.78);color:#fff;font-size:12px;padding:7px 14px;border-radius:50px;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px);font-weight:600">
@@ -2044,7 +2033,7 @@
     @php
         $hl = collect($car->highlighted_equipment ?? [])
             ->filter(fn($k) => \App\Helpers\EquipmentCatalog::option($k) !== null)
-            ->take(8)
+            ->take(6)
             ->values();
         $eqGrouped = \App\Helpers\EquipmentCatalog::groupEquipmentForDisplay($car->equipment);
         $hasEqSection = $hl->isNotEmpty() || $totalCount > 0;
@@ -2057,7 +2046,7 @@
         </div>
 
         @if($hl->isNotEmpty())
-        {{-- Top 8 highlighted tiles. Admin picks them from EquipmentCatalog options. --}}
+        {{-- Top 6 highlighted tiles. Admin picks them from EquipmentCatalog options. --}}
         <div class="cs-equip-tiles">
             @foreach($hl as $key)
                 @php $opt = \App\Helpers\EquipmentCatalog::option($key); @endphp
@@ -2333,15 +2322,7 @@
             ];
         };
 
-        // Engine video — derive embed type once.
-        $hasEngineVideoLocal = $car->engine_video_url || $car->engine_video_path;
-        $ytId = null; $vimId = null; $rawVidUrl = $car->engine_video_url;
-        if ($rawVidUrl) {
-            if (preg_match('~(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|v/|shorts/))([\w-]{11})~', $rawVidUrl, $m)) $ytId = $m[1];
-            elseif (preg_match('~vimeo\.com/(\d+)~', $rawVidUrl, $m)) $vimId = $m[1];
-        }
-        // Hide the whole tech+video row when admin hasn't filled either side
-        // (no per-item status entries AND no engine recording of any form).
+        // Hide the tech row when admin hasn't filled any per-item status entries.
         $hasAnyTechStatus = !empty(array_filter((array) ($car->technical_conditions ?? []), function ($v) {
             if (is_array($v)) {
                 $s = $v['status'] ?? null;
@@ -2350,7 +2331,7 @@
             }
             return is_string($v) && trim($v) !== '';
         }));
-        $showTechEngineRow = $hasAnyTechStatus || $hasEngineVideoLocal;
+        $showTechEngineRow = $hasAnyTechStatus;
     @endphp
     @if($showTechEngineRow)
     <div class="cs-tech-engine-row">
@@ -2363,7 +2344,7 @@
                 <div class="cs-tech-engine-card-titlewrap">
                     <h3 class="cs-tech-engine-card-title">Stan techniczny podczas oględzin</h3>
                     <p class="cs-tech-engine-card-sub">Sprawdziliśmy kluczowe elementy techniczne pojazdu podczas oględzin i jazdy próbnej.</p>
-                    <p class="cs-tech-engine-card-sub">Poniżej znajdziesz ich stan oraz nagranie pracy silnika.</p>
+                    <p class="cs-tech-engine-card-sub">Poniżej znajdziesz ich stan.</p>
                 </div>
             </div>
             <div class="cs-tech-list-panel">
@@ -2399,37 +2380,6 @@
                 @endforeach
             </div>
         </div>
-
-        {{-- RIGHT — Nagranie pracy silnika (CertiCheck only) --}}
-        @if($car->has_certicheck)
-        <div class="cs-tech-engine-card">
-            <div class="cs-tech-engine-card-head">
-                <div class="cs-tech-engine-card-ico">
-                    <x-icon name="video" size="22"/>
-                </div>
-                <div class="cs-tech-engine-card-titlewrap">
-                    <h3 class="cs-tech-engine-card-title">Nagranie pracy silnika</h3>
-                    <p class="cs-tech-engine-card-sub">Krótki film z uruchomienia i pracy silnika nagrany podczas inspekcji.</p>
-                </div>
-            </div>
-            <div class="cs-engine-video-panel">
-                @if($ytId)
-                    <iframe src="https://www.youtube.com/embed/{{ $ytId }}" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-                @elseif($vimId)
-                    <iframe src="https://player.vimeo.com/video/{{ $vimId }}" allowfullscreen loading="lazy"></iframe>
-                @elseif($car->engine_video_path)
-                    <video src="{{ $car->engine_video_file_url }}" controls preload="metadata" playsinline></video>
-                @elseif($rawVidUrl)
-                    <div class="cs-engine-video-empty">
-                        Pełne nagranie dostępne pod adresem:<br>
-                        <a href="{{ $rawVidUrl }}" target="_blank" rel="noopener" style="color:#fff;text-decoration:underline">{{ $rawVidUrl }}</a>
-                    </div>
-                @else
-                    <div class="cs-engine-video-empty">Nagranie zostanie dodane wkrótce.</div>
-                @endif
-            </div>
-        </div>
-        @endif
     </div>
     @endif
 
@@ -2448,7 +2398,7 @@
             ? ($car->exteriorFrameUrls()[0] ?? null)
             : ($car->exteriorPano360Image?->url);
     @endphp
-    @if($car->has_certicheck && ($hasInteriorViewer || $hasExteriorViewerCard))
+    @if($hasInteriorViewer || $hasExteriorViewerCard)
     <div class="cs-pano360-section-card">
         <div class="cs-pano360-section-head">
             <div class="cs-pano360-section-ico">
@@ -3168,11 +3118,6 @@ function csFilterGallery(btn,filter){
         return;
     }
 
-    if(filter==='video'){
-        var vid=document.querySelector('[data-panel-engine-video]');
-        if(vid)vid.scrollIntoView({behavior:'smooth',block:'center'});
-        return;
-    }
     if(filter==='paint'){
         var paintSec=document.querySelector('.cs-paint-grid');
         if(paintSec)paintSec.scrollIntoView({behavior:'smooth',block:'center'});
@@ -3206,7 +3151,7 @@ function csFilterGallery(btn,filter){
 }
 
 // ==== 360° PANORAMA VIEWER (gallery tab) ====
-@if($car->has_certicheck && $car->pano360Image)
+@if($car->pano360Image)
 window.csPano360Init = (function(){
     let initialized = false;
     return function(){
@@ -3265,7 +3210,7 @@ window.csPano360Init = (function(){
 // first one paints synchronously; the rest preload in the background so the
 // scrubber feels instant after the first ~half second. Used by both the
 // interior and exterior viewers.
-@if($car->has_certicheck && ($car->hasInteriorFrames() || $car->hasExteriorFrames()))
+@if($car->hasInteriorFrames() || $car->hasExteriorFrames())
 // Manual scrubber only: user drags with mouse / finger to spin through
 // the frame sequence. No auto-rotate (the earlier autoplay path was
 // reverted per user feedback: "musi być 360 i user sobie przewija
@@ -3292,15 +3237,16 @@ window.csMakeFramesScrubber = function(paneId){
             preloaded[i] = p;
             return p;
         }
-        loadFrame(0).addEventListener('load', function(){ img.src = urls[0]; }, { once: true });
+        loadFrame(0).addEventListener('load', function(){ if(current === 0) img.src = urls[0]; }, { once: true });
         if(preloaded[0].complete) img.src = urls[0];
-        var nextToPreload = 1;
-        (function preloadNext(){
-            if(nextToPreload >= urls.length) return;
-            var p = loadFrame(nextToPreload++);
-            p.addEventListener('load', preloadNext, { once: true });
-            p.addEventListener('error', preloadNext, { once: true });
-        })();
+        // Preload the whole sequence CONCURRENTLY, not one-frame-at-a-time.
+        // The old sequential loader waited for each frame's load event before
+        // requesting the next, so a fast drag outran the buffer and the image
+        // "froze" on the last decoded frame (the stop-klatki bug — worst on the
+        // exterior walk-around with more/larger frames). Firing every request
+        // up front lets the browser fetch them in parallel (capped ~6/host) so
+        // frames are ready almost immediately and scrubbing stays smooth.
+        for(var k = 1; k < urls.length; k++) loadFrame(k);
 
         var current = 0, dragging = false, lastX = 0, accum = 0;
         function setFrame(i){
@@ -3321,6 +3267,7 @@ window.csMakeFramesScrubber = function(paneId){
         }
 
         function onDown(e){
+            markLearned();            // first grab stops the auto-spin for good
             dragging = true;
             pane.classList.add('is-dragging');
             lastX = (e.touches ? e.touches[0].clientX : e.clientX);
@@ -3343,6 +3290,33 @@ window.csMakeFramesScrubber = function(paneId){
             pane.classList.remove('is-dragging');
         }
 
+        // ── Auto-rotate teaser ────────────────────────────────────────────
+        // On first ever view the sequence spins on its own so the user sees
+        // it IS a 360°. The instant they grab it (mousedown/touch) the spin
+        // stops for good and they take over — and we remember that in
+        // localStorage so it never auto-spins again for this visitor until
+        // they clear their storage. Auto-advance only lands on already-decoded
+        // frames, so there are no black flashes while the set is still buffering.
+        var CC360_KEY = 'cc360_userControls';
+        var autoRAF = null, autoAcc = 0, autoLast = 0;
+        function stopAuto(){ if(autoRAF){ cancelAnimationFrame(autoRAF); autoRAF = null; } }
+        function markLearned(){ stopAuto(); try { localStorage.setItem(CC360_KEY, '1'); } catch(_){} }
+        function autoTick(ts){
+            if(!autoRAF) return;
+            if(!autoLast){ autoLast = ts; }
+            autoAcc += ts - autoLast; autoLast = ts;
+            while(autoAcc >= 90){
+                autoAcc -= 90;
+                var nxt = (current + 1) % urls.length;
+                if(preloaded[nxt] && preloaded[nxt].complete){ setFrame(nxt); }
+                else { autoAcc = 0; break; }   // wait for buffering — never blank the frame
+            }
+            autoRAF = requestAnimationFrame(autoTick);
+        }
+        var cc360Learned = false;
+        try { cc360Learned = localStorage.getItem(CC360_KEY) === '1'; } catch(_){}
+        if(!cc360Learned){ autoLast = 0; autoAcc = 0; autoRAF = requestAnimationFrame(autoTick); }
+
         pane.addEventListener('mousedown', onDown);
         window.addEventListener('mousemove', onMove);
         window.addEventListener('mouseup', onUp);
@@ -3353,15 +3327,15 @@ window.csMakeFramesScrubber = function(paneId){
     };
 };
 @endif
-@if($car->has_certicheck && $car->hasInteriorFrames())
+@if($car->hasInteriorFrames())
 window.csInteriorFramesInit = window.csMakeFramesScrubber('csInteriorFrames');
 @endif
-@if($car->has_certicheck && $car->hasExteriorFrames())
+@if($car->hasExteriorFrames())
 window.csExteriorFramesInit = window.csMakeFramesScrubber('csExteriorFrames');
 @endif
 
 // ==== 360° PANORAMA VIEWER (exterior gallery tab) ====
-@if($car->has_certicheck && $car->exteriorPano360Image)
+@if($car->exteriorPano360Image)
 window.csPano360ExtInit = (function(){
     let initialized = false;
     return function(){
@@ -3822,7 +3796,7 @@ function csShareToast(msg) {
 @endpush
 
 {{-- ===== Fullscreen 360° lightbox ===== --}}
-@if($car->has_certicheck && ($car->hasInteriorFrames() || $car->hasExteriorFrames() || $car->pano360Image || $car->exteriorPano360Image))
+@if($car->hasInteriorFrames() || $car->hasExteriorFrames() || $car->pano360Image || $car->exteriorPano360Image)
 <div class="cs-360-lightbox" id="cs360Lightbox" role="dialog" aria-modal="true" aria-label="Widok 360°">
     <div class="cs-360-lightbox-stage">
         <div class="cs-360-lightbox-title" id="cs360LightboxTitle">
@@ -3891,14 +3865,11 @@ function csShareToast(msg) {
         }
         loadFrame(0);
         if(preloaded[0].complete) img.src = urls[0];
-        else preloaded[0].addEventListener('load', function(){ img.src = urls[0]; }, { once: true });
-        var nextToPreload = 1;
-        (function preloadNext(){
-            if(nextToPreload >= urls.length) return;
-            var p = loadFrame(nextToPreload++);
-            p.addEventListener('load', preloadNext, { once: true });
-            p.addEventListener('error', preloadNext, { once: true });
-        })();
+        else preloaded[0].addEventListener('load', function(){ if(current === 0) img.src = urls[0]; }, { once: true });
+        // Concurrent preload of the whole sequence — see the main-gallery
+        // scrubber above. Sequential loading froze the frame on fast drags
+        // (stop-klatki); firing all requests up front keeps the spin smooth.
+        for(var k = 1; k < urls.length; k++) loadFrame(k);
 
         var current = 0, dragging = false, lastX = 0, accum = 0;
         function setFrame(i){
@@ -3916,6 +3887,7 @@ function csShareToast(msg) {
             return Math.max(4, w / urls.length);
         }
         function onDown(e){
+            markLearned();            // first grab stops the auto-spin for good
             dragging = true;
             pane.classList.add('is-dragging');
             lastX = (e.touches ? e.touches[0].clientX : e.clientX);
@@ -3937,6 +3909,30 @@ function csShareToast(msg) {
             dragging = false;
             pane.classList.remove('is-dragging');
         }
+
+        // Auto-rotate teaser — same behaviour as the inline gallery scrubber:
+        // spins on first view, stops for good on first grab, remembered in
+        // localStorage. Advances only onto decoded frames (no black flashes).
+        var CC360_KEY = 'cc360_userControls';
+        var autoRAF = null, autoAcc = 0, autoLast = 0;
+        function stopAuto(){ if(autoRAF){ cancelAnimationFrame(autoRAF); autoRAF = null; } }
+        function markLearned(){ stopAuto(); try { localStorage.setItem(CC360_KEY, '1'); } catch(_){} }
+        function autoTick(ts){
+            if(!autoRAF) return;
+            if(!autoLast){ autoLast = ts; }
+            autoAcc += ts - autoLast; autoLast = ts;
+            while(autoAcc >= 90){
+                autoAcc -= 90;
+                var nxt = (current + 1) % urls.length;
+                if(preloaded[nxt] && preloaded[nxt].complete){ setFrame(nxt); }
+                else { autoAcc = 0; break; }
+            }
+            autoRAF = requestAnimationFrame(autoTick);
+        }
+        var cc360Learned = false;
+        try { cc360Learned = localStorage.getItem(CC360_KEY) === '1'; } catch(_){}
+        if(!cc360Learned){ autoLast = 0; autoAcc = 0; autoRAF = requestAnimationFrame(autoTick); }
+
         pane.addEventListener('mousedown', onDown);
         window.addEventListener('mousemove', onMove);
         window.addEventListener('mouseup', onUp);
@@ -3946,6 +3942,7 @@ function csShareToast(msg) {
         pane.addEventListener('touchcancel', onUp);
 
         return function cleanup(){
+            stopAuto();
             pane.removeEventListener('mousedown', onDown);
             window.removeEventListener('mousemove', onMove);
             window.removeEventListener('mouseup', onUp);
