@@ -46,7 +46,6 @@ class CarBrochureObserver
         'aso_serviced', 'service_history',
         'paint_measurements', 'technical_conditions',
         'equipment', 'highlighted_equipment',
-        'engine_video_url', 'engine_video_path',
     ];
 
     public function __construct(

@@ -29,6 +29,21 @@ class PageController extends Controller
         return view('pages.certicheck');
     }
 
+    public function privacy()
+    {
+        return view('pages.privacy', ['updated' => '15 lipca 2026']);
+    }
+
+    public function terms()
+    {
+        return view('pages.terms', ['updated' => '15 lipca 2026']);
+    }
+
+    public function cookies()
+    {
+        return view('pages.cookies', ['updated' => '15 lipca 2026']);
+    }
+
 
     public function contactSubmit(Request $request)
     {
@@ -48,6 +63,13 @@ class PageController extends Controller
         ]);
 
         Event::record('contact_submitted', $request);
+
+        // AJAX (fetch) submit → return JSON so the page never reloads and the
+        // visitor stays exactly where they are (no scroll jump). Validation
+        // errors are returned as 422 JSON automatically by Laravel.
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Dziękujemy! Odezwiemy się wkrótce.']);
+        }
 
         return back()->with('success', 'Dziękujemy! Odezwiemy się wkrótce.');
     }

@@ -104,7 +104,6 @@ final class BrochureData
         public readonly array $damageImages,
 
         // Online materials
-        public readonly ?string $engineVideoUrl,
         public readonly ?string $exteriorPanoUrl,
         public readonly ?string $interiorPanoUrl,
     ) {}

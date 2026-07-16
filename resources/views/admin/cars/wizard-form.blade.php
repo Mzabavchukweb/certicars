@@ -1282,7 +1282,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             default => ['#6b7280','#f3f4f6','Stan nieznany'],
         } : null;
     @endphp
-    <div class="wz-media-section wz-360-section" data-certicheck-only="1" data-360-side="interior">
+    <div class="wz-media-section wz-360-section" data-360-side="interior">
         <div class="wz-media-header">
             <i data-lucide="orbit"></i>
             <h3>360° wnętrze pojazdu <span style="font-size:11px;color:var(--text-3);font-weight:500">(opcjonalne)</span></h3>
@@ -1365,7 +1365,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             default => ['#6b7280','#f3f4f6','Stan nieznany'],
         } : null;
     @endphp
-    <div class="wz-media-section wz-360-section" data-certicheck-only="1" data-360-side="exterior">
+    <div class="wz-media-section wz-360-section" data-360-side="exterior">
         <div class="wz-media-header">
             <i data-lucide="scan"></i>
             <h3>360° na zewnątrz pojazdu <span style="font-size:11px;color:var(--text-3);font-weight:500">(opcjonalne)</span></h3>
@@ -1436,52 +1436,6 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
          pano360ext upload teraz wbudowany w wz-360-section above (exterior),
          pokazywany gdy admin wybierze radio „Panorama 360°". --}}
 
-    {{-- Engine video — available for ALL listings (Zwykłe + CertiCheck).
-         Basic sales asset (engine startup / running sound / walkaround) admin
-         uploads OR links from YouTube/Vimeo. Previously gated to CertiCheck-
-         only which made the upload UI vanish on normal listings — users
-         could not add ANY video. The CertiCheck-specific 360° walkarounds
-         above stay gated (those need the frame extractor + Pannellum viewer
-         shipped with the CertiCheck UI on the public detail page). --}}
-    <div class="wz-media-section">
-        <div class="wz-media-header">
-            <i data-lucide="film"></i>
-            <h3>Film z pracy silnika</h3>
-        </div>
-        <p style="font-size:12px;color:var(--text-3);margin:0 0 14px">Link YouTube/Vimeo <strong>lub</strong> plik wideo (MP4, WebM, MOV — max 100 MB).</p>
-
-        <div style="display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:9px;margin-bottom:14px;width:fit-content">
-            <button type="button" id="wzVidTabUrl" class="btn btn-sm" style="background:{{ $car?->engine_video_url ? '#fff' : 'transparent' }};border:none">🔗 Link URL</button>
-            <button type="button" id="wzVidTabFile" class="btn btn-sm" style="background:{{ $car?->engine_video_path && !$car?->engine_video_url ? '#fff' : 'transparent' }};border:none">📤 Plik na serwerze</button>
-        </div>
-
-        <div id="wzVidUrlPanel">
-            <div class="wz-field" style="margin-bottom:10px">
-                <label>URL filmu</label>
-                <input type="url" name="engine_video_url" id="wzEngineVideoUrl" value="{{ old('engine_video_url',$car?->engine_video_url) }}" placeholder="https://youtu.be/... lub https://vimeo.com/...">
-            </div>
-            <div id="wzVidUrlPreview"></div>
-        </div>
-
-        <div id="wzVidFilePanel" style="display:none">
-            @if($car?->engine_video_path)
-            <div style="background:#fafafb;border:1px solid var(--border-l);border-radius:10px;padding:10px;margin-bottom:10px;display:flex;gap:12px;align-items:center">
-                <video src="{{ $car->engine_video_file_url }}" controls preload="metadata" style="max-width:220px;border-radius:8px;background:#000"></video>
-                <div style="flex:1">
-                    <div style="font-weight:600;font-size:13px;margin-bottom:4px">Aktualny plik</div>
-                    <div style="font-size:11.5px;color:var(--text-3);word-break:break-all">{{ $car->engine_video_path }}</div>
-                    <label class="wz-inline-label" style="margin-top:8px;color:#b91c1c"><input type="checkbox" name="remove_engine_video" value="1"> Usuń ten plik przy zapisie</label>
-                </div>
-            </div>
-            @endif
-            <label class="wz-file-drop" id="wzVideoDrop">
-                <i data-lucide="film"></i>
-                <div class="drop-title">{{ $car?->engine_video_path ? 'Kliknij lub przeciągnij, aby podmienić plik' : 'Kliknij lub przeciągnij plik wideo' }}</div>
-                <input type="file" name="engine_video_file" id="wzEngineVideoFile" accept="video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska">
-            </label>
-            <div id="wzVideoLocalPreview" style="margin-top:10px"></div>
-        </div>
-    </div>
 
 </div>
 
@@ -1759,17 +1713,17 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
      ║  STEP 6 — Wyposażenie                                      ║
      ╚══════════════════════════════════════════════════════════════╝ --}}
 <div class="wz-step" data-step="6">
-    {{-- Highlighted equipment — top 8 icon tiles shown on the public page --}}
+    {{-- Highlighted equipment — top 6 icon tiles shown on the public page --}}
     @php
         $highlighted = old('highlighted_equipment', $car?->highlighted_equipment ?? []);
-        $highlighted = is_array($highlighted) ? array_pad(array_slice($highlighted, 0, 8), 8, null) : array_fill(0, 8, null);
+        $highlighted = is_array($highlighted) ? array_pad(array_slice($highlighted, 0, 6), 6, null) : array_fill(0, 6, null);
         $eqGrouped   = \App\Helpers\EquipmentCatalog::optionsGroupedByCategory();
         $eqCatLabels = \App\Helpers\EquipmentCatalog::CATEGORIES;
     @endphp
     <div class="wz-section" style="margin-bottom:18px">
         <div class="wz-section-header">
             <div class="wz-section-badge"><i data-lucide="star" style="width:16px;height:16px"></i></div>
-            <div><div class="wz-section-title">Najważniejsze wyposażenie (8 kafelków)</div><div class="wz-section-subtitle">Wybierz do 8 elementów, które wyróżnią się ikonami na górze sekcji Wyposażenie. Możesz zostawić puste sloty.</div></div>
+            <div><div class="wz-section-title">Najważniejsze wyposażenie (6 kafelków)</div><div class="wz-section-subtitle">Wybierz do 6 elementów, które wyróżnią się ikonami na górze sekcji Wyposażenie. Możesz zostawić puste sloty.</div></div>
         </div>
         @php
             // Lookup table for the per-slot icon preview. JS reads it via data-eq-icon
@@ -1780,7 +1734,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             }
         @endphp
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px" id="wzEqSlots" data-eq-icon-map='@json($iconMap)'>
-            @for($i = 0; $i < 8; $i++)
+            @for($i = 0; $i < 6; $i++)
             @php
                 $currentKey = $highlighted[$i] ?? null;
                 $currentIcon = $currentKey ? ($iconMap[$currentKey] ?? null) : null;
@@ -2756,61 +2710,6 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 
 
     // ===================================================================
-    //  ENGINE VIDEO URL / FILE TOGGLE + PREVIEW
-    // ===================================================================
-    (function(){
-        const vidUrl        = document.getElementById('wzEngineVideoUrl');
-        const vidFile       = document.getElementById('wzEngineVideoFile');
-        const vidUrlPreview = document.getElementById('wzVidUrlPreview');
-        const vidLocalPrev  = document.getElementById('wzVideoLocalPreview');
-        const vidTabUrl     = document.getElementById('wzVidTabUrl');
-        const vidTabFile    = document.getElementById('wzVidTabFile');
-        const vidUrlPanel   = document.getElementById('wzVidUrlPanel');
-        const vidFilePanel  = document.getElementById('wzVidFilePanel');
-
-        function setVidTab(tab) {
-            const isUrl = tab === 'url';
-            if (vidUrlPanel)  vidUrlPanel.style.display  = isUrl ? 'block' : 'none';
-            if (vidFilePanel) vidFilePanel.style.display  = isUrl ? 'none' : 'block';
-            if (vidTabUrl)  vidTabUrl.style.background  = isUrl ? '#fff' : 'transparent';
-            if (vidTabFile) vidTabFile.style.background  = isUrl ? 'transparent' : '#fff';
-        }
-        vidTabUrl?.addEventListener('click', () => setVidTab('url'));
-        vidTabFile?.addEventListener('click', () => setVidTab('file'));
-
-        function previewVideoUrl(url) {
-            if (!vidUrlPreview) return;
-            if (!url) { vidUrlPreview.innerHTML = ''; return; }
-            let yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([A-Za-z0-9_-]{11})/);
-            let vim = url.match(/vimeo\.com\/(\d+)/);
-            if (yt) {
-                vidUrlPreview.innerHTML = `<div style="position:relative;padding-bottom:56.25%;border-radius:10px;overflow:hidden;background:#000"><iframe src="https://www.youtube.com/embed/${yt[1]}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen></iframe></div>`;
-            } else if (vim) {
-                vidUrlPreview.innerHTML = `<div style="position:relative;padding-bottom:56.25%;border-radius:10px;overflow:hidden;background:#000"><iframe src="https://player.vimeo.com/video/${vim[1]}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen></iframe></div>`;
-            } else {
-                vidUrlPreview.innerHTML = `<div style="background:#fafafb;border:1px solid var(--border-l);border-radius:8px;padding:10px;font-size:12px;color:var(--text-3)"><i data-lucide="info" style="width:13px;height:13px;vertical-align:-2px"></i> Link zapisany — podgląd dostępny tylko dla YouTube i Vimeo.</div>`;
-                if (window.lucide) lucide.createIcons();
-            }
-        }
-        vidUrl?.addEventListener('input', e => previewVideoUrl(e.target.value.trim()));
-        if (vidUrl?.value) previewVideoUrl(vidUrl.value.trim());
-
-        vidFile?.addEventListener('change', e => {
-            if (!vidLocalPrev) return;
-            const f = e.target.files?.[0];
-            if (!f) { vidLocalPrev.innerHTML = ''; return; }
-            const url = URL.createObjectURL(f);
-            const sizeMB = (f.size / (1024 * 1024)).toFixed(1);
-            vidLocalPrev.innerHTML = `<div style="background:#fafafb;border:1px solid var(--border-l);border-radius:10px;padding:10px"><div style="font-size:12px;color:var(--text-3);margin-bottom:6px">Podgląd: <strong style="color:var(--text)">${f.name}</strong> · ${sizeMB} MB</div><video src="${url}" controls preload="metadata" style="max-width:100%;max-height:320px;border-radius:8px;background:#000"></video></div>`;
-        });
-
-        @if($car?->engine_video_path && !$car?->engine_video_url)
-        setVidTab('file');
-        @endif
-    })();
-
-
-    // ===================================================================
     //  DIRTY CHECK + STICKY SAVE BAR
     // ===================================================================
     (function(){
@@ -2830,26 +2729,6 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         form.addEventListener('input', check);
         form.addEventListener('change', check);
         form.addEventListener('submit', () => { dirty = false; window.removeEventListener('beforeunload', beforeUnload); });
-
-        // P1 GUARD: engine video size — must match Laravel validation max:102400 KB (=100 MB).
-        // Without this, PHP upload_max_filesize used to silently drop oversized
-        // uploads → empty form / no car / no error. Now PHP allows up to 120MB
-        // (so Laravel can return a clear Polish message) and this client-side
-        // check blocks the submit before payload even leaves the browser.
-        form.addEventListener('submit', function(e) {
-            const ENGINE_VIDEO_MAX_BYTES = 100 * 1024 * 1024;
-            const vid = form.querySelector('input[type="file"][name="engine_video_file"]');
-            const f = vid && vid.files && vid.files[0];
-            if (f && f.size > ENGINE_VIDEO_MAX_BYTES) {
-                e.preventDefault();
-                e.stopImmediatePropagation();
-                const mb = Math.round(f.size / 1024 / 1024);
-                alert('Nagranie pracy silnika jest za duże (' + mb + ' MB). Maksymalny rozmiar to 100 MB.\n\nSkompresuj wideo lub wyślij krótszy fragment. Pozostałe dane formularza nie zostały utracone — pozostaną na tej stronie.');
-                // Re-enable Save buttons (wizSafeSubmit disabled them on first click)
-                if (typeof wizResetSubmitState === 'function') wizResetSubmitState();
-                return false;
-            }
-        }, true);
 
         // Guard: warn if total file payload would exceed server limit (250 MB soft cap)
         form.addEventListener('submit', function(e) {

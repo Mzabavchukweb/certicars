@@ -34,7 +34,6 @@
     <meta name="twitter:image" content="@yield('og_image', asset('img/og-default-v2.jpg'))">
     <link rel="canonical" href="{{ url()->current() }}">
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <link rel="apple-touch-icon" href="{{ asset('favicon.svg') }}">
     <meta name="format-detection" content="telephone=no">
     @hasSection('extra_head')@yield('extra_head')@endif
@@ -626,9 +625,9 @@
             <div>
                 <h3>Informacje</h3>
                 <ul class="footer-nav-list">
-                    <li><a href="#"><x-icon name="chevron-right" size="11"/>Polityka prywatności</a></li>
-                    <li><a href="#"><x-icon name="chevron-right" size="11"/>Regulamin</a></li>
-                    <li><a href="#"><x-icon name="chevron-right" size="11"/>Pliki cookies</a></li>
+                    <li><a href="{{ route('privacy') }}"><x-icon name="chevron-right" size="11"/>Polityka prywatności</a></li>
+                    <li><a href="{{ route('terms') }}"><x-icon name="chevron-right" size="11"/>Regulamin</a></li>
+                    <li><a href="{{ route('cookies') }}"><x-icon name="chevron-right" size="11"/>Pliki cookies</a></li>
                 </ul>
             </div>
         </div>
@@ -976,5 +975,6 @@
     })();
     </script>
     @stack('scripts')
+    @include('layouts.partials.cookie-banner')
 </body>
 </html>

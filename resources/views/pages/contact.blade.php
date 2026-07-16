@@ -242,7 +242,7 @@ a.kt-side-val:hover{color:var(--blue)}
                 </div>
                 @endif
 
-                <form method="POST" action="{{ route('contact.submit') }}" novalidate>
+                <form method="POST" action="{{ route('contact.submit') }}" novalidate id="kt-contact-form">
                     @csrf
                     {{-- honeypot --}}
                     <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
@@ -321,5 +321,72 @@ a.kt-side-val:hover{color:var(--blue)}
         </a>
     </div>
 </section>
+
+<script>
+(function(){
+    var form = document.getElementById('kt-contact-form');
+    if(!form) return;
+    var card = form.closest('.kt-form-card');
+    var btn  = form.querySelector('.kt-form-submit');
+    var btnHTML = btn ? btn.innerHTML : '';
+
+    function clearErrors(){
+        form.querySelectorAll('.kt-field-err[data-ajax-err]').forEach(function(el){ el.remove(); });
+        var old = card && card.querySelector('.kt-form-alert');
+        if(old) old.remove();
+    }
+    function showError(field, msg){
+        var input = form.querySelector('[name="'+field+'"]');
+        var wrap = input ? input.closest('.kt-field') : null;
+        if(!wrap) return;
+        var span = document.createElement('span');
+        span.className = 'kt-field-err';
+        span.setAttribute('data-ajax-err','1');
+        span.textContent = msg;
+        wrap.appendChild(span);
+    }
+    function showAlert(type, msg){
+        // Inserted at the top of the card WITHOUT scrolling the page.
+        var box = document.createElement('div');
+        box.className = 'kt-form-alert ' + (type === 'ok' ? 'kt-form-success' : '');
+        if(type !== 'ok'){
+            box.style.cssText = 'background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.25);color:#991b1b;padding:14px 18px;border-radius:10px;font-size:14px;font-weight:500;margin-bottom:22px';
+        }
+        box.textContent = msg;
+        card.insertBefore(box, form);       // just above the form — no page scroll
+    }
+
+    form.addEventListener('submit', function(e){
+        e.preventDefault();                 // never reload → the visitor stays put
+        clearErrors();
+        if(btn){ btn.disabled = true; btn.style.opacity = '.7'; btn.innerHTML = 'Wysyłanie…'; }
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': (document.querySelector('input[name=_token]') || {}).value || ''
+            },
+            body: new FormData(form)
+        }).then(function(res){
+            return res.json().then(function(data){ return { status: res.status, data: data }; });
+        }).then(function(r){
+            if(r.status === 200){
+                form.reset();
+                showAlert('ok', (r.data && r.data.message) || 'Dziękujemy! Odezwiemy się wkrótce.');
+            } else if(r.status === 422 && r.data && r.data.errors){
+                Object.keys(r.data.errors).forEach(function(f){ showError(f, r.data.errors[f][0]); });
+            } else {
+                showAlert('err', 'Wystąpił błąd. Spróbuj ponownie za chwilę lub zadzwoń do nas.');
+            }
+        }).catch(function(){
+            showAlert('err', 'Brak połączenia. Sprawdź internet i spróbuj ponownie.');
+        }).finally(function(){
+            if(btn){ btn.disabled = false; btn.style.opacity = ''; btn.innerHTML = btnHTML; }
+        });
+    });
+})();
+</script>
 
 @endsection

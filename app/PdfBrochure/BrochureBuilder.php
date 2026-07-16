@@ -93,7 +93,6 @@ final class BrochureBuilder
             galleryImages: $this->embedCollection($car->galleryImages ?? collect(), 'gallery'),
             damageImages:  $this->embedCollection($car->damageImages ?? collect(), 'damage_aggregate'),
 
-            engineVideoUrl:  $this->safeUrl($car->engine_video_url),
             exteriorPanoUrl: $car->exteriorPano360Image ? url('/samochody/' . $car->slug) : null,
             interiorPanoUrl: $car->pano360Image ? url('/samochody/' . $car->slug) : null,
         );
