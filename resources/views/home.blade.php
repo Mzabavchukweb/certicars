@@ -224,13 +224,13 @@
 .cs-cc-card-arrow svg,.cs-cc-card-arrow i[data-lucide]{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.4}
 .cs-cc-card:hover .cs-cc-card-arrow{opacity:1;transform:translateX(2px) translateY(-2px)}
 
-/* ---- Desktop posredni (1025-1600px) ----------------------------------
-   Reference to render przy 1880px. Ponizej tej szerokosci typografia i karty
-   zostawaly w rozmiarach z 1880px, wiec zajmowaly proporcjonalnie wiecej
-   miejsca: naglowek lamal sie agresywniej, karty rosly, sekcja puchla w pionie
-   i bohater wygladal na mniejszego. Tu skalujemy caly uklad w dol, zeby przy
-   ~1380px (typowe okno Chrome na 15" Retina) czytal sie jak reference. */
-@media(min-width:1025px) and (max-width:1600px){
+/* ---- Desktop (>=1025px) ----------------------------------------------
+   Jedna skala dla CALEGO desktopu. Wczesniej ten blok konczyl sie na 1600px i
+   powyzej wracaly wieksze wartosci bazowe (h2 44px, karty bez min-height,
+   bohater 800px) — sekcja puchla w pionie, naglowek i karty rosly, a caly uklad
+   przestawal wygladac jak przy ~1400-1500px. Siatka i tak ma sufit 1560px, wiec
+   ta sama skala na 1920/2560px daje identyczna kompozycje jak na 15" Retina. */
+@media(min-width:1025px){
     .cs-cc-grid{gap:14px 24px}
     .cs-cc-left{padding-top:48px}
     .cs-cc-cards{padding:48px 0;gap:12px}

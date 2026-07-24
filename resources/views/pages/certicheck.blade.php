@@ -64,16 +64,21 @@
             mask-composite:intersect}
 
 /* ===== SECTION SHELL ===== */
-.cclp-sec{padding:74px 0}
+.cclp-sec{padding:80px 0}
 .cclp-sec.alt{background:var(--cc-bg)}
-.cclp-head{text-align:center;max-width:720px;margin:0 auto 44px}
+.cclp-head{text-align:center;max-width:720px;margin:0 auto 48px}
+/* Centered eyebrow label with flanking hairlines — mirrors the
+   .about-section-label / .kt-section-label used on the O nas + Kontakt
+   pages so every section on the site opens the same way. */
+.cclp-eyebrow-c{font-size:11px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:var(--cc-blue);margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:10px}
+.cclp-eyebrow-c::before,.cclp-eyebrow-c::after{content:'';width:24px;height:2px;background:var(--cc-blue);border-radius:2px;opacity:.5}
 .cclp-head h2{font-size:36px;font-weight:900;letter-spacing:-.8px;color:var(--cc-ink);margin:0 0 12px;line-height:1.12}
 .cclp-head p{font-size:15.5px;color:var(--cc-muted);line-height:1.65;margin:0}
 
 /* ===== BENEFITS (6 cards) ===== */
 .cclp-cards{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
-.cclp-card{background:#fff;border:1px solid var(--cc-line);border-radius:16px;padding:22px 18px;transition:all .2s}
-.cclp-card:hover{border-color:#c7d8f5;transform:translateY(-3px);box-shadow:0 14px 32px rgba(15,32,72,.08)}
+.cclp-card{background:#fff;border:1px solid var(--cc-line);border-radius:14px;padding:24px 20px;transition:border-color .15s}
+.cclp-card:hover{border-color:var(--cc-blue)}
 .cclp-card-ico{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#dbeafe 0%,#eff6ff 100%);color:var(--cc-blue);display:flex;align-items:center;justify-content:center;margin-bottom:15px}
 .cclp-card-ico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9}
 .cclp-card h3{font-size:14.5px;font-weight:800;color:var(--cc-ink);margin:0 0 8px;letter-spacing:-.2px;line-height:1.3}
@@ -84,7 +89,7 @@
 .cclp-ptab{border:1px solid var(--cc-line);background:#fff;color:#475569;font-size:13px;font-weight:700;padding:9px 16px;border-radius:50px;cursor:pointer;transition:all .15s}
 .cclp-ptab:hover{border-color:#c7d8f5}
 .cclp-ptab.active{background:var(--cc-blue);border-color:var(--cc-blue);color:#fff;box-shadow:0 6px 16px rgba(0,102,255,.28)}
-.cclp-report-card{background:#fff;border:1px solid var(--cc-line);border-radius:22px;padding:22px;box-shadow:0 12px 40px rgba(15,32,72,.06);display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:22px;align-items:stretch}
+.cclp-report-card{background:#fff;border:1px solid var(--cc-line);border-radius:18px;padding:22px;box-shadow:0 12px 40px rgba(15,32,72,.06);display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:22px;align-items:stretch}
 .cclp-rc-visual{position:relative;background:linear-gradient(180deg,#f7f9fd,#eef3fb);border-radius:16px;overflow:hidden;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .cclp-rc-car{width:78%;max-width:360px;filter:drop-shadow(0 18px 22px rgba(15,32,72,.20))}
 .cclp-rc-turn{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);width:74%;height:38px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,102,255,.14),rgba(0,102,255,0) 70%);border:2px solid rgba(0,102,255,.18)}
@@ -118,7 +123,8 @@
 
 /* ===== PROCESS ===== */
 .cclp-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-items:stretch}
-.cclp-step{position:relative;padding:24px 20px;background:#fff;border-radius:16px;border:1px solid var(--cc-line)}
+.cclp-step{position:relative;padding:24px 20px;background:#fff;border-radius:14px;border:1px solid var(--cc-line);transition:border-color .15s}
+.cclp-step:hover{border-color:var(--cc-blue)}
 .cclp-step-num{width:34px;height:34px;border-radius:50%;background:var(--cc-blue);color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(0,102,255,.28);margin-bottom:14px}
 .cclp-step h3{font-size:15px;font-weight:800;color:var(--cc-ink);margin:0 0 8px;letter-spacing:-.2px}
 .cclp-step p{font-size:13px;color:var(--cc-muted);line-height:1.55;margin:0}
@@ -130,7 +136,7 @@
 
 /* ===== SCOPE ===== */
 .cclp-scope-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-.cclp-scope-col{padding:26px 24px;border-radius:20px;border:1px solid var(--cc-line);background:#fff}
+.cclp-scope-col{padding:26px 24px;border-radius:18px;border:1px solid var(--cc-line);background:#fff}
 .cclp-scope-col.ok{background:linear-gradient(180deg,#f2f9f4 0%,#fbfefb 100%);border-color:#c9ecd4}
 .cclp-scope-col.no{background:linear-gradient(180deg,#fdf4f4 0%,#fffbfb 100%);border-color:#f4d3d3}
 .cclp-scope-title{display:flex;align-items:center;gap:11px;font-size:17px;font-weight:800;color:var(--cc-ink);margin:0 0 18px;letter-spacing:-.2px}
@@ -155,8 +161,9 @@
 .cclp-faq-a{padding:0 20px 18px;font-size:13.5px;color:var(--cc-muted);line-height:1.65}
 
 /* ===== DISCLAIMER ===== */
-.cclp-disc{padding:52px 0;background:#0a1432;color:rgba(255,255,255,.82)}
-.cclp-disc-in{max-width:960px;margin:0 auto;padding:0 24px;display:flex;gap:18px;align-items:flex-start}
+.cclp-disc{position:relative;overflow:hidden;padding:52px 0;background:#0a1432;color:rgba(255,255,255,.82)}
+.cclp-disc::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
+.cclp-disc-in{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 24px;display:flex;gap:18px;align-items:flex-start}
 .cclp-disc-ico{flex-shrink:0;width:46px;height:46px;border-radius:50%;background:rgba(95,161,255,.12);border:1.5px solid rgba(95,161,255,.4);color:#5fa1ff;display:flex;align-items:center;justify-content:center}
 .cclp-disc-ico svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.2}
 .cclp-disc h3{font-size:18px;font-weight:800;color:#fff;margin:0 0 8px;letter-spacing:-.2px}
@@ -258,6 +265,7 @@
 <section class="cclp-sec">
     <div class="cclp-in">
         <div class="cclp-head">
+            <div class="cclp-eyebrow-c">Co zyskujesz</div>
             <h2>Co otrzymujesz w CertiCheck</h2>
             <p>Komplet materiałów i informacji, które pokazują stan auta w sposób rzetelny i przejrzysty.</p>
         </div>
@@ -287,6 +295,7 @@
 <section class="cclp-sec alt">
     <div class="cclp-in">
         <div class="cclp-head">
+            <div class="cclp-eyebrow-c">Przykładowy raport</div>
             <h2>Zobacz CertiCheck w praktyce</h2>
             <p>Przykładowy raport dla jednego z naszych samochodów.</p>
         </div>
@@ -373,6 +382,7 @@
 <section class="cclp-sec">
     <div class="cclp-in">
         <div class="cclp-head">
+            <div class="cclp-eyebrow-c">Jak to działa</div>
             <h2>Jak powstaje CertiCheck</h2>
             <p>Prosty proces, który zapewnia rzetelność i przejrzystość.</p>
         </div>
@@ -405,7 +415,9 @@
 <section class="cclp-sec alt">
     <div class="cclp-in">
         <div class="cclp-head">
+            <div class="cclp-eyebrow-c">Zakres</div>
             <h2>Co CertiCheck obejmuje, a czego nie</h2>
+            <p>Jasno pokazujemy, na co odpowiadają materiały CertiCheck, a czego nie zastępują.</p>
         </div>
         <div class="cclp-scope-grid">
             <div class="cclp-scope-col ok">
@@ -452,7 +464,9 @@
 <section class="cclp-sec">
     <div class="cclp-in">
         <div class="cclp-head">
+            <div class="cclp-eyebrow-c">Masz pytania?</div>
             <h2>Najczęściej zadawane pytania</h2>
+            <p>Zebraliśmy najważniejsze pytania o zakres i charakter materiałów CertiCheck.</p>
         </div>
         <div class="cclp-faq-grid">
             @php
