@@ -16,7 +16,7 @@
    (#f4f6fd) so certicheck.png melts in; it glides across to the character's
    own bluish backdrop on the RIGHT so the figure melts in too. Both graphics
    sit on a colour that matches their baked-in background — no hard block. */
-.cclp-hero{position:relative;overflow:hidden;isolation:isolate;padding:40px 0;background:linear-gradient(95deg, #f4f6fd 0%, #f4f6fd 40%, #ebf1fc 56%, #dfe9fb 76%, #d6e2f9 100%)}
+.cclp-hero{position:relative;overflow:hidden;isolation:isolate;padding:40px 0;background:linear-gradient(95deg, #f4f6fd 0%, #f4f6fd 40%, #ebf1fc 56%, #dbe6fb 74%, #cddcfa 88%, #cddcfa 100%)}
 .cclp-in{max-width:1200px;margin:0 auto;padding:0 24px}
 .cclp-hero-in{max-width:1200px;margin:0 auto;padding:0 24px;position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,0.92fr) minmax(0,1.22fr);gap:20px;align-items:center}
 .cclp-eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11px;font-weight:800;color:var(--cc-blue);text-transform:uppercase;letter-spacing:1.8px;margin-bottom:16px}
@@ -27,62 +27,98 @@
 .cclp-cta-primary{display:inline-flex;align-items:center;gap:8px;background:var(--cc-blue);color:#fff;padding:16px 30px;border-radius:50px;font-size:14px;font-weight:700;letter-spacing:.1px;text-decoration:none;box-shadow:0 8px 24px rgba(0,102,255,.4);transition:all .18s}
 .cclp-cta-primary:hover{background:var(--cc-blue-d);color:#fff;transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,102,255,.5)}
 .cclp-cta-primary svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4}
-/* Info note under the CTA — mirrors the home-page CertiCheck note (cs-cc-info) */
-.cclp-hero-note{display:flex;align-items:flex-start;gap:10px;margin-top:22px;max-width:520px;background:rgba(255,255,255,.7);border:1px solid rgba(219,234,254,.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-radius:10px;padding:12px 14px;font-size:12.5px;color:#475569;line-height:1.55}
+/* Info note under the CTA — w referencji lezy bezposrednio na tle sekcji,
+   bez bialej ramki (inaczej niz cs-cc-info na home). */
+.cclp-hero-note{display:flex;align-items:flex-start;gap:10px;margin-top:26px;max-width:520px;font-size:12.5px;color:#475569;line-height:1.7}
 .cclp-hero-note svg{flex-shrink:0;width:17px;height:17px;stroke:var(--cc-blue);fill:none;stroke-width:2;margin-top:1px}
 
-/* Hero visual: report panel (white card) + character bled to the right */
-.cclp-hero-visual{position:relative;height:430px}
-.cclp-hero-report{position:absolute;left:-2%;top:50%;transform:translateY(-50%);z-index:2;width:min(74%,430px)}
-/* Hand-built CertiCheck report card (1:1 with the design, no image) */
-.cc-rep{position:relative;background:#fff;border-radius:22px;box-shadow:0 26px 60px rgba(15,32,72,.16),0 2px 6px rgba(15,32,72,.05);padding:22px 22px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.82fr);gap:20px;align-items:center}
-.cc-rep-360{position:absolute;top:-15px;right:-15px;width:66px;height:66px;border-radius:50%;background:#fff;box-shadow:0 12px 26px rgba(15,32,72,.18);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;z-index:3}
-.cc-rep-360 svg{width:23px;height:14px}
-.cc-rep-360 b{font-size:12px;font-weight:800;color:#0066ff;letter-spacing:.2px;line-height:1}
+/* Hero visual: report panel (white card) + character bled to the right.
+   Kolejnosc warstw: panel NAJNIZEJ, bohater NAD nim — tablet w jego dloni
+   nachodzi na prawa krawedz panelu (wczesniej bylo odwrotnie).
+   Pozycja panelu siedzi w zmiennych, bo badge 360° musi trzymac sie jego
+   prawej krawedzi, a jest wypiety poza panel (inaczej bohater by go zakryl,
+   bedac wyzej w stosie). */
+.cclp-hero-visual{position:relative;height:430px;--rep-l:0%;--rep-w:min(84%,478px)}
+.cclp-hero-report{position:absolute;left:var(--rep-l);top:50%;transform:translateY(-50%);z-index:1;width:var(--rep-w)}
+/* Hand-built CertiCheck report card (1:1 with the design, no image).
+   Panel jest LEKKI, nie biala karta: pol-przezroczysta biel + blur, cienka
+   jasna ramka i miekki cien. Solidne #fff z mocnym cieniem odcinalo sie od
+   gradientu sekcji jak naklejka — w referencji panel ledwo odstaje od tla. */
+.cc-rep{position:relative;background:rgba(255,255,255,.58);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.85);border-radius:26px;box-shadow:0 20px 54px rgba(15,32,72,.09);padding:24px 34px 24px 26px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;align-items:center}
+/* 360° — dziecko .cclp-hero-visual, nie panelu. Wysrodkowany na prawej
+   krawedzi panelu (calc ze zmiennych) i najwyzej w stosie, wiec bohater
+   go nie przykrywa. */
+.cc-rep-360{position:absolute;top:30px;left:calc(var(--rep-l) + var(--rep-w) - 54px);width:84px;height:84px;border-radius:50%;background:#fff;box-shadow:0 14px 30px rgba(15,32,72,.16);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;z-index:4}
+.cc-rep-360 svg{width:26px;height:16px}
+.cc-rep-360 b{font-size:13.5px;font-weight:800;color:#0066ff;letter-spacing:.2px;line-height:1}
 .cc-rep-list{display:flex;flex-direction:column}
-.cc-rep-row{display:flex;align-items:center;gap:13px;padding:13px 2px;border-top:1px solid #eef1f7}
+.cc-rep-row{display:flex;align-items:center;gap:11px;padding:14px 2px;border-top:1px solid #eef1f7}
 .cc-rep-row:first-child{border-top:0;padding-top:0}
 .cc-rep-row:last-child{padding-bottom:0}
-.cc-rep-ico{flex-shrink:0;width:44px;height:44px;border-radius:13px;background:#eef4ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
-.cc-rep-ico svg,.cc-rep-ico i{width:22px !important;height:22px !important;stroke-width:1.8}
+.cc-rep-ico{flex-shrink:0;width:40px;height:40px;border-radius:12px;background:#eef4ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cc-rep-ico svg,.cc-rep-ico i{width:20px !important;height:20px !important;stroke-width:1.8}
 .cc-rep-tx{min-width:0}
-.cc-rep-tx b{display:block;font-size:15px;font-weight:800;color:#0a1a3a;letter-spacing:-.25px;line-height:1.25;margin-bottom:1px}
+.cc-rep-tx b{display:block;font-size:14px;white-space:nowrap;font-weight:800;color:#0a1a3a;letter-spacing:-.25px;line-height:1.25;margin-bottom:1px}
 .cc-rep-tx span{display:block;font-size:12.5px;color:#5b6b86;letter-spacing:-.1px;line-height:1.35}
-.cc-rep-diagram{position:relative;border-left:1px solid #eef1f7;padding-left:16px;display:flex;align-items:center;justify-content:center;height:100%}
-.cc-rep-diagram img{width:auto;max-width:100%;max-height:300px;height:auto;display:block}
+.cc-rep-diagram{position:relative;border-left:1px solid rgba(15,32,72,.07);padding-left:18px;display:flex;align-items:center;justify-content:flex-start;height:100%}
+/* .cc-rep-car opina sie na obrazku (inline-block), zeby numerki liczyly % od
+   sylwetki auta, a nie od calej kolumny — inaczej przy kazdej szerokosci
+   ladowaly gdzie indziej wzgledem karoserii. */
+.cc-rep-car{position:relative;display:inline-block;line-height:0}
+.cc-rep-car img{width:100%;max-width:100%;height:auto;display:block}
+/* Numerki wokol auta — jak w referencji: dach, prawy przod, prawy tyl,
+   zderzak tylny, lewy bok. */
+.cc-rep-pin{position:absolute;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;background:#0066ff;color:#fff;font-size:12.5px;font-weight:800;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(0,102,255,.35);z-index:2}
+.cc-rep-pin.p1{top:1%;left:56%}
+.cc-rep-pin.p2{top:24%;left:82%}
+.cc-rep-pin.p3{top:63%;left:82%}
+.cc-rep-pin.p4{top:97%;left:46%}
+.cc-rep-pin.p5{top:44%;left:3%}
 .cc-rep-360 i,.cc-rep-360 svg{width:21px !important;height:21px !important;stroke:#0066ff}
 /* Two masks combined (intersect):
    1) an elliptical radial hugging the figure — fades his backdrop out all
       around into the hero colour;
    2) a horizontal wash whose LEFT side fades long & very soft (delicate
       tonal transition toward the lighter text side) and whose right stays
-      cleaner. Together: seamless soft blend on the left, clean on the right. */
-.cclp-hero-char{position:absolute;right:-9%;bottom:-40px;height:calc(100% + 80px);width:auto;z-index:1;pointer-events:none;
-    -webkit-mask-image:radial-gradient(82% 132% at 72% 46%, #000 44%, rgba(0,0,0,.5) 66%, rgba(0,0,0,0) 85%), linear-gradient(to right, rgba(0,0,0,0) 4%, rgba(0,0,0,.45) 26%, #000 52%);
+      cleaner. Together: seamless soft blend on the left, clean on the right.
+   Bohater ma wypalone jasnoniebieskie tlo (941x1672), wiec maski sa konieczne
+   — bez nich widac prostokat zdjecia na gradiencie sekcji. Rozmiar z wysokosci
+   (width:auto), bo proporcja jest pionowa 0.56. */
+/* Bohater jest kotwiczony do prawej krawedzi SIATKI (right:0), nie viewportu.
+   Wczesniej siedzial na krawedzi okna (ujemny right z 100vw) i przez to jego
+   odleglosc od panelu zmieniala sie z kazda szerokoscia: na 1280 tablet
+   zaslanial auto, a na 1440+ odjezdzal od panelu i nie bylo zadnego nachodzenia.
+   Teraz .cclp-hero-in ma sufit 1200px, wiec kompozycja panel → tablet → bohater
+   jest IDENTYCZNA na kazdym ekranie powyzej 1200px.
+   Kosztem jest prawa krawedz zdjecia, ktora na szerokim ekranie nie wychodzi juz
+   poza viewport — dlatego doszedl krotki fade od prawej (wczesniej niepotrzebny).
+   Gora i dol sa przyciete przez overflow:hidden sekcji. */
+.cclp-hero-char{position:absolute;right:auto;left:calc(var(--rep-l) + var(--rep-w) - 50px);bottom:-140px;height:calc(100% + 260px);width:auto;z-index:3;pointer-events:none;
+    -webkit-mask-image:linear-gradient(to right, rgba(0,0,0,0) 0, rgba(0,0,0,.55) 4%, #000 10%), linear-gradient(to left, rgba(0,0,0,0) 0, rgba(0,0,0,.55) 3%, #000 9%), linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,.5) 3%, #000 8%);
     -webkit-mask-composite:source-in;
-            mask-image:radial-gradient(82% 132% at 72% 46%, #000 44%, rgba(0,0,0,.5) 66%, rgba(0,0,0,0) 85%), linear-gradient(to right, rgba(0,0,0,0) 4%, rgba(0,0,0,.45) 26%, #000 52%);
+            mask-image:linear-gradient(to right, rgba(0,0,0,0) 0, rgba(0,0,0,.55) 4%, #000 10%), linear-gradient(to left, rgba(0,0,0,0) 0, rgba(0,0,0,.55) 3%, #000 9%), linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,.5) 3%, #000 8%);
             mask-composite:intersect}
 
 /* ===== SECTION SHELL ===== */
-.cclp-sec{padding:80px 0}
+.cclp-sec{padding:96px 0}
 .cclp-sec.alt{background:var(--cc-bg)}
-.cclp-head{text-align:center;max-width:720px;margin:0 auto 48px}
+.cclp-head{text-align:center;max-width:640px;margin:0 auto 56px}
 /* Centered eyebrow label with flanking hairlines — mirrors the
    .about-section-label / .kt-section-label used on the O nas + Kontakt
    pages so every section on the site opens the same way. */
 .cclp-eyebrow-c{font-size:11px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:var(--cc-blue);margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:10px}
 .cclp-eyebrow-c::before,.cclp-eyebrow-c::after{content:'';width:24px;height:2px;background:var(--cc-blue);border-radius:2px;opacity:.5}
-.cclp-head h2{font-size:36px;font-weight:900;letter-spacing:-.8px;color:var(--cc-ink);margin:0 0 12px;line-height:1.12}
-.cclp-head p{font-size:15.5px;color:var(--cc-muted);line-height:1.65;margin:0}
+.cclp-head h2{font-size:40px;font-weight:900;letter-spacing:-.9px;color:var(--cc-ink);margin:0 0 14px;line-height:1.1}
+.cclp-head p{font-size:15.5px;color:var(--cc-muted);line-height:1.7;margin:0}
 
 /* ===== BENEFITS (6 cards) ===== */
-.cclp-cards{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
-.cclp-card{background:#fff;border:1px solid var(--cc-line);border-radius:14px;padding:24px 20px;transition:border-color .15s}
+.cclp-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.cclp-card{background:#fff;border:1px solid var(--cc-line);border-radius:12px;padding:36px 32px;transition:border-color .15s}
 .cclp-card:hover{border-color:var(--cc-blue)}
-.cclp-card-ico{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#dbeafe 0%,#eff6ff 100%);color:var(--cc-blue);display:flex;align-items:center;justify-content:center;margin-bottom:15px}
-.cclp-card-ico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9}
-.cclp-card h3{font-size:14.5px;font-weight:800;color:var(--cc-ink);margin:0 0 8px;letter-spacing:-.2px;line-height:1.3}
-.cclp-card p{font-size:12.5px;color:var(--cc-muted);line-height:1.55;margin:0}
+.cclp-card-ico{width:60px;height:60px;border-radius:16px;background:#eef4ff;color:var(--cc-blue);display:flex;align-items:center;justify-content:center;margin-bottom:22px}
+.cclp-card-ico svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.8}
+.cclp-card h3{font-size:19px;font-weight:800;color:var(--cc-ink);margin:0 0 12px;letter-spacing:-.3px;line-height:1.25}
+.cclp-card p{font-size:14.5px;color:var(--cc-muted);line-height:1.75;margin:0}
 
 /* ===== PRACTICE (example report) ===== */
 .cclp-practice-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:26px}
@@ -122,57 +158,58 @@
 .cclp-practice-note svg{flex-shrink:0;width:16px;height:16px;stroke:var(--cc-blue);fill:none;stroke-width:2}
 
 /* ===== PROCESS ===== */
-.cclp-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-items:stretch}
-.cclp-step{position:relative;padding:24px 20px;background:#fff;border-radius:14px;border:1px solid var(--cc-line);transition:border-color .15s}
+.cclp-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;align-items:stretch}
+.cclp-step{position:relative;padding:32px 26px;background:#fff;border-radius:12px;border:1px solid var(--cc-line);transition:border-color .15s}
 .cclp-step:hover{border-color:var(--cc-blue)}
-.cclp-step-num{width:34px;height:34px;border-radius:50%;background:var(--cc-blue);color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(0,102,255,.28);margin-bottom:14px}
-.cclp-step h3{font-size:15px;font-weight:800;color:var(--cc-ink);margin:0 0 8px;letter-spacing:-.2px}
-.cclp-step p{font-size:13px;color:var(--cc-muted);line-height:1.55;margin:0}
+.cclp-step-num{width:48px;height:48px;border-radius:50%;background:var(--cc-blue);color:#fff;font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(0,102,255,.28);margin-bottom:20px}
+.cclp-step h3{font-size:16.5px;font-weight:800;color:var(--cc-ink);margin:0 0 14px;padding-bottom:14px;letter-spacing:-.2px;position:relative}
+.cclp-step h3::after{content:'';position:absolute;left:0;bottom:0;width:28px;height:3px;border-radius:2px;background:var(--cc-blue)}
+.cclp-step p{font-size:13.5px;color:var(--cc-muted);line-height:1.7;margin:0}
 .cclp-step-arrow{position:absolute;top:50%;right:-11px;transform:translateY(-50%);z-index:2;color:#c7d8f5}
 .cclp-step-arrow svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.4}
 .cclp-step:last-child .cclp-step-arrow{display:none}
-.cclp-infobar{display:flex;align-items:center;gap:12px;justify-content:center;max-width:900px;margin:28px auto 0;background:#eef4ff;border:1px solid #d7e5fd;border-radius:14px;padding:16px 22px;font-size:13px;color:#3f5578;line-height:1.6}
+.cclp-infobar{display:flex;align-items:center;gap:12px;justify-content:center;max-width:900px;margin:40px auto 0;background:#eef4ff;border:1px solid #d7e5fd;border-radius:14px;padding:16px 22px;font-size:13px;color:#3f5578;line-height:1.6}
 .cclp-infobar svg{flex-shrink:0;width:18px;height:18px;stroke:var(--cc-blue);fill:none;stroke-width:2}
 
 /* ===== SCOPE ===== */
 .cclp-scope-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-.cclp-scope-col{padding:26px 24px;border-radius:18px;border:1px solid var(--cc-line);background:#fff}
+.cclp-scope-col{padding:34px 30px;border-radius:16px;border:1px solid var(--cc-line);background:#fff}
 .cclp-scope-col.ok{background:linear-gradient(180deg,#f2f9f4 0%,#fbfefb 100%);border-color:#c9ecd4}
 .cclp-scope-col.no{background:linear-gradient(180deg,#fdf4f4 0%,#fffbfb 100%);border-color:#f4d3d3}
-.cclp-scope-title{display:flex;align-items:center;gap:11px;font-size:17px;font-weight:800;color:var(--cc-ink);margin:0 0 18px;letter-spacing:-.2px}
+.cclp-scope-title{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:800;color:var(--cc-ink);margin:0 0 22px;letter-spacing:-.2px}
 .cclp-scope-title .ico{flex-shrink:0;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 .cclp-scope-col.ok .ico{background:#dcfce7;color:#16a34a}
 .cclp-scope-col.no .ico{background:#fee2e2;color:#dc2626}
 .cclp-scope-title svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.6}
-.cclp-scope-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}
-.cclp-scope-list li{display:flex;align-items:flex-start;gap:11px;font-size:14px;color:#334155;line-height:1.5}
+.cclp-scope-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:15px}
+.cclp-scope-list li{display:flex;align-items:flex-start;gap:12px;font-size:14.5px;color:#334155;line-height:1.6}
 .cclp-scope-list li .li-ico{flex-shrink:0;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:1px}
 .cclp-scope-col.ok li .li-ico{background:#dcfce7;color:#16a34a}
 .cclp-scope-col.no li .li-ico{background:#fee2e2;color:#dc2626}
 .cclp-scope-list li .li-ico svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:3}
 
 /* ===== FAQ (2 cols) ===== */
-.cclp-faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:980px;margin:0 auto}
-.cclp-faq-item{background:#fff;border:1px solid var(--cc-line);border-radius:14px;overflow:hidden;align-self:start}
-.cclp-faq-q{width:100%;text-align:left;background:transparent;border:0;padding:17px 20px;font-size:14.5px;font-weight:700;color:var(--cc-ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:14px;letter-spacing:-.15px;list-style:none}
+.cclp-faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:980px;margin:0 auto}
+.cclp-faq-item{background:#fff;border:1px solid var(--cc-line);border-radius:12px;overflow:hidden;align-self:start}
+.cclp-faq-q{width:100%;text-align:left;background:transparent;border:0;padding:20px 22px;font-size:15px;font-weight:700;color:var(--cc-ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:14px;letter-spacing:-.15px;list-style:none}
 .cclp-faq-q::-webkit-details-marker{display:none}
 .cclp-faq-q svg{width:18px;height:18px;stroke:var(--cc-blue);fill:none;stroke-width:2.4;flex-shrink:0;transition:transform .18s}
 .cclp-faq-item[open] .cclp-faq-q svg{transform:rotate(180deg)}
-.cclp-faq-a{padding:0 20px 18px;font-size:13.5px;color:var(--cc-muted);line-height:1.65}
+.cclp-faq-a{padding:0 22px 20px;font-size:13.5px;color:var(--cc-muted);line-height:1.7}
 
 /* ===== DISCLAIMER ===== */
-.cclp-disc{position:relative;overflow:hidden;padding:52px 0;background:#0a1432;color:rgba(255,255,255,.82)}
+.cclp-disc{position:relative;overflow:hidden;padding:64px 0;background:#0a1432;color:rgba(255,255,255,.82)}
 .cclp-disc::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
 .cclp-disc-in{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 24px;display:flex;gap:18px;align-items:flex-start}
 .cclp-disc-ico{flex-shrink:0;width:46px;height:46px;border-radius:50%;background:rgba(95,161,255,.12);border:1.5px solid rgba(95,161,255,.4);color:#5fa1ff;display:flex;align-items:center;justify-content:center}
 .cclp-disc-ico svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.2}
 .cclp-disc h3{font-size:18px;font-weight:800;color:#fff;margin:0 0 8px;letter-spacing:-.2px}
-.cclp-disc p{font-size:14px;line-height:1.75;margin:0}
+.cclp-disc p{font-size:14px;line-height:1.8;margin:0}
 
 /* ===== BOTTOM CTA ===== */
-.cclp-cta-strip{padding:60px 0;background:#fff}
-.cclp-cta-strip-in{max-width:1000px;margin:0 auto;padding:30px 40px;background:linear-gradient(135deg,#f4f8ff 0%,#eaf1fe 100%);border:1px solid #d7e5fd;border-radius:22px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
-.cclp-cta-strip h3{font-size:22px;font-weight:800;color:var(--cc-ink);margin:0 0 4px;letter-spacing:-.3px}
+.cclp-cta-strip{padding:80px 0;background:#fff}
+.cclp-cta-strip-in{max-width:1000px;margin:0 auto;padding:40px 48px;background:linear-gradient(135deg,#f4f8ff 0%,#eaf1fe 100%);border:1px solid #d7e5fd;border-radius:22px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.cclp-cta-strip h3{font-size:26px;font-weight:800;color:var(--cc-ink);margin:0 0 6px;letter-spacing:-.4px}
 .cclp-cta-strip p{font-size:14px;color:var(--cc-muted);margin:0}
 .cclp-cta-strip-btns{display:flex;gap:12px;flex-wrap:wrap}
 .cclp-btn-solid{display:inline-flex;align-items:center;gap:8px;background:var(--cc-blue);color:#fff;padding:13px 24px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;transition:all .15s;box-shadow:0 6px 16px rgba(0,102,255,.26)}
@@ -182,30 +219,69 @@
 .cclp-btn-solid svg,.cclp-btn-ghost svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.4}
 
 /* ===== RESPONSIVE ===== */
+/* Desktop posredni: .cclp-hero-in ma sufit 1200px, wiec kolumny sa tu tak samo
+   szerokie jak na 1920 — ale bohater jest przyklejony do prawej krawedzi
+   VIEWPORTU, wiec im wezsze okno, tym glebiej wchodzi w tresc i tablet zaczyna
+   zaslaniac auto z numerkami. Tu zwezamy panel i zmniejszamy bohatera, zeby
+   tablet nachodzil tylko na krawedz panelu. */
+/* Ponizej 1200px na panel + auto + bohatera juz nie ma miejsca — tablet zaslanial
+   pol auta razem z numerkami. Diagram znika (tak jak ponizej 1025px), zostaje
+   sama lista i bohater nachodzacy na jej krawedz. */
+@media(min-width:1025px) and (max-width:1199px){
+    .cclp-hero-visual{--rep-w:min(66%,340px)}
+    .cc-rep{grid-template-columns:1fr}
+    .cc-rep-diagram{display:none}
+}
 @media(max-width:1024px){
     .cclp-hero{padding:52px 0 64px}
     .cclp-hero-in{grid-template-columns:1fr;gap:32px}
     .cclp-hero h1{font-size:42px}
     .cclp-hero-visual{order:-1;min-height:auto;justify-content:center}
-    .cclp-hero-char{width:min(88%,420px)}
-    .cclp-hero-report{width:min(64%,320px);left:-3%}
-    .cc-rep{grid-template-columns:1fr;padding:18px 18px}
+    /* Tablet/mobile: rozmiar z wysokosci (szerokosc min(88%,420px) przy
+       pionowej proporcji 0.56 dawalaby ~750px wysokosci). Desktopowy wash
+       wygaszal tylko lewa krawedz — tu zdjecie nie dochodzi do zadnej krawedzi
+       viewportu, wiec prostokat tla bylby widoczny z prawej i od dolu.
+       Zamiast washa winieta: elipsa + fade od dolu i od prawej (intersect). */
+    .cclp-hero-char{width:auto;height:calc(100% + 40px)}
+    /* Cztery fade'y na krawedziach zamiast elipsy: elipsa wygaszala tez srodek
+       kadru i tablet w dloni bohatera wygladal jak duch. Tu srodek zostaje
+       w pelni kryjacy, znika tylko prostokat tla przy krawedziach. */
+    .cclp-hero-char{
+        -webkit-mask-image:
+            linear-gradient(to right,transparent 0,rgba(0,0,0,.5) 5%,#000 14%),
+            linear-gradient(to left,transparent 0,rgba(0,0,0,.5) 5%,#000 14%),
+            linear-gradient(to top,transparent 0,rgba(0,0,0,.45) 6%,#000 18%),
+            linear-gradient(to bottom,transparent 0,rgba(0,0,0,.5) 4%,#000 11%);
+        mask-image:
+            linear-gradient(to right,transparent 0,rgba(0,0,0,.5) 5%,#000 14%),
+            linear-gradient(to left,transparent 0,rgba(0,0,0,.5) 5%,#000 14%),
+            linear-gradient(to top,transparent 0,rgba(0,0,0,.45) 6%,#000 18%),
+            linear-gradient(to bottom,transparent 0,rgba(0,0,0,.5) 4%,#000 11%);
+        -webkit-mask-composite:source-in;mask-composite:intersect}
+    /* Panel przez ZMIENNE, nie bezposrednio — badge 360° liczy z nich swoja
+       pozycje, wiec inaczej rozjechalby sie z krawedzia panelu. */
+    .cclp-hero-visual{--rep-l:-3%;--rep-w:min(64%,320px)}
+    /* Panel kryjacy: na tablecie/mobile bohater lezy POD nim i przez
+       pol-przezroczysta biel przebijal jego tablet. */
+    .cc-rep{grid-template-columns:1fr;padding:18px 18px;background:rgba(255,255,255,.94)}
     .cc-rep-diagram{display:none}
-    .cclp-cards{grid-template-columns:repeat(3,1fr)}
+    .cclp-cards{grid-template-columns:repeat(2,1fr)}
     .cclp-report-card{grid-template-columns:1fr}
     .cclp-steps{grid-template-columns:repeat(2,1fr);gap:22px}
     .cclp-step-arrow{display:none!important}
-    .cclp-sec{padding:56px 0}
-    .cclp-head h2{font-size:30px}
+    .cclp-sec{padding:64px 0}
+    .cclp-head h2{font-size:32px}
     .cclp-scope-grid,.cclp-faq-grid{grid-template-columns:1fr}
 }
 @media(max-width:640px){
     .cclp-hero{padding:40px 0 52px}
     .cclp-hero h1{font-size:32px;letter-spacing:-.8px}
     .cclp-hero .lead{font-size:15px}
-    .cclp-hero-char{width:min(92%,360px)}
-    .cclp-hero-report{width:min(72%,290px);left:-2%}
-    .cclp-cards{grid-template-columns:1fr 1fr;gap:12px}
+    .cclp-hero-char{width:auto;height:calc(100% + 30px)}
+    .cclp-hero-visual{--rep-l:-2%;--rep-w:min(72%,290px)}
+    .cclp-cards{grid-template-columns:1fr;gap:16px}
+    .cclp-card{padding:28px 24px}
+    .cclp-card-ico{margin-bottom:16px}
     .cclp-rc-specs{grid-template-columns:1fr}
     .cclp-steps{grid-template-columns:1fr}
     .cclp-sec{padding:44px 0}
@@ -227,8 +303,8 @@
             <h1>Wiesz więcej<br><span class="blue">przed przyjazdem.</span></h1>
             <p class="lead">CertiCheck to rozszerzona prezentacja wybranych samochodów w CertiCars. Pokazujemy pomiary lakieru, stan opon, zauważone ślady użytkowania, materiały 360° oraz dostępne dokumenty, aby ułatwić Ci wstępne zapoznanie się z autem jeszcze przed oględzinami.</p>
             <a class="cclp-cta-primary" href="{{ route('catalog') }}">
-                <x-icon name="search" size="16" :strokeWidth="2.4"/>
                 Zobacz auta z CertiCheck
+                <x-icon name="arrow-right" size="17" :strokeWidth="2.4"/>
             </a>
             <div class="cclp-hero-note">
                 <x-icon name="info" size="17" :strokeWidth="2"/>
@@ -236,14 +312,14 @@
             </div>
         </div>
         <div class="cclp-hero-visual">
-            <img class="cclp-hero-char" src="/images/herocerti.png" alt="Konsultant CertiCars prezentujący podsumowanie CertiCheck" loading="eager" decoding="async" width="1122" height="1402">
+            <img class="cclp-hero-char" src="/images/bohater-certicheck.png" alt="Konsultant CertiCars prezentujący podsumowanie CertiCheck" loading="eager" decoding="async" width="941" height="1672">
+            <div class="cc-rep-360" aria-hidden="true"><x-icon name="rotate-3d" size="20" :strokeWidth="2"/><b>360°</b></div>
             <div class="cclp-hero-report cc-rep" role="img" aria-label="Panel CertiCheck — pomiary lakieru 118–164 µm, stan opon przód 6 mm tył 5 mm, 5 zauważonych śladów, 8 dokumentów">
-                <div class="cc-rep-360"><x-icon name="rotate-3d" size="20" :strokeWidth="2"/><b>360°</b></div>
                 <div class="cc-rep-list">
                     @php
                         $ccRows = [
                             ['scan-line','Pomiary lakieru',['118 – 164 µm']],
-                            ['circle-gauge','Stan opon',['Przód 6 mm','Tył 5 mm']],
+                            ['circle-gauge','Stan opon',['Przód 6 mm, Tył 5 mm']],
                             ['triangle-alert','Ślady użytkowania',['5 elementów']],
                             ['file-text','Dokumenty',['8 plików']],
                         ];
@@ -255,7 +331,17 @@
                     </div>
                     @endforeach
                 </div>
-                <div class="cc-rep-diagram"><img src="/images/certicheck-car.png" alt="" loading="eager" decoding="async"></div>
+                {{-- Numerki 1-5 rozstawione wokol auta jak w referencji: dach, prawy
+                     przod, prawy tyl, zderzak tylny, lewy bok. Pozycje w % pudelka
+                     diagramu, wiec skaluja sie razem z nim. --}}
+                <div class="cc-rep-diagram">
+                    <span class="cc-rep-car">
+                        <img src="/images/certicheck-car.png" alt="" loading="eager" decoding="async">
+                        @for($n = 1; $n <= 5; $n++)
+                            <span class="cc-rep-pin p{{ $n }}">{{ $n }}</span>
+                        @endfor
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -282,7 +368,7 @@
             @endphp
             @foreach($benefits as [$ico,$t,$d])
                 <div class="cclp-card">
-                    <div class="cclp-card-ico"><x-icon :name="$ico" size="22" :strokeWidth="1.9"/></div>
+                    <div class="cclp-card-ico"><x-icon :name="$ico" size="28" :strokeWidth="1.8"/></div>
                     <h3>{{ $t }}</h3>
                     <p>{{ $d }}</p>
                 </div>
