@@ -404,16 +404,9 @@
         <div class="cclp-report-card">
             <div class="cclp-rc-visual">
                 <div class="cclp-rc-caption" id="ccPracticeCaption">Obejrzyj auto dookoła — nadwozie z każdej strony.</div>
-                <svg class="cclp-rc-car" viewBox="0 0 400 150" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#33415a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
-                    <path d="M24 108c0-4 3-7 7-7h338c4 0 7 3 7 7v6c0 4-3 7-7 7H31c-4 0-7-3-7-7z" fill="#1e293b" stroke="#1e293b"/>
-                    <path d="M40 101c-8 0-14-4-14-12 0-6 8-10 20-13l40-24c10-6 22-9 36-9h74c16 0 30 6 44 16l34 24c14 3 26 7 26 15 0 5-5 3-12 3"/>
-                    <path d="M96 52l22-18c7-5 15-7 24-7h64c12 0 22 4 32 11l24 21z" fill="#dbe7fb" stroke="#33415a"/>
-                    <line x1="176" y1="24" x2="176" y2="52"/>
-                    <circle cx="112" cy="104" r="22" fill="#0f172a" stroke="#0f172a"/>
-                    <circle cx="112" cy="104" r="9" fill="#64748b" stroke="none"/>
-                    <circle cx="300" cy="104" r="22" fill="#0f172a" stroke="#0f172a"/>
-                    <circle cx="300" cy="104" r="9" fill="#64748b" stroke="none"/>
-                </svg>
+                {{-- Gotowa ilustracja auta (Microsoft Fluent Emoji, MIT), przemalowana
+                     na brandowy niebieski. Nadwozie SUV pasuje do X5 z karty raportu. --}}
+                <img class="cclp-rc-car" src="/images/certicheck-car-360.svg" alt="" loading="eager" decoding="async" width="326" height="244">
                 <div class="cclp-rc-turn"></div>
                 <div class="cclp-rc-360"><x-icon name="rotate-3d" size="14" :strokeWidth="2.2"/> 360°</div>
             </div>
