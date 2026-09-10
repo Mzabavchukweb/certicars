@@ -48,7 +48,7 @@
 .cat-filter-group{margin-bottom:18px}
 .cat-filter-group:last-of-type{margin-bottom:0}
 .cat-flabel{font-size:10px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px;display:flex;align-items:center;gap:5px}
-.cat-flabel svg{width:12px;height:12px;stroke:var(--text-3);fill:none;stroke-width:2}
+.cat-flabel svg{width:14px;height:14px;stroke:var(--blue);fill:none;stroke-width:2}
 .cat-select{width:100%;padding:10px 36px 10px 12px;border:1.5px solid var(--border-l);border-radius:10px;font-size:13px;font-family:inherit;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;color:var(--text);appearance:none;transition:border-color .15s}
 .cat-select:focus{outline:none;border-color:var(--blue)}
 .cat-row{display:flex;gap:6px}
@@ -216,7 +216,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     <div class="cat-filter-group">
                         <div class="cat-flabel">
-                            <x-icon name="rectangle-vertical" size="14"/>
+                            <x-icon name="shield-check" size="14"/>
                             Marka
                         </div>
                         <select name="brand" class="cat-select">
@@ -265,7 +265,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     <div class="cat-filter-group">
                         <div class="cat-flabel">
-                            <x-icon name="car-front" size="14"/>
+                            <x-icon name="tag" size="14"/>
                             Cena (zł)
                         </div>
                         <div class="cat-row">

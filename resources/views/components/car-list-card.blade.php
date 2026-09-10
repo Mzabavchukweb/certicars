@@ -103,6 +103,7 @@
                  clickable; both lead to the same route as the card overlay
                  but the explicit button keeps the action discoverable. --}}
             <div class="lcard-actions">
+                <div class="lcard-price-label">Cena brutto</div>
                 <div class="lcard-price">{{ $car->formatted_price }}</div>
                 <a href="{{ route('catalog.show', $car) }}" class="lcard-cta">
                     Zobacz szczegóły

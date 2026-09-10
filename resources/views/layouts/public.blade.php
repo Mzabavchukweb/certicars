@@ -825,6 +825,7 @@
     /* Right actions column — price + CTA stacked, right-aligned, 160
        wide so the CTA fits without wrapping but doesn't dominate. */
     .lcard-actions{flex-shrink:0;min-width:160px;display:flex;flex-direction:column;align-items:flex-end;gap:10px;align-self:center}
+    .lcard-price-label{font-size:10.5px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.7px;line-height:1;margin-bottom:6px}
     .lcard-price{font-size:22px;font-weight:900;color:#0a0a0a;letter-spacing:-.5px;line-height:1;white-space:nowrap}
     .lcard-cta{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#0066ff;border:1.5px solid #0066ff;padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:700;text-decoration:none;transition:all .18s ease;position:relative;z-index:2;cursor:pointer;white-space:nowrap}
     .lcard-cta:hover{background:#0066ff;color:#fff;box-shadow:0 4px 12px rgba(0,102,255,.25)}
