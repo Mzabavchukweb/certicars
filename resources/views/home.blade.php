@@ -311,10 +311,23 @@
     .cs-cc-card p{font-size:11px;line-height:1.45}
     .cs-cc-card-arrow{top:14px;right:14px;width:22px;height:22px}
     .cs-cc-card-arrow svg,.cs-cc-card-arrow i[data-lucide]{width:11px;height:11px}
-    /* Bohater na dole — wycentrowany. Kadr i maska dziedzicza z bloku 1024px,
-       tu zmienia sie tylko rozmiar pudelka (proporcja zostaje wasko-wysoka). */
-    .cs-cc-hero{height:450px;max-width:310px}
-    .cs-cc-hero img{max-height:450px}
+    /* Bohater full-bleed: pudelko rozpycha sie na cala szerokosc (ujemne
+       marginesy kasuja padding gridu), a sekcja traci dolny padding — dzieki
+       temu sylwetka jest przycieta krawedzia sekcji i styka sie ze stopka,
+       tak jak na desktopie. */
+    .cs-cc{padding-bottom:0}
+    .cs-cc-grid{row-gap:20px}
+    .cs-cc-hero{height:430px;max-width:none;width:auto;margin:0 -24px;padding-top:8px}
+    .cs-cc-hero img{max-height:430px;object-position:50% 100%}
+    /* Tlo idzie pelna szerokoscia do PRAWEJ krawedzi ekranu (bez wygaszania po
+       tej stronie); wygaszamy tylko gore i lewa strone. */
+    .cs-cc-hero::before{inset:0;
+        -webkit-mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.6) 10%,#000 26%),linear-gradient(to right,transparent 0,rgba(0,0,0,.45) 14%,#000 34%);
+        -webkit-mask-composite:source-in;
+                mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.6) 10%,#000 26%),linear-gradient(to right,transparent 0,rgba(0,0,0,.45) 14%,#000 34%);
+                mask-composite:intersect}
+    /* Sylwetka jest teraz ucieta krawedzia sekcji, wiec cien pod nia znika. */
+    .cs-cc-hero::after{display:none}
 }
 @media(max-width:768px){
     /* Spotlight tła — reposition dla mobile żeby aureola była pod bohaterem */
