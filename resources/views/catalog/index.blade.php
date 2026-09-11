@@ -23,14 +23,16 @@
 .cat-bt-card:hover{background:var(--blue-bg);border-color:transparent;transform:translateY(-1px)}
 .cat-bt-card.active{background:var(--blue-bg);border-color:transparent}
 .cat-bt-card.active .cat-bt-label{color:var(--blue);font-weight:700}
-.cat-bt-icon{height:38px;width:100%;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
-.cat-bt-icon img{height:34px;width:auto;object-fit:contain;mix-blend-mode:multiply;transition:transform .18s;display:block}
+.cat-bt-icon{height:92px;width:100%;display:flex;align-items:flex-end;justify-content:center;position:relative;padding-bottom:6px}
+.cat-bt-icon img{max-width:100%;max-height:84px;width:auto;height:auto;object-fit:contain;mix-blend-mode:multiply;transition:transform .18s;display:block}
 .cat-bt-card:hover .cat-bt-icon img,.cat-bt-card.active .cat-bt-icon img{transform:translateY(-2px)}
-.cat-bt-icon svg{width:24px;height:24px;stroke:var(--text-3);fill:none;stroke-width:1.5;transition:stroke .18s}
+.cat-bt-icon svg{width:44px;height:44px;stroke:var(--text-3);fill:none;stroke-width:1.5;transition:stroke .18s}
 .cat-bt-card.active .cat-bt-icon svg,.cat-bt-card:hover .cat-bt-icon svg{stroke:var(--blue)}
 .cat-bt-label{font-size:13px;font-weight:600;color:var(--text-2);text-align:center;white-space:nowrap;letter-spacing:-.1px}
 .cat-bt-icon img.flip{transform:scaleX(-1)}
 .cat-bt-card:hover .cat-bt-icon img.flip,.cat-bt-card.active .cat-bt-icon img.flip{transform:scaleX(-1) translateY(-2px)}
+@media(max-width:1024px){.cat-bt-icon{height:78px}.cat-bt-icon img{max-height:70px}.cat-bt-icon svg{width:38px;height:38px}}
+@media(max-width:460px){.cat-bt-icon{height:62px}.cat-bt-icon img{max-height:54px}.cat-bt-icon svg{width:32px;height:32px}}
 
 /* Grid + results background */
 /* minmax(0,1fr) zamiast 1fr — domyslne min-width:auto na kolumnie gridu
