@@ -317,11 +317,16 @@
        tak jak na desktopie. */
     .cs-cc{padding-bottom:0}
     .cs-cc-grid{row-gap:20px}
-    .cs-cc-hero{height:430px;max-width:none;width:auto;margin:0 -24px;padding-top:8px}
+    .cs-cc-hero{height:430px;max-width:none;width:auto;margin:0 -24px;padding-top:8px;justify-self:stretch}  /* stretch, nie center — inaczej grid liczy szerokosc
+       z tresci i ujemne marginesy nie dochodza do krawedzi ekranu */
     .cs-cc-hero img{max-height:430px;object-position:50% 100%}
     /* Tlo idzie pelna szerokoscia do PRAWEJ krawedzi ekranu (bez wygaszania po
        tej stronie); wygaszamy tylko gore i lewa strone. */
     .cs-cc-hero::before{inset:0;
+        /* Prawa strona byla plaska — cover przycina TLO tak, ze trafia tam jego
+           najjasniejszy fragment. Gradient w najglebszym odcieniu tla (#AEC7F8)
+           dokłada cien przy prawej krawedzi, zeby miala taka sama glebie jak lewa. */
+        background:linear-gradient(to left,rgba(174,199,248,.62) 0,rgba(174,199,248,.30) 18%,rgba(174,199,248,0) 52%),url('/images/certicheck-hero-bg.webp') center/cover no-repeat;
         -webkit-mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.6) 10%,#000 26%),linear-gradient(to right,transparent 0,rgba(0,0,0,.45) 14%,#000 34%);
         -webkit-mask-composite:source-in;
                 mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.6) 10%,#000 26%),linear-gradient(to right,transparent 0,rgba(0,0,0,.45) 14%,#000 34%);
