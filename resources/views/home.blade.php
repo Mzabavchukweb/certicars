@@ -183,7 +183,18 @@
    gradiencie sekcji. object-fit:contain + dolna kotwica = stoi na dolnej
    krawedzi i nigdy nie jest znieksztalcona. */
 .cs-cc-hero{position:relative;min-height:520px;width:100%;max-width:520px;justify-self:end;display:flex;align-items:flex-end;justify-content:center;padding-top:38px}
-.cs-cc-hero img{width:100%;height:100%;object-fit:contain;object-position:50% 100%;display:block;
+/* Tlo od projektanta (ta sama plansza co bohater: poswiata + tarcze).
+   Krawedzie wygaszone maska radialna, zeby nie bylo widac prostokata na
+   gradiencie sekcji. Lezy POD postacia (z-index). */
+.cs-cc-hero::before{content:'';position:absolute;inset:-4% -8% -2% 0;z-index:0;pointer-events:none;
+    background:url('/images/certicheck-hero-bg.webp') center/cover no-repeat;
+    /* dwie maski (intersect): radialna wygasza rogi, liniowa odcina lewa strone,
+       zeby poswiata i tarcze nie wchodzily pod karty */
+    -webkit-mask-image:radial-gradient(ellipse 66% 60% at 56% 50%,#000 50%,rgba(0,0,0,.6) 76%,transparent 100%),linear-gradient(90deg,transparent 0,rgba(0,0,0,.45) 14%,#000 34%);
+    -webkit-mask-composite:source-in;
+            mask-image:radial-gradient(ellipse 66% 60% at 56% 50%,#000 50%,rgba(0,0,0,.6) 76%,transparent 100%),linear-gradient(90deg,transparent 0,rgba(0,0,0,.45) 14%,#000 34%);
+            mask-composite:intersect}
+.cs-cc-hero img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;object-position:50% 100%;display:block;
     filter:drop-shadow(0 26px 40px rgba(15,32,80,.18))}
 .cs-cc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:12px}
 .cs-cc-kicker::before{content:'';width:22px;height:1.5px;background:#0066ff;border-radius:1px}
