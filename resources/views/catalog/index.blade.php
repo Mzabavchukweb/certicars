@@ -7,7 +7,7 @@
 @section('styles')
 /* ===== CATALOG HEADER (Otomoto-style: compact, functional) ===== */
 .cat-header{background:#fff;border-bottom:1px solid var(--border-l);padding:20px 0 0}
-.cat-header-in{max-width:1200px;margin:0 auto;padding:0 24px}
+.cat-header-in{max-width:1400px;margin:0 auto;padding:0 24px}
 .cat-breadcrumb{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-3);margin-bottom:12px}
 .cat-breadcrumb a{color:var(--text-3);text-decoration:none;transition:color .15s}
 .cat-breadcrumb a:hover{color:var(--blue)}
@@ -26,13 +26,13 @@
 .cat-bt-icon{height:92px;width:100%;display:flex;align-items:flex-end;justify-content:center;position:relative;padding-bottom:6px}
 .cat-bt-icon img{max-width:100%;max-height:84px;width:auto;height:auto;object-fit:contain;mix-blend-mode:multiply;transition:transform .18s;display:block}
 .cat-bt-card:hover .cat-bt-icon img,.cat-bt-card.active .cat-bt-icon img{transform:translateY(-2px)}
-.cat-bt-icon svg{width:44px;height:44px;stroke:var(--text-3);fill:none;stroke-width:1.5;transition:stroke .18s}
+.cat-bt-icon svg{width:72px;height:72px;stroke:var(--text-3);fill:none;stroke-width:1.4;transition:stroke .18s}
 .cat-bt-card.active .cat-bt-icon svg,.cat-bt-card:hover .cat-bt-icon svg{stroke:var(--blue)}
 .cat-bt-label{font-size:13px;font-weight:600;color:var(--text-2);text-align:center;white-space:nowrap;letter-spacing:-.1px}
 .cat-bt-icon img.flip{transform:scaleX(-1)}
 .cat-bt-card:hover .cat-bt-icon img.flip,.cat-bt-card.active .cat-bt-icon img.flip{transform:scaleX(-1) translateY(-2px)}
-@media(max-width:1024px){.cat-bt-icon{height:78px}.cat-bt-icon img{max-height:70px}.cat-bt-icon svg{width:38px;height:38px}}
-@media(max-width:460px){.cat-bt-icon{height:62px}.cat-bt-icon img{max-height:54px}.cat-bt-icon svg{width:32px;height:32px}}
+@media(max-width:1024px){.cat-bt-icon{height:78px}.cat-bt-icon img{max-height:70px}.cat-bt-icon svg{width:58px;height:58px}}
+@media(max-width:460px){.cat-bt-icon{height:62px}.cat-bt-icon img{max-height:54px}.cat-bt-icon svg{width:44px;height:44px}}
 
 /* Grid + results background */
 /* minmax(0,1fr) zamiast 1fr — domyslne min-width:auto na kolumnie gridu
@@ -159,7 +159,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
             <a href="{{ route('catalog', request()->except('category')) }}"
                class="cat-bt-card {{ !request('category') ? 'active' : '' }}">
                 <div class="cat-bt-icon">
-                    <x-icon name="layout-grid" size="22"/>
+                    <x-icon name="layout-grid" size="72" :strokeWidth="1.4"/>
                 </div>
                 <span class="cat-bt-label">Wszystkie</span>
             </a>
