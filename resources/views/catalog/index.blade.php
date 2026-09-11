@@ -26,13 +26,17 @@
 .cat-bt-icon{height:92px;width:100%;display:flex;align-items:flex-end;justify-content:center;position:relative;padding-bottom:6px}
 .cat-bt-icon img{max-width:100%;max-height:84px;width:auto;height:auto;object-fit:contain;mix-blend-mode:multiply;transition:transform .18s;display:block}
 .cat-bt-card:hover .cat-bt-icon img,.cat-bt-card.active .cat-bt-icon img{transform:translateY(-2px)}
-.cat-bt-icon svg{width:72px;height:72px;stroke:var(--text-3);fill:none;stroke-width:1.4;transition:stroke .18s}
+.cat-bt-icon svg{width:56px;height:56px;stroke:var(--text-3);fill:none;stroke-width:1.5;transition:stroke .18s}
+/* Wszystkie: bez hovera (tlo/podniesienie/kolor ikony) — aktywny stan zostaje */
+.cat-bt-all:not(.active):hover{background:transparent;transform:none}
+.cat-bt-all:not(.active):hover .cat-bt-icon svg{stroke:var(--text-3)}
+.cat-bt-all.active:hover{transform:none}
 .cat-bt-card.active .cat-bt-icon svg,.cat-bt-card:hover .cat-bt-icon svg{stroke:var(--blue)}
 .cat-bt-label{font-size:13px;font-weight:600;color:var(--text-2);text-align:center;white-space:nowrap;letter-spacing:-.1px}
 .cat-bt-icon img.flip{transform:scaleX(-1)}
 .cat-bt-card:hover .cat-bt-icon img.flip,.cat-bt-card.active .cat-bt-icon img.flip{transform:scaleX(-1) translateY(-2px)}
-@media(max-width:1024px){.cat-bt-icon{height:78px}.cat-bt-icon img{max-height:70px}.cat-bt-icon svg{width:58px;height:58px}}
-@media(max-width:460px){.cat-bt-icon{height:62px}.cat-bt-icon img{max-height:54px}.cat-bt-icon svg{width:44px;height:44px}}
+@media(max-width:1024px){.cat-bt-icon{height:78px}.cat-bt-icon img{max-height:70px}.cat-bt-icon svg{width:46px;height:46px}}
+@media(max-width:460px){.cat-bt-icon{height:62px}.cat-bt-icon img{max-height:54px}.cat-bt-icon svg{width:36px;height:36px}}
 
 /* Grid + results background */
 /* minmax(0,1fr) zamiast 1fr — domyslne min-width:auto na kolumnie gridu
@@ -157,9 +161,9 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
         <div class="cat-bt-grid">
             {{-- Karta: Wszystkie --}}
             <a href="{{ route('catalog', request()->except('category')) }}"
-               class="cat-bt-card {{ !request('category') ? 'active' : '' }}">
+               class="cat-bt-card cat-bt-all {{ !request('category') ? 'active' : '' }}">
                 <div class="cat-bt-icon">
-                    <x-icon name="layout-grid" size="72" :strokeWidth="1.4"/>
+                    <x-icon name="layout-grid" size="56" :strokeWidth="1.5"/>
                 </div>
                 <span class="cat-bt-label">Wszystkie</span>
             </a>

@@ -101,19 +101,17 @@
 .cs-jwz-head h2{font-size:40px;font-weight:900;color:#fff;letter-spacing:-.9px;line-height:1.1;margin:0 0 14px;max-width:760px;margin-left:auto;margin-right:auto}
 .cs-jwz-head p{font-size:15px;color:rgba(255,255,255,.7);line-height:1.6;margin:0;max-width:620px;margin-left:auto;margin-right:auto}
 
-.cs-jwz-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;margin-bottom:38px;align-items:start}
-.cs-jwz-step:nth-child(2){margin-top:32px}
-.cs-jwz-step:nth-child(3){margin-top:64px}
-.cs-jwz-step:nth-child(4){margin-top:96px}
-.cs-jwz-step:nth-child(5){margin-top:128px}
-.cs-jwz-step{position:relative;overflow:hidden;background:#fff;border-radius:18px;padding:28px 24px 26px;display:flex;flex-direction:column;gap:12px;box-shadow:0 10px 30px rgba(0,0,0,.22);transition:transform .2s ease,box-shadow .2s ease}
-.cs-jwz-step:hover{transform:translateY(-4px);box-shadow:0 20px 46px rgba(0,102,255,.28)}
-.cs-jwz-step-head{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.cs-jwz-step-ico{flex-shrink:0;width:54px;height:54px;border-radius:15px;background:linear-gradient(135deg,#dbeafe 0%,#eff6ff 100%);border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center}
-.cs-jwz-step-ico svg,.cs-jwz-step-ico i[data-lucide]{width:25px;height:25px;stroke:currentColor;fill:none;stroke-width:1.8}
-.cs-jwz-step-num{font-size:15px;font-weight:800;color:#0066ff;background:#eef4ff;border:1px solid #dbeafe;border-radius:10px;padding:7px 13px;letter-spacing:.5px;line-height:1}
-.cs-jwz-step h3{position:relative;z-index:1;font-size:18px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:10px 0 2px;line-height:1.25}
-.cs-jwz-step p{position:relative;z-index:1;font-size:13.5px;color:#4b5563;line-height:1.6;margin:0}
+/* Timeline: 5 numerowanych wezlow na wspolnej linii, pod nimi ikona, tytul
+   i opis. Bez kart — rozna dlugosc opisow nie psuje ukladu, a linia daje
+   plynny przeplyw 01 -> 05. Ponizej 1024px os zmienia sie w pionowa. */
+.cs-jwz-steps{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:28px;margin-bottom:44px;align-items:start}
+.cs-jwz-steps::before{content:'';position:absolute;top:26px;left:10%;right:10%;height:2px;background:linear-gradient(90deg,rgba(126,179,255,0),rgba(126,179,255,.5) 12%,rgba(126,179,255,.5) 88%,rgba(126,179,255,0));z-index:0}
+.cs-jwz-step{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center}
+.cs-jwz-node{position:relative;z-index:1;flex-shrink:0;width:52px;height:52px;border-radius:50%;background:#0066ff;color:#fff;font-size:16px;font-weight:800;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 6px rgba(0,102,255,.16),0 10px 26px rgba(0,102,255,.45);margin-bottom:26px}
+.cs-jwz-step-ico{width:46px;height:46px;border-radius:13px;background:rgba(255,255,255,.07);border:1px solid rgba(126,179,255,.24);color:#7eb3ff;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.cs-jwz-step-ico svg,.cs-jwz-step-ico i[data-lucide]{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8}
+.cs-jwz-step h3{font-size:17px;font-weight:800;color:#fff;letter-spacing:-.3px;margin:0 0 9px;line-height:1.25}
+.cs-jwz-step p{font-size:13.5px;color:rgba(255,255,255,.66);line-height:1.62;margin:0;max-width:240px}
 
 .cs-jwz-benefits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:28px}
 .cs-jwz-benefit{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(126,179,255,.18);border-radius:12px;padding:12px 16px;color:#fff;font-size:13px;font-weight:600}
@@ -253,8 +251,12 @@
 
 @media(max-width:1024px){
     .cs-jwz{padding:48px 0}
-    .cs-jwz-steps{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-    .cs-jwz-step{margin-top:0!important}
+    .cs-jwz-steps{grid-template-columns:1fr;gap:26px}
+    .cs-jwz-steps::before{top:0;bottom:0;left:25px;right:auto;width:2px;height:auto;background:linear-gradient(180deg,rgba(126,179,255,0),rgba(126,179,255,.5) 8%,rgba(126,179,255,.5) 92%,rgba(126,179,255,0))}
+    .cs-jwz-step{flex-direction:row;align-items:flex-start;text-align:left;gap:20px}
+    .cs-jwz-node{margin-bottom:0}
+    .cs-jwz-step-ico{margin:0 0 10px}
+    .cs-jwz-step p{max-width:none}
     .cs-jwz-benefits{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
     .cs-jwz-head h2{font-size:28px}
     .cs-cc{padding:48px 0}
@@ -663,13 +665,13 @@
                 ];
             @endphp
             @foreach($jwzSteps as [$ico, $num, $title, $desc])
-                <div class="cs-jwz-step" data-num="{{ $num }}">
-                    <div class="cs-jwz-step-head">
-                        <span class="cs-jwz-step-ico" aria-hidden="true"><x-icon :name="$ico" size="20" :strokeWidth="1.8"/></span>
-                        <span class="cs-jwz-step-num">{{ $num }}</span>
+                <div class="cs-jwz-step">
+                    <div class="cs-jwz-node" aria-hidden="true">{{ $num }}</div>
+                    <div class="cs-jwz-body">
+                        <span class="cs-jwz-step-ico" aria-hidden="true"><x-icon :name="$ico" size="22" :strokeWidth="1.8"/></span>
+                        <h3>{{ $title }}</h3>
+                        <p>{{ $desc }}</p>
                     </div>
-                    <h3>{{ $title }}</h3>
-                    <p>{{ $desc }}</p>
                 </div>
             @endforeach
         </div>
