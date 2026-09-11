@@ -278,6 +278,18 @@
     /* Wycinka ma alfe, wiec zadnych masek — tylko mniejsze pudelko. */
     .cs-cc-hero{min-height:0;height:460px;width:100%;max-width:330px;margin:0 auto;justify-self:center;padding-top:24px}
     .cs-cc-hero img{max-height:460px;object-position:50% 100%}
+    /* Tu bohater jest WYSRODKOWANY, wiec desktopowa maska (wygaszenie tylko
+       lewej krawedzi) zostawiala twarde ciecie po prawej. Symetryczna elipsa
+       wygasza wszystkie krawedzie. */
+    .cs-cc-hero::before{inset:-3% -7%;
+        -webkit-mask-image:radial-gradient(ellipse 62% 58% at 50% 47%,#000 44%,rgba(0,0,0,.55) 73%,transparent 100%);
+        -webkit-mask-composite:source-over;
+                mask-image:radial-gradient(ellipse 62% 58% at 50% 47%,#000 44%,rgba(0,0,0,.55) 73%,transparent 100%);
+                mask-composite:add}
+    /* Miekki cien pod sylwetka — bez niego postac wisi w powietrzu. */
+    .cs-cc-hero::after{content:'';position:absolute;left:50%;bottom:6px;transform:translateX(-50%);
+        width:70%;height:26px;z-index:0;pointer-events:none;
+        background:radial-gradient(ellipse at center,rgba(15,32,80,.20),rgba(15,32,80,0) 72%)}
     .cs-cc-left h2{font-size:32px}
     .cs-cc-card{min-height:170px}
 }
