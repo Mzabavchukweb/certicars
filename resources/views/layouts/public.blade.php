@@ -818,7 +818,9 @@
     /* Inline metadata row — single line, icons + label pairs separated
        by a thin vertical rule on desktop, wrap cleanly on mobile. */
     .lcard-specs{display:flex;flex-wrap:wrap;gap:4px 0;margin:0}
+    @media(min-width:1300px){.lcard-specs{flex-wrap:nowrap}}
     .lcard-spec{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:#475569;font-weight:500;padding-right:10px;margin-right:10px;border-right:1px solid #e5e7eb;white-space:nowrap;line-height:1.4}
+    .lcard-spec:last-child{border-right:none;padding-right:0;margin-right:0}
     .lcard-spec:last-child{border-right:none;padding-right:0;margin-right:0}
     .lcard-spec svg{width:13px;height:13px;stroke:#64748b;fill:none;stroke-width:2;flex-shrink:0}
 

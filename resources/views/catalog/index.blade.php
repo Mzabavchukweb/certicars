@@ -36,7 +36,7 @@
 /* minmax(0,1fr) zamiast 1fr — domyslne min-width:auto na kolumnie gridu
    sprawia, ze nie moze ona zwezic sie ponizej min-content zawartosci. Jedna
    szeroka karta rozpychala wtedy cala strone w prawo. */
-.cat-wrap{max-width:1200px;margin:0 auto;padding:24px 24px 64px;display:grid;grid-template-columns:270px minmax(0,1fr);gap:28px;align-items:start}
+.cat-wrap{max-width:1400px;margin:0 auto;padding:24px 24px 64px;display:grid;grid-template-columns:280px minmax(0,1fr);gap:28px;align-items:start}
 
 /* Sidebar */
 .cat-sidebar{}

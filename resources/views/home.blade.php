@@ -90,26 +90,28 @@
 /* ============ JAK WYGLĄDA ZAKUP — purchase process section ============
    Dark premium block. Five step-cards in one row on desktop, a benefits
    strip below, and a primary CTA at the bottom. Real component. */
-.cs-jwz{position:relative;background:linear-gradient(180deg,#0a1a3c 0%,#11264f 100%);color:#fff;padding:60px 0;overflow:hidden;isolation:isolate}
+.cs-jwz{position:relative;background:linear-gradient(180deg,#0a1a3c 0%,#11264f 100%);color:#fff;padding:76px 0;overflow:hidden;isolation:isolate}
 .cs-jwz::before{content:'';position:absolute;top:-30%;right:-8%;width:55%;height:120%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(0,102,255,.28) 0%,rgba(0,102,255,.08) 40%,rgba(0,102,255,0) 70%);pointer-events:none;z-index:0}
 .cs-jwz::after{content:'';position:absolute;bottom:-25%;left:-6%;width:50%;height:90%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(78,163,255,.18) 0%,rgba(78,163,255,.06) 45%,rgba(78,163,255,0) 70%);pointer-events:none;z-index:0}
 .cs-jwz > .container{position:relative;z-index:1}
-.cs-jwz-inner{max-width:1200px;margin:0 auto}
-.cs-jwz-head{text-align:center;margin-bottom:36px}
+.cs-jwz-inner{max-width:1320px;margin:0 auto}
+.cs-jwz-head{text-align:center;margin-bottom:44px}
 .cs-jwz-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#7eb3ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:14px}
 .cs-jwz-kicker::before,.cs-jwz-kicker::after{content:'';width:24px;height:1.5px;background:#7eb3ff;border-radius:1px}
-.cs-jwz-head h2{font-size:34px;font-weight:900;color:#fff;letter-spacing:-.7px;line-height:1.12;margin:0 0 14px;max-width:720px;margin-left:auto;margin-right:auto}
+.cs-jwz-head h2{font-size:40px;font-weight:900;color:#fff;letter-spacing:-.9px;line-height:1.1;margin:0 0 14px;max-width:760px;margin-left:auto;margin-right:auto}
 .cs-jwz-head p{font-size:15px;color:rgba(255,255,255,.7);line-height:1.6;margin:0;max-width:620px;margin-left:auto;margin-right:auto}
 
-.cs-jwz-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-bottom:32px}
-.cs-jwz-step{background:#fff;border-radius:14px;padding:22px 18px 20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);transition:transform .18s ease,box-shadow .18s ease;position:relative}
-.cs-jwz-step:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(0,0,0,.25)}
-.cs-jwz-step-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.cs-jwz-step-ico{flex-shrink:0;width:42px;height:42px;border-radius:11px;background:#eff6ff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center}
-.cs-jwz-step-ico svg,.cs-jwz-step-ico i[data-lucide]{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8}
-.cs-jwz-step-num{font-size:13px;font-weight:800;color:#0066ff;background:#eff6ff;border-radius:6px;padding:3px 9px;letter-spacing:.4px}
-.cs-jwz-step h3{font-size:15px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:6px 0 2px;line-height:1.25}
-.cs-jwz-step p{font-size:12.5px;color:#4b5563;line-height:1.55;margin:0}
+.cs-jwz-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;margin-bottom:38px}
+.cs-jwz-step{position:relative;overflow:hidden;background:#fff;border-radius:18px;padding:28px 24px 26px;display:flex;flex-direction:column;gap:12px;box-shadow:0 10px 30px rgba(0,0,0,.22);transition:transform .2s ease,box-shadow .2s ease}
+.cs-jwz-step::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#0066ff,#4ea3ff);z-index:1}
+.cs-jwz-step::after{content:attr(data-num);position:absolute;top:-16px;right:4px;font-size:90px;font-weight:900;color:#eef4ff;line-height:1;letter-spacing:-3px;z-index:0;pointer-events:none}
+.cs-jwz-step:hover{transform:translateY(-4px);box-shadow:0 20px 46px rgba(0,102,255,.28)}
+.cs-jwz-step-head{position:relative;z-index:1;display:flex;align-items:center;gap:10px}
+.cs-jwz-step-ico{flex-shrink:0;width:54px;height:54px;border-radius:15px;background:linear-gradient(135deg,#dbeafe 0%,#eff6ff 100%);border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-jwz-step-ico svg,.cs-jwz-step-ico i[data-lucide]{width:25px;height:25px;stroke:currentColor;fill:none;stroke-width:1.8}
+.cs-jwz-step-num{display:none}
+.cs-jwz-step h3{position:relative;z-index:1;font-size:18px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:10px 0 2px;line-height:1.25}
+.cs-jwz-step p{position:relative;z-index:1;font-size:13.5px;color:#4b5563;line-height:1.6;margin:0}
 
 .cs-jwz-benefits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:28px}
 .cs-jwz-benefit{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(126,179,255,.18);border-radius:12px;padding:12px 16px;color:#fff;font-size:13px;font-weight:600}
@@ -658,7 +660,7 @@
                 ];
             @endphp
             @foreach($jwzSteps as [$ico, $num, $title, $desc])
-                <div class="cs-jwz-step">
+                <div class="cs-jwz-step" data-num="{{ $num }}">
                     <div class="cs-jwz-step-head">
                         <span class="cs-jwz-step-ico" aria-hidden="true"><x-icon :name="$ico" size="20" :strokeWidth="1.8"/></span>
                         <span class="cs-jwz-step-num">{{ $num }}</span>
