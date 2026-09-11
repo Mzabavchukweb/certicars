@@ -104,12 +104,11 @@
 .cs-jwz-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;margin-bottom:38px}
 .cs-jwz-step{position:relative;overflow:hidden;background:#fff;border-radius:18px;padding:28px 24px 26px;display:flex;flex-direction:column;gap:12px;box-shadow:0 10px 30px rgba(0,0,0,.22);transition:transform .2s ease,box-shadow .2s ease}
 .cs-jwz-step::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#0066ff,#4ea3ff);z-index:1}
-.cs-jwz-step::after{content:attr(data-num);position:absolute;top:-16px;right:4px;font-size:90px;font-weight:900;color:#eef4ff;line-height:1;letter-spacing:-3px;z-index:0;pointer-events:none}
 .cs-jwz-step:hover{transform:translateY(-4px);box-shadow:0 20px 46px rgba(0,102,255,.28)}
-.cs-jwz-step-head{position:relative;z-index:1;display:flex;align-items:center;gap:10px}
+.cs-jwz-step-head{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .cs-jwz-step-ico{flex-shrink:0;width:54px;height:54px;border-radius:15px;background:linear-gradient(135deg,#dbeafe 0%,#eff6ff 100%);border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center}
 .cs-jwz-step-ico svg,.cs-jwz-step-ico i[data-lucide]{width:25px;height:25px;stroke:currentColor;fill:none;stroke-width:1.8}
-.cs-jwz-step-num{display:none}
+.cs-jwz-step-num{font-size:15px;font-weight:800;color:#0066ff;background:#eef4ff;border:1px solid #dbeafe;border-radius:10px;padding:7px 13px;letter-spacing:.5px;line-height:1}
 .cs-jwz-step h3{position:relative;z-index:1;font-size:18px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:10px 0 2px;line-height:1.25}
 .cs-jwz-step p{position:relative;z-index:1;font-size:13.5px;color:#4b5563;line-height:1.6;margin:0}
 
