@@ -378,6 +378,7 @@
 .cs-finance-result{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 14px;background:#eef4ff;border:1px solid #c7d8ff;border-radius:12px;margin-bottom:10px;flex-wrap:wrap}
 .cs-finance-result-left{display:flex;flex-direction:column;min-width:0}
 .cs-finance-result-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#0066ff;margin-bottom:3px}
+.cs-finance-rrso{display:inline-block;margin-top:5px;font-size:11px;font-weight:800;letter-spacing:.3px;color:#0066ff;background:#eef4ff;border-radius:6px;padding:2px 8px;width:fit-content}
 .cs-finance-result-value{font-size:22px;font-weight:900;color:#0066ff;letter-spacing:-.4px;line-height:1.1}
 .cs-finance-result-value .suffix{font-size:12px;font-weight:700;color:#0066ff;letter-spacing:0;opacity:.85}
 .cs-finance-cta{height:40px;padding:0 18px;background:#0066ff;color:#fff;border:none;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,102,255,.25);transition:all .15s;flex-shrink:0}
@@ -1783,6 +1784,7 @@
                 <div class="cs-finance-result-left">
                     <span class="cs-finance-result-label">Orientacyjna rata miesięczna</span>
                     <div class="cs-finance-result-value"><span id="csCalcInlineRate">—</span> <span class="suffix">/ mies.</span></div>
+                    <span class="cs-finance-rrso">RRSO 14%</span>
                 </div>
                 <button type="button" class="cs-finance-cta" onclick="csOpenInquiry('financing','financing_form')">
                     Zapytaj o finansowanie
@@ -1790,7 +1792,7 @@
                 </button>
             </div>
             <div class="cs-finance-foot">
-                <span>*Przykładowa rata przy RRSO 7,9%. Nie stanowi oferty w rozumieniu prawa.</span>
+                <span>*Przykładowa rata przy RRSO 14%. Nie stanowi oferty w rozumieniu prawa.</span>
             </div>
         </div>
 
@@ -3580,7 +3582,7 @@ function csCalcInlineUpdate() {
     var price = {{ $car->price ?? 0 }};
     var dp = parseInt(document.getElementById('csCalcDp').value) || 0;
     var term = parseInt(document.getElementById('csCalcTerm').value) || 48;
-    var apr = 0.079;
+    var apr = 0.14;
     var principal = Math.max(price - dp, 0);
     var mr = apr / 12;
     var pmt = principal > 0 ? Math.round(principal * mr / (1 - Math.pow(1 + mr, -term))) : 0;
