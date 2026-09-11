@@ -176,22 +176,15 @@
    powrotem NA te krawedz — inaczej prawy brzeg PNG (ktory ma wlasne,
    prostokatne tlo) wypadalby w srodku ekranu i widac byloby odciecie blekitu.
    min() zeruje efekt ponizej 1560px, gdzie grid i tak siega krawedzi. */
-.cs-cc-hero{position:relative;overflow:hidden;min-height:800px;width:100%;max-width:560px;justify-self:end;
-    margin-right:min(0px, calc((1560px - 100vw) / 2));
-    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%);
-    mask-image:linear-gradient(90deg,transparent 0,#000 22%)}
-/* Bez owalnej maski — PNG ma własne jasnoniebieskie tło zgodne z tłem
-   sekcji, więc wystarczy pionowy fade na LEWEJ krawędzi żeby zniknął szew
-   między zdjęciem a sekcją. Radial ellipse ścinał głowę i stopy. */
-/* width:112% + prawa kotwica — obrazek jest szerszy niz pudelko, wiec cover
-   skaluje go mocniej i bohater jest wiekszy (jak w reference). Nadmiar wychodzi
-   w LEWO, gdzie i tak wygasza go maska kontenera.
-   object-position bottom — sylwetka stoi na dolnej krawedzi sekcji, przycieta
-   przez stopke. Kotwica u gory zostawiala pusta przestrzen pod nogami i przez
-   to bohater wygladal na mniejszego. */
-.cs-cc-hero img{position:absolute;top:0;bottom:0;right:0;left:auto;width:112%;height:100%;object-fit:cover;object-position:50% 100%;display:block}
-.cs-cc-hero .cs-cc-hero-desktop{display:none}
-.cs-cc-hero .cs-cc-hero-mobile{display:block}
+/* Bohater to WYCINKA z prawdziwa alfa (certicheck-hero.webp) — wyciagnieta
+   przez roznice dwoch plansz od projektanta (postac na tle + samo tlo).
+   Dlatego NIE ma juz zadnych masek ani hackow z width:112%: nie ma
+   prostokatnego tla, ktore trzeba bylo chowac. Sylwetka po prostu stoi na
+   gradiencie sekcji. object-fit:contain + dolna kotwica = stoi na dolnej
+   krawedzi i nigdy nie jest znieksztalcona. */
+.cs-cc-hero{position:relative;min-height:520px;width:100%;max-width:520px;justify-self:end;display:flex;align-items:flex-end;justify-content:center;padding-top:38px}
+.cs-cc-hero img{width:100%;height:100%;object-fit:contain;object-position:50% 100%;display:block;
+    filter:drop-shadow(0 26px 40px rgba(15,32,80,.18))}
 .cs-cc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:12px}
 .cs-cc-kicker::before{content:'';width:22px;height:1.5px;background:#0066ff;border-radius:1px}
 .cs-cc-left h2{font-size:44px;font-weight:900;color:#0a0a0a;letter-spacing:-1px;line-height:1.05;margin:0 0 18px}
@@ -246,7 +239,7 @@
     .cs-cc-card p{font-size:12px;line-height:1.5}
     .cs-cc-card-arrow{top:18px;right:18px;width:28px;height:28px}
     .cs-cc-card-arrow svg,.cs-cc-card-arrow i[data-lucide]{width:13px;height:13px}
-    .cs-cc-hero{min-height:600px}
+    .cs-cc-hero{min-height:480px}
 }
 
 @media(max-width:1024px){
@@ -271,29 +264,9 @@
        wygasza wszystkie cztery krawedzie, wiec PNG wtapia sie w sekcje. */
     /* Pudelko WASKIE i WYSOKIE — proporcja bliska portretowi 941x1672. Kwadrat
        + cover skalowalby zdjecie po szerokosci i ucinal bohatera w pasie. */
-    /* mask/justify-self:end zerowane — to reguly desktopowe. Tu maska siedzi
-       na <img> (winieta ponizej), a bohater ma byc wysrodkowany. */
-    .cs-cc-hero{position:relative;overflow:hidden;min-height:0;height:480px;width:100%;max-width:340px;margin:0 auto;justify-self:center;
-        -webkit-mask-image:none;mask-image:none}
-    /* TRZY maski zlozone przez mask-composite:intersect (piksel jest widoczny
-       tylko tam, gdzie przepuszczaja go wszystkie warstwy):
-         1. elipsa — wygasza rogi. Promienie MUSZA byc < 50% wymiaru pudelka,
-            inaczej krawedzie wypadaja wewnatrz elipsy, gdzie maska jest wciaz
-            nieprzezroczysta, i widac prostokat PNG.
-         2. gradient od dolu — bohater rozplywa sie w tle zamiast konczyc cieciem.
-         3. gradient od prawej — to samo dla prawej krawedzi.
-       -webkit-mask-composite:source-in to odpowiednik intersect dla Safari. */
-    .cs-cc-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 20%;
-        -webkit-mask-image:
-            radial-gradient(ellipse 60% 56% at 50% 46%,#000 42%,rgba(0,0,0,.92) 62%,rgba(0,0,0,.5) 80%,transparent 100%),
-            linear-gradient(to top,transparent 0,rgba(0,0,0,.35) 10%,rgba(0,0,0,.85) 24%,#000 40%),
-            linear-gradient(to left,transparent 0,rgba(0,0,0,.5) 6%,rgba(0,0,0,.95) 16%,#000 26%);
-        mask-image:
-            radial-gradient(ellipse 60% 56% at 50% 46%,#000 42%,rgba(0,0,0,.92) 62%,rgba(0,0,0,.5) 80%,transparent 100%),
-            linear-gradient(to top,transparent 0,rgba(0,0,0,.35) 10%,rgba(0,0,0,.85) 24%,#000 40%),
-            linear-gradient(to left,transparent 0,rgba(0,0,0,.5) 6%,rgba(0,0,0,.95) 16%,#000 26%);
-        -webkit-mask-composite:source-in;
-        mask-composite:intersect}
+    /* Wycinka ma alfe, wiec zadnych masek — tylko mniejsze pudelko. */
+    .cs-cc-hero{min-height:0;height:460px;width:100%;max-width:330px;margin:0 auto;justify-self:center;padding-top:24px}
+    .cs-cc-hero img{max-height:460px;object-position:50% 100%}
     .cs-cc-left h2{font-size:32px}
     .cs-cc-card{min-height:170px}
 }
@@ -318,6 +291,7 @@
     /* Bohater na dole — wycentrowany. Kadr i maska dziedzicza z bloku 1024px,
        tu zmienia sie tylko rozmiar pudelka (proporcja zostaje wasko-wysoka). */
     .cs-cc-hero{height:450px;max-width:310px}
+    .cs-cc-hero img{max-height:450px}
 }
 @media(max-width:768px){
     /* Spotlight tła — reposition dla mobile żeby aureola była pod bohaterem */
@@ -331,11 +305,13 @@
     .cs-cc-cards{gap:8px}
     .cs-cc-card{padding:12px 11px 14px}
     .cs-cc-hero{height:420px;max-width:285px}
+    .cs-cc-hero img{max-height:420px}
 }
 @media(max-width:390px){
     /* Very small — karty stack 1-col żeby tekst był czytelny. */
     .cs-cc-cards{grid-template-columns:1fr}
     .cs-cc-hero{height:400px;max-width:270px}
+    .cs-cc-hero img{max-height:400px}
 }
 @media(max-width:600px){
     .cs-jwz{padding:36px 0}
@@ -748,8 +724,7 @@
         </div>
 
         <div class="cs-cc-hero" aria-hidden="true">
-            <img class="cs-cc-hero-desktop" src="/images/bohater-desktop.png" alt="" width="1672" height="941" loading="lazy" decoding="async">
-            <img class="cs-cc-hero-mobile" src="/images/bohater-mobile.png" alt="" width="941" height="1672" loading="lazy" decoding="async">
+            <img src="/images/certicheck-hero.webp" alt="Konsultant CertiCars prezentujacy raport CertiCheck na tablecie" width="911" height="1272" loading="lazy" decoding="async">
         </div>
     </div>
     </div>
