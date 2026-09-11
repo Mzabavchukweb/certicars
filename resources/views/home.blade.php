@@ -635,7 +635,7 @@
                 $jwzSteps = [
                     ['search',         '01', 'Wybierasz samochód',           'Przeglądasz ofertę, zdjęcia, dane techniczne, wyposażenie oraz opis stanu auta. Przy wybranych pojazdach dostępny jest dodatkowy raport CertiCheck.'],
                     ['message-square', '02', 'Kontaktujesz się z nami',      'Potwierdzamy dostępność auta, odpowiadamy na pytania i umawiamy dogodny termin oględzin.'],
-                    ['clipboard-check','03', 'Oglądasz i sprawdzasz auto',   'Na miejscu możesz dokładnie obejrzeć samochód, odbyć jazdę próbną oraz sprawdzić auto przed zakupem — na stacji diagnostycznej lub w wybranym serwisie.'],
+                    ['clipboard-check','03', 'Oglądasz samochód',   'Na miejscu możesz dokładnie obejrzeć samochód, odbyć jazdę próbną oraz sprawdzić auto przed zakupem — na stacji diagnostycznej lub w wybranym serwisie.'],
                     ['file-text',      '04', 'Finalizujesz zakup',           'Wyjaśniamy formalności, dokumenty oraz koszty. Wiesz, co jest w cenie auta i co pozostaje po stronie kupującego.'],
                     ['truck',          '05', 'Możliwy transport auta',       'Po wcześniejszym ustaleniu warunków i kosztów możemy przywieźć samochód pod wskazany adres.'],
                 ];

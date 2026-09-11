@@ -810,10 +810,10 @@
     .lcard-content{flex:1;padding:16px 22px;display:flex;flex-direction:column;min-width:0;position:relative;justify-content:center}
     .lcard-main{display:flex;gap:20px;align-items:center;min-width:0}
 
-    .lcard-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+    .lcard-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:13px}
     .lcard-titlewrap{display:flex;align-items:center;gap:10px;min-width:0}
     .lcard-accent{flex-shrink:0;width:4px;height:20px;border-radius:2px;background:var(--blue)}
-    .lcard-title{font-size:17px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0;min-width:0}
+    .lcard-title{font-size:19px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0;min-width:0}
 
     /* Inline metadata row — single line, icons + label pairs separated
        by a thin vertical rule on desktop, wrap cleanly on mobile. */
@@ -824,12 +824,16 @@
     .lcard-spec:last-child{border-right:none;padding-right:0;margin-right:0}
     .lcard-spec svg{width:13px;height:13px;stroke:#64748b;fill:none;stroke-width:2;flex-shrink:0}
 
-    .lcard-certicheck{margin-top:2px;position:relative;z-index:2}
+    .lcard-certicheck{margin-top:10px;position:relative;z-index:2}
+    /* Gdy karta ma badge CertiCheck, rozsuwamy tresc: dane u gory, badge
+       przy dolnej krawedzi. :has() zamiast sztywnych marginesow — bez niego
+       stack zostaje wysrodkowany (bezpieczny fallback). */
+    .lcard-content:has(.lcard-certicheck){justify-content:space-between;padding-bottom:12px}
 
     /* Right actions column — price + CTA stacked, right-aligned, 160
        wide so the CTA fits without wrapping but doesn't dominate. */
     .lcard-actions{flex-shrink:0;min-width:160px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:10px;align-self:stretch;border-left:1px solid #eef1f6;padding-left:28px}
-    .lcard-price-label{font-size:11px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.7px;line-height:1;margin-bottom:6px}
+    .lcard-price-label{font-size:11.5px;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.6px;line-height:1;margin-bottom:7px}
     .lcard-price{font-size:22px;font-weight:900;color:#0a0a0a;letter-spacing:-.5px;line-height:1;white-space:nowrap}
     .lcard-cta{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#0066ff;border:1.5px solid #0066ff;padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:700;text-decoration:none;transition:all .18s ease;position:relative;z-index:2;cursor:pointer;white-space:nowrap}
     .lcard-cta:hover{background:#0066ff;color:#fff;box-shadow:0 4px 12px rgba(0,102,255,.25)}
@@ -842,7 +846,7 @@
         .lcard-img{width:220px;min-width:220px;height:160px}
         .lcard-content{padding:14px 18px}
         .lcard-actions{min-width:140px}
-        .lcard-title{font-size:16px}
+        .lcard-title{font-size:17.5px}
         .lcard-price{font-size:20px}
         .lcard-spec{font-size:12px}
     }
@@ -867,7 +871,7 @@
     /* Very small phones — keep the CTA legible. */
     @media(max-width:380px){
         .lcard-content{padding:12px 14px}
-        .lcard-title{font-size:15.5px;white-space:normal}
+        .lcard-title{font-size:16.5px;white-space:normal}
         .lcard-cta{padding:7px 11px;font-size:12px}
         .lcard-price{font-size:19px}
     }
