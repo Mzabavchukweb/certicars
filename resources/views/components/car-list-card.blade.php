@@ -56,7 +56,10 @@
         <div class="lcard-main">
             {{-- Center column: title + single inline metadata row --}}
             <div class="lcard-info">
-                <h3 class="lcard-title">{{ $car->title }}</h3>
+                <div class="lcard-titlewrap">
+                    <span class="lcard-accent" aria-hidden="true"></span>
+                    <h3 class="lcard-title">{{ $car->title }}</h3>
+                </div>
 
                 <div class="lcard-specs">
                     @if($car->first_registration)

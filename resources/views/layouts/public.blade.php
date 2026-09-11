@@ -811,7 +811,9 @@
     .lcard-main{display:flex;gap:20px;align-items:center;min-width:0}
 
     .lcard-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
-    .lcard-title{font-size:17px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0}
+    .lcard-titlewrap{display:flex;align-items:center;gap:10px;min-width:0}
+    .lcard-accent{flex-shrink:0;width:4px;height:20px;border-radius:2px;background:var(--blue)}
+    .lcard-title{font-size:17px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0;min-width:0}
 
     /* Inline metadata row — single line, icons + label pairs separated
        by a thin vertical rule on desktop, wrap cleanly on mobile. */
