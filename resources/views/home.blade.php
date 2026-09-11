@@ -340,13 +340,13 @@
     .cs-cc-left h2{font-size:24px}
     .cs-cc-cards{gap:8px}
     .cs-cc-card{padding:12px 11px 14px}
-    .cs-cc-hero{height:420px;max-width:285px}
+    .cs-cc-hero{height:420px;max-width:none}
     .cs-cc-hero img{max-height:420px}
 }
 @media(max-width:390px){
     /* Very small — karty stack 1-col żeby tekst był czytelny. */
     .cs-cc-cards{grid-template-columns:1fr}
-    .cs-cc-hero{height:400px;max-width:270px}
+    .cs-cc-hero{height:400px;max-width:none}
     .cs-cc-hero img{max-height:400px}
 }
 @media(max-width:600px){
@@ -357,7 +357,7 @@
     .cs-jwz-head h2{font-size:24px}
     .cs-jwz-head p{font-size:13.5px}
     .cs-jwz-cta{padding:12px 26px;font-size:14px}
-    .cs-cc{padding:36px 0}
+    .cs-cc{padding:36px 0 0}
     .cs-cc-left h2{font-size:26px}
     .cs-cc-left p{font-size:14px}
     .cs-cc-cards{grid-template-columns:1fr}
