@@ -826,8 +826,8 @@
 
     /* Right actions column — price + CTA stacked, right-aligned, 160
        wide so the CTA fits without wrapping but doesn't dominate. */
-    .lcard-actions{flex-shrink:0;min-width:160px;display:flex;flex-direction:column;align-items:flex-end;gap:10px;align-self:center}
-    .lcard-price-label{font-size:10.5px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.7px;line-height:1;margin-bottom:6px}
+    .lcard-actions{flex-shrink:0;min-width:160px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:10px;align-self:stretch;border-left:1px solid #eef1f6;padding-left:28px}
+    .lcard-price-label{font-size:11px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.7px;line-height:1;margin-bottom:6px}
     .lcard-price{font-size:22px;font-weight:900;color:#0a0a0a;letter-spacing:-.5px;line-height:1;white-space:nowrap}
     .lcard-cta{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#0066ff;border:1.5px solid #0066ff;padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:700;text-decoration:none;transition:all .18s ease;position:relative;z-index:2;cursor:pointer;white-space:nowrap}
     .lcard-cta:hover{background:#0066ff;color:#fff;box-shadow:0 4px 12px rgba(0,102,255,.25)}
@@ -856,7 +856,7 @@
            min-content 340px. Grid katalogu nie moze zwezic kolumny ponizej
            min-content swojego dziecka, wiec cala strona wyjezdzala w prawo na
            waskich telefonach. Gdy brakuje miejsca, CTA schodzi pod cene. */
-        .lcard-actions{min-width:0;width:100%;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-top:10px;border-top:1px solid #f1f5f9}
+        .lcard-actions{min-width:0;width:100%;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-top:10px;padding-left:0;border-left:none;border-top:1px solid #f1f5f9}
         .lcard-price{font-size:20px;min-width:0}
         .lcard-cta{flex-shrink:0}
         .lcard-spec{font-size:12px;padding-right:8px;margin-right:8px}
