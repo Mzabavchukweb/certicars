@@ -149,18 +149,20 @@
    NIE wstawiac sztywnego px na kolumne bohatera bez minmax: przy 1380px
    (typowe okno Chrome na 15" Retina) 560px zjadalo polowe i sciskalo karty.
    Proporcje wg reference: tekst ~23%, karty ~39%, bohater ~29%. */
-.cs-cc-grid{width:100%;max-width:1560px;margin:0 auto;padding-left:clamp(24px,4vw,72px);display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.3fr) minmax(0,1fr);grid-template-areas:"content cards hero" "info    cards hero";gap:12px 28px;align-items:center;
+.cs-cc-grid{width:100%;max-width:1560px;margin:0 auto;padding-left:clamp(24px,4vw,72px);display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.3fr) minmax(0,1fr);grid-template-areas:"content cards hero";gap:12px 28px;align-items:center;
     /* align-content:center — bez tego nadmiar wysokosci sekcji (bohater ma
        min-height:700px) rozpycha wiersze i ramka z disclaimerem zjezdza na
        stopke. Teraz tekst + ramka trzymaja sie razem, wysrodkowane. */
-    grid-template-rows:auto auto;align-content:center}
+    grid-template-rows:auto;align-content:center}
 /* align-self:end — wiersz jest wyzszy od tekstu (wysokosc dyktuja karty), a
    align-items:center zostawialo pod tekstem duza dziure przed ramka
    disclaimera. Dosuniety do dolu wiersza tekst styka sie z ramka. */
-.cs-cc-left{grid-area:content;align-self:end;padding:56px 0 0}
-.cs-cc-cards{grid-area:cards;align-self:center;padding:56px 0}
+.cs-cc-left{grid-area:content;align-self:center;padding:56px 0}
+/* Srodkowa kolumna: etykieta nad kafelkami, disclaimer pod nimi. */
+.cs-cc-mid{grid-area:cards;align-self:center;padding:56px 0;display:flex;flex-direction:column;gap:18px;min-width:0}
+.cs-cc-mid-label{display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.4px;line-height:1}
+.cs-cc-mid-label::before{content:'';flex-shrink:0;width:4px;height:17px;border-radius:2px;background:#0066ff}
 .cs-cc-hero{grid-area:hero;align-self:stretch}
-.cs-cc-info{grid-area:info;align-self:start}
 /* Bohater wypełnia CAŁĄ prawą kolumnę (align-self:stretch + absolutny img
    z object-fit:cover). Sekcja przycina PNG: góra tuż nad głową, dół na
    wysokości kolan — dokładnie jak w reference. Bohater dochodzi do prawej
@@ -206,7 +208,7 @@
 .cs-cc-cta-secondary{display:inline-flex;align-items:center;gap:6px;color:#0066ff;padding:10px 4px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid transparent;transition:color .15s,border-color .15s}
 .cs-cc-cta-secondary:hover{color:#0052cc;border-color:#dbeafe}
 .cs-cc-ctas svg,.cs-cc-ctas i[data-lucide]{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
-.cs-cc-info{grid-area:info;align-self:start;display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,.7);border:1px solid rgba(219,234,254,.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-radius:10px;padding:12px 14px;font-size:12.5px;color:#475569;line-height:1.55;max-width:520px}
+.cs-cc-info{display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,.7);border:1px solid rgba(219,234,254,.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-radius:10px;padding:12px 14px;font-size:12.5px;color:#475569;line-height:1.55;max-width:none}
 .cs-cc-info-ico{flex-shrink:0;width:24px;height:24px;border-radius:6px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
 .cs-cc-info-ico svg,.cs-cc-info-ico i[data-lucide]{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
 
@@ -239,10 +241,11 @@
 @media(min-width:1025px){
     .cs-cc-grid{gap:14px 24px}
     .cs-cc-left{padding-top:48px}
-    .cs-cc-cards{padding:48px 0;gap:12px}
+    .cs-cc-mid{padding:48px 0}
+    .cs-cc-cards{gap:12px}
     .cs-cc-left h2{font-size:36px;letter-spacing:-.8px;margin-bottom:14px}
     .cs-cc-left p{font-size:14px;line-height:1.6;margin-bottom:16px;max-width:380px}
-    .cs-cc-info{font-size:11.5px;padding:10px 12px;max-width:440px}
+    .cs-cc-info{font-size:11.5px;padding:10px 12px}
     .cs-cc-card{min-height:190px;padding:18px 18px 20px;border-radius:16px}
     .cs-cc-card-ico{width:42px;height:42px;border-radius:11px}
     .cs-cc-card-ico svg,.cs-cc-card-ico i[data-lucide]{width:19px;height:19px}
@@ -267,8 +270,8 @@
     /* Tablet 1024px: content full width top, potem karty | hero, info full
        width przed hero. Grid-areas explicit żeby info nie utknęło w
        lewej kolumnie. */
-    .cs-cc-grid{padding-left:24px;padding-right:24px;grid-template-columns:1fr 1fr;grid-template-areas:"content content" "cards hero" "info info";gap:24px 32px}
-    .cs-cc-left,.cs-cc-cards{padding-bottom:0}
+    .cs-cc-grid{padding-left:24px;padding-right:24px;grid-template-columns:1fr 1fr;grid-template-areas:"content content" "cards hero";gap:24px 32px}
+    .cs-cc-left,.cs-cc-mid{padding-bottom:0}
     /* Tablet/mobile: ten sam kadr co desktop (cover + przyciecie), tylko w
        nizszym pudelku. Wczesniej lecial pelny PNG w normalnym flow — na tle
        sekcji widac bylo prostokat zdjecia z jego wlasnym tlem. Maska-winieta
@@ -298,7 +301,7 @@
        content → cards → info → hero (bohater ostatni).
        User feedback: „info idzie jako ostatni ten tekst, a potem bohater". */
     .cs-cc{padding:40px 0}
-    .cs-cc-grid{grid-template-columns:1fr;grid-template-areas:"content" "cards" "info" "hero";gap:20px}
+    .cs-cc-grid{grid-template-columns:1fr;grid-template-areas:"content" "cards" "hero";gap:20px}
     .cs-cc-left h2{font-size:28px;margin-bottom:14px}
     .cs-cc-left p{font-size:14px;margin-bottom:20px}
     .cs-cc-ctas{margin-bottom:16px}
@@ -740,7 +743,9 @@
             </div>
         </div>
 
-        <div class="cs-cc-cards">
+        <div class="cs-cc-mid">
+            <div class="cs-cc-mid-label">Co zawiera CertiCheck</div>
+            <div class="cs-cc-cards">
             @php
                 $ccCards = [
                     ['scan-line',     'Pomiary lakieru',   'Wskazujemy pomiary i ewentualne różnice grubości powłoki w punktach kontrolnych.'],
@@ -757,11 +762,12 @@
                     <span class="cs-cc-card-arrow" aria-hidden="true"><x-icon name="arrow-up-right" size="13" :strokeWidth="2.4"/></span>
                 </div>
             @endforeach
-        </div>
+            </div>
 
-        <div class="cs-cc-info">
-            <span class="cs-cc-info-ico" aria-hidden="true"><x-icon name="shield-check" size="13" :strokeWidth="2"/></span>
-            CertiCheck to wewnętrzny standard kontroli jakości CertiCars, a nie opinia rzeczoznawcy. Opis dotyczy stanu pojazdu na dzień oględzin i obejmuje elementy możliwe do oceny bez specjalistycznego demontażu podzespołów.
+            <div class="cs-cc-info">
+                <span class="cs-cc-info-ico" aria-hidden="true"><x-icon name="shield-check" size="13" :strokeWidth="2"/></span>
+                CertiCheck to wewnętrzny standard kontroli jakości CertiCars, a nie opinia rzeczoznawcy. Opis dotyczy stanu pojazdu na dzień oględzin i obejmuje elementy możliwe do oceny bez specjalistycznego demontażu podzespołów.
+            </div>
         </div>
 
         <div class="cs-cc-hero" aria-hidden="true">
