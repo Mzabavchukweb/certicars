@@ -561,7 +561,7 @@ class CarController extends Controller
 
     private function validateCar(Request $request): array
     {
-        return $request->validate([
+        $validated = $request->validate([
             'brand_id' => 'required|exists:brands,id',
             'model' => 'required|string|max:255',
             'category' => 'nullable|string|max:100',
@@ -701,6 +701,16 @@ class CarController extends Controller
             'exterior_video_file.max'        => 'Film zewnętrza 360° jest za duży. Maksymalny rozmiar to 200 MB.',
             'exterior_video_file.uploaded'   => 'Film zewnętrza 360° jest za duży lub przesyłanie zostało przerwane. Maksymalny rozmiar to 200 MB.',
         ]);
+
+        // Kolumny boolean sa NOT NULL z domyslnym false — pusty select ("— wybierz —")
+        // przychodzi jako null i wywalal INSERT/UPDATE calego auta.
+        foreach (['is_imported', 'available_now', 'home_delivery', 'has_certicheck', 'has_gethelp', 'noindex'] as $boolField) {
+            if (array_key_exists($boolField, $validated) && $validated[$boolField] === null) {
+                $validated[$boolField] = false;
+            }
+        }
+
+        return $validated;
     }
 
     private function syncRelations(Car $car, Request $request): void

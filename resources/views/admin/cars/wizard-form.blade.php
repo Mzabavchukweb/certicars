@@ -615,6 +615,8 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 .wz-order-saved.err { color: #ef4444; }
 .wz-file-preview-grid.is-sortable .wz-fp-item { cursor: grab; position: relative; }
 .wz-fp-item .fp-pos { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,.65); color: #fff; font-size: 11px; font-weight: 700; border-radius: 6px; padding: 2px 7px; }
+.wz-fp-item .fp-del { position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; line-height: 1; border: none; border-radius: 6px; background: rgba(239,68,68,.92); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.wz-file-preview-grid.wz-fp-local .wz-fp-item { position: relative; }
 .wz-img-tile img {
     width: 100%;
     aspect-ratio: 4/3;
@@ -1448,7 +1450,6 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                 <div class="wz-icon-row-ico"><x-icon name="log-in" size="20"/></div>
                 <div class="wz-icon-row-label">Importowany <span class="wz-icon-row-label-info" title="Czy pojazd został sprowadzony z zagranicy"><i data-lucide="info"></i></span></div>
                 <select name="is_imported">
-                    <option value="">— wybierz —</option>
                     @php $curImp = old('is_imported', $car?->is_imported); @endphp
                     <option value="1" {{ $curImp !== null && $curImp !== '' && (int) $curImp === 1 ? 'selected' : '' }}>Tak</option>
                     <option value="0" {{ $curImp !== null && $curImp !== '' && (int) $curImp === 0 ? 'selected' : '' }}>Nie</option>
@@ -2395,6 +2396,21 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
     // ===================================================================
     //  FILE DROP ZONES
     // ===================================================================
+    // Nowe auto: zdjecia wybrane w kilku turach musza sie DOKLADAC. Natywny
+    // <input type=file> podmienia cala liste przy kazdym wyborze, wiec
+    // trzymamy wlasna liste i po kazdej zmianie odbudowujemy input.files.
+    const wzPicked = new WeakMap();   // input -> File[]
+    const wzSortables = new WeakMap(); // grid -> Sortable
+
+    const wzFileKey = f => `${f.name}|${f.size}|${f.lastModified}`;
+
+    function wzSyncInput(input) {
+        if (!window.DataTransfer) return;
+        const dt = new DataTransfer();
+        (wzPicked.get(input) || []).forEach(f => dt.items.add(f));
+        input.files = dt.files;
+    }
+
     document.querySelectorAll('.wz-file-drop').forEach(drop => {
         const input = drop.querySelector('input[type="file"]');
         if (!input) return;
@@ -2404,18 +2420,14 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         drop.addEventListener('drop', e => {
             e.preventDefault();
             drop.classList.remove('over');
-            input.files = e.dataTransfer.files;
-            wzHandleFileDrop(drop, input);
+            wzHandleFileDrop(drop, input, Array.from(e.dataTransfer.files));
         });
-        input.addEventListener('change', () => wzHandleFileDrop(drop, input));
+        input.addEventListener('change', () => wzHandleFileDrop(drop, input, Array.from(input.files)));
     });
 
-    function wzHandleFileDrop(drop, input) {
+    function wzHandleFileDrop(drop, input, incoming) {
         const titleEl = drop.querySelector('.drop-title');
-        if (!input.files.length) {
-            if (titleEl && drop.dataset.originalText) titleEl.textContent = drop.dataset.originalText;
-            return;
-        }
+        if (!incoming || !incoming.length) return;
         if (titleEl && !drop.dataset.originalText) drop.dataset.originalText = titleEl.textContent;
 
         const uploadType = drop.dataset.uploadType;
@@ -2423,40 +2435,105 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 
         // AJAX upload for existing cars (gallery/damage)
         if (carId && (uploadType === 'gallery' || uploadType === 'damage')) {
-            const files = Array.from(input.files).filter(f => f.type.startsWith('image/'));
+            const files = incoming.filter(f => f.type.startsWith('image/'));
             if (titleEl) titleEl.textContent = `Wgrywanie ${files.length} zdjęć...`;
             input.value = '';
             wzAjaxUploadFiles(files, uploadType, carId);
             return;
         }
 
-        // Fallback: show local previews
-        const n = input.files.length;
-        if (titleEl) titleEl.textContent = `${n} plik(ów) gotowych do wgrania`;
+        // Nowe auto — lokalne podglady. Dokladamy do listy, bez duplikatow.
+        const list = wzPicked.get(input) || [];
+        const seen = new Set(list.map(wzFileKey));
+        let added = 0, dupes = 0;
+        incoming.forEach(f => {
+            if (!f.type.startsWith('image/')) return;
+            if (seen.has(wzFileKey(f))) { dupes++; return; }
+            seen.add(wzFileKey(f));
+            list.push(f);
+            added++;
+        });
+        wzPicked.set(input, list);
+        wzSyncInput(input);
+        wzRenderLocalPreviews(drop, input);
+        if (titleEl) {
+            titleEl.textContent = `${list.length} plik(ów) gotowych do wgrania`
+                + (added ? ` · dodano ${added}` : '')
+                + (dupes ? ` · pominięto ${dupes} już dodanych` : '');
+        }
+        if (window.toast && dupes) toast(`Pominięto ${dupes} zdjęć, które już są na liście.`, 'info');
+    }
 
-        let pg = drop.parentElement?.querySelector('.wz-file-preview-grid');
-        if (pg) pg.remove();
-        pg = document.createElement('div');
-        pg.className = 'wz-file-preview-grid';
-        drop.parentElement?.insertBefore(pg, drop.nextSibling);
-
-        Array.from(input.files).forEach((file, fileIndex) => {
-            if (!file.type.startsWith('image/')) return;
+    function wzRenderLocalPreviews(drop, input) {
+        const list = wzPicked.get(input) || [];
+        let pg = drop.parentElement?.querySelector('.wz-file-preview-grid.wz-fp-local');
+        if (!pg) {
+            pg = document.createElement('div');
+            pg.className = 'wz-file-preview-grid wz-fp-local';
+            drop.parentElement?.insertBefore(pg, drop.nextSibling);
+        }
+        pg.innerHTML = '';
+        list.forEach(file => {
             const item = document.createElement('div');
             item.className = 'wz-fp-item';
-            item.dataset.fileIndex = fileIndex;
+            item.dataset.fileKey = wzFileKey(file);
             const img = document.createElement('img');
             img.src = URL.createObjectURL(file);
             img.onload = () => URL.revokeObjectURL(img.src);
+            img.draggable = false;
             const name = document.createElement('div');
             name.className = 'fp-name';
             name.textContent = file.name;
-            img.draggable = false;
+            const del = document.createElement('button');
+            del.type = 'button';
+            del.className = 'fp-del';
+            del.title = 'Usuń z listy';
+            del.textContent = '×';
+            del.addEventListener('click', e => {
+                e.preventDefault(); e.stopPropagation();
+                const rest = (wzPicked.get(input) || []).filter(f => wzFileKey(f) !== item.dataset.fileKey);
+                wzPicked.set(input, rest);
+                wzSyncInput(input);
+                wzRenderLocalPreviews(drop, input);
+                const t = drop.querySelector('.drop-title');
+                if (t) t.textContent = rest.length ? `${rest.length} plik(ów) gotowych do wgrania` : (drop.dataset.originalText || t.textContent);
+            });
             item.appendChild(img);
             item.appendChild(name);
+            item.appendChild(del);
             pg.appendChild(item);
         });
-        if (uploadType === 'gallery' && window.wzSortLocalPreviews) window.wzSortLocalPreviews(pg, input);
+        wzNumberLocalPreviews(pg);
+        if (drop.dataset.uploadType === 'gallery') wzSortLocalPreviews(pg, input);
+    }
+
+    function wzNumberLocalPreviews(pg) {
+        pg.querySelectorAll('.wz-fp-item').forEach((it, i) => {
+            let b = it.querySelector('.fp-pos');
+            if (!b) { b = document.createElement('span'); b.className = 'fp-pos'; it.appendChild(b); }
+            b.textContent = i + 1;
+        });
+    }
+
+    // Nowe auto — podglady galerii przed zapisem tez da sie przestawiac.
+    function wzSortLocalPreviews(pg, input) {
+        if (!window.Sortable || !window.DataTransfer || wzSortables.has(pg)) return;
+        pg.classList.add('is-sortable');
+        wzSortables.set(pg, Sortable.create(pg, Object.assign({}, wzSortOpts, {
+            draggable: '.wz-fp-item',
+            filter: '.fp-del',
+            onEnd: () => {
+                const byKey = new Map((wzPicked.get(input) || []).map(f => [wzFileKey(f), f]));
+                const ordered = [];
+                pg.querySelectorAll('.wz-fp-item').forEach(it => {
+                    const f = byKey.get(it.dataset.fileKey);
+                    if (f) ordered.push(f);
+                });
+                wzPicked.set(input, ordered);
+                wzSyncInput(input);
+                wzNumberLocalPreviews(pg);
+            },
+        })));
     }
 
 
@@ -2629,30 +2706,6 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         };
     })();
 
-    // Nowe auto — podglądy galerii przed zapisem też da się przestawiać.
-    window.wzSortLocalPreviews = function(pg, input){
-        if (!window.Sortable || !window.DataTransfer) return;
-        pg.classList.add('is-sortable');
-        const files = Array.from(input.files);
-        const renumber = () => pg.querySelectorAll('.wz-fp-item').forEach((it, i) => {
-            let b = it.querySelector('.fp-pos');
-            if (!b) { b = document.createElement('span'); b.className = 'fp-pos'; it.appendChild(b); }
-            b.textContent = i + 1;
-        });
-        renumber();
-        Sortable.create(pg, Object.assign({}, wzSortOpts, {
-            draggable: '.wz-fp-item',
-            onEnd: () => {
-                const dt = new DataTransfer();
-                pg.querySelectorAll('.wz-fp-item').forEach(it => {
-                    const f = files[+it.dataset.fileIndex];
-                    if (f) dt.items.add(f);
-                });
-                input.files = dt.files;
-                renumber();
-            },
-        }));
-    };
 
 
     // ===================================================================
