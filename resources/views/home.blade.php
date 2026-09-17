@@ -58,7 +58,7 @@
 
 /* SEARCH FORM */
 .hero-search-wrap{position:relative;margin-top:-90px;z-index:4;padding-bottom:0}
-.hero-search{background:#fff;border-radius:22px;box-shadow:0 24px 64px rgba(0,0,0,.16),0 4px 16px rgba(0,0,0,.06);padding:32px 40px 32px;max-width:1200px;margin:0 auto}
+.hero-search{background:#fff;border-radius:22px;box-shadow:0 2px 10px rgba(15,32,80,.06),0 1px 2px rgba(15,32,80,.04);padding:32px 40px 32px;max-width:1200px;margin:0 auto}
 
 /* Header row */
 .hero-search-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
@@ -398,7 +398,10 @@
    for the shared car-list-card component. */
 
 .body-types{background:#fff;border:none;padding:32px 0 48px;margin-top:0}
-.body-types-card{background:#fff;border-radius:22px;box-shadow:0 24px 64px rgba(0,0,0,.16),0 4px 16px rgba(0,0,0,.06);padding:32px 40px 36px;max-width:1200px;margin:0 auto}
+/* position+z-index nad .hero-search-wrap (z-index:4): inaczej cien karty
+   wyszukiwarki kladl sie na gorze tej karty i ja przyciemnial. Podnosimy
+   TYLKO karte — sekcja ma biale tlo, ktore ucieloby cien w polowie. */
+.body-types-card{position:relative;z-index:5;background:#fff;border-radius:22px;box-shadow:0 2px 10px rgba(15,32,80,.06),0 1px 2px rgba(15,32,80,.04);padding:32px 40px 36px;max-width:1200px;margin:0 auto}
 .body-types-inner{max-width:1200px;margin:0 auto;padding:0}
 .body-types-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;gap:20px}
 .body-types-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:1.4px;margin-bottom:8px}
