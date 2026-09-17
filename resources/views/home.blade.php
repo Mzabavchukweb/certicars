@@ -201,7 +201,7 @@
 .cs-cc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:12px}
 .cs-cc-kicker::before{content:'';width:22px;height:1.5px;background:#0066ff;border-radius:1px}
 .cs-cc-left h2{font-size:44px;font-weight:900;color:#0a0a0a;letter-spacing:-1px;line-height:1.05;margin:0 0 18px}
-.cs-cc-left p{font-size:15px;color:#475569;line-height:1.65;margin:0 0 20px;max-width:420px}
+.cs-cc-left p{font-size:16.5px;color:#475569;line-height:1.65;margin:0 0 22px;max-width:440px}
 .cs-cc-ctas{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 .cs-cc-cta-primary{display:inline-flex;align-items:center;gap:8px;background:#0066ff;color:#fff;padding:12px 22px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;transition:all .18s ease;box-shadow:0 4px 16px rgba(0,102,255,.3)}
 .cs-cc-cta-primary:hover{background:#0052cc;box-shadow:0 6px 20px rgba(0,102,255,.42);transform:translateY(-1px);color:#fff}
@@ -227,7 +227,7 @@
 .cs-cc-card-ico{width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-bottom:14px;flex-shrink:0}
 .cs-cc-card-ico svg,.cs-cc-card-ico i[data-lucide]{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9}
 .cs-cc-card h3{font-size:16px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0 0 6px;line-height:1.25}
-.cs-cc-card p{font-size:13px;color:#4b5563;line-height:1.55;margin:0}
+.cs-cc-card p{font-size:14.5px;color:#4b5563;line-height:1.6;margin:0}
 .cs-cc-card-arrow{position:absolute;top:22px;right:22px;width:32px;height:32px;border-radius:50%;background:#fff;border:1px solid #dbeafe;color:#0066ff;display:flex;align-items:center;justify-content:center;opacity:.65;transition:opacity .18s ease,transform .18s ease}
 .cs-cc-card-arrow svg,.cs-cc-card-arrow i[data-lucide]{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.4}
 .cs-cc-card:hover .cs-cc-card-arrow{opacity:1;transform:translateX(2px) translateY(-2px)}
@@ -244,13 +244,13 @@
     .cs-cc-mid{padding:48px 0}
     .cs-cc-cards{gap:12px}
     .cs-cc-left h2{font-size:36px;letter-spacing:-.8px;margin-bottom:14px}
-    .cs-cc-left p{font-size:14px;line-height:1.6;margin-bottom:16px;max-width:380px}
+    .cs-cc-left p{font-size:16.5px;line-height:1.65;margin-bottom:20px;max-width:430px}
     .cs-cc-info{font-size:11.5px;padding:10px 12px}
     .cs-cc-card{min-height:190px;padding:18px 18px 20px;border-radius:16px}
     .cs-cc-card-ico{width:42px;height:42px;border-radius:11px}
     .cs-cc-card-ico svg,.cs-cc-card-ico i[data-lucide]{width:19px;height:19px}
-    .cs-cc-card h3{font-size:14.5px;margin:12px 0 5px}
-    .cs-cc-card p{font-size:12px;line-height:1.5}
+    .cs-cc-card h3{font-size:17px;margin:12px 0 6px}
+    .cs-cc-card p{font-size:14.5px;line-height:1.6}
     .cs-cc-card-arrow{top:18px;right:18px;width:28px;height:28px}
     .cs-cc-card-arrow svg,.cs-cc-card-arrow i[data-lucide]{width:13px;height:13px}
     .cs-cc-hero{min-height:480px}
@@ -303,7 +303,7 @@
     .cs-cc{padding:40px 0}
     .cs-cc-grid{grid-template-columns:1fr;grid-template-areas:"content" "cards" "hero";gap:20px}
     .cs-cc-left h2{font-size:28px;margin-bottom:14px}
-    .cs-cc-left p{font-size:14px;margin-bottom:20px}
+    .cs-cc-left p{font-size:15.5px;margin-bottom:20px}
     .cs-cc-ctas{margin-bottom:16px}
     .cs-cc-info{margin-bottom:0}
     .cs-cc-cards{grid-template-columns:1fr 1fr;gap:10px}
@@ -311,7 +311,7 @@
     .cs-cc-card-ico{width:34px;height:34px;margin-bottom:10px}
     .cs-cc-card-ico svg,.cs-cc-card-ico i[data-lucide]{width:16px;height:16px}
     .cs-cc-card h3{font-size:12.5px;margin:6px 0 4px}
-    .cs-cc-card p{font-size:11px;line-height:1.45}
+    .cs-cc-card p{font-size:13px;line-height:1.55}
     .cs-cc-card-arrow{top:14px;right:14px;width:22px;height:22px}
     .cs-cc-card-arrow svg,.cs-cc-card-arrow i[data-lucide]{width:11px;height:11px}
     /* Bohater full-bleed: pudelko rozpycha sie na cala szerokosc (ujemne
@@ -367,7 +367,7 @@
     .cs-jwz-cta{padding:12px 26px;font-size:14px}
     .cs-cc{padding:36px 0 0}
     .cs-cc-left h2{font-size:26px}
-    .cs-cc-left p{font-size:14px}
+    .cs-cc-left p{font-size:15.5px}
     .cs-cc-cards{grid-template-columns:1fr}
     .cs-cc-ctas{flex-direction:column;align-items:stretch}
     .cs-cc-cta-primary,.cs-cc-cta-secondary{justify-content:center}

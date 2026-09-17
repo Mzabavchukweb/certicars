@@ -825,10 +825,12 @@
     .lcard-spec svg{width:13px;height:13px;stroke:#64748b;fill:none;stroke-width:2;flex-shrink:0}
 
     .lcard-certicheck{margin-top:10px;position:relative;z-index:2}
-    /* Gdy karta ma badge CertiCheck, rozsuwamy tresc: dane u gory, badge
-       przy dolnej krawedzi. :has() zamiast sztywnych marginesow — bez niego
-       stack zostaje wysrodkowany (bezpieczny fallback). */
-    .lcard-content:has(.lcard-certicheck){justify-content:space-between;padding-bottom:12px}
+    /* Badge CertiCheck NIE moze przesuwac tytulu i danych — kazda karta (z badge'em
+       i bez) ma je w tym samym miejscu, wysrodkowane w pionie. Dlatego badge jest
+       przypiety absolutnie do lewego dolnego rogu. Ponizej 721px karta sie
+       stackuje, wiec tam wraca do normalnego przeplywu. */
+    @media(min-width:721px){.lcard-certicheck{position:absolute;left:22px;bottom:16px;margin:0}}
+    @media(min-width:721px) and (max-width:1024px){.lcard-certicheck{left:18px;bottom:14px}}
 
     /* Right actions column — price + CTA stacked, right-aligned, 160
        wide so the CTA fits without wrapping but doesn't dominate. */
