@@ -615,6 +615,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 .wz-order-saved.err { color: #ef4444; }
 .wz-file-preview-grid.is-sortable .wz-fp-item { cursor: grab; position: relative; }
 .wz-fp-item .fp-pos { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,.65); color: #fff; font-size: 11px; font-weight: 700; border-radius: 6px; padding: 2px 7px; }
+.wz-fp-item .fp-file { width: 100%; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; background: #eff6ff; color: var(--blue, #0066ff); font-size: 15px; font-weight: 800; letter-spacing: .5px; }
 .wz-fp-item .fp-del { position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; line-height: 1; border: none; border-radius: 6px; background: rgba(239,68,68,.92); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .wz-file-preview-grid.wz-fp-local .wz-fp-item { position: relative; }
 .wz-img-tile img {
@@ -2420,12 +2421,12 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         drop.addEventListener('drop', e => {
             e.preventDefault();
             drop.classList.remove('over');
-            wzHandleFileDrop(drop, input, Array.from(e.dataTransfer.files));
+            wzHandleFileDrop(drop, input, Array.from(e.dataTransfer.files), true);
         });
-        input.addEventListener('change', () => wzHandleFileDrop(drop, input, Array.from(input.files)));
+        input.addEventListener('change', () => wzHandleFileDrop(drop, input, Array.from(input.files), false));
     });
 
-    function wzHandleFileDrop(drop, input, incoming) {
+    function wzHandleFileDrop(drop, input, incoming, fromDrop) {
         const titleEl = drop.querySelector('.drop-title');
         if (!incoming || !incoming.length) return;
         if (titleEl && !drop.dataset.originalText) drop.dataset.originalText = titleEl.textContent;
@@ -2442,12 +2443,24 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             return;
         }
 
+        // Pola na JEDEN plik (filmy 360, panoramy) — zadnego sklejania listy.
+        // Wczesniejsza wersja filtrowala tu po typie image/* i kasowala film.
+        if (!input.multiple) {
+            if (fromDrop && window.DataTransfer) {
+                const dt = new DataTransfer();
+                dt.items.add(incoming[0]);
+                input.files = dt.files;
+            }
+            const f = input.files[0] || incoming[0];
+            if (titleEl && f) titleEl.textContent = `${f.name} (${(f.size / 1048576).toFixed(1)} MB) — gotowy do wgrania`;
+            return;
+        }
+
         // Nowe auto — lokalne podglady. Dokladamy do listy, bez duplikatow.
         const list = wzPicked.get(input) || [];
         const seen = new Set(list.map(wzFileKey));
         let added = 0, dupes = 0;
         incoming.forEach(f => {
-            if (!f.type.startsWith('image/')) return;
             if (seen.has(wzFileKey(f))) { dupes++; return; }
             seen.add(wzFileKey(f));
             list.push(f);
@@ -2477,10 +2490,17 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             const item = document.createElement('div');
             item.className = 'wz-fp-item';
             item.dataset.fileKey = wzFileKey(file);
-            const img = document.createElement('img');
-            img.src = URL.createObjectURL(file);
-            img.onload = () => URL.revokeObjectURL(img.src);
-            img.draggable = false;
+            let img;
+            if (file.type.startsWith('image/')) {
+                img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.onload = () => URL.revokeObjectURL(img.src);
+                img.draggable = false;
+            } else {
+                img = document.createElement('div');
+                img.className = 'fp-file';
+                img.textContent = (file.name.split('.').pop() || '?').toUpperCase();
+            }
             const name = document.createElement('div');
             name.className = 'fp-name';
             name.textContent = file.name;
