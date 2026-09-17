@@ -600,11 +600,19 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
     overflow: hidden;
     background: #fff;
     cursor: grab;
+    container-type: inline-size;
     transition: transform .15s, opacity .15s, box-shadow .15s;
 }
 .wz-img-tile:active { cursor: grabbing; }
-.wz-img-tile.dragging { opacity: .5; transform: scale(.95); }
-.wz-img-tile.drag-over { box-shadow: 0 0 0 3px var(--blue, #0066ff); transform: scale(1.02); }
+.wz-img-tile img { -webkit-user-drag: none; user-select: none; }
+.wz-img-tile.sort-ghost { opacity: .35; outline: 2px dashed var(--blue, #0066ff); outline-offset: -2px; }
+.wz-img-tile.sort-chosen { box-shadow: 0 10px 28px rgba(15,32,80,.22); }
+.wz-img-tile.sort-drag { transform: rotate(1.5deg); }
+.wz-order-saved { font-size: 12px; font-weight: 600; color: #10b981; min-height: 16px; margin: 8px 0 10px; opacity: 0; transition: opacity .2s; }
+.wz-order-saved.show { opacity: 1; }
+.wz-order-saved.err { color: #ef4444; }
+.wz-file-preview-grid.is-sortable .wz-fp-item { cursor: grab; position: relative; }
+.wz-fp-item .fp-pos { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,.65); color: #fff; font-size: 11px; font-weight: 700; border-radius: 6px; padding: 2px 7px; }
 .wz-img-tile img {
     width: 100%;
     aspect-ratio: 4/3;
@@ -639,19 +647,17 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 }
 .wz-img-tile .tile-drag {
     position: absolute;
-    top: 6px; left: 50%; transform: translateX(-50%);
-    background: rgba(0,0,0,.6);
+    top: calc(75cqw - 30px); left: 6px;
+    background: rgba(0,0,0,.65);
     color: #fff;
     border-radius: 6px;
-    width: 26px; height: 22px;
+    height: 24px; padding: 0 7px 0 4px; gap: 2px;
     display: flex; align-items: center; justify-content: center;
     cursor: grab;
-    opacity: 0;
-    transition: opacity .15s;
-    pointer-events: none;
+    touch-action: none;
 }
-.wz-img-tile:hover .tile-drag { opacity: 1; }
-.wz-img-tile .tile-drag i { width: 14px; height: 14px; }
+.wz-img-tile .tile-drag i, .wz-img-tile .tile-drag svg { width: 14px; height: 14px; }
+.wz-img-tile .tile-pos { font-size: 11px; font-weight: 700; line-height: 1; }
 .wz-img-tile.to-delete { opacity: .4; outline: 2px solid var(--red, #ef4444); }
 .wz-img-tile .tile-alt {
     padding: 8px 10px;
@@ -1170,7 +1176,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             <div class="wz-section-badge">1</div>
             <div>
                 <div class="wz-section-title">Galeria zdjęć</div>
-                <div class="wz-section-subtitle">Przeciągnij aby zmienić kolejność · alt text auto z tytułu</div>
+                <div class="wz-section-subtitle">Chwyć i przeciągnij zdjęcie, aby zmienić kolejność — tak ułożą się w galerii ogłoszenia (zapis od razu) · „Główne” = miniatura na liście aut</div>
             </div>
         </div>
 
@@ -1181,12 +1187,12 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         </div>
         @endif
 
-        @if($car && $car->galleryImages->count())
-        <div id="wzGalleryGrid" class="wz-img-grid" data-sortable data-type="gallery">
+        @if($car)
+        <div id="wzGalleryGrid" class="wz-img-grid" data-type="gallery" data-reorder-url="{{ route('admin.cars.images.reorder', $car) }}">
             @foreach($car->galleryImages as $img)
-            <div class="wz-img-tile sort-item" data-img-id="{{ $img->id }}" draggable="true">
-                <img src="{{ $img->url }}" alt="{{ $img->alt }}">
-                <span class="tile-drag" title="Przeciągnij, aby zmienić kolejność"><i data-lucide="grip-vertical"></i></span>
+            <div class="wz-img-tile sort-item" data-img-id="{{ $img->id }}">
+                <img src="{{ $img->url }}" alt="{{ $img->alt }}" draggable="false">
+                <span class="tile-drag" title="Przeciągnij, aby zmienić kolejność"><i data-lucide="grip-vertical"></i><b class="tile-pos">{{ $loop->iteration }}</b></span>
                 <label class="tile-primary" title="Zaznacz jako główne"><input type="radio" name="primary_image_id" value="{{ $img->id }}" {{ $img->is_primary?'checked':'' }}> Główne</label>
                 <div class="tile-actions">
                     <button type="button" class="tile-del" onclick="wzToggleDelete(this,{{ $img->id }})"><i data-lucide="x"></i></button>
@@ -1199,8 +1205,8 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             </div>
             @endforeach
         </div>
-        @elseif($car)
-        <p style="color:var(--text-3);font-size:12.5px;margin-bottom:10px">Brak zdjęć galerii.</p>
+        <p id="wzGalleryEmpty" style="color:var(--text-3);font-size:12.5px;margin-bottom:10px;{{ $car->galleryImages->count() ? 'display:none' : '' }}">Brak zdjęć galerii.</p>
+        <div id="wzGallerySaved" class="wz-order-saved" aria-live="polite"></div>
         @endif
 
         <label class="wz-file-drop" id="wzGalleryDrop" data-upload-type="gallery">
@@ -2177,6 +2183,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
      JAVASCRIPT
      ============================================================ --}}
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
 <script>
 (function(){
     'use strict';
@@ -2561,20 +2568,23 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         pg.className = 'wz-file-preview-grid';
         drop.parentElement?.insertBefore(pg, drop.nextSibling);
 
-        Array.from(input.files).forEach(file => {
+        Array.from(input.files).forEach((file, fileIndex) => {
             if (!file.type.startsWith('image/')) return;
             const item = document.createElement('div');
             item.className = 'wz-fp-item';
+            item.dataset.fileIndex = fileIndex;
             const img = document.createElement('img');
             img.src = URL.createObjectURL(file);
             img.onload = () => URL.revokeObjectURL(img.src);
             const name = document.createElement('div');
             name.className = 'fp-name';
             name.textContent = file.name;
+            img.draggable = false;
             item.appendChild(img);
             item.appendChild(name);
             pg.appendChild(item);
         });
+        if (uploadType === 'gallery' && window.wzSortLocalPreviews) window.wzSortLocalPreviews(pg, input);
     }
 
 
@@ -2615,7 +2625,9 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                 if (progressBar) progressBar.style.width = Math.round((done / total) * 100) + '%';
                 if (progressText) progressText.textContent = `${done}/${total}`;
 
-                if (data.success && data.image) {
+                if (data.success && data.image && type === 'gallery' && window.wzGallerySortable) {
+                    window.wzGallerySortable.add(data.image);
+                } else if (data.success && data.image) {
                     const tile = document.createElement('div');
                     tile.className = 'wz-fp-item';
                     tile.style.border = '2px solid #10b981';
@@ -2658,54 +2670,117 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 
 
     // ===================================================================
-    //  GALLERY DRAG-AND-DROP REORDER
+    //  GALLERY DRAG-AND-DROP REORDER (SortableJS — mysz i dotyk)
+    //  Istniejące auto: kolejność zapisuje się od razu (AJAX) + image_order[]
+    //  w formularzu jako zabezpieczenie. Nowe auto: przestawiamy podglądy
+    //  i odbudowujemy input.files w tej samej kolejności.
     // ===================================================================
-    (function(){
+    const wzCsrf = () => document.querySelector('meta[name="csrf-token"]')?.content
+                      || document.querySelector('input[name="_token"]')?.value;
+    const wzSortOpts = {
+        animation: 180,
+        ghostClass: 'sort-ghost',
+        chosenClass: 'sort-chosen',
+        dragClass: 'sort-drag',
+        filter: 'input, button, label, .tile-del',
+        preventOnFilter: false,
+        delay: 150,
+        delayOnTouchOnly: true,
+        forceFallback: false,
+    };
+
+    window.wzGallerySortable = (function(){
         const grid = document.getElementById('wzGalleryGrid');
-        if (!grid) return;
+        if (!grid || !window.Sortable) return null;
+        const savedEl = document.getElementById('wzGallerySaved');
+        let saveTimer = null, req = 0;
 
-        let draggedEl = null;
-
-        function syncOrder(){
-            const items = grid.querySelectorAll('.sort-item');
-            items.forEach(it => {
-                const inp = it.querySelector('.sort-order-input');
-                if (inp) inp.value = it.dataset.imgId;
+        function renumber(){
+            grid.querySelectorAll('.sort-item').forEach((it, i) => {
+                const pos = it.querySelector('.tile-pos');
+                if (pos) pos.textContent = i + 1;
             });
+            const empty = document.getElementById('wzGalleryEmpty');
+            if (empty) empty.style.display = grid.querySelector('.sort-item') ? 'none' : '';
         }
 
-        grid.querySelectorAll('.sort-item').forEach(item => {
-            item.addEventListener('dragstart', e => {
-                draggedEl = item;
-                item.classList.add('dragging');
-                e.dataTransfer.effectAllowed = 'move';
-                e.dataTransfer.setData('text/plain', item.dataset.imgId);
-            });
-            item.addEventListener('dragend', () => {
-                item.classList.remove('dragging');
-                grid.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
-                draggedEl = null;
-                syncOrder();
-            });
-            item.addEventListener('dragover', e => {
-                e.preventDefault();
-                if (!draggedEl || draggedEl === item) return;
-                item.classList.add('drag-over');
-                e.dataTransfer.dropEffect = 'move';
-            });
-            item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
-            item.addEventListener('drop', e => {
-                e.preventDefault();
-                item.classList.remove('drag-over');
-                if (!draggedEl || draggedEl === item) return;
-                const rect = item.getBoundingClientRect();
-                const after = (e.clientX - rect.left) > rect.width / 2;
-                if (after) item.parentNode.insertBefore(draggedEl, item.nextSibling);
-                else item.parentNode.insertBefore(draggedEl, item);
-                syncOrder();
-            });
-        });
+        function flash(msg, isErr){
+            if (!savedEl) return;
+            savedEl.textContent = msg;
+            savedEl.classList.toggle('err', !!isErr);
+            savedEl.classList.add('show');
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => savedEl.classList.remove('show'), isErr ? 6000 : 2200);
+        }
+
+        async function save(){
+            const order = Array.from(grid.querySelectorAll('.sort-item')).map(it => it.dataset.imgId);
+            const my = ++req;
+            try {
+                const res = await fetch(grid.dataset.reorderUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json',
+                               'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': wzCsrf() },
+                    body: JSON.stringify({ order }),
+                });
+                if (my !== req) return;
+                if (!res.ok) throw new Error(res.status);
+                flash('✓ Kolejność zdjęć zapisana');
+            } catch (e) {
+                if (my === req) flash('Nie udało się zapisać kolejności — kliknij „Zapisz”, aby ją utrwalić.', true);
+            }
+        }
+
+        Sortable.create(grid, Object.assign({}, wzSortOpts, {
+            draggable: '.sort-item',
+            onEnd: (e) => { renumber(); if (e.oldIndex !== e.newIndex) save(); },
+        }));
+
+        return {
+            add(image){
+                const tile = document.createElement('div');
+                tile.className = 'wz-img-tile sort-item';
+                tile.dataset.imgId = image.id;
+                const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+                tile.innerHTML =
+                    `<img src="${esc(image.url)}" alt="${esc(image.alt)}" draggable="false">`
+                  + `<span class="tile-drag" title="Przeciągnij, aby zmienić kolejność"><i data-lucide="grip-vertical"></i><b class="tile-pos"></b></span>`
+                  + `<label class="tile-primary" title="Zaznacz jako główne"><input type="radio" name="primary_image_id" value="${image.id}"> Główne</label>`
+                  + `<div class="tile-actions"><button type="button" class="tile-del" onclick="wzToggleDelete(this,${image.id})"><i data-lucide="x"></i></button></div>`
+                  + `<input type="checkbox" name="delete_images[]" value="${image.id}" style="display:none">`
+                  + `<input type="hidden" name="image_order[]" value="${image.id}" class="sort-order-input">`
+                  + `<div class="tile-alt"><input type="text" name="image_alt[${image.id}]" value="" placeholder="${esc(image.alt)}" title="Alt text — opis zdjęcia dla SEO"></div>`;
+                grid.appendChild(tile);
+                renumber();
+                if (window.lucide) lucide.createIcons();
+            },
+        };
     })();
+
+    // Nowe auto — podglądy galerii przed zapisem też da się przestawiać.
+    window.wzSortLocalPreviews = function(pg, input){
+        if (!window.Sortable || !window.DataTransfer) return;
+        pg.classList.add('is-sortable');
+        const files = Array.from(input.files);
+        const renumber = () => pg.querySelectorAll('.wz-fp-item').forEach((it, i) => {
+            let b = it.querySelector('.fp-pos');
+            if (!b) { b = document.createElement('span'); b.className = 'fp-pos'; it.appendChild(b); }
+            b.textContent = i + 1;
+        });
+        renumber();
+        Sortable.create(pg, Object.assign({}, wzSortOpts, {
+            draggable: '.wz-fp-item',
+            onEnd: () => {
+                const dt = new DataTransfer();
+                pg.querySelectorAll('.wz-fp-item').forEach(it => {
+                    const f = files[+it.dataset.fileIndex];
+                    if (f) dt.items.add(f);
+                });
+                input.files = dt.files;
+                renumber();
+            },
+        }));
+    };
 
 
     // ===================================================================

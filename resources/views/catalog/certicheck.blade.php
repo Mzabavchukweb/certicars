@@ -250,7 +250,7 @@
         @if($car->paint_measurements && count($car->paint_measurements))
         <div class="cc-section">
             <div class="cc-section-title">
-                <x-icon name="paintbrush" size="18"/>
+                <x-icon name="scan-line" size="18"/>
                 Pomiary grubości lakieru
             </div>
             <p style="font-size:12px;color:#9ca3af;margin:-8px 0 14px">Norma fabryczna: 80–150 µm. Wartości powyżej 200 µm mogą wskazywać na naprawę lakierniczą.</p>
@@ -372,7 +372,7 @@
         @if($car->tireSets && $car->tireSets->count())
         <div class="cc-section">
             <div class="cc-section-title">
-                <x-icon name="circle-dot" size="18"/>
+                <x-icon name="tabler:wheel" size="18"/>
                 Opony
             </div>
             @foreach($car->tireSets as $set)

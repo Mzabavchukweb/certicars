@@ -413,22 +413,21 @@
 }
 
 /* ============ 3-card bottom row (Historia / Dokumenty / Formalności) ============ */
-.cs-info-3row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box;align-items:stretch}
-.cs-info-3card{background:#fff;border:1px solid #eef1f6;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:22px 24px;display:flex;flex-direction:column;min-width:0;height:100%}
-.cs-info-3card-head{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #eef1f6}
-.cs-info-3card-ico{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#e8f0ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
-.cs-info-3card-ico svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.cs-info-3card-title{font-size:16px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0;line-height:1.3}
+.cs-info-3row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box;align-items:stretch}
+.cs-info-3card{background:#fff;border:1px solid #eef1f6;border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);padding:22px 24px 56px;display:flex;flex-direction:column;min-width:0;height:100%}
+.cs-info-3card-head{display:flex;align-items:center;gap:13px;margin-bottom:0;padding-bottom:14px;border-bottom:1px solid #eef1f6}
+.cs-info-3card-ico{flex-shrink:0;width:46px;height:46px;border-radius:12px;background:#e8f0ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.cs-info-3card-ico svg{width:24px!important;height:24px!important;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.cs-info-3card-title{font-size:17px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0;line-height:1.3}
 .cs-info-3card-rows{flex:1;display:flex;flex-direction:column}
-.cs-info-3row-line{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #f2f4f8;font-size:14px;line-height:1.45}
-.cs-info-3row-line:last-child{border-bottom:none;padding-bottom:2px}
-.cs-info-3row-line:first-child{padding-top:4px}
-.cs-info-3row-line .lbl{display:flex;align-items:center;gap:12px;color:#6b7280;font-weight:500;min-width:0;flex:1;line-height:1.4;font-size:14px}
+.cs-info-3row-line{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:20px 0;border-bottom:1px solid #eef1f6;font-size:15px;line-height:24px}
+.cs-info-3row-line:last-child{border-bottom:none}
+.cs-info-3row-line .lbl{display:flex;align-items:center;gap:21px;color:#6b7280;font-weight:500;min-width:0;flex:1;line-height:24px;font-size:15px}
 /* Ikony wierszy bez niebieskiego boxa (wg reference) — sam glif. Box
    zostaje tylko w naglowku karty i w siatce Dane pojazdu. */
-.cs-info-3row-line .lbl-ico{flex-shrink:0;width:20px;height:20px;color:var(--blue);display:inline-flex;align-items:center;justify-content:center}
-.cs-info-3row-line .lbl-ico svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.9}
-.cs-info-3row-line .val{font-weight:700;color:#0a0a0a;text-align:right;word-break:break-word;flex-shrink:0;max-width:55%;font-size:14.5px;letter-spacing:-.1px}
+.cs-info-3row-line .lbl-ico{flex-shrink:0;width:24px;height:24px;color:var(--blue);display:inline-flex;align-items:center;justify-content:center}
+.cs-info-3row-line .lbl-ico svg{width:23px!important;height:23px!important;stroke:currentColor;fill:none;stroke-width:1.9}
+.cs-info-3row-line .val{font-weight:700;color:#0a0a0a;text-align:right;word-break:break-word;flex-shrink:0;max-width:55%;font-size:15px;letter-spacing:-.1px}
 .cs-info-3row-line .val.muted{color:#94a3b8;font-weight:500;font-style:normal}
 .cs-info-3row-line .val.ok{color:#16a34a;font-weight:800;display:inline-flex;align-items:center;gap:6px}
 .cs-info-3row-line .val.ok::after{content:'';display:inline-block;width:16px;height:16px;border-radius:50%;background:#dcfce7 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2316a34a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/10px 10px no-repeat;flex-shrink:0}
@@ -842,11 +841,11 @@
    detail block on the page shares the same border/radius/shadow language. */
 .cs-data-section{background:#fff;border:1px solid #eef1f6;border-radius:18px;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);max-width:100%}
 .cs-wrap > .cs-data-section,.cs-wrap > div:not(.container) > .cs-data-section{max-width:calc(1200px - 48px);margin-left:auto;margin-right:auto}
-.cs-data-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;user-select:none;border-bottom:1px solid #eef1f6;background:#fff}
+.cs-data-header{display:flex;align-items:center;justify-content:space-between;padding:19px 24px;user-select:none;border-bottom:1px solid #eef1f6;background:#fff}
 .cs-data-header h2{font-size:16px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;display:flex;align-items:center;gap:14px;margin:0;line-height:1.3;font-family:'Inter',sans-serif}
 .cs-data-header h2 i,.cs-data-header h2 svg{display:inline-flex;align-items:center;justify-content:center}
 /* Header icon: 44x44 contained pill (matches cs-info-3card-ico / cs-equip-cat-ico) */
-.cs-data-header h2 svg,.cs-data-header h2 i[data-lucide],.cs-data-header h2 i.cs-icon{width:20px;height:20px;flex-shrink:0;color:#0066ff;stroke-width:1.9;box-sizing:content-box;padding:12px;background:#e8f0ff;border-radius:12px}
+.cs-data-header h2 svg,.cs-data-header h2 i[data-lucide],.cs-data-header h2 i.cs-icon{width:24px!important;height:24px!important;flex-shrink:0;color:#0066ff;stroke-width:1.9;box-sizing:content-box;padding:11px;background:#e8f0ff;border-radius:12px}
 .cs-data-header .chev{display:none}
 /* Collapsible accordion behavior — applied only at mobile breakpoint */
 @media(max-width:1024px){
@@ -871,7 +870,7 @@
    (prawa krawędź kolumny + dolna krawędź wiersza). Ikona w soft-blue
    rounded box po lewej, label (mała szara) nad value (bold). */
 .cs-dp-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0}
-.cs-dp-item{display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:16px;padding:18px 20px;background:transparent;
+.cs-dp-item{display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:16px;padding:19px 22px;background:transparent;
     border-right:1px solid #eef1f6;border-bottom:1px solid #eef1f6;min-width:0;transition:background .15s ease}
 .cs-dp-item:hover{background:#f7f9fd}
 /* Ostatnia kolumna bez prawej linii, ostatni wiersz bez dolnej — inaczej
@@ -879,7 +878,7 @@
 .cs-dp-grid > .cs-dp-item:nth-child(4n){border-right:none}
 .cs-dp-grid > .cs-dp-item:nth-last-child(-n+4){border-bottom:none}
 .cs-dp-ico{width:48px;height:48px;border-radius:12px;background:#eef4ff;color:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.cs-dp-ico svg,.cs-dp-ico i[data-lucide]{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9}
+.cs-dp-ico svg,.cs-dp-ico i[data-lucide]{width:24px!important;height:24px!important;stroke:currentColor;fill:none;stroke-width:1.9}
 .cs-dp-body{display:flex;flex-direction:column;min-width:0;gap:4px}
 .cs-dp-lbl{font-size:13px;color:#6b7280;font-weight:500;line-height:1.3;letter-spacing:.1px}
 .cs-dp-val{font-size:15px;color:#0a0a0a;font-weight:800;line-height:1.3;letter-spacing:-.15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1427,7 +1426,7 @@
                 Dokumenty
             </button>
             <button type="button" class="cs-gallery-tab" data-gallery-filter="paint" onclick="csFilterGallery(this,'paint')" role="tab" aria-selected="false">
-                <x-icon name="paintbrush" size="14" :strokeWidth="1.8"/>
+                <x-icon name="scan-line" size="14" :strokeWidth="1.8"/>
                 Pomiary lakieru
             </button>
         </div>
@@ -1594,14 +1593,14 @@
                     @endif
                     @if($car->body_type ?? $car->category)
                     <div class="cs-sidebar-summary-row">
-                        <span class="cs-row-icon"><x-icon name="car-front" size="16"/></span>
+                        <span class="cs-row-icon"><x-icon name="ph-fill:car" size="16"/></span>
                         <span class="lbl">Nadwozie</span>
                         <span class="val">{{ \App\Helpers\CarLabels::bodyType($car->body_type ?? $car->category) }}</span>
                     </div>
                     @endif
                     @if($car->seats)
                     <div class="cs-sidebar-summary-row">
-                        <span class="cs-row-icon"><x-icon name="armchair" size="16"/></span>
+                        <span class="cs-row-icon"><x-icon name="ph:seat" size="16"/></span>
                         <span class="lbl">Liczba miejsc</span>
                         <span class="val">{{ $car->seats }}</span>
                     </div>
@@ -1830,7 +1829,7 @@
     {{-- A. DANE POJAZDU — expanded by default on both desktop and mobile --}}
     <div class="cs-data-section cs-collapsible-mobile">
         <div class="cs-data-header open" onclick="csToggleAccordion(this)">
-            <h2><x-icon name="clipboard-list" size="20"/>Dane pojazdu</h2>
+            <h2><x-icon name="ph-fill:car" size="24"/>Dane pojazdu</h2>
             <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
         </div>
         <div class="cs-data-body">
@@ -1859,25 +1858,25 @@
                 $equipVersion = $rowOk($car->equipment_version) ? $car->equipment_version : '';
                 $dpRows = [
                     // Row 1
-                    ['factory',           'Marka',                $car->brand?->name ?: $em],
-                    ['calendar-check',      'Pierwsza rejestracja', $firstRegDate ?: $em],
+                    ['car',           'Marka',                $car->brand?->name ?: $em],
+                    ['calendar',      'Pierwsza rejestracja', $firstRegDate ?: $em],
                     ['fuel',          'Paliwo',               $rowOk($dispFuel) ? $dispFuel : $em],
-                    ['car-front',     'Nadwozie',             $rowOk($dispBody) ? $dispBody : $em],
+                    ['ph-fill:car',     'Nadwozie',             $rowOk($dispBody) ? $dispBody : $em],
                     // Row 2
                     ['car',           'Model',                $rowOk($car->model) ? $car->model : $em],
                     ['gauge',         'Przebieg',             $rowOk($car->mileage) ? number_format((float) $car->mileage, 0, '', ' ') . ' km' : $em],
                     ['tabler:manual-gearbox',      'Skrzynia biegów',      $rowOk($dispTransmission) ? $dispTransmission : $em],
-                    ['armchair',         'Liczba miejsc',        $rowOk($car->seats) ? $car->seats : $em],
+                    ['ph:seat',         'Liczba miejsc',        $rowOk($car->seats) ? $car->seats : $em],
                     // Row 3
-                    ['layers',   'Wersja',               $equipVersion !== '' ? $equipVersion : $em],
+                    ['badge-check',   'Wersja',               $equipVersion !== '' ? $equipVersion : $em],
                     ['calendar-days', 'Rok produkcji',        $prodYear ?: $em],
-                    ['zap',           'Moc',                  $rowOk($car->power_hp) ? $car->power_hp . ' KM' . ($rowOk($car->power_kw) ? ' / ' . $car->power_kw . ' kW' : '') : $em],
+                    ['zap',             'Moc',                  $rowOk($car->power_hp) ? $car->power_hp . ' KM' . ($rowOk($car->power_kw) ? ' / ' . $car->power_kw . ' kW' : '') : $em],
                     ['palette',       'Kolor nadwozia',       $rowOk($car->color) ? $car->color : $em],
                     // Row 4
-                    ['engine',           'Silnik',               $engineVersion !== '' ? $engineVersion : $em],
-                    ['cylinder',      'Pojemność skokowa',    $rowOk($car->engine_capacity) ? number_format((float) $car->engine_capacity, 0, '', ' ') . ' cm³' : $em],
-                    ['tabler:car-4wd',         'Napęd',                $drivetrain ?: $em],
-                    ['fingerprint',          'VIN',                  $rowOk($car->vin) ? strtoupper($car->vin) : $em],
+                    ['ph-fill:engine',           'Silnik',               $engineVersion !== '' ? $engineVersion : $em],
+                    ['ph-fill:cylinder',      'Pojemność skokowa',    $rowOk($car->engine_capacity) ? number_format((float) $car->engine_capacity, 0, '', ' ') . ' cm³' : $em],
+                    ['tabler-fill:car-4wd',         'Napęd',                $drivetrain ? preg_replace('/\s*\([A-Z0-9]{2,4}\)\s*$/', '', $drivetrain) : $em],
+                    ['ph-fill:identification-card',          'VIN',                  $rowOk($car->vin) ? (substr(strtoupper($car->vin),0,12) . str_repeat('*', max(0, strlen($car->vin) - 12))) : $em],
                 ];
 
                 // Efficiency rows — card-eligible set. Napęd wypadł stąd bo ma
@@ -1925,73 +1924,55 @@
             : ($bookSt3 ?: ($svc3 ?: null));
         $odometerStatus = $rowOk($car->odometer_status) ? $car->odometer_status : null;
     @endphp
+    @php
+        // Wiersze kart 1:1 wg wzoru (po 4 w kazdej karcie).
+        $impLabel = $car->is_imported !== null
+            ? \App\Helpers\CarLabels::bool($car->is_imported)
+            : ($rowOk($car->imported_from) ? 'Tak' : null);
+        $techInsp = $rowOk($car->de_tech_valid_until)
+            ? 'TÜV · ' . $car->de_tech_valid_until
+            : ($rowOk($car->next_inspection) ? $car->next_inspection : null);
+        $svcDocs  = \App\Helpers\CarLabels::bool($car->service_documentation);
+        $cards3 = [
+            ['title' => 'Historia pojazdu', 'ico' => 'history', 'rows' => [
+                ['globe',  'Kraj pochodzenia',   $dispCountry ?: null],
+                ['users',  'Liczba właścicieli', $car->previous_owners === null ? null : ($car->previous_owners == 0 ? 'Pierwszy' : $car->previous_owners)],
+                ['log-in', 'Importowany',        $impLabel],
+                ['key',    'Liczba kluczyków',   $rowOk($car->number_of_keys) ? $car->number_of_keys : null],
+            ]],
+            ['title' => 'Dokumenty i formalności', 'ico' => 'ph-fill:file-text', 'rows' => [
+                ['tabler:file-invoice', 'Forma sprzedaży',             $rowOk($car->taxation) ? $car->taxation : null],
+                ['tabler:file-percent', 'Kupujący nie płaci 2% PCC',   'Tak'],
+                ['file-text',           'Przygotowany do rejestracji', 'Tak'],
+                ['book-open',           'Książka serwisowa',           $bookSt3 ?: null],
+            ]],
+            ['title' => 'Serwis i przeglądy', 'ico' => 'ph-fill:wrench', 'rows' => [
+                ['calendar',       'Ostatni serwis',         $rowOk($car->last_service) ? $car->last_service : null],
+                ['gauge',          'Przebieg przy serwisie', $rowOk($car->last_service_mileage) ? number_format((float) $car->last_service_mileage, 0, '', ' ') . ' km' : null],
+                ['calendar-check', 'Badanie techniczne',     $techInsp],
+                ['file-text',      'Dokumentacja serwisowa', $svcDocs],
+            ]],
+        ];
+    @endphp
     <div class="cs-info-3row">
-        {{-- A. HISTORIA POJAZDU --}}
+        @foreach($cards3 as $card3)
         <div class="cs-info-3card">
             <div class="cs-info-3card-head">
                 <div class="cs-info-3card-ico" aria-hidden="true">
-                    <x-icon name="history" size="18"/>
+                    <x-icon :name="$card3['ico']" size="24"/>
                 </div>
-                <h3 class="cs-info-3card-title">Historia pojazdu</h3>
+                <h3 class="cs-info-3card-title">{{ $card3['title'] }}</h3>
             </div>
             <div class="cs-info-3card-rows">
-                @php
-                    $importedSpecific = ($rowOk($dispImportedFrom) && $car->imported_from !== $car->country_registration) ? $dispImportedFrom : null;
-                @endphp
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="flag" size="14"/></span>Kraj pochodzenia</span><span class="val {{ $dispCountry ? '' : 'muted' }}">{{ $hasMuted($dispCountry) }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="users" size="14"/></span>Liczba właścicieli</span><span class="val {{ $car->previous_owners === null ? 'muted' : '' }}">{{ $car->previous_owners === null ? '—' : ($car->previous_owners == 0 ? 'Pierwszy' : $car->previous_owners) }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="file-clock" size="14"/></span>Historia serwisowa</span><span class="val {{ $svc3 ? 'ok' : 'muted' }}">{{ $hasMuted($svc3) }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="circle-gauge" size="14"/></span>Stan licznika</span><span class="val {{ $odometerStatus ? 'ok' : 'muted' }}">{{ $hasMuted($odometerStatus) }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="user" size="14"/></span>Sposób użytkowania</span><span class="val {{ $rowOk($car->business_use) ? '' : 'muted' }}">{{ $hasMuted($rowOk($car->business_use) ? $car->business_use : null) }}</span></div>
-                @if($importedSpecific || $car->is_imported || $rowOk($car->imported_from))
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="ship" size="14"/></span>Importowany</span><span class="val">{{ $importedSpecific ?? 'Tak' }}</span></div>
-                @endif
-                @if($rowOk($car->vehicle_history))
-                <div class="cs-info-3row-line" style="flex-direction:column;align-items:flex-start;gap:2px"><span class="lbl">Opis historii</span><span class="val" style="text-align:left;max-width:100%;font-weight:600;color:#374151">{{ $car->vehicle_history }}</span></div>
-                @endif
-            </div>
-        </div>
-
-        {{-- B. DOKUMENTY --}}
-        <div class="cs-info-3card">
-            <div class="cs-info-3card-head">
-                <div class="cs-info-3card-ico" aria-hidden="true">
-                    <x-icon name="file-text" size="18"/>
+                @foreach($card3['rows'] as [$ico3, $lbl3, $val3])
+                <div class="cs-info-3row-line">
+                    <span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon :name="$ico3" size="22"/></span>{{ $lbl3 }}</span>
+                    <span class="val {{ $val3 === null ? 'muted' : '' }}">{{ $val3 ?? '—' }}</span>
                 </div>
-                <h3 class="cs-info-3card-title">Dokumenty i formalności</h3>
-            </div>
-            <div class="cs-info-3card-rows">
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="receipt" size="14"/></span>Forma sprzedaży</span><span class="val {{ $rowOk($car->taxation) ? '' : 'muted' }}">{{ $rowOk($car->taxation) ? $car->taxation : '—' }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="id-card" size="14"/></span>Dowód rejestracyjny</span><span class="val {{ $regCert3 ? 'ok' : 'muted' }}">{{ $regCert3 ?: '—' }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="key-round" size="14"/></span>Liczba kluczyków</span><span class="val {{ $rowOk($car->number_of_keys) ? '' : 'muted' }}">{{ $rowOk($car->number_of_keys) ? $car->number_of_keys : '—' }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="book-open" size="14"/></span>Książka serwisowa</span><span class="val {{ $bookSt3 ? 'ok' : 'muted' }}">{{ $bookSt3 ?: '—' }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="notebook-text" size="14"/></span>Instrukcja obsługi</span><span class="val {{ $manual3 ? 'ok' : 'muted' }}">{{ $manual3 ?: '—' }}</span></div>
+                @endforeach
             </div>
         </div>
-
-        {{-- C. SERWISOWANIE --}}
-        <div class="cs-info-3card">
-            <div class="cs-info-3card-head">
-                <div class="cs-info-3card-ico" aria-hidden="true">
-                    <x-icon name="wrench" size="18"/>
-                </div>
-                <h3 class="cs-info-3card-title">Serwis i przeglądy</h3>
-            </div>
-            <div class="cs-info-3card-rows">
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="calendar-cog" size="14"/></span>Ostatni serwis</span><span class="val {{ $rowOk($car->last_service) ? '' : 'muted' }}">{{ $hasMuted($car->last_service) }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="milestone" size="14"/></span>Przebieg przy serwisie</span><span class="val {{ $rowOk($car->last_service_mileage) ? '' : 'muted' }}">{{ $rowOk($car->last_service_mileage) ? number_format((float) $car->last_service_mileage, 0, '', ' ') . ' km' : '—' }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="stamp" size="14"/></span>TÜV ważny do</span><span class="val {{ $rowOk($car->de_tech_valid_until) ? '' : 'muted' }}">{{ $hasMuted($car->de_tech_valid_until) }}</span></div>
-                @if($rowOk($car->next_inspection))
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="calendar-clock" size="14"/></span>Następny przegląd</span><span class="val">{{ $car->next_inspection }}</span></div>
-                @endif
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="circle-check" size="14"/></span>Serwis potwierdzony</span><span class="val {{ $svcConfirmation ? 'ok' : 'muted' }}">{{ $hasMuted($svcConfirmation) }}</span></div>
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="hammer" size="14"/></span>Ostatnio wykonano</span><span class="val {{ $rowOk($car->last_service_scope) ? '' : 'muted' }}">{{ $hasMuted($car->last_service_scope) }}</span></div>
-                @php $asoLabel = \App\Helpers\CarLabels::bool($car->aso_serviced); @endphp
-                @if($asoLabel !== null)
-                <div class="cs-info-3row-line"><span class="lbl"><span class="lbl-ico" aria-hidden="true"><x-icon name="building-2" size="14"/></span>Serwis ASO</span><span class="val {{ $asoLabel === 'Tak' ? 'ok' : '' }}">{{ $asoLabel }}</span></div>
-                @endif
-            </div>
-        </div>
+        @endforeach
     </div>
     <p class="cs-info-3row-note">Informacje prezentujemy na podstawie posiadanych dokumentów i oględzin pojazdu.</p>
 
@@ -2359,11 +2340,11 @@
                     // Map our internal part keys → Lucide icon names. Keeps one
                     // consistent visual family for all 8 tech-status rows.
                     $techIconMap = [
-                        'engine'      => 'cog',
-                        'gear'        => 'settings-2',
+                        'engine'      => 'ph-fill:engine',
+                        'gear'        => 'tabler:manual-gearbox',
                         'suspension'  => 'activity',
                         'brakes'      => 'disc-3',
-                        'steering'    => 'circle-dot',
+                        'steering'    => 'tabler:steering-wheel',
                         'ac'          => 'snowflake',
                         'electronics' => 'cpu',
                         'lights'      => 'lightbulb',
@@ -2480,7 +2461,7 @@
         <div class="cs-pt-card">
             <div class="cs-pt-card-head">
                 <div class="cs-pt-card-ico" aria-hidden="true">
-                    <x-icon name="paintbrush" size="22"/>
+                    <x-icon name="scan-line" size="22"/>
                 </div>
                 <div>
                     <h3 class="cs-pt-card-title">Pomiary grubości lakieru</h3>
@@ -2542,7 +2523,7 @@
         <div class="cs-pt-card">
             <div class="cs-pt-card-head">
                 <div class="cs-pt-card-ico" aria-hidden="true">
-                    <x-icon name="circle-dot" size="22"/>
+                    <x-icon name="tabler:wheel" size="22"/>
                 </div>
                 <div>
                     <h3 class="cs-pt-card-title">Koła i opony</h3>

@@ -415,10 +415,10 @@
                 <div class="cclp-rc-specs">
                     @php
                         $specs = [
-                            ['cog','Silnik','2.0 Diesel 231 KM'],
-                            ['git-commit-horizontal','Skrzynia biegów','Automatyczna'],
-                            ['git-fork','Napęd','4x4'],
-                            ['car','Nadwozie','SUV'],
+                            ['ph-fill:engine','Silnik','2.0 Diesel 231 KM'],
+                            ['tabler:manual-gearbox','Skrzynia biegów','Automatyczna'],
+                            ['tabler-fill:car-4wd','Napęd','4x4'],
+                            ['ph-fill:car','Nadwozie','SUV'],
                             ['palette','Kolor','Czarny metalik'],
                             ['badge-check','Zarejestrowany w PL','Tak'],
                         ];

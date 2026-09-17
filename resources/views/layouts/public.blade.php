@@ -428,7 +428,11 @@
         .float-call svg{width:22px;height:22px}
         @media(max-width:768px){.float-call{bottom:18px;right:18px;width:52px;height:52px}}
 @yield('styles')
-    </style>
+    
+        /* Pelne ikony (Phosphor / Tabler filled) — wiele sekcji ustawia ikonom
+           fill:none + stroke, co wymazaloby wypelnione ksztalty. */
+        svg.cs-icon-solid{fill:currentColor!important;stroke:none!important}
+</style>
 </head>
 <body>
     <a href="#main" class="skip-link">Przejdź do treści</a>

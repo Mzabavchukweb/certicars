@@ -222,7 +222,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     <div class="cat-filter-group">
                         <div class="cat-flabel">
-                            <x-icon name="shield-check" size="14"/>
+                            <x-icon name="car" size="14"/>
                             Marka
                         </div>
                         <select name="brand" class="cat-select">
@@ -235,7 +235,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     <div class="cat-filter-group">
                         <div class="cat-flabel">
-                            <x-icon name="car-front" size="14"/>
+                            <x-icon name="ph-fill:car" size="14"/>
                             Typ nadwozia
                         </div>
                         <select name="category" class="cat-select">
@@ -257,7 +257,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     <div class="cat-filter-group" style="margin-top:14px">
                         <div class="cat-flabel">
-                            <x-icon name="settings" size="14"/>
+                            <x-icon name="tabler:manual-gearbox" size="14"/>
                             Skrzynia biegów
                         </div>
                         <select name="transmission" class="cat-select">
@@ -282,7 +282,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     <div class="cat-filter-group" style="margin-top:14px">
                         <div class="cat-flabel">
-                            <x-icon name="calendar" size="14"/>
+                            <x-icon name="calendar-days" size="14"/>
                             Rok produkcji
                         </div>
                         <div class="cat-row">

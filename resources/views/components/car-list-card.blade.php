@@ -88,7 +88,7 @@
                     @endif
                     @if($car->transmission)
                         <span class="lcard-spec">
-                            <x-icon name="settings" size="14"/>
+                            <x-icon name="tabler:manual-gearbox" size="14"/>
                             {{ \App\Helpers\CarLabels::transmission($car->transmission) ?? $car->transmission }}
                         </span>
                     @endif

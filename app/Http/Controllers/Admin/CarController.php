@@ -473,6 +473,27 @@ class CarController extends Controller
         ]);
     }
 
+    /** Zapis kolejności zdjęć galerii zaraz po przeciągnięciu (AJAX). */
+    public function reorderImages(Request $request, Car $car)
+    {
+        $data = $request->validate([
+            'order'   => 'required|array|max:200',
+            'order.*' => 'integer',
+        ]);
+
+        DB::transaction(function () use ($car, $data) {
+            foreach (array_values($data['order']) as $position => $imageId) {
+                $car->images()->where('id', (int) $imageId)->where('type', 'gallery')
+                    ->update(['sort_order' => $position]);
+            }
+        });
+
+        Cache::forget('catalog.filters');
+        Cache::forget('sitemap.xml');
+
+        return response()->json(['success' => true]);
+    }
+
     private function processEquipment(array $validated): array
     {
         if (!empty($validated['equipment'])) {

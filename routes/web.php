@@ -68,6 +68,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::patch('cars/{car}/toggle-featured', [AdminCarController::class, 'toggleFeatured'])->name('admin.cars.toggle-featured');
     Route::patch('cars/{car}/toggle-sold', [AdminCarController::class, 'toggleSold'])->name('admin.cars.toggle-sold');
     Route::post('cars/{car}/upload-image', [AdminCarController::class, 'uploadImage'])->name('admin.cars.upload-image');
+    Route::post('cars/{car}/images/reorder', [AdminCarController::class, 'reorderImages'])->name('admin.cars.images.reorder');
     Route::get('cars/{car}/pdf', [BrochurePdfController::class, 'download'])->name('admin.cars.pdf');
     // Synchronously regenerate one car's cached brochure. Admin waits.
     Route::post('cars/{car}/pdf/regenerate', [BrochurePdfController::class, 'regenerate'])->name('admin.cars.pdf.regenerate');
