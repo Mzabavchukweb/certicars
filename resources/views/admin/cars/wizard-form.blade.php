@@ -1032,8 +1032,6 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             </div>
         </div>
     </div>
-        </div>
-    </div>
 
     {{-- ③ Cena i sprzedaż — 2×2 grid per reference --}}
     <div class="wz-section">
