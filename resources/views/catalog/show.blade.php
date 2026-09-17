@@ -432,7 +432,8 @@
 .cs-info-3row-line .val.muted{color:#94a3b8;font-weight:500;font-style:normal}
 .cs-info-3row-line .val.ok{color:#16a34a;font-weight:800;display:inline-flex;align-items:center;gap:6px}
 .cs-info-3row-line .val.ok::after{content:'';display:inline-block;width:16px;height:16px;border-radius:50%;background:#dcfce7 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2316a34a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/10px 10px no-repeat;flex-shrink:0}
-.cs-info-3row-note{max-width:1200px;margin:14px auto 0;padding:0 24px;font-size:12.5px;color:#6b7280;line-height:1.6}
+.cs-info-3row-note{max-width:1200px;margin:22px auto 0;padding:0 24px;font-size:14px;color:#4b5563;line-height:1.6;display:flex;align-items:flex-start;gap:10px;box-sizing:border-box}
+.cs-info-3row-note::before{content:'';flex-shrink:0;width:18px;height:18px;margin-top:1px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230066ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4M12 8h.01'/%3E%3C/svg%3E") center/contain no-repeat}
 /* Auto-fit variant for optional cards (drivetrain/emission + fuel). Collapses
    from 2 → 1 column automatically below ~720px instead of overriding the
    parent's responsive grid with inline styles. */
@@ -780,18 +781,19 @@
 .cs-feat-eq-item i{width:18px;height:18px;color:#16a34a;flex-shrink:0;stroke-width:2.2}
 
 /* WYPOSAŻENIE — reference rebuild: header + 8 highlighted tiles + 6 category cards */
-.cs-equip-section{max-width:calc(1200px - 48px);margin:0 auto 16px;width:100%;box-sizing:border-box}
-.cs-equip-head{margin-bottom:18px}
-.cs-equip-title{font-size:22px;font-weight:800;color:#0a0a0a;letter-spacing:-.3px;margin:0 0 4px;line-height:1.2}
-.cs-equip-sub{font-size:13.5px;color:#6b7280;line-height:1.5;margin:0}
+.cs-equip-section{max-width:calc(1200px - 48px);margin:64px auto 24px;width:100%;box-sizing:border-box}
+.cs-equip-head{margin-bottom:28px}
+.cs-equip-title{font-size:28px;font-weight:800;color:#0a0a0a;letter-spacing:-.5px;margin:0 0 8px;line-height:1.2}
+.cs-equip-sub{font-size:15px;color:#6b7280;line-height:1.55;margin:0}
 /* Top 8 highlighted tiles */
 /* 8 top highlight tiles — uniform min-height so multi-line labels don't
    leave row-to-row gaps on mobile (2- and 4-col grids). */
-.cs-equip-tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:20px;align-items:stretch}
-.cs-equip-tile{background:#fff;border:1px solid #eeeef0;border-radius:14px;padding:18px 10px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;gap:10px;min-width:0;min-height:112px;transition:border-color .15s,box-shadow .15s}
+.cs-equip-tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin-bottom:28px;align-items:stretch}
+.cs-equip-tile{background:#fff;border:1px solid #eeeef0;border-radius:14px;padding:22px 12px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;gap:12px;min-width:0;min-height:128px;transition:border-color .15s,box-shadow .15s}
 .cs-equip-tile:hover{border-color:#cbd5e1;box-shadow:0 4px 12px rgba(0,0,0,.06)}
 .cs-equip-tile-ico{width:46px;height:46px;border-radius:12px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.cs-equip-tile-label{font-size:12px;font-weight:700;color:#1a1a1a;letter-spacing:-.1px;line-height:1.3;word-break:break-word}
+.cs-equip-tile-label .nowrap{white-space:nowrap}
+.cs-equip-tile-label{font-size:14px;font-weight:700;color:#1a1a1a;letter-spacing:-.1px;line-height:1.3;word-break:break-word}
 /* Category cards */
 /* 2-column desktop grid — "Komfort | Bezpieczeństwo" row 1,
    "Światła i nadwozie | Inne" row 2. Removes the 3+1 awkward layout. */
@@ -823,11 +825,11 @@
     .cs-equip-tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
     .cs-equip-tile{padding:16px 10px}
     .cs-equip-tile-ico{width:42px;height:42px}
-    .cs-equip-tile-label{font-size:11.5px}
+    .cs-equip-tile-label{font-size:13px}
     .cs-equip-cats{grid-template-columns:1fr;gap:10px}
     .cs-equip-cat{padding:16px}
-    .cs-equip-title{font-size:18px}
-    .cs-equip-sub{font-size:12.5px}
+    .cs-equip-title{font-size:23px}
+    .cs-equip-sub{font-size:14px}
 }
 .cs-eq-count{font-size:13px;color:var(--text-3);font-weight:500;margin-left:auto}
 
@@ -2056,7 +2058,8 @@
                     <div class="cs-equip-tile-ico" aria-hidden="true">
                         <x-icon :name="$opt['icon']" size="22" :strokeWidth="1.8"/>
                     </div>
-                    <div class="cs-equip-tile-label">{{ $opt['label'] }}</div>
+                    {{-- wyrazy z myslnikiem ("2-strefowa") trzymamy razem, zeby nie lamaly sie na "2-" / "strefowa" --}}
+                    <div class="cs-equip-tile-label">{!! preg_replace('/(\S+-\S+)/u', '<span class="nowrap">$1</span>', e($opt['label'])) !!}</div>
                 </div>
             @endforeach
         </div>
