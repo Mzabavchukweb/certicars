@@ -840,7 +840,7 @@
        wide so the CTA fits without wrapping but doesn't dominate. */
     .lcard-actions{flex-shrink:0;min-width:160px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:10px;align-self:stretch;border-left:1px solid #eef1f6;padding-left:28px}
     .lcard-price-label{font-size:11.5px;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.6px;line-height:1;margin-bottom:7px}
-    .lcard-price{font-size:22px;font-weight:900;color:#0a0a0a;letter-spacing:-.5px;line-height:1;white-space:nowrap}
+    .lcard-price{font-size:24px;font-weight:900;color:#0a0a0a;letter-spacing:-.5px;line-height:1;white-space:nowrap}
     .lcard-cta{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#0066ff;border:1.5px solid #0066ff;padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:700;text-decoration:none;transition:all .18s ease;position:relative;z-index:2;cursor:pointer;white-space:nowrap}
     .lcard-cta:hover{background:#0066ff;color:#fff;box-shadow:0 4px 12px rgba(0,102,255,.25)}
     .lcard-cta:focus-visible{outline:2px solid #0066ff;outline-offset:2px}
@@ -853,7 +853,7 @@
         .lcard-content{padding:14px 18px}
         .lcard-actions{min-width:140px}
         .lcard-title{font-size:17.5px}
-        .lcard-price{font-size:20px}
+        .lcard-price{font-size:22px}
         .lcard-spec{font-size:12px}
     }
 
@@ -869,7 +869,7 @@
            min-content swojego dziecka, wiec cala strona wyjezdzala w prawo na
            waskich telefonach. Gdy brakuje miejsca, CTA schodzi pod cene. */
         .lcard-actions{min-width:0;width:100%;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-top:10px;padding-left:0;border-left:none;border-top:1px solid #f1f5f9}
-        .lcard-price{font-size:20px;min-width:0}
+        .lcard-price{font-size:22px;min-width:0}
         .lcard-cta{flex-shrink:0}
         .lcard-spec{font-size:12px;padding-right:8px;margin-right:8px}
     }
@@ -879,7 +879,7 @@
         .lcard-content{padding:12px 14px}
         .lcard-title{font-size:16.5px;white-space:normal}
         .lcard-cta{padding:7px 11px;font-size:12px}
-        .lcard-price{font-size:19px}
+        .lcard-price{font-size:21px}
     }
 
     /* Bottom CTA on the homepage's featured section. Centered pill. */

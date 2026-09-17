@@ -118,7 +118,7 @@
                         @endif
                         @if($car->power_hp)
                         <div class="fav-lcard-spec">
-                            <x-icon name="zap" size="14"/>
+                            <x-icon name="gauge" size="14"/>
                             {{ $car->power_hp }} KM
                         </div>
                         @endif

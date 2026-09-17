@@ -82,7 +82,7 @@
                     @endif
                     @if($car->power_hp)
                         <span class="lcard-spec">
-                            <x-icon name="zap" size="14"/>
+                            <x-icon name="gauge" size="14"/>
                             {{ $car->power_hp }} KM
                         </span>
                     @endif

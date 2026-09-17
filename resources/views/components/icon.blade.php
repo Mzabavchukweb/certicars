@@ -25,12 +25,14 @@
     //   tabler-fill:<n>  Tabler filled   (wypelnione, siatka 24)
     //   ph:<n>           Phosphor regular (ksztalty wypelnione, siatka 256)
     //   ph-fill:<n>      Phosphor fill
+    //   mdi:<n>          Material Design Icons (wypelnione, siatka 24, Apache-2.0)
     // Wszystko bez prefiksu idzie do Lucide (<i data-lucide>, podmieniane w JS).
     $libs = [
         'tabler:'      => ['tabler',           '0 0 24 24',   false],
         'tabler-fill:' => ['tabler/filled',    '0 0 24 24',   true],
         'ph:'          => ['phosphor/regular', '0 0 256 256', true],
         'ph-fill:'     => ['phosphor/fill',    '0 0 256 256', true],
+        'mdi:'         => ['mdi',              '0 0 24 24',   true],
     ];
     $svgInner = null; $viewBox = null; $solid = false;
     foreach ($libs as $prefix => [$dir, $vb, $isSolid]) {

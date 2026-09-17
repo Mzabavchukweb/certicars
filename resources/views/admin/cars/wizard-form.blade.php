@@ -312,6 +312,8 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 .wz-icon-row:first-child { border-top: none; }
 .wz-icon-row-ico { width: 36px; height: 36px; border-radius: 50%; background: #eff6ff; color: var(--blue, #0066ff); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .wz-icon-row-ico i, .wz-icon-row-ico svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+.wz-icon-row-ico svg.cs-icon-solid { fill: currentColor; stroke: none; }
+.wz-icon-row-static { font-size: 14px; font-weight: 600; color: var(--text-2, #4b5563); padding: 9px 0; }
 .wz-icon-row-label { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--text, #0a0a0a); min-width: 0; }
 .wz-icon-row-label-info { width: 16px; height: 16px; color: var(--text-4, #9ca3af); cursor: help; flex-shrink: 0; }
 .wz-icon-row-label-info svg, .wz-icon-row-label-info i { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
@@ -774,23 +776,14 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 (function(){
     // Map each form field to the wizard step it lives on
     var wzFieldStep = {
-        brand_id:1, model:1, category:1, price:1, currency:1, price_type:1,
-        taxation:1, color:1, doors:1, seats:1,
-        vin:1, body_type:1, first_registration:1, mileage:1,
-        fuel_type:1, power_hp:1, power_kw:1, engine_capacity:1,
-        transmission:1, transmission_detail:1,
-        previous_owners:3, country_registration:3, is_imported:3,
-        business_use:3, imported_from:3, vehicle_history:3,
-        color_code:3, weight:3, upholstery:3,
-        number_of_keys:5,
-        last_service:4, last_service_mileage:4, next_inspection:4,
-        service_documentation:4, fuel_consumption:4, fuel_procedure:4,
-        co2_emission:4, emission_class:4, aso_serviced:4, service_history:4,
-        service_book:5, coc_documents:5, vehicle_folder:5, hu_au_report:5,
-        service_book_status:5, registration_cert:5, owners_manual:5,
-        seller_name:5, seller_phone:5, seller_email:5, commission_note:5,
-        reception_date:5,
-        location:1, location_distance:1, source:1,
+        brand_id:1, model:1, equipment_version:1, engine_version:1,
+        first_registration:1, mileage:1, production_year:1, engine_capacity:1,
+        fuel_type:1, transmission:1, power_hp:1, power_kw:1, drivetrain:1,
+        body_type:1, seats:1, color:1, vin:1,
+        price:1, currency:1, price_type:1,
+        country_registration:3, previous_owners:3, is_imported:3, number_of_keys:3,
+        taxation:4, service_book_status:4,
+        last_service:5, last_service_mileage:5, de_tech_valid_until:5, service_documentation:5,
         meta_title:11, meta_description:11, focus_keyword:11, noindex:11,
     };
     var errorFields = @json($errors->keys());
@@ -915,15 +908,13 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         <div class="wz-section-header">
             <div class="wz-section-badge">1</div>
             <div>
-                <div class="wz-section-title">Dane podstawowe</div>
-                <div class="wz-section-subtitle">Podstawowe informacje o aucie</div>
+                <div class="wz-section-title">Dane pojazdu</div>
+                <div class="wz-section-subtitle">Te dane widać w ogłoszeniu w sekcji „Dane pojazdu”</div>
             </div>
         </div>
 
         <div class="wz-grid-4 wz-cols-4">
-            {{-- COLUMN 1 — Auto --}}
             <div class="wz-col">
-                <div class="wz-col-label">Auto</div>
                 <div class="wz-field">
                     <label>Marka * <a href="#" id="wzBrandAddToggle" style="float:right;font-size:11px;font-weight:600;color:var(--blue);text-decoration:none;display:inline-flex;align-items:center;gap:4px;text-transform:none;letter-spacing:0"><i data-lucide="plus" style="width:12px;height:12px"></i> Dodaj nową</a></label>
                     <select name="brand_id" id="wzBrandSelect" required @error('brand_id') style="border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.12)" @enderror>
@@ -956,39 +947,35 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                     @enderror
                 </div>
                 <div class="wz-field">
-                    <label>Wersja / silnik</label>
-                    <input type="text" name="engine_version" value="{{ old('engine_version',$car?->engine_version) }}" maxlength="120" placeholder="np. 1.6 dCi 160 KM EDC">
+                    <label>Wersja</label>
+                    <input type="text" name="equipment_version" value="{{ old('equipment_version',$car?->equipment_version) }}" maxlength="120" placeholder="np. Cooper SD">
                 </div>
                 <div class="wz-field">
-                    <label>Rok produkcji</label>
-                    <input type="number" name="production_year" value="{{ old('production_year',$car?->production_year) }}" min="1900" max="2100" placeholder="np. 2018">
+                    <label>Silnik</label>
+                    <input type="text" name="engine_version" value="{{ old('engine_version',$car?->engine_version) }}" maxlength="120" placeholder="np. 2.0 SD">
                 </div>
             </div>
 
-            {{-- COLUMN 2 — Rejestracja i przebieg --}}
             <div class="wz-col">
-                <div class="wz-col-label">Rejestracja i przebieg</div>
                 <div class="wz-field">
                     <label>Pierwsza rejestracja</label>
                     <input type="text" name="first_registration" value="{{ old('first_registration',$car?->first_registration) }}" placeholder="mm/rrrr">
                 </div>
                 <div class="wz-field">
-                    <label>Przebieg (km)</label>
-                    <input type="number" name="mileage" value="{{ old('mileage',$car?->mileage) }}" min="0" placeholder="np. 136 000">
+                    <label>Przebieg</label>
+                    <input type="number" name="mileage" value="{{ old('mileage',$car?->mileage) }}" min="0" placeholder="km, np. 73 000">
                 </div>
                 <div class="wz-field">
-                    <label>Kraj pochodzenia</label>
-                    <input type="text" name="country_registration" value="{{ old('country_registration',$car?->country_registration) }}" placeholder="Niemcy, Polska, USA...">
+                    <label>Rok produkcji</label>
+                    <input type="number" name="production_year" value="{{ old('production_year',$car?->production_year) }}" min="1900" max="2100" placeholder="np. 2015">
                 </div>
                 <div class="wz-field">
-                    <label>VIN</label>
-                    <input type="text" name="vin" value="{{ old('vin',$car?->vin) }}" maxlength="50" placeholder="np. VF1RFC00X54321012">
+                    <label>Pojemność skokowa</label>
+                    <input type="number" name="engine_capacity" value="{{ old('engine_capacity',$car?->engine_capacity) }}" min="0" step="1" placeholder="cm³, np. 1995">
                 </div>
             </div>
 
-            {{-- COLUMN 3 — Silnik i skrzynia --}}
             <div class="wz-col">
-                <div class="wz-col-label">Silnik i skrzynia</div>
                 <div class="wz-field">
                     <label>Paliwo</label>
                     <select name="fuel_type">
@@ -1008,23 +995,21 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                     </select>
                 </div>
                 <div class="wz-field">
-                    <label>Moc (KM / kW)</label>
+                    <label>Moc</label>
                     <div style="display:flex;gap:6px">
-                        <input type="number" name="power_hp" value="{{ old('power_hp',$car?->power_hp) }}" min="0" placeholder="np. 160" style="flex:1;min-width:0">
-                        <input type="number" name="power_kw" value="{{ old('power_kw',$car?->power_kw) }}" min="0" placeholder="np. 118" style="flex:1;min-width:0">
+                        <input type="number" name="power_hp" value="{{ old('power_hp',$car?->power_hp) }}" min="0" placeholder="KM, np. 143" style="flex:1;min-width:0">
+                        <input type="number" name="power_kw" value="{{ old('power_kw',$car?->power_kw) }}" min="0" placeholder="kW, np. 105" style="flex:1;min-width:0">
                     </div>
                 </div>
                 <div class="wz-field">
-                    <label>Pojemność skokowa (cm³)</label>
-                    <input type="number" name="engine_capacity" value="{{ old('engine_capacity',$car?->engine_capacity) }}" min="0" step="1" placeholder="np. 1598">
+                    <label>Napęd</label>
+                    <input type="text" name="drivetrain" value="{{ old('drivetrain',$car?->drivetrain) }}" maxlength="80" placeholder="np. Na przednie koła">
                 </div>
             </div>
 
-            {{-- COLUMN 4 — Nadwozie i użytkowość --}}
             <div class="wz-col">
-                <div class="wz-col-label">Nadwozie i użytkowość</div>
                 <div class="wz-field">
-                    <label>Typ nadwozia</label>
+                    <label>Nadwozie</label>
                     <select name="body_type" id="wzBodyTypeSelect">
                         <option value="">— wybierz —</option>
                         @foreach(['Sedan','SUV','Coupé','Bus','Kombi','Hatchback','Kabriolet','Pickup'] as $bt)
@@ -1034,36 +1019,19 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                 </div>
                 <div class="wz-field">
                     <label>Liczba miejsc</label>
-                    <input type="number" name="seats" value="{{ old('seats',$car?->seats) }}" min="1" placeholder="np. 5">
-                </div>
-                <div class="wz-field">
-                    <label>Liczba drzwi</label>
-                    <input type="number" name="doors" value="{{ old('doors',$car?->doors) }}" min="1" max="7" placeholder="np. 5">
+                    <input type="number" name="seats" value="{{ old('seats',$car?->seats) }}" min="1" placeholder="np. 4">
                 </div>
                 <div class="wz-field">
                     <label>Kolor nadwozia</label>
-                    <input type="text" name="color" value="{{ old('color',$car?->color) }}" placeholder="np. Szary metalik">
+                    <input type="text" name="color" value="{{ old('color',$car?->color) }}" placeholder="np. Niebieski">
+                </div>
+                <div class="wz-field">
+                    <label>VIN</label>
+                    <input type="text" name="vin" value="{{ old('vin',$car?->vin) }}" maxlength="50" placeholder="np. WMWRS71010WN12345">
                 </div>
             </div>
         </div>
-
-        {{-- Secondary row — fields not in the reference 4-col grid but still
-             needed (title formula uses equipment_version; drivetrain stays
-             editable; identifier stays read-only for reference). --}}
-        <div class="wz-grid-3" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border-l)">
-            <div class="wz-field">
-                <label>Wersja wyposażenia</label>
-                <input type="text" name="equipment_version" value="{{ old('equipment_version',$car?->equipment_version) }}" maxlength="120" placeholder="np. Initiale Paris">
-                <small style="font-size:11px;color:var(--text-3);margin-top:4px;display:block">Wchodzi w skład tytułu ogłoszenia.</small>
-            </div>
-            <div class="wz-field">
-                <label>Napęd</label>
-                <input type="text" name="drivetrain" value="{{ old('drivetrain',$car?->drivetrain) }}" maxlength="80" placeholder="np. Na przednie koła (FWD)">
-            </div>
-            <div class="wz-field">
-                <label>Identyfikator</label>
-                <input type="text" value="{{ $car?->identifier ?? '— zostanie wygenerowany —' }}" disabled readonly>
-            </div>
+    </div>
         </div>
     </div>
 
@@ -1101,10 +1069,6 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                     <option value="{{ $pt }}" {{ old('price_type',$car?->price_type)==$pt?'selected':'' }}>{{ $pt }}</option>
                     @endforeach
                 </select>
-            </div>
-            <div class="wz-field">
-                <label>Dodatkowe informacje cenowe (opcjonalne)</label>
-                <input type="text" name="taxation" value="{{ old('taxation',$car?->taxation) }}" placeholder="np. cena do negocjacji, faktura VAT marża">
             </div>
         </div>
     </div>
@@ -1459,57 +1423,49 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 
         <div class="wz-icon-rows">
             <div class="wz-icon-row">
-                <div class="wz-icon-row-ico"><i data-lucide="globe"></i></div>
-                <div class="wz-icon-row-label">Pochodzenie <span class="wz-icon-row-label-info" title="Kraj, w którym pojazd był wcześniej zarejestrowany"><i data-lucide="info"></i></span></div>
-                <select name="imported_from">
-                    <option value="" {{ !old('imported_from',$car?->imported_from)?'selected':'' }}>— wybierz —</option>
-                    @foreach(['Niemcy','Polska','Francja','Holandia','Belgia','Austria','Szwajcaria','Włochy','Szwecja','Dania','USA','Inny'] as $opt)
-                    <option value="{{ $opt }}" {{ old('imported_from',$car?->imported_from)==$opt?'selected':'' }}>{{ $opt }}</option>
+                <div class="wz-icon-row-ico"><x-icon name="globe" size="20"/></div>
+                <div class="wz-icon-row-label">Kraj pochodzenia <span class="wz-icon-row-label-info" title="Kraj, z którego pochodzi pojazd"><i data-lucide="info"></i></span></div>
+                <select name="country_registration">
+                    <option value="">— wybierz —</option>
+                    @php $cur_country_registration = (string) old('country_registration', $car?->country_registration); $cur_country_registration = (string) (\App\Helpers\CarLabels::country($cur_country_registration) ?? $cur_country_registration); @endphp
+                    @if($cur_country_registration !== '' && !in_array($cur_country_registration, ['Niemcy','Polska','Francja','Holandia','Belgia','Austria','Szwajcaria','Włochy','Szwecja','Dania','USA'], true))<option value="{{ $cur_country_registration }}" selected>{{ $cur_country_registration }}</option>@endif
+                    @foreach(['Niemcy','Polska','Francja','Holandia','Belgia','Austria','Szwajcaria','Włochy','Szwecja','Dania','USA'] as $opt)
+                    <option value="{{ $opt }}" {{ $cur_country_registration === (string) $opt ? 'selected' : '' }}>{{ $opt }}</option>
                     @endforeach
                 </select>
             </div>
-
             <div class="wz-icon-row">
-                <div class="wz-icon-row-ico"><i data-lucide="log-in"></i></div>
-                <div class="wz-icon-row-label">Importowany <span class="wz-icon-row-label-info" title="Czy pojazd został sprowadzony z zagranicy"><i data-lucide="info"></i></span></div>
-                <select name="business_use">
-                    <option value="" {{ !old('business_use',$car?->business_use)?'selected':'' }}>— wybierz —</option>
-                    <option value="Tak" {{ old('business_use',$car?->business_use)=='Tak'?'selected':'' }}>Tak</option>
-                    <option value="Nie" {{ old('business_use',$car?->business_use)=='Nie'?'selected':'' }}>Nie</option>
-                </select>
-            </div>
-
-            <div class="wz-icon-row">
-                <div class="wz-icon-row-ico"><i data-lucide="users"></i></div>
-                <div class="wz-icon-row-label">Liczba właścicieli <span class="wz-icon-row-label-info" title="Liczba poprzednich właścicieli pojazdu według dowodu rejestracyjnego"><i data-lucide="info"></i></span></div>
+                <div class="wz-icon-row-ico"><x-icon name="users" size="20"/></div>
+                <div class="wz-icon-row-label">Liczba właścicieli <span class="wz-icon-row-label-info" title="Liczba poprzednich właścicieli pojazdu"><i data-lucide="info"></i></span></div>
                 <select name="previous_owners">
-                    <option value="" {{ !old('previous_owners',$car?->previous_owners)?'selected':'' }}>— wybierz —</option>
-                    <option value="1" {{ old('previous_owners',$car?->previous_owners)==1?'selected':'' }}>1 (Pierwszy)</option>
-                    <option value="2" {{ old('previous_owners',$car?->previous_owners)==2?'selected':'' }}>2</option>
-                    <option value="3" {{ old('previous_owners',$car?->previous_owners)==3?'selected':'' }}>3+</option>
-                    <option value="Brak danych" {{ old('previous_owners',$car?->previous_owners)=='Brak danych'?'selected':'' }}>Brak danych</option>
+                    <option value="">— wybierz —</option>
+                    @php $cur_previous_owners = (string) old('previous_owners', $car?->previous_owners); @endphp
+                    @if($cur_previous_owners !== '' && !in_array($cur_previous_owners, ['1','2','3','4','5'], true))<option value="{{ $cur_previous_owners }}" selected>{{ $cur_previous_owners }}</option>@endif
+                    @foreach(['1','2','3','4','5'] as $opt)
+                    <option value="{{ $opt }}" {{ $cur_previous_owners === (string) $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                    @endforeach
                 </select>
             </div>
-
             <div class="wz-icon-row">
-                <div class="wz-icon-row-ico"><i data-lucide="wrench"></i></div>
-                <div class="wz-icon-row-label">Historia serwisowa <span class="wz-icon-row-label-info" title="Czy dostępna jest pełna historia serwisowa pojazdu"><i data-lucide="info"></i></span></div>
-                <select name="service_history">
-                    <option value="" {{ !old('service_history',$car?->service_history)?'selected':'' }}>— wybierz —</option>
-                    <option value="Dostępna" {{ old('service_history',$car?->service_history)=='Dostępna'?'selected':'' }}>Dostępna</option>
-                    <option value="Częściowo dostępna" {{ old('service_history',$car?->service_history)=='Częściowo dostępna'?'selected':'' }}>Częściowo dostępna</option>
-                    <option value="Brak pełnej historii" {{ old('service_history',$car?->service_history)=='Brak pełnej historii'?'selected':'' }}>Brak pełnej historii</option>
+                <div class="wz-icon-row-ico"><x-icon name="log-in" size="20"/></div>
+                <div class="wz-icon-row-label">Importowany <span class="wz-icon-row-label-info" title="Czy pojazd został sprowadzony z zagranicy"><i data-lucide="info"></i></span></div>
+                <select name="is_imported">
+                    <option value="">— wybierz —</option>
+                    @php $curImp = old('is_imported', $car?->is_imported); @endphp
+                    <option value="1" {{ $curImp !== null && $curImp !== '' && (int) $curImp === 1 ? 'selected' : '' }}>Tak</option>
+                    <option value="0" {{ $curImp !== null && $curImp !== '' && (int) $curImp === 0 ? 'selected' : '' }}>Nie</option>
                 </select>
             </div>
-
             <div class="wz-icon-row">
-                <div class="wz-icon-row-ico"><i data-lucide="gauge"></i></div>
-                <div class="wz-icon-row-label">Stan licznika <span class="wz-icon-row-label-info" title="Czy wskazania licznika są zgodne z dokumentacją serwisową"><i data-lucide="info"></i></span></div>
-                <select name="odometer_status">
-                    <option value="" {{ !old('odometer_status',$car?->odometer_status)?'selected':'' }}>— wybierz —</option>
-                    <option value="Zgodny z dokumentami" {{ old('odometer_status',$car?->odometer_status)=='Zgodny z dokumentami'?'selected':'' }}>Zgodny z dokumentami</option>
-                    <option value="Niezgodny z dokumentami" {{ old('odometer_status',$car?->odometer_status)=='Niezgodny z dokumentami'?'selected':'' }}>Niezgodny z dokumentami</option>
-                    <option value="Brak danych" {{ old('odometer_status',$car?->odometer_status)=='Brak danych'?'selected':'' }}>Brak danych</option>
+                <div class="wz-icon-row-ico"><x-icon name="key" size="20"/></div>
+                <div class="wz-icon-row-label">Liczba kluczyków <span class="wz-icon-row-label-info" title="Liczba kluczyków dołączonych do pojazdu"><i data-lucide="info"></i></span></div>
+                <select name="number_of_keys">
+                    <option value="">— wybierz —</option>
+                    @php $cur_number_of_keys = (string) old('number_of_keys', $car?->number_of_keys); @endphp
+                    @if($cur_number_of_keys !== '' && !in_array($cur_number_of_keys, ['1','2','3'], true))<option value="{{ $cur_number_of_keys }}" selected>{{ $cur_number_of_keys }}</option>@endif
+                    @foreach(['1','2','3'] as $opt)
+                    <option value="{{ $opt }}" {{ $cur_number_of_keys === (string) $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
@@ -1529,89 +1485,54 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
     <div class="wz-section">
         <div class="wz-section-header">
             <div>
-                <div class="wz-section-title" style="font-size:22px">4. Dokumenty</div>
-                <div class="wz-section-subtitle">Podaj informacje o dokumentach i wyposażeniu dodatkowym pojazdu.</div>
+                <div class="wz-section-title" style="font-size:22px">4. Dokumenty i formalności</div>
+                <div class="wz-section-subtitle">Te informacje będą widoczne w kafelku „Dokumenty i formalności” w ogłoszeniu.</div>
             </div>
         </div>
 
         <div class="wz-icon-rows">
             <div class="wz-icon-row">
-                <div class="wz-icon-row-ico"><i data-lucide="receipt"></i></div>
-                <div class="wz-icon-row-label">Faktura <span class="wz-icon-row-label-info" title="Typ faktury wystawianej przy sprzedaży"><i data-lucide="info"></i></span></div>
-                <select name="price_type">
-                    <option value="" {{ !old('price_type',$car?->price_type)?'selected':'' }}>— wybierz —</option>
-                    @foreach(['VAT-marża','VAT 23%','Netto','Brutto','Cena do negocjacji'] as $pt)
-                    <option value="{{ $pt }}" {{ old('price_type',$car?->price_type)==$pt?'selected':'' }}>{{ $pt }}</option>
+                <div class="wz-icon-row-ico"><x-icon name="tabler:file-invoice" size="20"/></div>
+                <div class="wz-icon-row-label">Forma sprzedaży <span class="wz-icon-row-label-info" title="Dokument sprzedaży pojazdu"><i data-lucide="info"></i></span></div>
+                <select name="taxation">
+                    <option value="">— wybierz —</option>
+                    @php $cur_taxation = (string) old('taxation', $car?->taxation); @endphp
+                    @if($cur_taxation !== '' && !in_array($cur_taxation, ['Faktura VAT-marża','Faktura VAT 23%','Umowa kupna-sprzedaży'], true))<option value="{{ $cur_taxation }}" selected>{{ $cur_taxation }}</option>@endif
+                    @foreach(['Faktura VAT-marża','Faktura VAT 23%','Umowa kupna-sprzedaży'] as $opt)
+                    <option value="{{ $opt }}" {{ $cur_taxation === (string) $opt ? 'selected' : '' }}>{{ $opt }}</option>
                     @endforeach
                 </select>
             </div>
-
             <div class="wz-icon-row">
-                <div class="wz-icon-row-ico"><i data-lucide="file-check"></i></div>
-                <div class="wz-icon-row-label">Dowód rejestracyjny <span class="wz-icon-row-label-info" title="Czy dowód rejestracyjny pojazdu jest dostępny"><i data-lucide="info"></i></span></div>
-                <select name="registration_cert">
-                    <option value="" {{ !old('registration_cert',$car?->registration_cert)?'selected':'' }}>— wybierz —</option>
-                    <option value="Dostępny" {{ old('registration_cert',$car?->registration_cert)=='Dostępny'?'selected':'' }}>Dostępny</option>
-                    <option value="Niedostępny" {{ old('registration_cert',$car?->registration_cert)=='Niedostępny'?'selected':'' }}>Niedostępny</option>
-                </select>
+                <div class="wz-icon-row-ico"><x-icon name="tabler:file-percent" size="20"/></div>
+                <div class="wz-icon-row-label">Kupujący nie płaci 2% PCC <span class="wz-icon-row-label-info" title="Stała informacja w każdym ogłoszeniu"><i data-lucide="info"></i></span></div>
+                <div class="wz-icon-row-static">Tak — zawsze</div>
             </div>
-
             <div class="wz-icon-row">
-                <div class="wz-icon-row-ico"><i data-lucide="key"></i></div>
-                <div class="wz-icon-row-label">Liczba kluczyków <span class="wz-icon-row-label-info" title="Liczba kompletów kluczyków dołączonych do pojazdu"><i data-lucide="info"></i></span></div>
-                <select name="number_of_keys">
-                    <option value="" {{ !old('number_of_keys',$car?->number_of_keys)?'selected':'' }}>— wybierz —</option>
-                    <option value="1" {{ old('number_of_keys',$car?->number_of_keys)==1?'selected':'' }}>1</option>
-                    <option value="2" {{ old('number_of_keys',$car?->number_of_keys)==2?'selected':'' }}>2</option>
-                    <option value="3" {{ old('number_of_keys',$car?->number_of_keys)==3?'selected':'' }}>3</option>
-                </select>
+                <div class="wz-icon-row-ico"><x-icon name="file-text" size="20"/></div>
+                <div class="wz-icon-row-label">Przygotowany do rejestracji <span class="wz-icon-row-label-info" title="Stała informacja w każdym ogłoszeniu"><i data-lucide="info"></i></span></div>
+                <div class="wz-icon-row-static">Tak — zawsze</div>
             </div>
-
             <div class="wz-icon-row">
-                <div class="wz-icon-row-ico"><i data-lucide="book-open"></i></div>
-                <div class="wz-icon-row-label">Książka serwisowa <span class="wz-icon-row-label-info" title="Forma dostępnej książki serwisowej"><i data-lucide="info"></i></span></div>
+                <div class="wz-icon-row-ico"><x-icon name="book-open" size="20"/></div>
+                <div class="wz-icon-row-label">Książka serwisowa <span class="wz-icon-row-label-info" title="Stan książki serwisowej"><i data-lucide="info"></i></span></div>
                 <select name="service_book_status">
-                    <option value="" {{ !old('service_book_status',$car?->service_book_status)?'selected':'' }}>— wybierz —</option>
-                    <option value="Dostępna" {{ old('service_book_status',$car?->service_book_status)=='Dostępna'?'selected':'' }}>Dostępna</option>
-                    <option value="Niedostępna" {{ old('service_book_status',$car?->service_book_status)=='Niedostępna'?'selected':'' }}>Niedostępna</option>
-                    <option value="Elektroniczna" {{ old('service_book_status',$car?->service_book_status)=='Elektroniczna'?'selected':'' }}>Elektroniczna</option>
-                    <option value="Częściowa" {{ old('service_book_status',$car?->service_book_status)=='Częściowa'?'selected':'' }}>Częściowa</option>
-                </select>
-            </div>
-
-            <div class="wz-icon-row">
-                <div class="wz-icon-row-ico"><i data-lucide="book"></i></div>
-                <div class="wz-icon-row-label">Instrukcja obsługi <span class="wz-icon-row-label-info" title="Czy instrukcja obsługi pojazdu jest dostępna"><i data-lucide="info"></i></span></div>
-                <select name="owners_manual">
-                    <option value="" {{ !old('owners_manual',$car?->owners_manual)?'selected':'' }}>— wybierz —</option>
-                    <option value="Dostępna" {{ old('owners_manual',$car?->owners_manual)=='Dostępna'?'selected':'' }}>Dostępna</option>
-                    <option value="Niedostępna" {{ old('owners_manual',$car?->owners_manual)=='Niedostępna'?'selected':'' }}>Niedostępna</option>
+                    <option value="">— wybierz —</option>
+                    @php $cur_service_book_status = (string) old('service_book_status', $car?->service_book_status); $cur_service_book_status = (string) (\App\Helpers\CarLabels::status($cur_service_book_status) ?? $cur_service_book_status); @endphp
+                    @if($cur_service_book_status !== '' && !in_array($cur_service_book_status, ['Kompletna','Częściowa','Elektroniczna','Brak'], true))<option value="{{ $cur_service_book_status }}" selected>{{ $cur_service_book_status }}</option>@endif
+                    @foreach(['Kompletna','Częściowa','Elektroniczna','Brak'] as $opt)
+                    <option value="{{ $opt }}" {{ $cur_service_book_status === (string) $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
 
         <div class="wz-info-banner">
             <div class="wz-info-banner-ico"><i data-lucide="info"></i></div>
-            <p>Te informacje będą widoczne w ogłoszeniu w sekcji <b>„Dokumenty"</b>.</p>
+            <p>Te informacje będą widoczne w ogłoszeniu w kafelku <b>„Dokumenty i formalności”</b>.</p>
         </div>
     </div>
 
-    {{-- Internal-only seller info, hidden from the public car page. --}}
-    <div class="wz-section">
-        <div class="wz-section-header">
-            <div class="wz-section-badge">2</div>
-            <div><div class="wz-section-title">Sprzedawca</div><div class="wz-section-subtitle">Dane wewnętrzne (nie wyświetlane publicznie)</div></div>
-        </div>
-        <div class="wz-grid-2" style="margin-bottom:14px">
-            <div class="wz-field"><label>Nazwa / imię i nazwisko</label><input type="text" name="seller_name" value="{{ old('seller_name',$car?->seller_name) }}"></div>
-            <div class="wz-field"><label>Data przyjęcia pojazdu</label><input type="date" name="reception_date" value="{{ old('reception_date',$car?->reception_date) }}"></div>
-        </div>
-        <div class="wz-grid-2" style="margin-bottom:14px">
-            <div class="wz-field"><label>Telefon</label><input type="text" name="seller_phone" value="{{ old('seller_phone',$car?->seller_phone) }}"></div>
-            <div class="wz-field"><label>E-mail</label><input type="email" name="seller_email" value="{{ old('seller_email',$car?->seller_email) }}"></div>
-        </div>
-        <div class="wz-field"><label>Notatka komisowa (wewnętrzna)</label><textarea name="commission_note" rows="3" style="min-height:70px">{{ old('commission_note',$car?->commission_note) }}</textarea></div>
-    </div>
 </div>
 
 {{-- ╔══════════════════════════════════════════════════════════════╗
@@ -1621,97 +1542,50 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
     <div class="wz-section">
         <div class="wz-section-header">
             <div>
-                <div class="wz-section-title" style="font-size:22px">5. Serwisowanie</div>
-                <div class="wz-section-subtitle">Te informacje będą widoczne w ogłoszeniu w kafelku „Serwisowanie".</div>
+                <div class="wz-section-title" style="font-size:22px">5. Serwis i przeglądy</div>
+                <div class="wz-section-subtitle">Te informacje będą widoczne w kafelku „Serwis i przeglądy” w ogłoszeniu.</div>
             </div>
         </div>
 
         <div class="wz-icon-rows">
             <div class="wz-icon-row">
-                <div class="wz-icon-row-ico"><i data-lucide="calendar"></i></div>
+                <div class="wz-icon-row-ico"><x-icon name="calendar" size="20"/></div>
                 <div class="wz-icon-row-label">Ostatni serwis <span class="wz-icon-row-label-info" title="Miesiąc i rok ostatniego serwisu"><i data-lucide="info"></i></span></div>
-                <input type="text" name="last_service" value="{{ old('last_service',$car?->last_service) }}" placeholder="MM.RRRR">
+                <input type="text" name="last_service" value="{{ old('last_service',$car?->last_service) }}" placeholder="MM/RRRR">
             </div>
-
             <div class="wz-icon-row">
-                <div class="wz-icon-row-ico"><i data-lucide="gauge"></i></div>
-                <div class="wz-icon-row-label">Przebieg przy ostatnim serwisie <span class="wz-icon-row-label-info" title="Stan licznika podczas ostatniego serwisu"><i data-lucide="info"></i></span></div>
+                <div class="wz-icon-row-ico"><x-icon name="gauge" size="20"/></div>
+                <div class="wz-icon-row-label">Przebieg przy serwisie <span class="wz-icon-row-label-info" title="Stan licznika podczas ostatniego serwisu"><i data-lucide="info"></i></span></div>
                 <div class="wz-icon-row-input">
-                    <input type="number" name="last_service_mileage" value="{{ old('last_service_mileage',$car?->last_service_mileage) }}" min="0" placeholder="np. 132 000">
+                    <input type="number" name="last_service_mileage" value="{{ old('last_service_mileage',$car?->last_service_mileage) }}" min="0" placeholder="np. 70 000">
                     <span class="wz-icon-row-input-suffix">km</span>
                 </div>
             </div>
-
             <div class="wz-icon-row">
-                <div class="wz-icon-row-ico"><i data-lucide="calendar-check"></i></div>
-                <div class="wz-icon-row-label">Niemieckie badanie techniczne ważne do <span class="wz-icon-row-label-info" title="Data ważności niemieckiego badania technicznego (TÜV)"><i data-lucide="info"></i></span></div>
-                <input type="text" name="de_tech_valid_until" value="{{ old('de_tech_valid_until',$car?->de_tech_valid_until) }}" placeholder="MM.RRRR">
+                <div class="wz-icon-row-ico"><x-icon name="calendar-check" size="20"/></div>
+                <div class="wz-icon-row-label">Badanie techniczne <span class="wz-icon-row-label-info" title="Wyświetla się jako „TÜV · MM/RRRR”"><i data-lucide="info"></i></span></div>
+                <input type="text" name="de_tech_valid_until" value="{{ old('de_tech_valid_until',$car?->de_tech_valid_until) }}" placeholder="MM/RRRR">
             </div>
-
             <div class="wz-icon-row">
-                <div class="wz-icon-row-ico"><i data-lucide="file-text"></i></div>
-                <div class="wz-icon-row-label">Potwierdzenie serwisu <span class="wz-icon-row-label-info" title="Forma potwierdzenia wykonania serwisu"><i data-lucide="info"></i></span></div>
-                <select name="service_confirmation_type">
-                    <option value="" {{ !old('service_confirmation_type',$car?->service_confirmation_type)?'selected':'' }}>Wybierz</option>
-                    <option value="Książka / faktury" {{ old('service_confirmation_type',$car?->service_confirmation_type)=='Książka / faktury'?'selected':'' }}>Książka / faktury</option>
-                    <option value="Książka serwisowa" {{ old('service_confirmation_type',$car?->service_confirmation_type)=='Książka serwisowa'?'selected':'' }}>Książka serwisowa</option>
-                    <option value="Faktury" {{ old('service_confirmation_type',$car?->service_confirmation_type)=='Faktury'?'selected':'' }}>Faktury</option>
-                    <option value="Elektroniczna" {{ old('service_confirmation_type',$car?->service_confirmation_type)=='Elektroniczna'?'selected':'' }}>Elektroniczna</option>
-                    <option value="Brak" {{ old('service_confirmation_type',$car?->service_confirmation_type)=='Brak'?'selected':'' }}>Brak</option>
-                </select>
-            </div>
-
-            <div class="wz-icon-row">
-                <div class="wz-icon-row-ico"><i data-lucide="wrench"></i></div>
-                <div class="wz-icon-row-label">Zakres ostatniego serwisu <span class="wz-icon-row-label-info" title="Co zostało wykonane podczas ostatniego serwisu"><i data-lucide="info"></i></span></div>
-                <select name="last_service_scope">
-                    <option value="" {{ !old('last_service_scope',$car?->last_service_scope)?'selected':'' }}>Wybierz</option>
-                    <option value="Olej i filtry" {{ old('last_service_scope',$car?->last_service_scope)=='Olej i filtry'?'selected':'' }}>Olej i filtry</option>
-                    <option value="Przegląd okresowy" {{ old('last_service_scope',$car?->last_service_scope)=='Przegląd okresowy'?'selected':'' }}>Przegląd okresowy</option>
-                    <option value="Rozrząd" {{ old('last_service_scope',$car?->last_service_scope)=='Rozrząd'?'selected':'' }}>Rozrząd</option>
-                    <option value="Hamulce" {{ old('last_service_scope',$car?->last_service_scope)=='Hamulce'?'selected':'' }}>Hamulce</option>
-                    <option value="Zawieszenie" {{ old('last_service_scope',$car?->last_service_scope)=='Zawieszenie'?'selected':'' }}>Zawieszenie</option>
-                    <option value="Kompleksowy" {{ old('last_service_scope',$car?->last_service_scope)=='Kompleksowy'?'selected':'' }}>Kompleksowy</option>
+                <div class="wz-icon-row-ico"><x-icon name="file-text" size="20"/></div>
+                <div class="wz-icon-row-label">Dokumentacja serwisowa <span class="wz-icon-row-label-info" title="Czy pojazd ma dokumentację serwisową"><i data-lucide="info"></i></span></div>
+                <select name="service_documentation">
+                    <option value="">— wybierz —</option>
+                    @php $cur_service_documentation = (string) old('service_documentation', $car?->service_documentation); @endphp
+                    @if($cur_service_documentation !== '' && !in_array($cur_service_documentation, ['Tak','Nie'], true))<option value="{{ $cur_service_documentation }}" selected>{{ $cur_service_documentation }}</option>@endif
+                    @foreach(['Tak','Nie'] as $opt)
+                    <option value="{{ $opt }}" {{ $cur_service_documentation === (string) $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
 
         <div class="wz-info-banner">
             <div class="wz-info-banner-ico"><i data-lucide="info"></i></div>
-            <p>Te informacje będą widoczne w ogłoszeniu w sekcji <b>„Serwisowanie"</b>.</p>
+            <p>Te informacje będą widoczne w ogłoszeniu w kafelku <b>„Serwis i przeglądy”</b>.</p>
         </div>
     </div>
 
-    {{-- Secondary admin-only sub-section: legacy + eco data still
-         editable but moved out of the public-facing main card. --}}
-    <div class="wz-section">
-        <div class="wz-section-header">
-            <div class="wz-section-badge">2</div>
-            <div><div class="wz-section-title">Dodatkowe informacje</div><div class="wz-section-subtitle">Pozostałe pola serwisowe i parametry ekologiczne</div></div>
-        </div>
-        <div class="wz-grid-2" style="margin-bottom:14px">
-            <div class="wz-field"><label>Serwisowany w ASO</label>
-                <select name="aso_serviced">
-                    <option value="" {{ !old('aso_serviced',$car?->aso_serviced)?'selected':'' }}>— wybierz —</option>
-                    <option value="Tak" {{ old('aso_serviced',$car?->aso_serviced)=='Tak'?'selected':'' }}>Tak</option>
-                    <option value="Nie" {{ old('aso_serviced',$car?->aso_serviced)=='Nie'?'selected':'' }}>Nie</option>
-                    <option value="Częściowo" {{ old('aso_serviced',$car?->aso_serviced)=='Częściowo'?'selected':'' }}>Częściowo</option>
-                    <option value="Brak danych" {{ old('aso_serviced',$car?->aso_serviced)=='Brak danych'?'selected':'' }}>Brak danych</option>
-                </select>
-            </div>
-            <div class="wz-field"><label>Przegląd ważny do (miesiąc/rok)</label>
-                <input type="text" name="next_inspection" value="{{ old('next_inspection',$car?->next_inspection) }}" placeholder="03/2025">
-            </div>
-        </div>
-        <div class="wz-grid-2" style="margin-bottom:14px">
-            <div class="wz-field"><label>Zużycie paliwa</label><input type="text" name="fuel_consumption" value="{{ old('fuel_consumption',$car?->fuel_consumption) }}" placeholder="5.6 l/100km"></div>
-            <div class="wz-field"><label>Emisja CO₂</label><input type="text" name="co2_emission" value="{{ old('co2_emission',$car?->co2_emission) }}" placeholder="115 g/km"></div>
-        </div>
-        <div class="wz-grid-2">
-            <div class="wz-field"><label>Klasa emisji</label><input type="text" name="emission_class" value="{{ old('emission_class',$car?->emission_class) }}" placeholder="Euro 6"></div>
-            <div class="wz-field"><label>Procedura pomiaru</label><input type="text" name="fuel_procedure" value="{{ old('fuel_procedure',$car?->fuel_procedure) }}" placeholder="WLTP"></div>
-        </div>
-    </div>
 </div>
 
 {{-- ╔══════════════════════════════════════════════════════════════╗

@@ -58,7 +58,7 @@
 
 /* SEARCH FORM */
 .hero-search-wrap{position:relative;margin-top:-90px;z-index:4;padding-bottom:0}
-.hero-search{background:#fff;border-radius:22px;box-shadow:0 2px 10px rgba(15,32,80,.06),0 1px 2px rgba(15,32,80,.04);padding:32px 40px 32px;max-width:1200px;margin:0 auto}
+.hero-search{background:#fff;border-radius:22px;box-shadow:0 24px 64px rgba(0,0,0,.16),0 4px 16px rgba(0,0,0,.06);padding:32px 40px 32px;max-width:1200px;margin:0 auto}
 
 /* Header row */
 .hero-search-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
@@ -188,14 +188,12 @@
 /* Tlo od projektanta (ta sama plansza co bohater: poswiata + tarcze).
    Krawedzie wygaszone maska radialna, zeby nie bylo widac prostokata na
    gradiencie sekcji. Lezy POD postacia (z-index). */
-.cs-cc-hero::before{content:'';position:absolute;inset:-4% -8% -2% 0;z-index:0;pointer-events:none;
-    background:url('/images/certicheck-hero-bg.webp') center/cover no-repeat;
-    /* dwie maski (intersect): radialna wygasza rogi, liniowa odcina lewa strone,
-       zeby poswiata i tarcze nie wchodzily pod karty */
-    -webkit-mask-image:radial-gradient(ellipse 66% 60% at 56% 50%,#000 50%,rgba(0,0,0,.6) 76%,transparent 100%),linear-gradient(90deg,transparent 0,rgba(0,0,0,.45) 14%,#000 34%);
-    -webkit-mask-composite:source-in;
-            mask-image:radial-gradient(ellipse 66% 60% at 56% 50%,#000 50%,rgba(0,0,0,.6) 76%,transparent 100%),linear-gradient(90deg,transparent 0,rgba(0,0,0,.45) 14%,#000 34%);
-            mask-composite:intersect}
+.cs-cc-hero::before{content:'';position:absolute;top:0;bottom:0;left:-16%;right:-12vw;z-index:0;pointer-events:none;
+    background:url('/images/certicheck-hero-bg.webp') 30% 20%/cover no-repeat;
+    /* Tlo w CALOSCI (luki, poswiata, tarcze) — wygaszamy tylko waski pas od
+       strony kart, zeby nie bylo pionowej krawedzi. */
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.5) 9%,#000 20%);
+            mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.5) 9%,#000 20%)}
 .cs-cc-hero img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;object-position:50% 100%;display:block;
     filter:drop-shadow(0 26px 40px rgba(15,32,80,.18))}
 .cs-cc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:#0066ff;text-transform:uppercase;letter-spacing:1.6px;margin-bottom:12px}
@@ -284,11 +282,11 @@
     /* Tu bohater jest WYSRODKOWANY, wiec desktopowa maska (wygaszenie tylko
        lewej krawedzi) zostawiala twarde ciecie po prawej. Symetryczna elipsa
        wygasza wszystkie krawedzie. */
-    .cs-cc-hero::before{inset:-3% -7%;
-        -webkit-mask-image:radial-gradient(ellipse 62% 58% at 50% 47%,#000 44%,rgba(0,0,0,.55) 73%,transparent 100%);
-        -webkit-mask-composite:source-over;
-                mask-image:radial-gradient(ellipse 62% 58% at 50% 47%,#000 44%,rgba(0,0,0,.55) 73%,transparent 100%);
-                mask-composite:add}
+    .cs-cc-hero::before{top:-3%;bottom:0;left:-12%;right:-12%;background-position:center 20%;
+        -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%),linear-gradient(180deg,transparent 0,#000 8%,#000 84%,transparent 100%);
+        -webkit-mask-composite:source-in;
+                mask-image:linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%),linear-gradient(180deg,transparent 0,#000 8%,#000 84%,transparent 100%);
+                mask-composite:intersect}
     /* Miekki cien pod sylwetka — bez niego postac wisi w powietrzu. */
     .cs-cc-hero::after{content:'';position:absolute;left:50%;bottom:6px;transform:translateX(-50%);
         width:70%;height:26px;z-index:0;pointer-events:none;
@@ -330,10 +328,8 @@
            najjasniejszy fragment. Gradient w najglebszym odcieniu tla (#AEC7F8)
            dokłada cien przy prawej krawedzi, zeby miala taka sama glebie jak lewa. */
         background:linear-gradient(to left,rgba(174,199,248,.62) 0,rgba(174,199,248,.30) 18%,rgba(174,199,248,0) 52%),url('/images/certicheck-hero-bg.webp') center/cover no-repeat;
-        -webkit-mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.6) 10%,#000 26%),linear-gradient(to right,transparent 0,rgba(0,0,0,.45) 14%,#000 34%);
-        -webkit-mask-composite:source-in;
-                mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.6) 10%,#000 26%),linear-gradient(to right,transparent 0,rgba(0,0,0,.45) 14%,#000 34%);
-                mask-composite:intersect}
+        -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 12%);
+                mask-image:linear-gradient(to bottom,transparent 0,#000 12%)}
     /* Sylwetka jest teraz ucieta krawedzia sekcji, wiec cien pod nia znika. */
     .cs-cc-hero::after{display:none}
 }

@@ -196,7 +196,7 @@
 .cs-price-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .cs-price-block{min-width:0;flex:1 1 auto}
 .cs-price-label{font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.cs-price-value{font-size:36px;font-weight:900;letter-spacing:-1px;color:#1a1a1a;line-height:1}
+.cs-price-value{font-size:40px;font-weight:900;letter-spacing:-1px;color:#1a1a1a;line-height:1}
 .cs-price-value small{display:block;font-size:12px;font-weight:500;color:#9ca3af;letter-spacing:0;margin-top:4px}
 .cs-price-meta{font-size:12px;color:#6b7280;font-weight:500;margin-top:6px}
 /* (CertiCheck pill visuals owned by the shared component.) */
@@ -1056,7 +1056,7 @@
     /* Sidebar */
     .cs-sidebar-card{border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
     .cs-price-section{padding:20px 20px 14px}
-    .cs-price-value{font-size:30px}
+    .cs-price-value{font-size:33px}
     .cs-price-actions{padding:14px 16px 16px}
     .cs-price-actions .btn{padding:12px 16px;font-size:14px}
     .cs-sidebar-summary{padding:0 16px}
@@ -1164,7 +1164,7 @@
     .cs-data-section{border-radius:14px;margin-bottom:14px}
     .cs-data-row{padding:10px 0;gap:12px}
     .cs-data-row .val{max-width:55%}
-    .cs-price-value{font-size:26px}
+    .cs-price-value{font-size:29px}
     .cs-sections-2col{padding:0}
     .cs-nav-btn{padding:6px 8px;font-size:11px}
     .cs-damage-diagram{max-height:260px;max-width:300px}
@@ -1586,7 +1586,7 @@
                     @endif
                     @if($car->power_hp)
                     <div class="cs-sidebar-summary-row">
-                        <span class="cs-row-icon"><x-icon name="zap" size="16"/></span>
+                        <span class="cs-row-icon"><x-icon name="gauge" size="16"/></span>
                         <span class="lbl">Moc</span>
                         <span class="val">{{ $car->power_hp }} KM</span>
                     </div>
@@ -1870,11 +1870,11 @@
                     // Row 3
                     ['badge-check',   'Wersja',               $equipVersion !== '' ? $equipVersion : $em],
                     ['calendar-days', 'Rok produkcji',        $prodYear ?: $em],
-                    ['zap',             'Moc',                  $rowOk($car->power_hp) ? $car->power_hp . ' KM' . ($rowOk($car->power_kw) ? ' / ' . $car->power_kw . ' kW' : '') : $em],
+                    ['gauge',           'Moc',                  $rowOk($car->power_hp) ? $car->power_hp . ' KM' . ($rowOk($car->power_kw) ? ' / ' . $car->power_kw . ' kW' : '') : $em],
                     ['palette',       'Kolor nadwozia',       $rowOk($car->color) ? $car->color : $em],
                     // Row 4
                     ['ph-fill:engine',           'Silnik',               $engineVersion !== '' ? $engineVersion : $em],
-                    ['ph-fill:cylinder',      'Pojemność skokowa',    $rowOk($car->engine_capacity) ? number_format((float) $car->engine_capacity, 0, '', ' ') . ' cm³' : $em],
+                    ['mdi:piston',      'Pojemność skokowa',    $rowOk($car->engine_capacity) ? number_format((float) $car->engine_capacity, 0, '', ' ') . ' cm³' : $em],
                     ['tabler-fill:car-4wd',         'Napęd',                $drivetrain ? preg_replace('/\s*\([A-Z0-9]{2,4}\)\s*$/', '', $drivetrain) : $em],
                     ['ph-fill:identification-card',          'VIN',                  $rowOk($car->vin) ? (substr(strtoupper($car->vin),0,12) . str_repeat('*', max(0, strlen($car->vin) - 12))) : $em],
                 ];
@@ -1926,9 +1926,10 @@
     @endphp
     @php
         // Wiersze kart 1:1 wg wzoru (po 4 w kazdej karcie).
-        $impLabel = $car->is_imported !== null
-            ? \App\Helpers\CarLabels::bool($car->is_imported)
-            : ($rowOk($car->imported_from) ? 'Tak' : null);
+        // is_imported ma w bazie domyslnie false — admin pokazuje wtedy "Nie",
+        // wiec strona tez. Stare rekordy z samym imported_from (poza PL) = Tak.
+        $impFrom  = \App\Helpers\CarLabels::country($car->imported_from) ?? $car->imported_from;
+        $impLabel = $car->is_imported || ($rowOk($car->imported_from) && $impFrom !== 'Polska') ? 'Tak' : 'Nie';
         $techInsp = $rowOk($car->de_tech_valid_until)
             ? 'TÜV · ' . $car->de_tech_valid_until
             : ($rowOk($car->next_inspection) ? $car->next_inspection : null);

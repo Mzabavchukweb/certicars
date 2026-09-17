@@ -304,7 +304,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     <div class="cat-filter-group" style="margin-top:14px">
                         <div class="cat-flabel">
-                            <x-icon name="zap" size="14"/>
+                            <x-icon name="gauge" size="14"/>
                             Moc silnika (KM)
                         </div>
                         <div class="cat-row">

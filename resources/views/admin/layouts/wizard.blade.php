@@ -279,7 +279,7 @@
             <div class="wiz-step active" data-step="1" onclick="goToStep(1)">
                 <span class="num">1</span>
                 <span class="check"><i data-lucide="check"></i></span>
-                <span class="name">Dane podstawowe</span>
+                <span class="name">Dane pojazdu</span>
             </div>
             <div class="wiz-step" data-step="2" onclick="goToStep(2)">
                 <span class="num">2</span>
@@ -294,12 +294,12 @@
             <div class="wiz-step" data-step="4" onclick="goToStep(4)">
                 <span class="num">4</span>
                 <span class="check"><i data-lucide="check"></i></span>
-                <span class="name">Dokumenty</span>
+                <span class="name">Dokumenty i formalności</span>
             </div>
             <div class="wiz-step" data-step="5" onclick="goToStep(5)">
                 <span class="num">5</span>
                 <span class="check"><i data-lucide="check"></i></span>
-                <span class="name">Serwisowanie</span>
+                <span class="name">Serwis i przeglądy</span>
             </div>
             <div class="wiz-step" data-step="6" onclick="goToStep(6)">
                 <span class="num">6</span>
@@ -459,8 +459,8 @@ const totalSteps = 11;
 const completedSteps = new Set();
 
 const stepNames = [
-    '', 'Dane podstawowe', 'Zdjęcia i media', 'Historia pojazdu',
-    'Serwisowanie', 'Dokumenty', 'Wyposażenie', 'Stan wizualny',
+    '', 'Dane pojazdu', 'Zdjęcia i media', 'Historia pojazdu',
+    'Dokumenty i formalności', 'Serwis i przeglądy', 'Wyposażenie', 'Stan wizualny',
     'Stan techniczny', 'Pomiary lakieru', 'Opony i bieżnik', 'Podgląd i publikacja'
 ];
 
