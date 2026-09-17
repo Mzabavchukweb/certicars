@@ -680,10 +680,10 @@
         <div class="cs-jwz-steps">
             @php
                 $jwzSteps = [
-                    ['search',         '01', 'Wybierasz samochód',           'Przeglądasz ofertę, zdjęcia, dane techniczne, wyposażenie oraz opis stanu auta. Przy wybranych pojazdach dostępny jest dodatkowy raport CertiCheck.'],
+                    ['car',            '01', 'Wybierasz samochód',           'Przeglądasz ofertę, zdjęcia, dane techniczne, wyposażenie oraz opis stanu auta. Przy wybranych pojazdach dostępny jest dodatkowy raport CertiCheck.'],
                     ['message-square', '02', 'Kontaktujesz się z nami',      'Potwierdzamy dostępność auta, odpowiadamy na pytania i umawiamy dogodny termin oględzin.'],
                     ['clipboard-check','03', 'Oglądasz samochód',   'Na miejscu możesz dokładnie obejrzeć samochód, odbyć jazdę próbną oraz sprawdzić auto przed zakupem — na stacji diagnostycznej lub w wybranym serwisie.'],
-                    ['file-text',      '04', 'Finalizujesz zakup',           'Wyjaśniamy formalności, dokumenty oraz koszty. Wiesz, co jest w cenie auta i co pozostaje po stronie kupującego.'],
+                    ['handshake',      '04', 'Finalizujesz zakup',           'Wyjaśniamy formalności, dokumenty oraz koszty. Wiesz, co jest w cenie auta i co pozostaje po stronie kupującego.'],
                     ['truck',          '05', 'Możliwy transport auta',       'Po wcześniejszym ustaleniu warunków i kosztów możemy przywieźć samochód pod wskazany adres.'],
                 ];
             @endphp
@@ -702,9 +702,9 @@
         <div class="cs-jwz-benefits">
             @php
                 $jwzBenefits = [
-                    ['shield-check', 'Jasne zasady'],
+                    ['scale',        'Jasne zasady'],
                     ['wallet',       'Jasne koszty zakupu'],
-                    ['search',       'Możliwość sprawdzenia auta'],
+                    ['scan-search',  'Możliwość sprawdzenia auta'],
                     ['phone-call',   'Jesteśmy do Twojej dyspozycji'],
                 ];
             @endphp
@@ -753,7 +753,7 @@
                 $ccCards = [
                     ['scan-line',     'Pomiary lakieru',   'Wskazujemy pomiary i ewentualne różnice grubości powłoki w punktach kontrolnych.'],
                     ['wrench',        'Stan techniczny',   'Opisujemy widoczne elementy techniczne i podstawowe obserwacje z oględzin pojazdu.'],
-                    ['search',        'Ślady użytkowania', 'Pokazujemy widoczne ślady eksploatacji i ich lokalizację.'],
+                    ['map-pin',       'Ślady użytkowania', 'Pokazujemy widoczne ślady eksploatacji i ich lokalizację.'],
                     ['file-text',     'Raport PDF',        'Czytelne podsumowanie ze zdjęciami i danymi do pobrania.'],
                 ];
             @endphp

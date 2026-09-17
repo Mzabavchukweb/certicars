@@ -43,7 +43,7 @@
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@700;800;900&display=swap">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@700;800;900&display=swap" rel="stylesheet"></noscript>
-    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" defer></script>
     <script type="application/ld+json">
     {{-- AutoDealer jest podtypem LocalBusiness. @id daje encji stabilny
          identyfikator, do ktorego moga sie odwolywac inne schematy. geo i

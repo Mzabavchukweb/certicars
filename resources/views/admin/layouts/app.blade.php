@@ -8,7 +8,7 @@
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" defer></script>
     <style>
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
         :root{--blue:#0066ff;--blue-h:#0052cc;--blue-bg:#e8f1ff;--text:#0a0a0a;--text-2:#555;--text-3:#868686;--text-4:#b0b0b0;--bg:#f7f7f8;--border:#e5e5e7;--border-l:#eeeef0;--green:#10b981;--yellow:#f59e0b;--red:#ef4444}

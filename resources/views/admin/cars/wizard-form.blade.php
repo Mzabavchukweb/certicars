@@ -842,7 +842,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                     </div>
                 </div>
                 <ul class="wz-std-card-list">
-                    <li>Galeria zdjęć</li>
+                    <li>Galeria zdjęć + 360° wnętrza i zewnętrza</li>
                     <li>Dane pojazdu i historia</li>
                     <li>Dokumenty + serwisowanie</li>
                     <li>Wyposażenie + stan techniczny</li>
@@ -860,7 +860,6 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                 </div>
                 <ul class="wz-std-card-list">
                     <li>Zawiera wszystko ze zwykłego</li>
-                    <li>360° wnętrza + zewnętrza</li>
                     <li>Nagranie pracy silnika</li>
                     <li>Pomiary lakieru + bieżnik opon</li>
                     <li>Plakietka + broszura PDF</li>

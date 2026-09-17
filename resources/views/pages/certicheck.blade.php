@@ -1,9 +1,9 @@
 @extends('layouts.public')
 @section('meta_title_full','CertiCheck — rozszerzona prezentacja wybranych aut | CertiCars')
 @section('title','CertiCheck — rozszerzona prezentacja wybranych aut')
-@section('description','CertiCheck to rozszerzona prezentacja wybranych samochodów w CertiCars: pomiary lakieru, stan opon, mapa śladów, materiały 360° oraz dokumenty — abyś wiedział więcej przed przyjazdem.')
+@section('description','CertiCheck to rozszerzona prezentacja wybranych samochodów w CertiCars: pomiary lakieru, stan opon, mapa śladów, nagranie pracy silnika oraz dokumenty — abyś wiedział więcej przed przyjazdem.')
 @section('og_title','CertiCheck — rozszerzona prezentacja wybranych aut | CertiCars')
-@section('og_description','Pomiary lakieru, stan opon, mapa zauważonych śladów, materiały 360° i dokumenty. Poznaj auto jeszcze przed oględzinami.')
+@section('og_description','Pomiary lakieru, stan opon, mapa zauważonych śladów, nagranie pracy silnika i dokumenty. Poznaj auto jeszcze przed oględzinami.')
 
 @section('styles')
 :root{--cc-blue:#0066ff;--cc-blue-d:#0052cc;--cc-ink:#0a0a0a;--cc-muted:#475569;--cc-line:#e5edfa;--cc-bg:#f6f8fc}
@@ -301,7 +301,7 @@
         <div>
             <div class="cclp-eyebrow">CertiCheck</div>
             <h1>Wiesz więcej<br><span class="blue">przed przyjazdem.</span></h1>
-            <p class="lead">CertiCheck to rozszerzona prezentacja wybranych samochodów w CertiCars. Pokazujemy pomiary lakieru, stan opon, zauważone ślady użytkowania, materiały 360° oraz dostępne dokumenty, aby ułatwić Ci wstępne zapoznanie się z autem jeszcze przed oględzinami.</p>
+            <p class="lead">CertiCheck to rozszerzona prezentacja wybranych samochodów w CertiCars. Pokazujemy pomiary lakieru, stan opon, zauważone ślady użytkowania, nagranie pracy silnika oraz dostępne dokumenty, aby ułatwić Ci wstępne zapoznanie się z autem jeszcze przed oględzinami.</p>
             <a class="cclp-cta-primary" href="{{ route('catalog') }}">
                 Zobacz auta z CertiCheck
                 <x-icon name="arrow-right" size="17" :strokeWidth="2.4"/>
@@ -313,13 +313,12 @@
         </div>
         <div class="cclp-hero-visual">
             <img class="cclp-hero-char" src="/images/bohater-certicheck.png" alt="Konsultant CertiCars prezentujący podsumowanie CertiCheck" loading="eager" decoding="async" width="941" height="1672">
-            <div class="cc-rep-360" aria-hidden="true"><x-icon name="rotate-3d" size="20" :strokeWidth="2"/><b>360°</b></div>
             <div class="cclp-hero-report cc-rep" role="img" aria-label="Panel CertiCheck — pomiary lakieru 118–164 µm, stan opon przód 6 mm tył 5 mm, 5 zauważonych śladów, 8 dokumentów">
                 <div class="cc-rep-list">
                     @php
                         $ccRows = [
                             ['scan-line','Pomiary lakieru',['118 – 164 µm']],
-                            ['circle-gauge','Stan opon',['Przód 6 mm, Tył 5 mm']],
+                            ['tabler:wheel','Stan opon',['Przód 6 mm, Tył 5 mm']],
                             ['triangle-alert','Ślady użytkowania',['5 elementów']],
                             ['file-text','Dokumenty',['8 plików']],
                         ];
@@ -358,10 +357,10 @@
         <div class="cclp-cards">
             @php
                 $benefits = [
-                    ['rotate-3d','Prezentacja 360° nadwozie i wnętrze','Obejrzyj samochód z każdej strony oraz dokładnie wnętrze kabiny.'],
+                    ['audio-lines','Nagranie pracy silnika','Posłuchaj, jak pracuje silnik, jeszcze przed przyjazdem na oględziny.'],
                     ['scan-line','Pomiary grubości lakieru','Sprawdź rzeczywiste wartości lakieru na poszczególnych elementach.'],
                     ['map-pin','Mapa zauważonych śladów','Zaznaczamy rysy, odpryski, wgniecenia i inne ślady normalnej eksploatacji.'],
-                    ['circle-gauge','Stan opon i bieżnika','Informacja o oponach oraz zmierzona głębokość bieżnika w mm.'],
+                    ['tabler:wheel','Stan opon i bieżnika','Informacja o oponach oraz zmierzona głębokość bieżnika w mm.'],
                     ['file-text','Dokumenty i historia serwisowa','Zdjęcia dostępnych dokumentów oraz wpisów serwisowych pojazdu.'],
                     ['clipboard-check','Szczegółowy opis stanu pojazdu','Opis wybranych elementów pojazdu oraz zauważonych informacji podczas oględzin.'],
                 ];
@@ -469,7 +468,7 @@
             @php
                 $steps = [
                     ['1','Oględziny samochodu','Oglądamy pojazd i dokumentujemy jego stan oraz wyposażenie.'],
-                    ['2','Pomiary i materiały','Wykonujemy pomiary lakieru, prezentację 360° i zdjęcia oraz zbieramy dokumenty.'],
+                    ['2','Pomiary i materiały','Wykonujemy pomiary lakieru, nagrywamy pracę silnika, robimy zdjęcia i zbieramy dokumenty.'],
                     ['3','Opis i mapa śladów','Opisujemy wybrane elementy i zaznaczamy wszystkie zauważone ślady użytkowania.'],
                     ['4','Publikacja przy ogłoszeniu','Materiały CertiCheck udostępniamy w ogłoszeniu, abyś wiedział więcej przed przyjazdem.'],
                 ];
@@ -507,7 +506,7 @@
                 <ul class="cclp-scope-list">
                     @foreach([
                         'Pomiary grubości lakieru w wybranych punktach kontrolnych',
-                        'Materiały zdjęciowe oraz prezentacje 360°',
+                        'Nagranie pracy silnika i zdjęcia stanu pojazdu',
                         'Zaznaczenie wszystkich zauważonych śladów użytkowania',
                         'Informacje o oponach i głębokości bieżnika',
                         'Zdjęcia dostępnych dokumentów i historii serwisowej',

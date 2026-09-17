@@ -312,7 +312,7 @@
                     </a>
                     <div class="about-cta-trust">
                         <span><x-icon name="zap" size="14"/> Szybki kontakt</span>
-                        <span><x-icon name="info" size="14"/> Jasne informacje</span>
+                        <span><x-icon name="list-checks" size="14"/> Jasne informacje</span>
                         <span><x-icon name="calendar-check" size="14"/> Możliwość oględzin</span>
                     </div>
                 </div>
