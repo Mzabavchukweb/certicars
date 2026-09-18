@@ -643,6 +643,18 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 .wz-file-drop.wz-drop-busy { border-color: var(--blue, #0066ff); background: #f5f9ff; }
 .wz-file-drop.wz-drop-ok { border-color: #10b981; background: #f0fdf6; }
 .wz-file-drop.wz-drop-err { border-color: #ef4444; background: #fef2f2; }
+#wzSaveError { position: relative; margin: 0 0 18px; padding: 16px 44px 16px 18px; border: 1.5px solid #fca5a5; border-left-width: 5px; border-left-color: #ef4444; background: #fef2f2; border-radius: 12px; }
+#wzSaveError .wse-title { font-size: 15px; font-weight: 800; color: #b91c1c; margin-bottom: 6px; }
+#wzSaveError .wse-list { margin: 0 0 8px; padding-left: 18px; font-size: 13.5px; color: #7f1d1d; line-height: 1.5; }
+#wzSaveError .wse-note { font-size: 12.5px; color: #991b1b; }
+#wzSaveError .wse-note a { color: #b91c1c; font-weight: 700; }
+#wzSaveError .wse-close { position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border: none; background: transparent; color: #b91c1c; font-size: 20px; cursor: pointer; }
+.wz-form .is-invalid { border-color: #ef4444 !important; box-shadow: 0 0 0 3px rgba(239,68,68,.12) !important; }
+.wz-dmg-item-thumb.is-uploading img { opacity: .5; }
+.wz-dmg-item-thumb .dmg-up-state { position: absolute; left: 4px; bottom: 4px; background: rgba(0,0,0,.65); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 4px; }
+.wz-dmg-item-thumb.is-done .dmg-up-state { background: #10b981; }
+.wz-dmg-item-thumb.is-failed { outline: 2px solid #ef4444; cursor: pointer; }
+.wz-dmg-item-thumb.is-failed .dmg-up-state { background: #ef4444; }
 .wz-drop-retry { margin-left: 6px; background: #fff; color: #dc2626; border: 1.5px solid #fca5a5; border-radius: 99px; padding: 3px 12px; font-size: 12px; font-weight: 700; cursor: pointer; }
 .wz-img-tile img {
     width: 100%;
@@ -2852,6 +2864,57 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         }
     }
 
+    // Szkic (localStorage) niesie tez sciezki wgranych plikow (pending_*).
+    // Po "Przywróć" odtwarzamy ukryte pola, zeby wgrane zdjecia/filmy nie przepadly.
+    (function(){
+        if (WZ_CAR_ID || typeof wizApplyDraft !== 'function') return;
+        const orig = wizApplyDraft;
+        window.wizApplyDraft = function(payload) {
+            orig(payload);
+            const v = (payload && payload.values) || {};
+            const restoreList = (name, kind) => {
+                const arr = Array.isArray(v[name]) ? v[name] : (v[name] ? [v[name]] : []);
+                if (!arr.length) return;
+                const drop = document.getElementById(kind === 'gallery' ? 'wzGalleryDrop' : 'wzDamageDrop');
+                const grid = wzPhotoGrid(kind);
+                if (!drop || !grid) return;
+                arr.forEach((path, i) => {
+                    if (grid.querySelector('input[value="' + CSS.escape(path) + '"]')) return;
+                    const tile = document.createElement('div');
+                    tile.className = 'wz-fp-item wz-up up-done';
+                    tile.dataset.fileKey = 'restored|' + path;
+                    tile.innerHTML = '<div class="up-thumb up-thumb-text">WGRANE</div><div class="up-status"><span class="up-name"></span><span class="up-msg">✓ Z poprzedniej próby</span></div><div class="up-bar"><i></i></div><button type="button" class="up-del" title="Usuń">×</button>';
+                    tile.querySelector('.up-name').textContent = path.split('/').pop();
+                    tile.querySelector('.up-del').addEventListener('click', e => { e.preventDefault(); tile.remove(); wzAfterTilesChanged(kind); });
+                    const hid = document.createElement('input');
+                    hid.type = 'hidden'; hid.name = name; hid.value = path;
+                    tile.appendChild(hid);
+                    grid.appendChild(tile);
+                });
+                wzAfterTilesChanged(kind);
+                const t = drop.querySelector('.drop-title');
+                if (t) t.textContent = `${arr.length} zdjęć z poprzedniej próby zostanie dołączonych — możesz dodać kolejne`;
+            };
+            restoreList('pending_gallery[]', 'gallery');
+            restoreList('pending_damage[]', 'damage');
+            // wybor Zwykle/CertiCheck: odswiez widocznosc krokow wg przywroconej wartosci
+            const picked = document.querySelector('[name=has_certicheck_picker]:checked');
+            if (picked) picked.closest('.wz-std-card')?.click();
+            if (window.wzRestoreDamages) window.wzRestoreDamages(v);
+            Object.keys(WZ_MEDIA_FIELDS).forEach(field => {
+                const path = v['pending_' + field];
+                if (!path) return;
+                const input = document.querySelector('input[type=file][name="' + field + '"]');
+                const drop = input && input.closest('.wz-file-drop');
+                if (!drop) return;
+                let hid = drop.querySelector('input[name="pending_' + field + '"]');
+                if (!hid) { hid = document.createElement('input'); hid.type = 'hidden'; hid.name = 'pending_' + field; drop.appendChild(hid); }
+                hid.value = path;
+                wzMediaUI(drop).set('✓ Plik z poprzedniej próby (<strong>' + wzEsc(path.split('/').pop()) + '</strong>) dołączy się przy zapisie auta', 'ok');
+            });
+        };
+    })();
+
     // --- pola plikow ---
     document.querySelectorAll('.wz-file-drop').forEach(drop => {
         const input = drop.querySelector('input[type="file"]');
@@ -2922,8 +2985,58 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         return list;
     }
 
+    // Zglos blad do Rejestru bledow w adminie (best-effort, bez czekania).
+    window.wzReportError = function(source, message, context) {
+        try {
+            const fd = new FormData();
+            fd.append('source', source);
+            fd.append('message', String(message).slice(0, 1000));
+            fd.append('context', ''); // placeholder — nizej nadpisane JSON-em
+            fd.delete('context');
+            Object.entries(context || {}).forEach(([k, v]) => fd.append('context[' + k + ']', typeof v === 'string' ? v.slice(0, 2000) : JSON.stringify(v)));
+            if (WZ_CAR_ID) fd.append('car_id', WZ_CAR_ID);
+            fd.append('_token', wzCsrf());
+            navigator.sendBeacon ? navigator.sendBeacon('/admin/errors/client', fd) : fetch('/admin/errors/client', { method: 'POST', body: fd, keepalive: true });
+        } catch (_) {}
+    };
+
+    function wzFieldLabel(name) {
+        const el = document.querySelector('[name="' + CSS.escape(name) + '"], [name="' + CSS.escape(name + '[]') + '"]');
+        if (!el) return name;
+        const wrap = el.closest('.wz-field, .wz-icon-row, .wz-toggle');
+        const lab = wrap && (wrap.querySelector('label, .wz-icon-row-label, .wz-toggle-label'));
+        return lab ? lab.textContent.replace(/\s+/g, ' ').replace(/\*|Dodaj nową/g, '').trim() : name;
+    }
+
+    function wzShowSaveError(title, lines, focusName) {
+        let box = document.getElementById('wzSaveError');
+        if (!box) {
+            box = document.createElement('div');
+            box.id = 'wzSaveError';
+            box.setAttribute('role', 'alert');
+            const center = document.getElementById('wizCenter');
+            (center || document.body).insertBefore(box, (center || document.body).firstChild);
+        }
+        box.innerHTML = '<div class="wse-title"></div><ul class="wse-list"></ul>'
+            + '<div class="wse-note">Nic nie przepadło — wszystkie wpisane dane i wgrane pliki zostały na tej stronie. Popraw i kliknij „Zapisz” jeszcze raz. Ten błąd jest też zapisany w <a href="/admin/bledy" target="_blank">Rejestrze błędów</a>.</div>'
+            + '<button type="button" class="wse-close" aria-label="Zamknij">×</button>';
+        box.querySelector('.wse-title').textContent = title;
+        const ul = box.querySelector('.wse-list');
+        (lines || []).forEach(t => { const li = document.createElement('li'); li.textContent = t; ul.appendChild(li); });
+        if (!lines || !lines.length) ul.remove();
+        box.querySelector('.wse-close').addEventListener('click', () => box.remove());
+        if (focusName) {
+            const el = document.querySelector('[name="' + CSS.escape(focusName) + '"]');
+            const step = el && el.closest('.wz-step');
+            if (step && typeof goToStep === 'function') goToStep(parseInt(step.dataset.step, 10) || 1);
+            if (el) { el.classList.add('is-invalid'); try { el.focus({ preventScroll: true }); } catch (_) {} }
+        }
+        (document.getElementById('wizCenter') || window).scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Zapis: XHR + JSON. Przy bledzie NIE przeladowujemy strony — komunikat
+    // na ekranie, formularz i szkic w localStorage zostaja nietkniete.
     window.wzChunkedSubmit = function(form) {
-        if (wzInFlight === 0 && !wzFailedUploads().length) return false;
         (async () => {
             if (wzInFlight > 0) {
                 const start = wzInFlight;
@@ -2948,9 +3061,60 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                     return;
                 }
             }
-            if (window.wzClearDirty) window.wzClearDirty();
-            window.wzLeavingOnPurpose = true;
-            form.submit();
+
+            const ov = wzOverlay();
+            ov.querySelector('.wzu-title').textContent = 'Zapisywanie ogłoszenia…';
+            ov.querySelector('.wzu-step').textContent = '';
+            ov.querySelector('.wzu-fill').style.width = '100%';
+            document.getElementById('wzSaveError')?.remove();
+            form.querySelectorAll('.is-invalid').forEach(e => e.classList.remove('is-invalid'));
+            if (typeof wizPersistDraft === 'function') wizPersistDraft(); // szkic aktualny na wypadek bledu
+
+            // pola plikow ida osobno — w glownym zadaniu nie ma zadnych plikow
+            const fd = new FormData(form);
+            [...fd.keys()].forEach(k => { const v = fd.getAll(k); if (v.some(x => x instanceof File)) fd.delete(k); });
+
+            let r = null;
+            for (let attempt = 1; attempt <= 3; attempt++) {
+                r = await wzXhr(form.action, fd, null).promise;
+                if (r.status !== 0 && r.status !== 502 && r.status !== 503 && r.status !== 504) break;
+                ov.querySelector('.wzu-step').textContent = `Serwer nie odpowiada — ponawiam (${attempt}/3)…`;
+                await wzSleep(2000 * attempt);
+            }
+            document.getElementById('wzUploadOverlay')?.remove();
+
+            if (r.ok && r.data && r.data.redirect) {
+                if (window.wzClearDirty) window.wzClearDirty();
+                if (typeof wizClearDraft === 'function') wizClearDraft();
+                window.wzLeavingOnPurpose = true;
+                window.location.href = r.data.redirect;
+                return;
+            }
+
+            if (typeof wizResetSubmitState === 'function') wizResetSubmitState();
+            const errors = (r.data && r.data.errors) || null;
+            let title, lines = [], focus = null;
+            if (r.status === 422 && errors) {
+                title = 'Ogłoszenie nie zostało zapisane — popraw zaznaczone pola:';
+                Object.entries(errors).forEach(([name, msgs]) => {
+                    const base = name.replace(/\.\d+$/, '').replace(/\./g, '][').replace(/^([^\]]+)\]/, '$1]');
+                    lines.push(wzFieldLabel(base) + ': ' + (Array.isArray(msgs) ? msgs[0] : msgs));
+                    if (!focus) focus = base;
+                });
+            } else if (r.status === 419) {
+                title = 'Sesja wygasła — ogłoszenie nie zostało zapisane.';
+                lines = ['Otwórz panel w nowej karcie, zaloguj się, wróć tutaj i kliknij „Zapisz” jeszcze raz. Dane na tej stronie zostają.'];
+            } else if (r.status === 413) {
+                title = 'Serwer odrzucił zapis: za dużo danych w formularzu (413).';
+            } else if (r.status === 0) {
+                title = 'Brak połączenia z serwerem — ogłoszenie nie zostało zapisane.';
+                lines = ['Sprawdź internet i kliknij „Zapisz” jeszcze raz.'];
+            } else {
+                title = (r.data && r.data.message) || ('Serwer zwrócił błąd ' + r.status + ' — ogłoszenie nie zostało zapisane.');
+                if (r.data && r.data.detail) lines = [r.data.detail];
+            }
+            wzShowSaveError(title, lines, focus);
+            window.wzReportError('car.save', title + (lines.length ? ' — ' + lines.join(' | ') : ''), { status: r.status, url: form.action });
         })();
         return true;
     };
@@ -3179,6 +3343,48 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             wzUpdateCount();
         }
 
+        // Odtworzenie znacznikow ze szkicu (localStorage) — razem ze zdjeciami
+        // wgranymi wczesniej do tmp-uploads (pending_images).
+        window.wzRestoreDamages = function(values) {
+            const byIdx = {};
+            Object.keys(values || {}).forEach(k => {
+                const m = k.match(/^damages\[(\d+)\]\[([a-z_]+)\](\[\])?$/);
+                if (!m) return;
+                (byIdx[m[1]] = byIdx[m[1]] || {})[m[2]] = values[k];
+            });
+            const list = document.getElementById('wzDamageList');
+            if (!list) return 0;
+            let n = 0;
+            Object.keys(byIdx).sort((a, b) => a - b).forEach(i => {
+                const d = byIdx[i];
+                if (d.id) return; // istniejace w bazie sa juz na stronie
+                if (!TYPE_LABELS[d.type]) return;
+                const prev = wzCurrentType;
+                wzCurrentType = d.type;
+                wzAddDamageItem(parseFloat(d.position_x) || 50, parseFloat(d.position_y) || 50);
+                wzCurrentType = prev;
+                const item = list.lastElementChild;
+                if (d.area) item.querySelector('.wz-area-input').value = d.area;
+                const pend = Array.isArray(d.pending_images) ? d.pending_images : (d.pending_images ? [d.pending_images] : []);
+                const photoRow = item.querySelector('.wz-dmg-item-photo');
+                pend.forEach(path => {
+                    const thumb = document.createElement('div');
+                    thumb.className = 'wz-dmg-item-thumb is-new is-done';
+                    thumb.innerHTML = '<img src="/storage/' + path.split('/').map(encodeURIComponent).join('/') + '" alt=""><span class="dmg-up-state">✓</span>';
+                    const hid = document.createElement('input');
+                    hid.type = 'hidden'; hid.name = 'damages[' + item.dataset.idx + '][pending_images][]'; hid.value = path;
+                    thumb.appendChild(hid);
+                    const x = document.createElement('button');
+                    x.type = 'button'; x.className = 'wz-dmg-item-thumb-x'; x.title = 'Usuń zdjęcie'; x.textContent = '✕';
+                    x.addEventListener('click', e => { e.preventDefault(); thumb.remove(); });
+                    thumb.appendChild(x);
+                    photoRow.insertBefore(thumb, photoRow.firstChild);
+                });
+                n++;
+            });
+            return n;
+        };
+
         window.wzRemoveDamage = function(btn) {
             btn.closest('.wz-dmg-item').remove();
             wzReindexDamages();
@@ -3186,26 +3392,65 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             wzUpdateCount();
         };
 
+        // Zdjecie oznaczenia wgrywa sie od razu (tmp-uploads) — do glownego
+        // zadania idzie tylko sciezka w damages[i][pending_images][].
         window.wzPreviewDmgImages = function(input) {
             const item = input.closest('.wz-dmg-item');
             const photoRow = item.querySelector('.wz-dmg-item-photo');
-            const file = input.files && input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = e => {
-                let thumb = item.querySelector('.wz-dmg-item-thumb.is-new');
-                if (!thumb) {
-                    thumb = document.createElement('div');
-                    thumb.className = 'wz-dmg-item-thumb is-new';
-                    photoRow.insertBefore(thumb, photoRow.firstChild);
-                }
-                thumb.innerHTML = `<img src="${e.target.result}" alt="">`;
-                // Mark the camera button as filled so admin sees the upload landed.
-                const label = item.querySelector('.wz-dmg-photo-btn');
-                if (label) { label.style.borderColor = '#10b981'; label.style.color = '#10b981'; label.style.borderStyle = 'solid'; }
-            };
-            reader.readAsDataURL(file);
+            const files = Array.from(input.files || []);
+            input.value = '';
+            files.forEach(file => wzDmgUpload(item, photoRow, file));
         };
+        async function wzDmgUpload(item, photoRow, file) {
+            const thumb = document.createElement('div');
+            thumb.className = 'wz-dmg-item-thumb is-new is-uploading';
+            thumb.innerHTML = '<img alt=""><span class="dmg-up-state">0%</span>';
+            const img = thumb.querySelector('img');
+            if (!wzIsHeic(file)) { img.src = URL.createObjectURL(file); img.onload = () => URL.revokeObjectURL(img.src); }
+            photoRow.insertBefore(thumb, photoRow.firstChild);
+            const state = thumb.querySelector('.dmg-up-state');
+            const camera = item.querySelector('.wz-dmg-photo-btn');
+            wzTrackStart();
+            try {
+                let prepared = file;
+                try { prepared = await wzPrepareImage(file); } catch (_) {}
+                if (wzIsHeic(file) && prepared !== file) { img.src = URL.createObjectURL(prepared); img.onload = () => URL.revokeObjectURL(img.src); }
+                let r = null;
+                for (let attempt = 1; attempt <= WZ_PHOTO_TRIES; attempt++) {
+                    const fd = new FormData();
+                    fd.append('kind', 'damage_marker');
+                    fd.append('file', prepared);
+                    r = await wzXhr('/admin/uploads/temp', fd, frac => { state.textContent = Math.round(frac * 100) + '%'; }).promise;
+                    if (r.ok || !wzRetryable(r.status)) break;
+                    state.textContent = 'ponawiam…';
+                    await wzSleep([0, 1500, 4000, 9000][attempt] || 9000);
+                }
+                thumb.classList.remove('is-uploading');
+                if (!r.ok) {
+                    thumb.classList.add('is-failed');
+                    thumb.title = r.msg || 'błąd wysyłania';
+                    state.textContent = '✗';
+                    thumb.addEventListener('click', () => { thumb.remove(); wzDmgUpload(item, photoRow, file); }, { once: true });
+                    window.wzReportError('upload.damage_marker', file.name + ': ' + (r.msg || 'błąd wysyłania'), { status: r.status });
+                    return;
+                }
+                thumb.classList.add('is-done');
+                state.textContent = '✓';
+                const idx = item.dataset.idx;
+                const hid = document.createElement('input');
+                hid.type = 'hidden';
+                hid.name = 'damages[' + idx + '][pending_images][]';
+                hid.value = r.data.path;
+                thumb.appendChild(hid);
+                const x = document.createElement('button');
+                x.type = 'button'; x.className = 'wz-dmg-item-thumb-x'; x.title = 'Usuń zdjęcie'; x.textContent = '✕';
+                x.addEventListener('click', e => { e.preventDefault(); thumb.remove(); });
+                thumb.appendChild(x);
+                if (camera) { camera.style.borderColor = '#10b981'; camera.style.color = '#10b981'; camera.style.borderStyle = 'solid'; }
+            } finally {
+                wzTrackEnd();
+            }
+        }
 
         function wzReindexDamages() {
             document.querySelectorAll('.wz-dmg-item').forEach((el, idx) => {

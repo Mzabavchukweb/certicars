@@ -25,6 +25,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: ['zdarzenie']);
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        // Rejestr błędów w adminie: każdy zgłoszony wyjątek trafia do tabeli
+        // error_logs (poza 404). Zapis nigdy nie rzuca — patrz ErrorLog::record().
+        $exceptions->report(function (\Throwable $e) {
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+                || $e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+                return;
+            }
+            \App\Models\ErrorLog::fromException($e);
+        });
         // CSRF / session-expired (419) — return a friendly Polish message
         // instead of the generic Page Expired screen. Critical for the
         // long-lived admin car wizard where a user may leave the form open

@@ -62,6 +62,9 @@ Route::post('/admin/password/update', [PasswordResetController::class, 'reset'])
 // Admin Panel
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('bledy', [\App\Http\Controllers\Admin\ErrorLogController::class, 'index'])->name('admin.errors.index');
+    Route::post('bledy/wyczysc', [\App\Http\Controllers\Admin\ErrorLogController::class, 'clear'])->name('admin.errors.clear');
+    Route::post('errors/client', [\App\Http\Controllers\Admin\ErrorLogController::class, 'client'])->name('admin.errors.client');
 
     Route::post('cars/bulk', [AdminCarController::class, 'bulk'])->name('admin.cars.bulk');
     Route::resource('cars', AdminCarController::class)->names('admin.cars');

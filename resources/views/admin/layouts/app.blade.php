@@ -283,6 +283,8 @@
             <div class="section-lbl">Zarządzanie</div>
             <a href="{{ route('admin.cars.index') }}" class="{{ request()->routeIs('admin.cars.*')?'active':'' }}"><i data-lucide="car"></i> Samochody</a>
             <a href="{{ route('admin.brands.index') }}" class="{{ request()->routeIs('admin.brands.*')?'active':'' }}"><i data-lucide="tag"></i> Marki</a>
+            @php try { $errCount24 = \App\Models\ErrorLog::where('created_at', '>=', now()->subDay())->count(); } catch (\Throwable $e) { $errCount24 = 0; } @endphp
+            <a href="{{ route('admin.errors.index') }}" class="{{ request()->routeIs('admin.errors.*')?'active':'' }}"><i data-lucide="triangle-alert"></i> Rejestr błędów @if($errCount24)<span class="badge" style="background:#ef4444">{{ $errCount24 }}</span>@endif</a>
             <div class="section-lbl">Konto</div>
             <a href="{{ route('admin.profile.edit') }}" class="{{ request()->routeIs('admin.profile.*')?'active':'' }}"><i data-lucide="user"></i> Profil</a>
             <a href="#" onclick="event.preventDefault();openShortcuts()"><i data-lucide="keyboard"></i> Skróty <span class="kbd">?</span></a>
@@ -439,6 +441,7 @@ const CMDK_PAGES=[
     {t:'Wiadomości',s:'Skrzynka odbiorcza',icon:'inbox',url:'{{ route('admin.messages.index') }}',kbd:'g m'},
     {t:'Nieprzeczytane wiadomości',s:'Filtr',icon:'mail',url:'{{ route('admin.messages.index',['filter'=>'unread']) }}'},
     {t:'Marki',s:'Zarządzanie markami',icon:'tag',url:'{{ route('admin.brands.index') }}',kbd:'g b'},
+    {t:'Rejestr błędów',s:'Wyjątki, nieudane zapisy i wgrania',icon:'triangle-alert',url:'{{ route('admin.errors.index') }}'},
     {t:'Profil',s:'Dane konta, hasło',icon:'user',url:'{{ route('admin.profile.edit') }}'},
     {t:'Strona główna',s:'Widok publiczny',icon:'external-link',url:'{{ route('home') }}',external:true},
     {t:'Oferta publiczna',s:'Katalog',icon:'external-link',url:'{{ route('catalog') }}',external:true},

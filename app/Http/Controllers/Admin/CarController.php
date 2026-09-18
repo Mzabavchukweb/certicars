@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Car;
+use App\Models\ErrorLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -143,6 +144,7 @@ class CarController extends Controller
                 'rid' => $reqId, 'op' => 'store', 'user_id' => $userId,
                 'fields' => array_keys($ve->errors()),
             ]);
+            ErrorLog::record('car.store', 'Nowe auto — walidacja: ' . $this->firstErrors($ve), ['errors' => $ve->errors(), 'rid' => $reqId], 'warning');
             throw $ve;
         }
         $validated = $this->processEquipment($validated);
@@ -162,7 +164,12 @@ class CarController extends Controller
                 'exception' => get_class($e), 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            return back()->withInput()->with('error', 'Nie udało się zapisać samochodu. Spróbuj ponownie, a jeśli problem się powtórzy — skontaktuj się z administratorem.');
+            ErrorLog::record('car.store', 'Nowe auto — zapis do bazy nie powiódł się: ' . $e->getMessage(), ['exception' => get_class($e), 'rid' => $reqId, 'trace' => mb_substr($e->getTraceAsString(), 0, 3000)]);
+            $msg = 'Nie udało się zapisać samochodu (błąd bazy danych). Szczegóły są w Rejestrze błędów.';
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => $msg, 'detail' => $e->getMessage()], 500);
+            }
+            return back()->withInput()->with('error', $msg);
         }
 
         // Phase 2: Image uploads — outside transaction (filesystem ops can't roll back).
@@ -175,6 +182,7 @@ class CarController extends Controller
                 'rid' => $reqId, 'op' => 'store', 'user_id' => $userId, 'car_id' => $car->id,
                 'exception' => get_class($e), 'message' => $e->getMessage(),
             ]);
+            ErrorLog::record('car.store', 'Auto zapisane, ale pliki nie: ' . $e->getMessage(), ['exception' => get_class($e), 'rid' => $reqId], 'error', $car->id);
             $imageFailures[] = '(błąd przesyłania)';
         }
 
@@ -186,7 +194,15 @@ class CarController extends Controller
             'image_failures' => count($imageFailures),
         ]);
 
+        if (!empty($imageFailures)) {
+            ErrorLog::record('car.store', 'Auto zapisane, nie udało się dołączyć plików: ' . implode(', ', $imageFailures), [], 'warning', $car->id);
+        }
         $redirect = redirect($this->editUrlWithTab($car, $request));
+        if ($request->expectsJson()) {
+            session()->flash('success', 'Samochód został dodany.');
+            if (!empty($imageFailures)) session()->flash('warning', $this->formatImageFailureMessage($imageFailures));
+            return response()->json(['success' => true, 'redirect' => $redirect->getTargetUrl(), 'car_id' => $car->id]);
+        }
         if (!empty($imageFailures)) {
             return $redirect
                 ->with('success', 'Samochód został dodany.')
@@ -251,6 +267,7 @@ class CarController extends Controller
                 'rid' => $reqId, 'op' => 'update', 'user_id' => $userId, 'car_id' => $car->id,
                 'fields' => array_keys($ve->errors()),
             ]);
+            ErrorLog::record('car.update', 'Edycja auta — walidacja: ' . $this->firstErrors($ve), ['errors' => $ve->errors(), 'rid' => $reqId], 'warning', $car->id);
             throw $ve;
         }
         $validated = $this->processEquipment($validated);
@@ -268,7 +285,12 @@ class CarController extends Controller
                 'exception' => get_class($e), 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            return back()->withInput()->with('error', 'Nie udało się zaktualizować samochodu. Twoje zmiany nie zostały zapisane — spróbuj ponownie.');
+            ErrorLog::record('car.update', 'Edycja auta — zapis do bazy nie powiódł się: ' . $e->getMessage(), ['exception' => get_class($e), 'rid' => $reqId, 'trace' => mb_substr($e->getTraceAsString(), 0, 3000)], 'error', $car->id);
+            $msg = 'Nie udało się zaktualizować samochodu (błąd bazy danych). Twoje zmiany nie zostały zapisane — szczegóły są w Rejestrze błędów.';
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => $msg, 'detail' => $e->getMessage()], 500);
+            }
+            return back()->withInput()->with('error', $msg);
         }
 
         $imageFailures = [];
@@ -279,6 +301,7 @@ class CarController extends Controller
                 'rid' => $reqId, 'op' => 'update', 'user_id' => $userId, 'car_id' => $car->id,
                 'exception' => get_class($e), 'message' => $e->getMessage(),
             ]);
+            ErrorLog::record('car.update', 'Zmiany zapisane, ale pliki nie: ' . $e->getMessage(), ['exception' => get_class($e), 'rid' => $reqId], 'error', $car->id);
             $imageFailures[] = '(błąd przesyłania)';
         }
 
@@ -290,7 +313,15 @@ class CarController extends Controller
             'image_failures' => count($imageFailures),
         ]);
 
+        if (!empty($imageFailures)) {
+            ErrorLog::record('car.update', 'Zmiany zapisane, nie udało się dołączyć plików: ' . implode(', ', $imageFailures), [], 'warning', $car->id);
+        }
         $redirect = redirect($this->editUrlWithTab($car, $request));
+        if ($request->expectsJson()) {
+            session()->flash('success', 'Samochód został zaktualizowany.');
+            if (!empty($imageFailures)) session()->flash('warning', $this->formatImageFailureMessage($imageFailures));
+            return response()->json(['success' => true, 'redirect' => $redirect->getTargetUrl(), 'car_id' => $car->id]);
+        }
         if (!empty($imageFailures)) {
             return $redirect
                 ->with('success', 'Samochód został zaktualizowany.')
@@ -302,6 +333,11 @@ class CarController extends Controller
     /**
      * Count uploaded files per field — safe to log (no contents, no PII).
      */
+    private function firstErrors(\Illuminate\Validation\ValidationException $ve): string
+    {
+        return implode(' | ', array_map(fn($m) => $m[0] ?? '', array_slice($ve->errors(), 0, 6)));
+    }
+
     private function safeFileCounts(Request $request): array
     {
         $out = [];
@@ -648,6 +684,7 @@ class CarController extends Controller
         }
         @unlink($part);
         if (!$stored) {
+            ErrorLog::record('upload.chunk', 'Nie udało się zapisać pliku po złożeniu części: ' . $data['name'], ['kind' => $kind, 'size' => $data['size']]);
             return response()->json(['success' => false, 'message' => 'Nie udało się zapisać pliku na serwerze.'], 500);
         }
         @file_put_contents($doneFile, $stored);
@@ -676,6 +713,7 @@ class CarController extends Controller
         return [
             'gallery'             => $image,
             'damage'              => $image,
+            'damage_marker'       => $image,
             'interior_video_file' => $video,
             'exterior_video_file' => $video,
             'pano360_image'       => $pano,
@@ -729,10 +767,11 @@ class CarController extends Controller
 
         $path = $this->safeStore($request->file('file'), $dir);
         if ($path === null) {
+            ErrorLog::record('upload.temp', 'Nie udało się zapisać pliku na serwerze: ' . $request->file('file')->getClientOriginalName(), ['kind' => $kind]);
             return response()->json(['success' => false, 'message' => 'Nie udało się zapisać pliku na serwerze.'], 500);
         }
-        if ($kind === 'gallery' || $kind === 'damage') {
-            $this->optimizeImage($path, $kind === 'damage' ? 1280 : 1920);
+        if ($kind === 'gallery' || $kind === 'damage' || $kind === 'damage_marker') {
+            $this->optimizeImage($path, $kind === 'gallery' ? 1920 : 1280);
         }
 
         return response()->json(['success' => true, 'path' => $path, 'url' => $disk->url($path)]);
@@ -1163,6 +1202,29 @@ class CarController extends Controller
                             Storage::disk('public')->delete($p->path);
                         }
                         $p->delete();
+                    }
+                }
+
+                // Zdjecia oznaczen wgrane od razu po wybraniu (tmp-uploads) — przenies do auta.
+                if (!empty($damage['pending_images']) && is_array($damage['pending_images'])) {
+                    Storage::disk('public')->makeDirectory('cars/' . $car->id . '/damages');
+                    $sortOrder = $dmgRecord->photos()->max('sort_order') ?? 0;
+                    foreach ($damage['pending_images'] as $tmp) {
+                        if (!$this->isOwnTempPath($tmp)) continue;
+                        $dest = 'cars/' . $car->id . '/damages/' . basename($tmp);
+                        try {
+                            if (!Storage::disk('public')->move($tmp, $dest)) continue;
+                        } catch (\Throwable $e) {
+                            ErrorLog::record('car.damages', 'Nie udało się przenieść zdjęcia oznaczenia: ' . $e->getMessage(), ['tmp' => $tmp], 'error', $car->id);
+                            continue;
+                        }
+                        \App\Models\CarImage::create([
+                            'car_id'     => $car->id,
+                            'damage_id'  => $dmgRecord->id,
+                            'path'       => $dest,
+                            'type'       => 'damage',
+                            'sort_order' => ++$sortOrder,
+                        ]);
                     }
                 }
 
