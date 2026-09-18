@@ -169,6 +169,7 @@ class CarController extends Controller
         $imageFailures = [];
         try {
             $imageFailures = $this->handleImages($car, $request);
+            $imageFailures = array_merge($imageFailures, $this->attachTempUploads($car, $request));
         } catch (\Throwable $e) {
             \Log::error('car.save.image_phase_failed', [
                 'rid' => $reqId, 'op' => 'store', 'user_id' => $userId, 'car_id' => $car->id,
@@ -471,6 +472,145 @@ class CarController extends Controller
                 'type' => $img->type,
             ],
         ]);
+    }
+
+    /** Rodzaje plikow wgrywanych od razu przy nowym aucie + ich reguly walidacji. */
+    private function tempUploadRules(): array
+    {
+        $image = 'image|mimes:jpg,jpeg,png,webp,avif|max:20480';
+        $video = 'file|mimetypes:video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska|max:204800';
+        $pano  = 'image|mimes:jpg,jpeg,png,webp|max:25600';
+        return [
+            'gallery'             => $image,
+            'damage'              => $image,
+            'interior_video_file' => $video,
+            'exterior_video_file' => $video,
+            'pano360_image'       => $pano,
+            'pano360ext_image'    => $pano,
+        ];
+    }
+
+    private function tempUploadDir(): string
+    {
+        return 'tmp-uploads/' . (int) auth()->id();
+    }
+
+    /**
+     * Nowe auto nie ma jeszcze id, wiec pliki trafiaja od razu do katalogu
+     * tymczasowego uzytkownika. Przy zapisie auta attachTempUploads() je
+     * przenosi. Dzieki temu wgrywanie trwa w trakcie wypelniania formularza,
+     * a nie dopiero po kliknieciu "Opublikuj".
+     */
+    public function uploadTemp(Request $request)
+    {
+        $rules = $this->tempUploadRules();
+        $kind  = (string) $request->input('kind');
+        if (!isset($rules[$kind])) {
+            return response()->json(['success' => false, 'message' => 'Nieznany rodzaj pliku.'], 422);
+        }
+        $isVideo = str_ends_with($kind, '_video_file');
+        $limit   = $isVideo ? '200' : (str_starts_with($kind, 'pano') ? '25' : '20');
+        $request->validate(['file' => 'required|' . $rules[$kind]], [
+            'file.required'  => 'Nie dotarł plik — przesyłanie zostało przerwane.',
+            'file.uploaded'  => 'Plik jest za duży lub przesyłanie zostało przerwane. Maksymalny rozmiar to ' . $limit . ' MB.',
+            'file.max'       => 'Plik jest za duży. Maksymalny rozmiar to ' . $limit . ' MB.',
+            'file.mimetypes' => 'Nieobsługiwany format filmu. Dozwolone: MP4, WebM, MOV, AVI, MKV.',
+            'file.mimes'     => 'Nieobsługiwany format zdjęcia. Dozwolone: JPG, PNG, WebP, AVIF.',
+            'file.image'     => 'Plik musi być zdjęciem.',
+            'file.file'      => 'Plik jest uszkodzony.',
+        ]);
+
+        $disk = Storage::disk('public');
+        $dir  = $this->tempUploadDir();
+
+        // Sprzatanie porzuconych plikow (formularz zamkniety bez zapisu) — starsze niz 2 dni.
+        try {
+            foreach ($disk->files($dir) as $old) {
+                if ($disk->lastModified($old) < now()->subDays(2)->getTimestamp()) {
+                    $disk->delete($old);
+                }
+            }
+        } catch (\Throwable $e) {
+            // best-effort
+        }
+
+        $path = $this->safeStore($request->file('file'), $dir);
+        if ($path === null) {
+            return response()->json(['success' => false, 'message' => 'Nie udało się zapisać pliku na serwerze.'], 500);
+        }
+        if ($kind === 'gallery' || $kind === 'damage') {
+            $this->optimizeImage($path, $kind === 'damage' ? 1280 : 1920);
+        }
+
+        return response()->json(['success' => true, 'path' => $path, 'url' => $disk->url($path)]);
+    }
+
+    /**
+     * Przypina do nowego auta pliki wgrane wczesniej przez uploadTemp().
+     * Przyjmuje TYLKO sciezki z katalogu tymczasowego zalogowanego uzytkownika.
+     */
+    private function attachTempUploads(Car $car, Request $request): array
+    {
+        $failures = [];
+        $disk = Storage::disk('public');
+        $dir  = $this->tempUploadDir();
+        $ok = function ($p) use ($disk, $dir) {
+            return is_string($p)
+                && preg_match('~^' . preg_quote($dir, '~') . '/[A-Za-z0-9]+\.[A-Za-z0-9]{2,5}$~', $p)
+                && $disk->exists($p);
+        };
+        $moveTo = function (string $p, string $sub) use ($disk, $car): ?string {
+            $dest = 'cars/' . $car->id . '/' . $sub . '/' . basename($p);
+            try {
+                return $disk->move($p, $dest) ? $dest : null;
+            } catch (\Throwable $e) {
+                \Log::error('temp.attach.move_failed', ['car_id' => $car->id, 'path' => $p, 'err' => $e->getMessage()]);
+                return null;
+            }
+        };
+
+        foreach (['gallery' => 'pending_gallery', 'damage' => 'pending_damage'] as $type => $field) {
+            foreach ((array) $request->input($field, []) as $p) {
+                $dest = $ok($p) ? $moveTo($p, $type) : null;
+                if ($dest === null) { $failures[] = basename((string) $p); continue; }
+                $car->images()->create([
+                    'path'       => $dest,
+                    'type'       => $type,
+                    'is_primary' => $type === 'gallery' && !$car->images()->where('is_primary', true)->exists(),
+                    'sort_order' => ($car->images()->max('sort_order') ?? 0) + 1,
+                ]);
+            }
+        }
+
+        foreach (['pano360_image' => 'pano360', 'pano360ext_image' => 'pano360ext'] as $field => $type) {
+            $p = $request->input('pending_' . $field);
+            if (!$p) continue;
+            $dest = $ok($p) ? $moveTo($p, $type) : null;
+            if ($dest === null) { $failures[] = basename((string) $p); continue; }
+            $car->images()->where('type', $type)->get()->each(function ($old) use ($disk) {
+                if (!str_starts_with($old->path, 'http')) $disk->delete($old->path);
+                $old->delete();
+            });
+            $car->images()->create(['path' => $dest, 'type' => $type, 'sort_order' => 0]);
+        }
+
+        foreach (['interior' => \App\Jobs\ExtractInteriorFramesJob::class, 'exterior' => \App\Jobs\ExtractExteriorFramesJob::class] as $side => $job) {
+            $p = $request->input('pending_' . $side . '_video_file');
+            if (!$p) continue;
+            $dest = $ok($p) ? $moveTo($p, $side . '_video') : null;
+            if ($dest === null) { $failures[] = basename((string) $p); continue; }
+            $framesDir = 'cars/' . $car->id . '/' . $side . '_frames';
+            $car->forceFill([
+                $side . '_video_path'    => $dest,
+                $side . '_frames_status' => 'pending',
+                $side . '_frames_count'  => null,
+                $side . '_frames_dir'    => $framesDir,
+                $side . '_frames_error'  => null,
+            ])->save();
+            $job::dispatch($car->id, $dest, $framesDir);
+        }
+
+        return $failures;
     }
 
     /**

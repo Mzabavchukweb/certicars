@@ -615,6 +615,16 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 .wz-order-saved.err { color: #ef4444; }
 .wz-file-preview-grid.is-sortable .wz-fp-item { cursor: grab; position: relative; }
 .wz-fp-item .fp-pos { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,.65); color: #fff; font-size: 11px; font-weight: 700; border-radius: 6px; padding: 2px 7px; }
+.wz-fp-item .fp-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(0,0,0,.08); }
+.wz-fp-item .fp-bar i { display: block; height: 100%; width: 0; background: var(--blue, #0066ff); transition: width .15s; }
+.wz-fp-item.is-uploading img { opacity: .55; }
+.wz-fp-item.is-done .fp-bar i { width: 100% !important; background: #10b981; }
+.wz-fp-item.is-failed { outline: 2px solid #ef4444; }
+.wz-fp-item.is-failed .fp-bar i { background: #ef4444; width: 100% !important; }
+.wz-fp-item.is-failed .fp-name { color: #ef4444; white-space: normal; }
+.wz-file-drop.wz-drop-busy { border-color: var(--blue, #0066ff); background: #f5f9ff; }
+.wz-file-drop.wz-drop-ok { border-color: #10b981; background: #f0fdf6; }
+.wz-file-drop.wz-drop-err { border-color: #ef4444; background: #fef2f2; }
 #wzUploadOverlay { position: fixed; inset: 0; z-index: 9999; background: rgba(15,23,42,.55); display: flex; align-items: center; justify-content: center; padding: 16px; }
 #wzUploadOverlay .wzu-box { background: #fff; border-radius: 16px; padding: 24px 26px; width: 100%; max-width: 440px; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
 #wzUploadOverlay .wzu-title { font-size: 17px; font-weight: 800; color: #0a0a0a; margin-bottom: 10px; }
@@ -2404,19 +2414,59 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
     // ===================================================================
     //  FILE DROP ZONES
     // ===================================================================
-    // Nowe auto: zdjecia wybrane w kilku turach musza sie DOKLADAC. Natywny
-    // <input type=file> podmienia cala liste przy kazdym wyborze, wiec
-    // trzymamy wlasna liste i po kazdej zmianie odbudowujemy input.files.
-    const wzPicked = new WeakMap();   // input -> File[]
-    const wzSortables = new WeakMap(); // grid -> Sortable
-
+    // ===================================================================
+    //  WGRYWANIE OD RAZU PO DODANIU PLIKU
+    //  - istniejace auto: galeria/stan -> upload-image, filmy/panoramy -> upload-media
+    //  - nowe auto (bez id): wszystko -> uploads/temp, a przy zapisie serwer
+    //    przypina pliki po ukrytych polach pending_*
+    //  "Zapisz"/"Opublikuj" tylko czeka, az skoncza sie trwajace wgrywania.
+    // ===================================================================
+    const WZ_CAR_ID = @json($car?->id ?? null);
+    const WZ_MEDIA_FIELDS = {
+        interior_video_file: 'remove_interior_video',
+        exterior_video_file: 'remove_exterior_video',
+        pano360_image:       'remove_pano360',
+        pano360ext_image:    'remove_pano360ext',
+    };
     const wzFileKey = f => `${f.name}|${f.size}|${f.lastModified}`;
 
-    function wzSyncInput(input) {
-        if (!window.DataTransfer) return;
-        const dt = new DataTransfer();
-        (wzPicked.get(input) || []).forEach(f => dt.items.add(f));
-        input.files = dt.files;
+    // --- licznik trwajacych wgrywan (Zapisz czeka na zero) ---
+    let wzInFlight = 0;
+    let wzIdleWaiters = [];
+    function wzTrackStart(n) { wzInFlight += (n || 1); }
+    function wzTrackEnd() {
+        wzInFlight = Math.max(0, wzInFlight - 1);
+        if (wzInFlight === 0) { const w = wzIdleWaiters; wzIdleWaiters = []; w.forEach(fn => fn()); }
+    }
+    function wzWhenIdle() { return wzInFlight === 0 ? Promise.resolve() : new Promise(r => wzIdleWaiters.push(r)); }
+    window.wzUploadsInFlight = () => wzInFlight;
+
+    // Ostrzezenie przy zamykaniu karty w trakcie wgrywania.
+    window.addEventListener('beforeunload', e => {
+        if (wzInFlight > 0 && !window.wzLeavingOnPurpose) { e.preventDefault(); e.returnValue = ''; }
+    });
+
+    // XHR zamiast fetch — daje postep wysylania duzych plikow.
+    function wzPost(url, fd, onProgress) {
+        return new Promise(resolve => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', url);
+            xhr.setRequestHeader('Accept', 'application/json');
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            if (onProgress) xhr.upload.onprogress = e => { if (e.lengthComputable) onProgress(e.loaded / e.total); };
+            xhr.onload = () => {
+                let data = {};
+                try { data = JSON.parse(xhr.responseText); } catch (_) {}
+                const firstErr = data.errors ? Object.values(data.errors)[0]?.[0] : null;
+                const msg = xhr.status === 413 ? 'plik za duży dla serwera'
+                          : xhr.status === 419 ? 'sesja wygasła — odśwież stronę'
+                          : (firstErr || data.message || (xhr.status >= 400 ? 'błąd serwera (' + xhr.status + ')' : ''));
+                resolve({ ok: xhr.status >= 200 && xhr.status < 300 && data.success !== false, msg, data });
+            };
+            xhr.onerror = () => resolve({ ok: false, msg: 'błąd sieci' });
+            fd.append('_token', wzCsrf());
+            xhr.send(fd);
+        });
     }
 
     document.querySelectorAll('.wz-file-drop').forEach(drop => {
@@ -2436,105 +2486,180 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
     function wzHandleFileDrop(drop, input, incoming, fromDrop) {
         const titleEl = drop.querySelector('.drop-title');
         if (!incoming || !incoming.length) return;
-        if (titleEl && !drop.dataset.originalText) drop.dataset.originalText = titleEl.textContent;
-
+        if (titleEl && !drop.dataset.originalText) drop.dataset.originalText = titleEl.innerHTML;
         const uploadType = drop.dataset.uploadType;
-        const carId = @json($car?->id ?? null);
 
-        // AJAX upload for existing cars (gallery/damage)
-        if (carId && (uploadType === 'gallery' || uploadType === 'damage')) {
+        // Galeria / zdjecia stanu
+        if (uploadType === 'gallery' || uploadType === 'damage') {
             const files = incoming.filter(f => f.type.startsWith('image/'));
-            if (titleEl) titleEl.textContent = `Wgrywanie ${files.length} zdjęć...`;
             input.value = '';
-            wzAjaxUploadFiles(files, uploadType, carId);
-            return;
-        }
-
-        // Pola na JEDEN plik (filmy 360, panoramy) — zadnego sklejania listy.
-        // Wczesniejsza wersja filtrowala tu po typie image/* i kasowala film.
-        if (!input.multiple) {
-            if (fromDrop && window.DataTransfer) {
-                const dt = new DataTransfer();
-                dt.items.add(incoming[0]);
-                input.files = dt.files;
+            if (!files.length) return;
+            if (WZ_CAR_ID) {
+                if (titleEl) titleEl.textContent = `Wgrywanie ${files.length} zdjęć...`;
+                wzAjaxUploadFiles(files, uploadType, WZ_CAR_ID);
+            } else {
+                wzTempAddFiles(drop, uploadType, files);
             }
-            const f = input.files[0] || incoming[0];
-            if (titleEl && f) titleEl.textContent = `${f.name} (${(f.size / 1048576).toFixed(1)} MB) — gotowy do wgrania`;
             return;
         }
 
-        // Nowe auto — lokalne podglady. Dokladamy do listy, bez duplikatow.
-        const list = wzPicked.get(input) || [];
-        const seen = new Set(list.map(wzFileKey));
-        let added = 0, dupes = 0;
-        incoming.forEach(f => {
-            if (seen.has(wzFileKey(f))) { dupes++; return; }
-            seen.add(wzFileKey(f));
-            list.push(f);
-            added++;
-        });
-        wzPicked.set(input, list);
-        wzSyncInput(input);
-        wzRenderLocalPreviews(drop, input);
-        if (titleEl) {
-            titleEl.textContent = `${list.length} plik(ów) gotowych do wgrania`
-                + (added ? ` · dodano ${added}` : '')
-                + (dupes ? ` · pominięto ${dupes} już dodanych` : '');
+        // Film 360 / panorama — wgrywamy od razu
+        if (WZ_MEDIA_FIELDS[input.name]) {
+            const file = incoming[0];
+            input.value = '';
+            wzUploadMediaNow(drop, input.name, file);
+            return;
         }
-        if (window.toast && dupes) toast(`Pominięto ${dupes} zdjęć, które już są na liście.`, 'info');
+
+        // Inne pola jednoplikowe — zostaja w formularzu jak dawniej
+        if (fromDrop && window.DataTransfer) {
+            const dt = new DataTransfer();
+            dt.items.add(incoming[0]);
+            input.files = dt.files;
+        }
+        const f = input.files[0] || incoming[0];
+        if (titleEl && f) titleEl.textContent = `${f.name} (${(f.size / 1048576).toFixed(1)} MB) — gotowy do wgrania`;
     }
 
-    function wzRenderLocalPreviews(drop, input) {
-        const list = wzPicked.get(input) || [];
+    // --- film / panorama: od razu na serwer ---
+    async function wzUploadMediaNow(drop, field, file) {
+        const titleEl = drop.querySelector('.drop-title');
+        const mb = (file.size / 1048576).toFixed(1);
+        const setTitle = html => { if (titleEl) titleEl.innerHTML = html; };
+        drop.classList.remove('wz-drop-ok', 'wz-drop-err');
+        drop.classList.add('wz-drop-busy');
+        setTitle(`Wgrywanie <strong>${wzEsc(file.name)}</strong> (${mb} MB)… 0%`);
+
+        const fd = new FormData();
+        let url;
+        if (WZ_CAR_ID) {
+            url = '/admin/cars/' + WZ_CAR_ID + '/upload-media';
+            fd.append('field', field);
+            fd.append(field, file);
+        } else {
+            url = '/admin/uploads/temp';
+            fd.append('kind', field);
+            fd.append('file', file);
+        }
+        wzTrackStart();
+        const r = await wzPost(url, fd, frac => setTitle(`Wgrywanie <strong>${wzEsc(file.name)}</strong> (${mb} MB)… ${Math.round(frac * 100)}%`));
+        drop.classList.remove('wz-drop-busy');
+        if (r.ok) {
+            drop.classList.add('wz-drop-ok');
+            if (WZ_CAR_ID) {
+                // plik jest juz zapisany w aucie — "usun" przy zapisie by go skasowal
+                const rm = document.querySelector('input[name="' + WZ_MEDIA_FIELDS[field] + '"]');
+                if (rm) rm.checked = false;
+                setTitle(`✓ Wgrano <strong>${wzEsc(file.name)}</strong> (${mb} MB) — zapisany w ogłoszeniu`);
+            } else {
+                let hid = drop.querySelector('input[name="pending_' + field + '"]');
+                if (!hid) { hid = document.createElement('input'); hid.type = 'hidden'; hid.name = 'pending_' + field; drop.appendChild(hid); }
+                hid.value = r.data.path;
+                setTitle(`✓ Wgrano <strong>${wzEsc(file.name)}</strong> (${mb} MB) — dołączy się przy zapisie auta`);
+            }
+        } else {
+            drop.classList.add('wz-drop-err');
+            setTitle(`✗ Nie udało się wgrać <strong>${wzEsc(file.name)}</strong>${r.msg ? ' — ' + wzEsc(r.msg) : ''}. Kliknij, aby spróbować ponownie.`);
+            (window.wzUploadFailures = window.wzUploadFailures || []).push(file.name + (r.msg ? ' — ' + r.msg : ''));
+        }
+        wzTrackEnd();
+    }
+
+    function wzEsc(v) {
+        return String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    }
+
+    // --- nowe auto: zdjecia galerii/stanu od razu do katalogu tymczasowego ---
+    const wzTempQueue = [];
+    let wzTempRunning = false;
+
+    function wzTempGrid(drop) {
         let pg = drop.parentElement?.querySelector('.wz-file-preview-grid.wz-fp-local');
         if (!pg) {
             pg = document.createElement('div');
             pg.className = 'wz-file-preview-grid wz-fp-local';
             drop.parentElement?.insertBefore(pg, drop.nextSibling);
         }
-        pg.innerHTML = '';
-        list.forEach(file => {
-            const item = document.createElement('div');
-            item.className = 'wz-fp-item';
-            item.dataset.fileKey = wzFileKey(file);
-            let img;
-            if (file.type.startsWith('image/')) {
-                img = document.createElement('img');
-                img.src = URL.createObjectURL(file);
-                img.onload = () => URL.revokeObjectURL(img.src);
-                img.draggable = false;
-            } else {
-                img = document.createElement('div');
-                img.className = 'fp-file';
-                img.textContent = (file.name.split('.').pop() || '?').toUpperCase();
-            }
+        return pg;
+    }
+
+    function wzTempAddFiles(drop, kind, files) {
+        const pg = wzTempGrid(drop);
+        const have = new Set([...pg.querySelectorAll('.wz-fp-item')].map(t => t.dataset.fileKey));
+        let added = 0, dupes = 0;
+        files.forEach(file => {
+            const key = wzFileKey(file);
+            if (have.has(key)) { dupes++; return; }
+            have.add(key);
+            const tile = document.createElement('div');
+            tile.className = 'wz-fp-item is-uploading';
+            tile.dataset.fileKey = key;
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.onload = () => URL.revokeObjectURL(img.src);
+            img.draggable = false;
             const name = document.createElement('div');
             name.className = 'fp-name';
             name.textContent = file.name;
+            const bar = document.createElement('div');
+            bar.className = 'fp-bar';
+            bar.innerHTML = '<i></i>';
             const del = document.createElement('button');
             del.type = 'button';
             del.className = 'fp-del';
-            del.title = 'Usuń z listy';
+            del.title = 'Usuń';
             del.textContent = '×';
             del.addEventListener('click', e => {
                 e.preventDefault(); e.stopPropagation();
-                const rest = (wzPicked.get(input) || []).filter(f => wzFileKey(f) !== item.dataset.fileKey);
-                wzPicked.set(input, rest);
-                wzSyncInput(input);
-                wzRenderLocalPreviews(drop, input);
-                const t = drop.querySelector('.drop-title');
-                if (t) t.textContent = rest.length ? `${rest.length} plik(ów) gotowych do wgrania` : (drop.dataset.originalText || t.textContent);
+                tile.dataset.cancelled = '1';
+                tile.remove();
+                wzTempNumber(pg);
             });
-            item.appendChild(img);
-            item.appendChild(name);
-            item.appendChild(del);
-            pg.appendChild(item);
+            tile.append(img, name, bar, del);
+            pg.appendChild(tile);
+            wzTempQueue.push({ tile, file, kind });
+            wzTrackStart();
+            added++;
         });
-        wzNumberLocalPreviews(pg);
-        if (drop.dataset.uploadType === 'gallery') wzSortLocalPreviews(pg, input);
+        wzTempNumber(pg);
+        if (kind === 'gallery') wzTempSortable(pg);
+        const titleEl = drop.querySelector('.drop-title');
+        if (titleEl) titleEl.textContent = `Dodano ${added} zdjęć` + (dupes ? ` · pominięto ${dupes} już dodanych` : '') + ' — możesz dodać kolejne';
+        wzTempRun();
     }
 
-    function wzNumberLocalPreviews(pg) {
+    async function wzTempRun() {
+        if (wzTempRunning) return;
+        wzTempRunning = true;
+        while (wzTempQueue.length) {
+            const { tile, file, kind } = wzTempQueue.shift();
+            if (tile.dataset.cancelled) { wzTrackEnd(); continue; }
+            const fill = tile.querySelector('.fp-bar i');
+            const fd = new FormData();
+            fd.append('kind', kind);
+            fd.append('file', file);
+            const r = await wzPost('/admin/uploads/temp', fd, frac => { if (fill) fill.style.width = Math.round(frac * 100) + '%'; });
+            tile.classList.remove('is-uploading');
+            if (!tile.dataset.cancelled) {
+                if (r.ok) {
+                    tile.classList.add('is-done');
+                    const hid = document.createElement('input');
+                    hid.type = 'hidden';
+                    hid.name = kind === 'damage' ? 'pending_damage[]' : 'pending_gallery[]';
+                    hid.value = r.data.path;
+                    tile.appendChild(hid);
+                } else {
+                    tile.classList.add('is-failed');
+                    tile.querySelector('.fp-name').textContent = '✗ ' + file.name + (r.msg ? ' — ' + r.msg : '');
+                    (window.wzUploadFailures = window.wzUploadFailures || []).push(file.name + (r.msg ? ' — ' + r.msg : ''));
+                }
+            }
+            wzTrackEnd();
+        }
+        wzTempRunning = false;
+    }
+
+    function wzTempNumber(pg) {
         pg.querySelectorAll('.wz-fp-item').forEach((it, i) => {
             let b = it.querySelector('.fp-pos');
             if (!b) { b = document.createElement('span'); b.className = 'fp-pos'; it.appendChild(b); }
@@ -2542,156 +2667,62 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         });
     }
 
-    // Nowe auto — podglady galerii przed zapisem tez da sie przestawiac.
-    function wzSortLocalPreviews(pg, input) {
-        if (!window.Sortable || !window.DataTransfer || wzSortables.has(pg)) return;
+    const wzTempSortables = new WeakMap();
+    function wzTempSortable(pg) {
+        if (!window.Sortable || wzTempSortables.has(pg)) return;
         pg.classList.add('is-sortable');
-        wzSortables.set(pg, Sortable.create(pg, Object.assign({}, wzSortOpts, {
+        // kolejnosc ukrytych pol pending_gallery[] = kolejnosc kafelkow w DOM
+        wzTempSortables.set(pg, Sortable.create(pg, Object.assign({}, wzSortOpts, {
             draggable: '.wz-fp-item',
             filter: '.fp-del',
-            onEnd: () => {
-                const byKey = new Map((wzPicked.get(input) || []).map(f => [wzFileKey(f), f]));
-                const ordered = [];
-                pg.querySelectorAll('.wz-fp-item').forEach(it => {
-                    const f = byKey.get(it.dataset.fileKey);
-                    if (f) ordered.push(f);
-                });
-                wzPicked.set(input, ordered);
-                wzSyncInput(input);
-                wzNumberLocalPreviews(pg);
-            },
+            onEnd: () => wzTempNumber(pg),
         })));
     }
 
-    // ===================================================================
-    //  ZAPIS PO KAWALKU — zamiast jednego wielkiego zadania (413 z nginx).
-    //  Nowe auto: najpierw dane auta (bez plikow), potem kazde zdjecie
-    //  osobno, potem filmy/panoramy. Edycja: filmy/panoramy osobno, potem
-    //  zwykly zapis formularza. Kazde zadanie niesie jeden plik.
-    // ===================================================================
-    const WZ_MEDIA_FIELDS = {
-        interior_video_file: 'remove_interior_video',
-        exterior_video_file: 'remove_exterior_video',
-        pano360_image:       'remove_pano360',
-        pano360ext_image:    'remove_pano360ext',
-    };
-
+    // --- Zapisz / Opublikuj: poczekaj na trwajace wgrywania ---
     function wzOverlay() {
         let el = document.getElementById('wzUploadOverlay');
         if (el) return el;
         el = document.createElement('div');
         el.id = 'wzUploadOverlay';
-        el.innerHTML = '<div class="wzu-box"><div class="wzu-title">Zapisywanie ogłoszenia…</div>'
+        el.innerHTML = '<div class="wzu-box"><div class="wzu-title">Kończę wgrywanie plików…</div>'
             + '<div class="wzu-step"></div><div class="wzu-bar"><div class="wzu-fill"></div></div>'
-            + '<div class="wzu-note">Nie zamykaj tej karty do końca wgrywania.</div></div>';
+            + '<div class="wzu-note">Ogłoszenie zapisze się automatycznie, gdy wszystko się wgra.</div></div>';
         document.body.appendChild(el);
         return el;
     }
-    function wzOverlayStep(text, pct) {
-        const el = wzOverlay();
-        el.querySelector('.wzu-step').textContent = text;
-        el.querySelector('.wzu-fill').style.width = Math.max(0, Math.min(100, pct)) + '%';
-    }
-
-    // XHR zamiast fetch — daje postep wysylania duzych filmow.
-    function wzPost(url, fd, onProgress) {
-        return new Promise(resolve => {
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', url);
-            xhr.setRequestHeader('Accept', 'application/json');
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            if (onProgress) xhr.upload.onprogress = e => { if (e.lengthComputable) onProgress(e.loaded / e.total); };
-            xhr.onload = () => {
-                let data = {};
-                try { data = JSON.parse(xhr.responseText); } catch (_) {}
-                const firstErr = data.errors ? Object.values(data.errors)[0]?.[0] : null;
-                const msg = xhr.status === 413 ? 'plik za duży dla serwera'
-                          : (firstErr || data.message || (xhr.status >= 400 ? 'błąd serwera (' + xhr.status + ')' : ''));
-                resolve({ ok: xhr.status >= 200 && xhr.status < 300 && data.success !== false, msg });
-            };
-            xhr.onerror = () => resolve({ ok: false, msg: 'błąd sieci' });
-            fd.append('_token', wzCsrf());
-            xhr.send(fd);
-        });
-    }
 
     window.wzChunkedSubmit = function(form) {
-        const carId = @json($car?->id ?? null);
-        const galleryInput = document.querySelector('#wzGalleryDrop input[type=file]');
-        const damageInput  = document.querySelector('#wzDamageDrop input[type=file]');
-        const gallery = !carId && galleryInput ? (wzPicked.get(galleryInput) || []) : [];
-        const damage  = !carId && damageInput  ? (wzPicked.get(damageInput)  || []) : [];
-        const media = Object.keys(WZ_MEDIA_FIELDS)
-            .map(name => form.querySelector('input[type=file][name="' + name + '"]'))
-            .filter(i => i && !i.disabled && i.files && i.files.length)
-            .map(i => ({ name: i.name, file: i.files[0], input: i }));
-        if (!gallery.length && !damage.length && !media.length) return false;
-
-        const handled = [galleryInput, damageInput, ...media.map(m => m.input)].filter(Boolean);
-        const restore = () => handled.forEach(i => { i.disabled = false; });
-        handled.forEach(i => { i.disabled = true; }); // nie leca w glownym zadaniu
+        if (wzInFlight === 0 && !(window.wzUploadFailures || []).length) return false;
 
         (async () => {
-            const failures = [];
-            const total = gallery.length + damage.length + media.length + 1;
-            let done = 0;
-            const tick = (label, frac) => wzOverlayStep(label, ((done + (frac || 0)) / total) * 100);
-
-            let id = carId;
-            if (!id) {
-                tick('Zapisywanie danych auta…');
-                let res;
-                try {
-                    res = await fetch(form.action, { method: 'POST', body: new FormData(form), credentials: 'same-origin' });
-                } catch (_) { res = null; }
-                const m = res && res.url.match(/\/admin\/cars\/(\d+)\/edit/);
-                if (!m) {
-                    restore();
+            if (wzInFlight > 0) {
+                const start = wzInFlight;
+                const ov = wzOverlay();
+                const upd = () => {
+                    ov.querySelector('.wzu-step').textContent = `Pozostało plików: ${wzInFlight}`;
+                    ov.querySelector('.wzu-fill').style.width = Math.round(((start - wzInFlight) / start) * 100) + '%';
+                };
+                upd();
+                const t = setInterval(upd, 300);
+                await wzWhenIdle();
+                clearInterval(t);
+                upd();
+            }
+            const failed = window.wzUploadFailures || [];
+            if (failed.length) {
+                const go = confirm('Tych plików nie udało się wgrać:\n\n• ' + failed.join('\n• ')
+                    + '\n\nZapisać ogłoszenie bez nich? (Możesz je dodać później w edycji.)');
+                if (!go) {
                     document.getElementById('wzUploadOverlay')?.remove();
                     if (typeof wizResetSubmitState === 'function') wizResetSubmitState();
-                    alert('Nie udało się zapisać auta' + (res && res.status === 413 ? ' — za duże dane formularza.' : '.')
-                        + '\n\nSprawdź, czy są wypełnione Marka i Model, i spróbuj ponownie. Wybrane zdjęcia zostały na liście.');
                     return;
                 }
-                id = m[1];
-            }
-            done++;
-
-            const upload = async (url, fd, label) => {
-                const r = await wzPost(url, fd, frac => tick(label, frac));
-                if (!r.ok) failures.push(label + (r.msg ? ' — ' + r.msg : ''));
-                done++;
-            };
-
-            for (const [i, f] of gallery.entries()) {
-                const fd = new FormData(); fd.append('image', f); fd.append('type', 'gallery');
-                await upload('/admin/cars/' + id + '/upload-image', fd, 'Zdjęcie ' + (i + 1) + '/' + gallery.length + ': ' + f.name);
-            }
-            for (const [i, f] of damage.entries()) {
-                const fd = new FormData(); fd.append('image', f); fd.append('type', 'damage');
-                await upload('/admin/cars/' + id + '/upload-image', fd, 'Zdjęcie stanu ' + (i + 1) + '/' + damage.length + ': ' + f.name);
-            }
-            for (const m of media) {
-                // nowy plik zastepuje stary — pole "usun" nie moze go potem skasowac
-                const rm = form.querySelector('input[name="' + WZ_MEDIA_FIELDS[m.name] + '"]');
-                if (rm) rm.checked = false;
-                const fd = new FormData(); fd.append('field', m.name); fd.append(m.name, m.file);
-                const mb = (m.file.size / 1048576).toFixed(0);
-                await upload('/admin/cars/' + id + '/upload-media', fd, m.file.name + ' (' + mb + ' MB)');
-            }
-
-            wzOverlayStep(failures.length ? 'Zakończono z błędami' : 'Gotowe', 100);
-            if (failures.length) {
-                alert('Auto zostało zapisane, ale tych plików nie udało się wgrać:\n\n• ' + failures.join('\n• ')
-                    + '\n\nDodaj je ponownie w edycji auta.');
+                window.wzUploadFailures = [];
             }
             if (window.wzClearDirty) window.wzClearDirty();
-
-            if (carId) {
-                form.submit(); // pliki sa juz na serwerze; reszta formularza zwyklym zapisem
-            } else {
-                window.location.href = '/admin/cars/' + id + '/edit';
-            }
+            window.wzLeavingOnPurpose = true;
+            form.submit();
         })();
         return true;
     };
@@ -2714,6 +2745,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         if (progressWrap) progressWrap.style.display = '';
         let done = 0;
         const total = files.length;
+        wzTrackStart(total);
         if (progressText) progressText.textContent = `0/${total}`;
         if (progressBar) progressBar.style.width = '0%';
 
@@ -2733,6 +2765,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                 done++;
                 if (progressBar) progressBar.style.width = Math.round((done / total) * 100) + '%';
                 if (progressText) progressText.textContent = `${done}/${total}`;
+                wzTrackEnd();
 
                 if (data.success && data.image && type === 'gallery' && window.wzGallerySortable) {
                     window.wzGallerySortable.add(data.image);
@@ -2751,6 +2784,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                 }
             } catch (err) {
                 done++;
+                wzTrackEnd();
                 if (progressBar) progressBar.style.width = Math.round((done / total) * 100) + '%';
                 if (progressText) progressText.textContent = `${done}/${total}`;
                 const tile = document.createElement('div');
