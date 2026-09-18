@@ -598,6 +598,9 @@ function wizSafeSubmit() {
         b.style.cursor = 'wait';
         b.textContent = 'Zapisywanie…';
     });
+    // Duze pliki (galeria nowego auta, filmy 360, panoramy) ida osobnymi
+    // zadaniami — jedno wielkie zadanie konczylo sie 413 z nginx.
+    if (window.wzChunkedSubmit && window.wzChunkedSubmit(form)) return;
     form.submit();
 }
 function wizResetSubmitState() {

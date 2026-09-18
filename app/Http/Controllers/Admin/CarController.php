@@ -473,6 +473,56 @@ class CarController extends Controller
         ]);
     }
 
+    /**
+     * Pojedynczy film 360 albo panorama — osobnym zadaniem, zeby formularz auta
+     * nie wysylal wszystkiego naraz (nginx: 413 Request Entity Too Large).
+     * Obsluga plikow jest ta sama co przy zapisie formularza (handleImages).
+     */
+    public function uploadMedia(Request $request, Car $car)
+    {
+        $video = 'file|mimetypes:video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska|max:204800';
+        $pano  = 'image|mimes:jpg,jpeg,png,webp|max:25600';
+        $rules = [
+            'interior_video_file' => $video,
+            'exterior_video_file' => $video,
+            'pano360_image'       => $pano,
+            'pano360ext_image'    => $pano,
+        ];
+        $labels = [
+            'interior_video_file' => 'Film 360° wnętrza',
+            'exterior_video_file' => 'Film 360° na zewnątrz',
+            'pano360_image'       => 'Panorama 360° wnętrza',
+            'pano360ext_image'    => 'Panorama 360° na zewnątrz',
+        ];
+
+        $field = (string) $request->input('field');
+        if (!isset($rules[$field])) {
+            return response()->json(['success' => false, 'message' => 'Nieznane pole pliku.'], 422);
+        }
+
+        $isVideo = str_ends_with($field, '_video_file');
+        $request->validate([$field => 'required|' . $rules[$field]], [
+            $field . '.required'  => $labels[$field] . ': nie dotarł plik — przesyłanie zostało przerwane.',
+            $field . '.uploaded'  => $labels[$field] . ' jest za duży lub przesyłanie zostało przerwane. Maksymalny rozmiar to ' . ($isVideo ? '200' : '25') . ' MB.',
+            $field . '.max'       => $labels[$field] . ' jest za duży. Maksymalny rozmiar to ' . ($isVideo ? '200' : '25') . ' MB.',
+            $field . '.mimetypes' => $labels[$field] . ': nieobsługiwany format. Dozwolone: MP4, WebM, MOV, AVI, MKV.',
+            $field . '.mimes'     => $labels[$field] . ': nieobsługiwany format. Dozwolone: JPG, PNG, WebP.',
+            $field . '.image'     => $labels[$field] . ' musi być zdjęciem.',
+            $field . '.file'      => $labels[$field] . ' musi być prawidłowym plikiem.',
+        ]);
+
+        // Request zawiera tylko ten jeden plik, wiec handleImages obsluzy tylko jego.
+        $failures = $this->handleImages($car, $request);
+
+        Cache::forget('catalog.filters');
+        Cache::forget('sitemap.xml');
+
+        if ($failures) {
+            return response()->json(['success' => false, 'message' => $labels[$field] . ': nie udało się zapisać pliku na serwerze.'], 500);
+        }
+        return response()->json(['success' => true]);
+    }
+
     /** Zapis kolejności zdjęć galerii zaraz po przeciągnięciu (AJAX). */
     public function reorderImages(Request $request, Car $car)
     {

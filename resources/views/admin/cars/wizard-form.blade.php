@@ -615,6 +615,13 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 .wz-order-saved.err { color: #ef4444; }
 .wz-file-preview-grid.is-sortable .wz-fp-item { cursor: grab; position: relative; }
 .wz-fp-item .fp-pos { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,.65); color: #fff; font-size: 11px; font-weight: 700; border-radius: 6px; padding: 2px 7px; }
+#wzUploadOverlay { position: fixed; inset: 0; z-index: 9999; background: rgba(15,23,42,.55); display: flex; align-items: center; justify-content: center; padding: 16px; }
+#wzUploadOverlay .wzu-box { background: #fff; border-radius: 16px; padding: 24px 26px; width: 100%; max-width: 440px; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+#wzUploadOverlay .wzu-title { font-size: 17px; font-weight: 800; color: #0a0a0a; margin-bottom: 10px; }
+#wzUploadOverlay .wzu-step { font-size: 13px; color: #475569; min-height: 18px; margin-bottom: 12px; word-break: break-all; }
+#wzUploadOverlay .wzu-bar { height: 8px; background: #eef2f7; border-radius: 99px; overflow: hidden; }
+#wzUploadOverlay .wzu-fill { height: 100%; width: 0; background: var(--blue, #0066ff); border-radius: 99px; transition: width .2s; }
+#wzUploadOverlay .wzu-note { font-size: 12px; color: #94a3b8; margin-top: 12px; }
 .wz-fp-item .fp-file { width: 100%; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; background: #eff6ff; color: var(--blue, #0066ff); font-size: 15px; font-weight: 800; letter-spacing: .5px; }
 .wz-fp-item .fp-del { position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; line-height: 1; border: none; border-radius: 6px; background: rgba(239,68,68,.92); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .wz-file-preview-grid.wz-fp-local .wz-fp-item { position: relative; }
@@ -2556,6 +2563,139 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         })));
     }
 
+    // ===================================================================
+    //  ZAPIS PO KAWALKU — zamiast jednego wielkiego zadania (413 z nginx).
+    //  Nowe auto: najpierw dane auta (bez plikow), potem kazde zdjecie
+    //  osobno, potem filmy/panoramy. Edycja: filmy/panoramy osobno, potem
+    //  zwykly zapis formularza. Kazde zadanie niesie jeden plik.
+    // ===================================================================
+    const WZ_MEDIA_FIELDS = {
+        interior_video_file: 'remove_interior_video',
+        exterior_video_file: 'remove_exterior_video',
+        pano360_image:       'remove_pano360',
+        pano360ext_image:    'remove_pano360ext',
+    };
+
+    function wzOverlay() {
+        let el = document.getElementById('wzUploadOverlay');
+        if (el) return el;
+        el = document.createElement('div');
+        el.id = 'wzUploadOverlay';
+        el.innerHTML = '<div class="wzu-box"><div class="wzu-title">Zapisywanie ogłoszenia…</div>'
+            + '<div class="wzu-step"></div><div class="wzu-bar"><div class="wzu-fill"></div></div>'
+            + '<div class="wzu-note">Nie zamykaj tej karty do końca wgrywania.</div></div>';
+        document.body.appendChild(el);
+        return el;
+    }
+    function wzOverlayStep(text, pct) {
+        const el = wzOverlay();
+        el.querySelector('.wzu-step').textContent = text;
+        el.querySelector('.wzu-fill').style.width = Math.max(0, Math.min(100, pct)) + '%';
+    }
+
+    // XHR zamiast fetch — daje postep wysylania duzych filmow.
+    function wzPost(url, fd, onProgress) {
+        return new Promise(resolve => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', url);
+            xhr.setRequestHeader('Accept', 'application/json');
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            if (onProgress) xhr.upload.onprogress = e => { if (e.lengthComputable) onProgress(e.loaded / e.total); };
+            xhr.onload = () => {
+                let data = {};
+                try { data = JSON.parse(xhr.responseText); } catch (_) {}
+                const firstErr = data.errors ? Object.values(data.errors)[0]?.[0] : null;
+                const msg = xhr.status === 413 ? 'plik za duży dla serwera'
+                          : (firstErr || data.message || (xhr.status >= 400 ? 'błąd serwera (' + xhr.status + ')' : ''));
+                resolve({ ok: xhr.status >= 200 && xhr.status < 300 && data.success !== false, msg });
+            };
+            xhr.onerror = () => resolve({ ok: false, msg: 'błąd sieci' });
+            fd.append('_token', wzCsrf());
+            xhr.send(fd);
+        });
+    }
+
+    window.wzChunkedSubmit = function(form) {
+        const carId = @json($car?->id ?? null);
+        const galleryInput = document.querySelector('#wzGalleryDrop input[type=file]');
+        const damageInput  = document.querySelector('#wzDamageDrop input[type=file]');
+        const gallery = !carId && galleryInput ? (wzPicked.get(galleryInput) || []) : [];
+        const damage  = !carId && damageInput  ? (wzPicked.get(damageInput)  || []) : [];
+        const media = Object.keys(WZ_MEDIA_FIELDS)
+            .map(name => form.querySelector('input[type=file][name="' + name + '"]'))
+            .filter(i => i && !i.disabled && i.files && i.files.length)
+            .map(i => ({ name: i.name, file: i.files[0], input: i }));
+        if (!gallery.length && !damage.length && !media.length) return false;
+
+        const handled = [galleryInput, damageInput, ...media.map(m => m.input)].filter(Boolean);
+        const restore = () => handled.forEach(i => { i.disabled = false; });
+        handled.forEach(i => { i.disabled = true; }); // nie leca w glownym zadaniu
+
+        (async () => {
+            const failures = [];
+            const total = gallery.length + damage.length + media.length + 1;
+            let done = 0;
+            const tick = (label, frac) => wzOverlayStep(label, ((done + (frac || 0)) / total) * 100);
+
+            let id = carId;
+            if (!id) {
+                tick('Zapisywanie danych auta…');
+                let res;
+                try {
+                    res = await fetch(form.action, { method: 'POST', body: new FormData(form), credentials: 'same-origin' });
+                } catch (_) { res = null; }
+                const m = res && res.url.match(/\/admin\/cars\/(\d+)\/edit/);
+                if (!m) {
+                    restore();
+                    document.getElementById('wzUploadOverlay')?.remove();
+                    if (typeof wizResetSubmitState === 'function') wizResetSubmitState();
+                    alert('Nie udało się zapisać auta' + (res && res.status === 413 ? ' — za duże dane formularza.' : '.')
+                        + '\n\nSprawdź, czy są wypełnione Marka i Model, i spróbuj ponownie. Wybrane zdjęcia zostały na liście.');
+                    return;
+                }
+                id = m[1];
+            }
+            done++;
+
+            const upload = async (url, fd, label) => {
+                const r = await wzPost(url, fd, frac => tick(label, frac));
+                if (!r.ok) failures.push(label + (r.msg ? ' — ' + r.msg : ''));
+                done++;
+            };
+
+            for (const [i, f] of gallery.entries()) {
+                const fd = new FormData(); fd.append('image', f); fd.append('type', 'gallery');
+                await upload('/admin/cars/' + id + '/upload-image', fd, 'Zdjęcie ' + (i + 1) + '/' + gallery.length + ': ' + f.name);
+            }
+            for (const [i, f] of damage.entries()) {
+                const fd = new FormData(); fd.append('image', f); fd.append('type', 'damage');
+                await upload('/admin/cars/' + id + '/upload-image', fd, 'Zdjęcie stanu ' + (i + 1) + '/' + damage.length + ': ' + f.name);
+            }
+            for (const m of media) {
+                // nowy plik zastepuje stary — pole "usun" nie moze go potem skasowac
+                const rm = form.querySelector('input[name="' + WZ_MEDIA_FIELDS[m.name] + '"]');
+                if (rm) rm.checked = false;
+                const fd = new FormData(); fd.append('field', m.name); fd.append(m.name, m.file);
+                const mb = (m.file.size / 1048576).toFixed(0);
+                await upload('/admin/cars/' + id + '/upload-media', fd, m.file.name + ' (' + mb + ' MB)');
+            }
+
+            wzOverlayStep(failures.length ? 'Zakończono z błędami' : 'Gotowe', 100);
+            if (failures.length) {
+                alert('Auto zostało zapisane, ale tych plików nie udało się wgrać:\n\n• ' + failures.join('\n• ')
+                    + '\n\nDodaj je ponownie w edycji auta.');
+            }
+            if (window.wzClearDirty) window.wzClearDirty();
+
+            if (carId) {
+                form.submit(); // pliki sa juz na serwerze; reszta formularza zwyklym zapisem
+            } else {
+                window.location.href = '/admin/cars/' + id + '/edit';
+            }
+        })();
+        return true;
+    };
+
 
     // ===================================================================
     //  AJAX IMAGE UPLOAD (sequential)
@@ -2748,9 +2888,16 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         form.addEventListener('input', check);
         form.addEventListener('change', check);
         form.addEventListener('submit', () => { dirty = false; window.removeEventListener('beforeunload', beforeUnload); });
+        window.wzClearDirty = () => { dirty = false; window.removeEventListener('beforeunload', beforeUnload); };
 
         // Guard: warn if total file payload would exceed server limit (250 MB soft cap)
         form.addEventListener('submit', function(e) {
+            // Duze pliki ida osobnymi zadaniami (Enter / requestSubmit).
+            if (window.wzChunkedSubmit && window.wzChunkedSubmit(form)) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                return;
+            }
             const MAX_BYTES = 250 * 1024 * 1024;
             let total = 0;
             form.querySelectorAll('input[type="file"]').forEach(input => {
