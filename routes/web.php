@@ -72,6 +72,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('cars/{car}/upload-media', [AdminCarController::class, 'uploadMedia'])->name('admin.cars.upload-media');
     // Nowe auto (jeszcze bez id): pliki wgrywaja sie od razu do katalogu tymczasowego.
     Route::post('uploads/temp', [AdminCarController::class, 'uploadTemp'])->name('admin.uploads.temp');
+    // Duze pliki (filmy 360, panoramy) w czesciach po 5 MB — odporne na zrywanie laczy.
+    Route::post('uploads/chunk', [AdminCarController::class, 'uploadChunk'])->name('admin.uploads.chunk');
+    Route::post('cars/{car}/attach-media', [AdminCarController::class, 'attachMedia'])->name('admin.cars.attach-media');
     Route::get('cars/{car}/pdf', [BrochurePdfController::class, 'download'])->name('admin.cars.pdf');
     // Synchronously regenerate one car's cached brochure. Admin waits.
     Route::post('cars/{car}/pdf/regenerate', [BrochurePdfController::class, 'regenerate'])->name('admin.cars.pdf.regenerate');

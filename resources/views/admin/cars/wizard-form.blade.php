@@ -615,16 +615,6 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 .wz-order-saved.err { color: #ef4444; }
 .wz-file-preview-grid.is-sortable .wz-fp-item { cursor: grab; position: relative; }
 .wz-fp-item .fp-pos { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,.65); color: #fff; font-size: 11px; font-weight: 700; border-radius: 6px; padding: 2px 7px; }
-.wz-fp-item .fp-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(0,0,0,.08); }
-.wz-fp-item .fp-bar i { display: block; height: 100%; width: 0; background: var(--blue, #0066ff); transition: width .15s; }
-.wz-fp-item.is-uploading img { opacity: .55; }
-.wz-fp-item.is-done .fp-bar i { width: 100% !important; background: #10b981; }
-.wz-fp-item.is-failed { outline: 2px solid #ef4444; }
-.wz-fp-item.is-failed .fp-bar i { background: #ef4444; width: 100% !important; }
-.wz-fp-item.is-failed .fp-name { color: #ef4444; white-space: normal; }
-.wz-file-drop.wz-drop-busy { border-color: var(--blue, #0066ff); background: #f5f9ff; }
-.wz-file-drop.wz-drop-ok { border-color: #10b981; background: #f0fdf6; }
-.wz-file-drop.wz-drop-err { border-color: #ef4444; background: #fef2f2; }
 #wzUploadOverlay { position: fixed; inset: 0; z-index: 9999; background: rgba(15,23,42,.55); display: flex; align-items: center; justify-content: center; padding: 16px; }
 #wzUploadOverlay .wzu-box { background: #fff; border-radius: 16px; padding: 24px 26px; width: 100%; max-width: 440px; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
 #wzUploadOverlay .wzu-title { font-size: 17px; font-weight: 800; color: #0a0a0a; margin-bottom: 10px; }
@@ -632,9 +622,28 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
 #wzUploadOverlay .wzu-bar { height: 8px; background: #eef2f7; border-radius: 99px; overflow: hidden; }
 #wzUploadOverlay .wzu-fill { height: 100%; width: 0; background: var(--blue, #0066ff); border-radius: 99px; transition: width .2s; }
 #wzUploadOverlay .wzu-note { font-size: 12px; color: #94a3b8; margin-top: 12px; }
-.wz-fp-item .fp-file { width: 100%; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; background: #eff6ff; color: var(--blue, #0066ff); font-size: 15px; font-weight: 800; letter-spacing: .5px; }
-.wz-fp-item .fp-del { position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; line-height: 1; border: none; border-radius: 6px; background: rgba(239,68,68,.92); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.wz-file-preview-grid.wz-fp-local .wz-fp-item { position: relative; }
+.wz-up { position: relative; overflow: hidden; }
+.wz-up .up-thumb { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; background: #eef2f7; }
+.wz-up .up-thumb-text { display: flex; align-items: center; justify-content: center; color: var(--blue, #0066ff); font-weight: 800; font-size: 14px; letter-spacing: .5px; background: #eff6ff; }
+.wz-up .up-status { display: flex; flex-direction: column; gap: 2px; padding: 7px 9px 9px; font-size: 11.5px; line-height: 1.3; min-height: 44px; }
+.wz-up .up-name { color: var(--text-2, #4b5563); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wz-up .up-msg { color: var(--text-3, #9ca3af); font-weight: 600; }
+.wz-up .up-bar { position: absolute; left: 0; right: 0; top: 0; height: 4px; background: rgba(0,0,0,.06); }
+.wz-up .up-bar i { display: block; height: 100%; width: 0; background: var(--blue, #0066ff); transition: width .15s; }
+.wz-up.up-queued .up-thumb, .wz-up.up-uploading .up-thumb { opacity: .6; }
+.wz-up.up-done .up-bar i { width: 100% !important; background: #10b981; }
+.wz-up.up-done .up-msg { color: #059669; }
+.wz-up.up-failed { outline: 2px solid #ef4444; outline-offset: -2px; }
+.wz-up.up-failed .up-bar i { width: 100% !important; background: #ef4444; }
+.wz-up.up-failed .up-msg { color: #dc2626; white-space: normal; }
+.wz-up .up-retry { display: none; position: absolute; left: 50%; top: 34%; transform: translate(-50%,-50%); background: #fff; color: #dc2626; border: 1.5px solid #fca5a5; border-radius: 99px; padding: 6px 16px; font-size: 12.5px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.12); }
+.wz-up.up-failed .up-retry { display: block; }
+.wz-up .up-del { position: absolute; top: 8px; right: 6px; width: 24px; height: 24px; border: none; border-radius: 6px; background: rgba(239,68,68,.92); color: #fff; font-size: 16px; font-weight: 700; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.wz-fp-item.wz-up .fp-pos { top: 8px; }
+.wz-file-drop.wz-drop-busy { border-color: var(--blue, #0066ff); background: #f5f9ff; }
+.wz-file-drop.wz-drop-ok { border-color: #10b981; background: #f0fdf6; }
+.wz-file-drop.wz-drop-err { border-color: #ef4444; background: #fef2f2; }
+.wz-drop-retry { margin-left: 6px; background: #fff; color: #dc2626; border: 1.5px solid #fca5a5; border-radius: 99px; padding: 3px 12px; font-size: 12px; font-weight: 700; cursor: pointer; }
 .wz-img-tile img {
     width: 100%;
     aspect-ratio: 4/3;
@@ -1194,8 +1203,8 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         <label class="wz-file-drop" id="wzGalleryDrop" data-upload-type="gallery">
             <i data-lucide="image-plus"></i>
             <div class="drop-title">Kliknij lub przeciągnij pliki, aby dodać zdjęcia galerii</div>
-            <div class="drop-hint">JPEG, PNG, WebP, AVIF — max 20 MB na zdjęcie</div>
-            <input type="file" name="gallery_images[]" multiple accept="image/*">
+            <div class="drop-hint">JPG, PNG, WebP, HEIC (iPhone) — wgrywają się od razu, duże zdjęcia są automatycznie zmniejszane</div>
+            <input type="file" name="gallery_images[]" multiple accept="image/*,.heic,.heif">
         </label>
         <div class="wz-upload-progress" id="wzGalleryUploadProgress">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
@@ -1216,8 +1225,8 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             </div>
         </div>
 
-        @if($car && $car->damageImages->count())
-        <div class="wz-img-grid" style="margin-bottom:14px">
+        @if($car)
+        <div id="wzDamageGrid" class="wz-img-grid" style="margin-bottom:14px">
             @foreach($car->damageImages as $img)
             <div class="wz-img-tile" data-img-id="{{ $img->id }}">
                 <img src="{{ $img->url }}" alt="{{ $img->alt }}">
@@ -1231,15 +1240,14 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             </div>
             @endforeach
         </div>
-        @elseif($car)
-        <p style="color:var(--text-3);font-size:12.5px;margin-bottom:10px">Brak zdjęć stanu wizualnego.</p>
+        <p id="wzDamageEmpty" style="color:var(--text-3);font-size:12.5px;margin-bottom:10px;{{ $car->damageImages->count() ? 'display:none' : '' }}">Brak zdjęć stanu wizualnego.</p>
         @endif
 
         <label class="wz-file-drop" id="wzDamageDrop" data-upload-type="damage">
             <i data-lucide="image-plus"></i>
             <div class="drop-title">Kliknij lub przeciągnij pliki, aby dodać zdjęcia stanu wizualnego</div>
-            <div class="drop-hint">JPEG, PNG, WebP, AVIF — max 20 MB na zdjęcie</div>
-            <input type="file" name="damage_images[]" multiple accept="image/*">
+            <div class="drop-hint">JPG, PNG, WebP, HEIC (iPhone) — wgrywają się od razu, duże zdjęcia są automatycznie zmniejszane</div>
+            <input type="file" name="damage_images[]" multiple accept="image/*,.heic,.heif">
         </label>
         <div class="wz-upload-progress" id="wzDamageUploadProgress">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
@@ -1314,7 +1322,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             @endif
             <label class="wz-file-drop" id="wzInteriorVidDrop">
                 <i data-lucide="film"></i>
-                <div class="drop-title">Kliknij lub przeciągnij <strong>film z wnętrza</strong> (MP4, WebM, MOV — max 200 MB)</div>
+                <div class="drop-title">Kliknij lub przeciągnij <strong>film z wnętrza</strong> (MP4, MOV, WebM — do 500 MB, wgrywa się od razu)</div>
                 <input type="file" name="interior_video_file" accept="video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska">
             </label>
         </div>
@@ -1395,7 +1403,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             @endif
             <label class="wz-file-drop" id="wzExteriorVidDrop">
                 <i data-lucide="film"></i>
-                <div class="drop-title">Kliknij lub przeciągnij <strong>film dookoła auta</strong> (MP4, WebM, MOV — max 200 MB)</div>
+                <div class="drop-title">Kliknij lub przeciągnij <strong>film dookoła auta</strong> (MP4, MOV, WebM — do 500 MB, wgrywa się od razu)</div>
                 <input type="file" name="exterior_video_file" accept="video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska">
             </label>
         </div>
@@ -2415,11 +2423,15 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
     //  FILE DROP ZONES
     // ===================================================================
     // ===================================================================
-    //  WGRYWANIE OD RAZU PO DODANIU PLIKU
-    //  - istniejace auto: galeria/stan -> upload-image, filmy/panoramy -> upload-media
-    //  - nowe auto (bez id): wszystko -> uploads/temp, a przy zapisie serwer
-    //    przypina pliki po ukrytych polach pending_*
-    //  "Zapisz"/"Opublikuj" tylko czeka, az skoncza sie trwajace wgrywania.
+    //  WGRYWANIE PLIKOW — od razu po dodaniu, jak na Otomoto
+    //  Zdjecia: 3 naraz, pomniejszane w przegladarce (max 2560 px, JPG),
+    //    HEIC z iPhone'a konwertowane na JPG, obrot wg EXIF, automatyczne
+    //    ponawianie przy zerwanym laczu, "Ponów" na kafelku przy bledzie.
+    //  Filmy 360 / panoramy: czesci po 5 MB, kazda ponawiana; po zerwaniu
+    //    wysylka wznawia sie od miejsca, w ktorym stanela.
+    //  Istniejace auto: pliki od razu trafiaja do ogloszenia.
+    //  Nowe auto: pliki czekaja w tmp-uploads, przy zapisie serwer je przypina.
+    //  "Zapisz"/"Opublikuj" tylko czeka na koniec trwajacych wysylek.
     // ===================================================================
     const WZ_CAR_ID = @json($car?->id ?? null);
     const WZ_MEDIA_FIELDS = {
@@ -2428,9 +2440,20 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         pano360_image:       'remove_pano360',
         pano360ext_image:    'remove_pano360ext',
     };
-    const wzFileKey = f => `${f.name}|${f.size}|${f.lastModified}`;
+    const WZ_PARALLEL = 3;
+    const WZ_MAX_EDGE = 2560;
+    const WZ_CHUNK = 5 * 1024 * 1024;
+    const WZ_PHOTO_TRIES = 4;
+    const WZ_CHUNK_TRIES = 8;
 
-    // --- licznik trwajacych wgrywan (Zapisz czeka na zero) ---
+    const wzFileKey = f => `${f.name}|${f.size}|${f.lastModified}`;
+    const wzSleep = ms => new Promise(r => setTimeout(r, ms));
+    const wzMB = b => (b / 1048576).toFixed(b < 10 * 1048576 ? 1 : 0);
+    function wzEsc(v) {
+        return String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    }
+
+    // --- licznik trwajacych wysylek (Zapisz czeka na zero) ---
     let wzInFlight = 0;
     let wzIdleWaiters = [];
     function wzTrackStart(n) { wzInFlight += (n || 1); }
@@ -2441,15 +2464,15 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
     function wzWhenIdle() { return wzInFlight === 0 ? Promise.resolve() : new Promise(r => wzIdleWaiters.push(r)); }
     window.wzUploadsInFlight = () => wzInFlight;
 
-    // Ostrzezenie przy zamykaniu karty w trakcie wgrywania.
     window.addEventListener('beforeunload', e => {
         if (wzInFlight > 0 && !window.wzLeavingOnPurpose) { e.preventDefault(); e.returnValue = ''; }
     });
 
-    // XHR zamiast fetch — daje postep wysylania duzych plikow.
-    function wzPost(url, fd, onProgress) {
-        return new Promise(resolve => {
-            const xhr = new XMLHttpRequest();
+    // --- POST przez XHR (postep wysylania + mozliwosc przerwania) ---
+    function wzXhr(url, fd, onProgress) {
+        let xhr;
+        const promise = new Promise(resolve => {
+            xhr = new XMLHttpRequest();
             xhr.open('POST', url);
             xhr.setRequestHeader('Accept', 'application/json');
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -2459,20 +2482,380 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                 try { data = JSON.parse(xhr.responseText); } catch (_) {}
                 const firstErr = data.errors ? Object.values(data.errors)[0]?.[0] : null;
                 const msg = xhr.status === 413 ? 'plik za duży dla serwera'
-                          : xhr.status === 419 ? 'sesja wygasła — odśwież stronę'
+                          : xhr.status === 419 ? 'sesja wygasła — odśwież stronę i zaloguj się ponownie'
                           : (firstErr || data.message || (xhr.status >= 400 ? 'błąd serwera (' + xhr.status + ')' : ''));
-                resolve({ ok: xhr.status >= 200 && xhr.status < 300 && data.success !== false, msg, data });
+                resolve({ status: xhr.status, ok: xhr.status >= 200 && xhr.status < 300 && data.success !== false, msg, data });
             };
-            xhr.onerror = () => resolve({ ok: false, msg: 'błąd sieci' });
+            xhr.onerror = () => resolve({ status: 0, ok: false, msg: 'brak połączenia z serwerem' });
+            xhr.ontimeout = () => resolve({ status: 0, ok: false, msg: 'serwer nie odpowiada' });
+            xhr.onabort = () => resolve({ status: -1, ok: false, aborted: true, msg: 'przerwano' });
+            xhr.timeout = 180000;
             fd.append('_token', wzCsrf());
             xhr.send(fd);
         });
+        return { promise, abort: () => { try { xhr && xhr.abort(); } catch (_) {} } };
+    }
+    // Ponawiamy tylko to, co moze sie udac za drugim razem (siec, przeciazenie).
+    const wzRetryable = st => st === 0 || st === 408 || st === 429 || st >= 500;
+
+    // --- przygotowanie zdjecia: HEIC -> JPG, obrot EXIF, zmniejszenie ---
+    const wzIsHeic  = f => /image\/hei[cf]/i.test(f.type || '') || /\.(heic|heif)$/i.test(f.name || '');
+    const wzIsImage = f => (f.type || '').startsWith('image/') || /\.(jpe?g|png|webp|avif|heic|heif)$/i.test(f.name || '');
+    let wzHeicLib = null;
+    function wzLoadHeic() {
+        if (!wzHeicLib) {
+            wzHeicLib = new Promise((res, rej) => {
+                const el = document.createElement('script');
+                el.src = 'https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js';
+                el.onload = () => window.heic2any ? res(window.heic2any) : rej(new Error('heic2any'));
+                el.onerror = () => { wzHeicLib = null; rej(new Error('heic2any')); };
+                document.head.appendChild(el);
+            });
+        }
+        return wzHeicLib;
+    }
+    async function wzDecode(blob) {
+        try { return await createImageBitmap(blob, { imageOrientation: 'from-image' }); } catch (_) { return null; }
+    }
+    async function wzPrepareImage(file) {
+        const baseName = (file.name || 'zdjecie').replace(/\.[^.]+$/, '');
+        let bmp = await wzDecode(file);
+        if (!bmp && wzIsHeic(file)) {
+            // Chrome/Firefox nie znaja HEIC — konwersja w przegladarce
+            const heic2any = await wzLoadHeic();
+            let jpg = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
+            jpg = Array.isArray(jpg) ? jpg[0] : jpg;
+            bmp = await wzDecode(jpg);
+            if (!bmp) return new File([jpg], baseName + '.jpg', { type: 'image/jpeg' });
+        }
+        if (!bmp) return file; // nieznany format — niech oceni serwer
+        const long = Math.max(bmp.width, bmp.height);
+        const tooBig = long > WZ_MAX_EDGE;
+        if (!tooBig && !wzIsHeic(file) && file.size <= 4 * 1048576) { bmp.close && bmp.close(); return file; }
+        const scale = tooBig ? WZ_MAX_EDGE / long : 1;
+        const w = Math.round(bmp.width * scale), h = Math.round(bmp.height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, w, h);
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(bmp, 0, 0, w, h);
+        bmp.close && bmp.close();
+        const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.9));
+        return blob ? new File([blob], baseName + '.jpg', { type: 'image/jpeg' }) : file;
     }
 
+    // --- kafelki zdjec w trakcie wysylki ---
+    function wzPhotoGrid(kind) {
+        if (WZ_CAR_ID) return document.getElementById(kind === 'gallery' ? 'wzGalleryGrid' : 'wzDamageGrid');
+        const drop = document.getElementById(kind === 'gallery' ? 'wzGalleryDrop' : 'wzDamageDrop');
+        if (!drop) return null;
+        let pg = drop.parentElement.querySelector('.wz-file-preview-grid.wz-fp-local');
+        if (!pg) {
+            pg = document.createElement('div');
+            pg.className = 'wz-file-preview-grid wz-fp-local';
+            drop.parentElement.insertBefore(pg, drop.nextSibling);
+        }
+        return pg;
+    }
+
+    function wzMakeUpTile(file) {
+        const tile = document.createElement('div');
+        tile.className = (WZ_CAR_ID ? 'wz-img-tile' : 'wz-fp-item') + ' wz-up up-queued';
+        tile.dataset.fileKey = wzFileKey(file);
+        let thumb;
+        if (wzIsHeic(file)) {
+            thumb = document.createElement('div');
+            thumb.className = 'up-thumb up-thumb-text';
+            thumb.textContent = 'HEIC';
+        } else {
+            thumb = document.createElement('img');
+            thumb.className = 'up-thumb';
+            thumb.src = URL.createObjectURL(file);
+            thumb.onload = () => URL.revokeObjectURL(thumb.src);
+            thumb.draggable = false;
+        }
+        tile.innerHTML = '<div class="up-status"><span class="up-name"></span><span class="up-msg">W kolejce…</span></div>'
+            + '<div class="up-bar"><i></i></div>'
+            + '<button type="button" class="up-retry">Ponów</button>'
+            + '<button type="button" class="up-del" title="Usuń">×</button>';
+        tile.prepend(thumb);
+        tile.querySelector('.up-name').textContent = file.name;
+        return tile;
+    }
+
+    function wzTileState(tile, state, msg) {
+        tile.classList.remove('up-queued', 'up-uploading', 'up-done', 'up-failed');
+        tile.classList.add('up-' + state);
+        if (msg !== undefined) tile.querySelector('.up-msg').textContent = msg;
+    }
+    function wzTileProgress(tile, frac) {
+        const pct = Math.round(frac * 100);
+        tile.querySelector('.up-bar i').style.width = pct + '%';
+        tile.querySelector('.up-msg').textContent = pct < 100 ? pct + '%' : 'Zapisywanie…';
+    }
+
+    const wzPhotoQueue = [];
+    let wzPhotoActive = 0;
+
+    function wzAddPhotos(kind, files) {
+        const grid = wzPhotoGrid(kind);
+        if (!grid) return { added: 0, dupes: 0 };
+        const have = new Set([...grid.querySelectorAll('.wz-up')].map(t => t.dataset.fileKey));
+        let added = 0, dupes = 0;
+        files.forEach(file => {
+            const key = wzFileKey(file);
+            if (have.has(key)) { dupes++; return; }
+            have.add(key);
+            const tile = wzMakeUpTile(file);
+            const job = { tile, file, kind, prepared: null, cancelled: false, xhr: null };
+            tile.querySelector('.up-del').addEventListener('click', e => {
+                e.preventDefault(); e.stopPropagation();
+                job.cancelled = true;
+                if (job.xhr) job.xhr.abort();
+                tile.remove();
+                wzAfterTilesChanged(kind);
+            });
+            tile.querySelector('.up-retry').addEventListener('click', e => {
+                e.preventDefault(); e.stopPropagation();
+                wzTileState(tile, 'queued', 'W kolejce…');
+                tile.querySelector('.up-bar i').style.width = '0';
+                wzPhotoQueue.push(job);
+                wzTrackStart();
+                wzPumpPhotos();
+            });
+            grid.appendChild(tile);
+            wzPhotoQueue.push(job);
+            wzTrackStart();
+            added++;
+        });
+        wzAfterTilesChanged(kind);
+        wzPumpPhotos();
+        return { added, dupes };
+    }
+
+    function wzAfterTilesChanged(kind) {
+        const grid = wzPhotoGrid(kind);
+        if (!grid) return;
+        const empty = document.getElementById(kind === 'gallery' ? 'wzGalleryEmpty' : 'wzDamageEmpty');
+        if (empty) empty.style.display = grid.children.length ? 'none' : '';
+        if (!WZ_CAR_ID) {
+            grid.querySelectorAll('.wz-fp-item').forEach((it, i) => {
+                let b = it.querySelector('.fp-pos');
+                if (!b) { b = document.createElement('span'); b.className = 'fp-pos'; it.appendChild(b); }
+                b.textContent = i + 1;
+            });
+            if (kind === 'gallery') wzLocalSortable(grid);
+        }
+    }
+
+    function wzPumpPhotos() {
+        while (wzPhotoActive < WZ_PARALLEL && wzPhotoQueue.length) {
+            const job = wzPhotoQueue.shift();
+            if (job.cancelled) { wzTrackEnd(); continue; }
+            wzPhotoActive++;
+            wzRunPhoto(job).catch(err => {
+                if (!job.cancelled) wzTileState(job.tile, 'failed', 'nieoczekiwany błąd — kliknij „Ponów”');
+                console.error(err);
+            }).finally(() => {
+                wzPhotoActive--;
+                wzTrackEnd();
+                wzPumpPhotos();
+            });
+        }
+    }
+
+    async function wzRunPhoto(job) {
+        const { tile, kind } = job;
+        wzTileState(tile, 'uploading', 'Przygotowanie…');
+        if (!job.prepared) {
+            try { job.prepared = await wzPrepareImage(job.file); }
+            catch (_) { job.prepared = job.file; }
+        }
+        if (job.cancelled) return;
+        const thumb = tile.querySelector('.up-thumb-text');
+        if (thumb && job.prepared !== job.file) {
+            const img = document.createElement('img');
+            img.className = 'up-thumb';
+            img.src = URL.createObjectURL(job.prepared);
+            img.onload = () => URL.revokeObjectURL(img.src);
+            img.draggable = false;
+            thumb.replaceWith(img);
+        }
+
+        const url = WZ_CAR_ID ? '/admin/cars/' + WZ_CAR_ID + '/upload-image' : '/admin/uploads/temp';
+        let r = null;
+        for (let attempt = 1; attempt <= WZ_PHOTO_TRIES; attempt++) {
+            const fd = new FormData();
+            if (WZ_CAR_ID) { fd.append('image', job.prepared); fd.append('type', kind); }
+            else { fd.append('kind', kind); fd.append('file', job.prepared); }
+            if (attempt > 1) wzTileState(tile, 'uploading', `Ponawiam (${attempt}/${WZ_PHOTO_TRIES})…`);
+            job.xhr = wzXhr(url, fd, frac => wzTileProgress(tile, frac));
+            r = await job.xhr.promise;
+            job.xhr = null;
+            if (job.cancelled || r.aborted) return;
+            if (r.ok || !wzRetryable(r.status)) break;
+            await wzSleep([0, 1500, 4000, 9000][attempt] || 9000);
+        }
+        if (!r.ok) {
+            wzTileState(tile, 'failed', r.msg || 'błąd wysyłania');
+            return;
+        }
+        wzPhotoDone(job, r.data);
+    }
+
+    function wzPhotoDone(job, data) {
+        const { tile, kind } = job;
+        if (!WZ_CAR_ID) {
+            wzTileState(tile, 'done', '✓ Wgrano');
+            const hid = document.createElement('input');
+            hid.type = 'hidden';
+            hid.name = kind === 'damage' ? 'pending_damage[]' : 'pending_gallery[]';
+            hid.value = data.path;
+            tile.appendChild(hid);
+            return;
+        }
+        if (kind === 'gallery' && window.wzGallerySortable) {
+            window.wzGallerySortable.replace(tile, data.image);
+            window.wzGallerySortable.saveSoon();
+            return;
+        }
+        // zdjecia stanu — zwykly kafelek jak po odswiezeniu strony
+        const img = data.image;
+        const real = document.createElement('div');
+        real.className = 'wz-img-tile';
+        real.dataset.imgId = img.id;
+        real.innerHTML = `<img src="${wzEsc(img.url)}" alt="${wzEsc(img.alt)}">`
+            + `<div class="tile-actions"><button type="button" class="tile-del" onclick="wzToggleDelete(this,${img.id})"><i data-lucide="x"></i></button></div>`
+            + `<input type="checkbox" name="delete_images[]" value="${img.id}" style="display:none">`
+            + `<div class="tile-alt"><input type="text" name="image_alt[${img.id}]" value="" placeholder="${wzEsc(img.alt)}"></div>`;
+        tile.replaceWith(real);
+        if (window.lucide) lucide.createIcons();
+    }
+
+    // Nowe auto — kolejnosc kafelkow (i ukrytych pol pending_gallery[]) przeciaganiem
+    const wzLocalSortables = new WeakMap();
+    function wzLocalSortable(pg) {
+        if (!window.Sortable || wzLocalSortables.has(pg)) return;
+        pg.classList.add('is-sortable');
+        wzLocalSortables.set(pg, Sortable.create(pg, Object.assign({}, wzSortOpts, {
+            draggable: '.wz-fp-item',
+            filter: '.up-del, .up-retry',
+            onEnd: () => wzAfterTilesChanged('gallery'),
+        })));
+    }
+
+    // --- filmy 360 / panoramy: czesci po 5 MB z wznawianiem ---
+    function wzMediaUI(drop) {
+        const titleEl = drop.querySelector('.drop-title');
+        return {
+            set(html, state) {
+                drop.classList.remove('wz-drop-busy', 'wz-drop-ok', 'wz-drop-err');
+                if (state) drop.classList.add('wz-drop-' + state);
+                if (titleEl) titleEl.innerHTML = html;
+            },
+        };
+    }
+
+    async function wzUploadMedia(drop, field, file) {
+        if (drop._media) drop._media.cancel(); // nowy plik zastepuje trwajaca wysylke
+        const ui = wzMediaUI(drop);
+        const state = { cancelled: false, xhr: null };
+        const handle = { cancel: () => { state.cancelled = true; if (state.xhr) state.xhr.abort(); } };
+        drop._media = handle;
+        const name = wzEsc(file.name);
+        const total = file.size;
+        const uploadId = (window.crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random()).replace(/[^A-Za-z0-9]/g, '').slice(0, 40);
+        const progress = done => ui.set(`Wgrywanie <strong>${name}</strong> — ${Math.min(100, Math.round(done / total * 100))}% (${wzMB(done)} / ${wzMB(total)} MB)`, 'busy');
+
+        wzTrackStart();
+        try {
+            progress(0);
+            let offset = 0, path = null, failMsg = null, resumes = 0;
+            while (path === null && failMsg === null) {
+                const end = Math.min(total, offset + WZ_CHUNK);
+                let tries = 0, r;
+                for (;;) {
+                    const fd = new FormData();
+                    fd.append('upload_id', uploadId);
+                    fd.append('kind', field);
+                    fd.append('offset', offset);
+                    fd.append('size', total);
+                    fd.append('name', file.name);
+                    fd.append('chunk', file.slice(offset, end), 'chunk.bin');
+                    state.xhr = wzXhr('/admin/uploads/chunk', fd, frac => progress(offset + frac * (end - offset)));
+                    r = await state.xhr.promise;
+                    state.xhr = null;
+                    if (state.cancelled) return;
+                    if (r.ok) break;
+                    if (r.status === 409 && r.data && typeof r.data.resume_from === 'number') break;
+                    if (!wzRetryable(r.status) || ++tries >= WZ_CHUNK_TRIES) { failMsg = r.msg || 'błąd wysyłania'; break; }
+                    ui.set(`Połączenie przerwane — ponawiam wysyłkę <strong>${name}</strong> (${tries}/${WZ_CHUNK_TRIES - 1})…`, 'busy');
+                    await wzSleep(Math.min(20000, 1000 * 2 ** tries));
+                    if (state.cancelled) return;
+                }
+                if (failMsg) break;
+                if (r.status === 409) { // wznow od miejsca serwera (z bezpiecznikiem na zapetlenie)
+                    if (++resumes > 5) { failMsg = 'serwer nie przyjmuje kolejnych części pliku'; break; }
+                    offset = r.data.resume_from;
+                    continue;
+                }
+                resumes = 0;
+                if (r.data && r.data.done) { path = r.data.path; break; }
+                offset = end;
+            }
+
+            if (failMsg) {
+                ui.set(`✗ Nie udało się wgrać <strong>${name}</strong> — ${wzEsc(failMsg)}. <button type="button" class="wz-drop-retry">Ponów</button>`, 'err');
+                drop.querySelector('.wz-drop-retry')?.addEventListener('click', e => {
+                    e.preventDefault(); e.stopPropagation();
+                    wzUploadMedia(drop, field, file);
+                });
+                return;
+            }
+
+            ui.set(`Zapisywanie <strong>${name}</strong>…`, 'busy');
+            if (WZ_CAR_ID) {
+                let r = null;
+                for (let i = 1; i <= 4; i++) {
+                    const fd = new FormData();
+                    fd.append('field', field);
+                    fd.append('path', path);
+                    state.xhr = wzXhr('/admin/cars/' + WZ_CAR_ID + '/attach-media', fd);
+                    r = await state.xhr.promise;
+                    state.xhr = null;
+                    if (state.cancelled) return;
+                    if (r.ok || !wzRetryable(r.status)) break;
+                    await wzSleep(1500 * i);
+                }
+                if (!r.ok) {
+                    ui.set(`✗ Plik <strong>${name}</strong> wgrany, ale nie dołączył się do ogłoszenia — ${wzEsc(r.msg)}. <button type="button" class="wz-drop-retry">Ponów</button>`, 'err');
+                    drop.querySelector('.wz-drop-retry')?.addEventListener('click', e => {
+                        e.preventDefault(); e.stopPropagation();
+                        wzUploadMedia(drop, field, file);
+                    });
+                    return;
+                }
+                const rm = document.querySelector('input[name="' + WZ_MEDIA_FIELDS[field] + '"]');
+                if (rm) rm.checked = false; // "usun" przy zapisie skasowalby nowy plik
+                ui.set(`✓ Wgrano <strong>${name}</strong> (${wzMB(total)} MB) — zapisany w ogłoszeniu`, 'ok');
+            } else {
+                let hid = drop.querySelector('input[name="pending_' + field + '"]');
+                if (!hid) { hid = document.createElement('input'); hid.type = 'hidden'; hid.name = 'pending_' + field; drop.appendChild(hid); }
+                hid.value = path;
+                ui.set(`✓ Wgrano <strong>${name}</strong> (${wzMB(total)} MB) — dołączy się przy zapisie auta`, 'ok');
+            }
+        } finally {
+            if (drop._media === handle) drop._media = null;
+            wzTrackEnd();
+        }
+    }
+
+    // --- pola plikow ---
     document.querySelectorAll('.wz-file-drop').forEach(drop => {
         const input = drop.querySelector('input[type="file"]');
         if (!input) return;
-
         drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
         drop.addEventListener('dragleave', () => drop.classList.remove('over'));
         drop.addEventListener('drop', e => {
@@ -2484,202 +2867,42 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
     });
 
     function wzHandleFileDrop(drop, input, incoming, fromDrop) {
-        const titleEl = drop.querySelector('.drop-title');
         if (!incoming || !incoming.length) return;
-        if (titleEl && !drop.dataset.originalText) drop.dataset.originalText = titleEl.innerHTML;
-        const uploadType = drop.dataset.uploadType;
+        const titleEl = drop.querySelector('.drop-title');
+        const kind = drop.dataset.uploadType;
 
-        // Galeria / zdjecia stanu
-        if (uploadType === 'gallery' || uploadType === 'damage') {
-            const files = incoming.filter(f => f.type.startsWith('image/'));
+        if (kind === 'gallery' || kind === 'damage') {
+            const files = incoming.filter(wzIsImage);
             input.value = '';
-            if (!files.length) return;
-            if (WZ_CAR_ID) {
-                if (titleEl) titleEl.textContent = `Wgrywanie ${files.length} zdjęć...`;
-                wzAjaxUploadFiles(files, uploadType, WZ_CAR_ID);
-            } else {
-                wzTempAddFiles(drop, uploadType, files);
+            const notImages = incoming.length - files.length;
+            const { added, dupes } = files.length ? wzAddPhotos(kind, files) : { added: 0, dupes: 0 };
+            if (titleEl) {
+                titleEl.textContent = added
+                    ? `Dodano ${added} zdjęć — wgrywają się, możesz od razu dodawać kolejne`
+                    : (files.length ? 'Te zdjęcia są już na liście' : 'Wybrane pliki nie są zdjęciami');
+                if (dupes && added) titleEl.textContent += ` · pominięto ${dupes} już dodanych`;
+                if (notImages) titleEl.textContent += ` · pominięto ${notImages} plików, które nie są zdjęciami`;
             }
             return;
         }
 
-        // Film 360 / panorama — wgrywamy od razu
         if (WZ_MEDIA_FIELDS[input.name]) {
-            const file = incoming[0];
             input.value = '';
-            wzUploadMediaNow(drop, input.name, file);
+            wzUploadMedia(drop, input.name, incoming[0]);
             return;
         }
 
-        // Inne pola jednoplikowe — zostaja w formularzu jak dawniej
+        // inne pola jednoplikowe — zostaja w formularzu jak dawniej
         if (fromDrop && window.DataTransfer) {
             const dt = new DataTransfer();
             dt.items.add(incoming[0]);
             input.files = dt.files;
         }
         const f = input.files[0] || incoming[0];
-        if (titleEl && f) titleEl.textContent = `${f.name} (${(f.size / 1048576).toFixed(1)} MB) — gotowy do wgrania`;
+        if (titleEl && f) titleEl.textContent = `${f.name} (${wzMB(f.size)} MB) — gotowy do wgrania`;
     }
 
-    // --- film / panorama: od razu na serwer ---
-    async function wzUploadMediaNow(drop, field, file) {
-        const titleEl = drop.querySelector('.drop-title');
-        const mb = (file.size / 1048576).toFixed(1);
-        const setTitle = html => { if (titleEl) titleEl.innerHTML = html; };
-        drop.classList.remove('wz-drop-ok', 'wz-drop-err');
-        drop.classList.add('wz-drop-busy');
-        setTitle(`Wgrywanie <strong>${wzEsc(file.name)}</strong> (${mb} MB)… 0%`);
-
-        const fd = new FormData();
-        let url;
-        if (WZ_CAR_ID) {
-            url = '/admin/cars/' + WZ_CAR_ID + '/upload-media';
-            fd.append('field', field);
-            fd.append(field, file);
-        } else {
-            url = '/admin/uploads/temp';
-            fd.append('kind', field);
-            fd.append('file', file);
-        }
-        wzTrackStart();
-        const r = await wzPost(url, fd, frac => setTitle(`Wgrywanie <strong>${wzEsc(file.name)}</strong> (${mb} MB)… ${Math.round(frac * 100)}%`));
-        drop.classList.remove('wz-drop-busy');
-        if (r.ok) {
-            drop.classList.add('wz-drop-ok');
-            if (WZ_CAR_ID) {
-                // plik jest juz zapisany w aucie — "usun" przy zapisie by go skasowal
-                const rm = document.querySelector('input[name="' + WZ_MEDIA_FIELDS[field] + '"]');
-                if (rm) rm.checked = false;
-                setTitle(`✓ Wgrano <strong>${wzEsc(file.name)}</strong> (${mb} MB) — zapisany w ogłoszeniu`);
-            } else {
-                let hid = drop.querySelector('input[name="pending_' + field + '"]');
-                if (!hid) { hid = document.createElement('input'); hid.type = 'hidden'; hid.name = 'pending_' + field; drop.appendChild(hid); }
-                hid.value = r.data.path;
-                setTitle(`✓ Wgrano <strong>${wzEsc(file.name)}</strong> (${mb} MB) — dołączy się przy zapisie auta`);
-            }
-        } else {
-            drop.classList.add('wz-drop-err');
-            setTitle(`✗ Nie udało się wgrać <strong>${wzEsc(file.name)}</strong>${r.msg ? ' — ' + wzEsc(r.msg) : ''}. Kliknij, aby spróbować ponownie.`);
-            (window.wzUploadFailures = window.wzUploadFailures || []).push(file.name + (r.msg ? ' — ' + r.msg : ''));
-        }
-        wzTrackEnd();
-    }
-
-    function wzEsc(v) {
-        return String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-    }
-
-    // --- nowe auto: zdjecia galerii/stanu od razu do katalogu tymczasowego ---
-    const wzTempQueue = [];
-    let wzTempRunning = false;
-
-    function wzTempGrid(drop) {
-        let pg = drop.parentElement?.querySelector('.wz-file-preview-grid.wz-fp-local');
-        if (!pg) {
-            pg = document.createElement('div');
-            pg.className = 'wz-file-preview-grid wz-fp-local';
-            drop.parentElement?.insertBefore(pg, drop.nextSibling);
-        }
-        return pg;
-    }
-
-    function wzTempAddFiles(drop, kind, files) {
-        const pg = wzTempGrid(drop);
-        const have = new Set([...pg.querySelectorAll('.wz-fp-item')].map(t => t.dataset.fileKey));
-        let added = 0, dupes = 0;
-        files.forEach(file => {
-            const key = wzFileKey(file);
-            if (have.has(key)) { dupes++; return; }
-            have.add(key);
-            const tile = document.createElement('div');
-            tile.className = 'wz-fp-item is-uploading';
-            tile.dataset.fileKey = key;
-            const img = document.createElement('img');
-            img.src = URL.createObjectURL(file);
-            img.onload = () => URL.revokeObjectURL(img.src);
-            img.draggable = false;
-            const name = document.createElement('div');
-            name.className = 'fp-name';
-            name.textContent = file.name;
-            const bar = document.createElement('div');
-            bar.className = 'fp-bar';
-            bar.innerHTML = '<i></i>';
-            const del = document.createElement('button');
-            del.type = 'button';
-            del.className = 'fp-del';
-            del.title = 'Usuń';
-            del.textContent = '×';
-            del.addEventListener('click', e => {
-                e.preventDefault(); e.stopPropagation();
-                tile.dataset.cancelled = '1';
-                tile.remove();
-                wzTempNumber(pg);
-            });
-            tile.append(img, name, bar, del);
-            pg.appendChild(tile);
-            wzTempQueue.push({ tile, file, kind });
-            wzTrackStart();
-            added++;
-        });
-        wzTempNumber(pg);
-        if (kind === 'gallery') wzTempSortable(pg);
-        const titleEl = drop.querySelector('.drop-title');
-        if (titleEl) titleEl.textContent = `Dodano ${added} zdjęć` + (dupes ? ` · pominięto ${dupes} już dodanych` : '') + ' — możesz dodać kolejne';
-        wzTempRun();
-    }
-
-    async function wzTempRun() {
-        if (wzTempRunning) return;
-        wzTempRunning = true;
-        while (wzTempQueue.length) {
-            const { tile, file, kind } = wzTempQueue.shift();
-            if (tile.dataset.cancelled) { wzTrackEnd(); continue; }
-            const fill = tile.querySelector('.fp-bar i');
-            const fd = new FormData();
-            fd.append('kind', kind);
-            fd.append('file', file);
-            const r = await wzPost('/admin/uploads/temp', fd, frac => { if (fill) fill.style.width = Math.round(frac * 100) + '%'; });
-            tile.classList.remove('is-uploading');
-            if (!tile.dataset.cancelled) {
-                if (r.ok) {
-                    tile.classList.add('is-done');
-                    const hid = document.createElement('input');
-                    hid.type = 'hidden';
-                    hid.name = kind === 'damage' ? 'pending_damage[]' : 'pending_gallery[]';
-                    hid.value = r.data.path;
-                    tile.appendChild(hid);
-                } else {
-                    tile.classList.add('is-failed');
-                    tile.querySelector('.fp-name').textContent = '✗ ' + file.name + (r.msg ? ' — ' + r.msg : '');
-                    (window.wzUploadFailures = window.wzUploadFailures || []).push(file.name + (r.msg ? ' — ' + r.msg : ''));
-                }
-            }
-            wzTrackEnd();
-        }
-        wzTempRunning = false;
-    }
-
-    function wzTempNumber(pg) {
-        pg.querySelectorAll('.wz-fp-item').forEach((it, i) => {
-            let b = it.querySelector('.fp-pos');
-            if (!b) { b = document.createElement('span'); b.className = 'fp-pos'; it.appendChild(b); }
-            b.textContent = i + 1;
-        });
-    }
-
-    const wzTempSortables = new WeakMap();
-    function wzTempSortable(pg) {
-        if (!window.Sortable || wzTempSortables.has(pg)) return;
-        pg.classList.add('is-sortable');
-        // kolejnosc ukrytych pol pending_gallery[] = kolejnosc kafelkow w DOM
-        wzTempSortables.set(pg, Sortable.create(pg, Object.assign({}, wzSortOpts, {
-            draggable: '.wz-fp-item',
-            filter: '.fp-del',
-            onEnd: () => wzTempNumber(pg),
-        })));
-    }
-
-    // --- Zapisz / Opublikuj: poczekaj na trwajace wgrywania ---
+    // --- Zapisz / Opublikuj: poczekaj na trwajace wysylki ---
     function wzOverlay() {
         let el = document.getElementById('wzUploadOverlay');
         if (el) return el;
@@ -2692,9 +2915,15 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         return el;
     }
 
-    window.wzChunkedSubmit = function(form) {
-        if (wzInFlight === 0 && !(window.wzUploadFailures || []).length) return false;
+    function wzFailedUploads() {
+        const list = [];
+        document.querySelectorAll('.wz-up.up-failed').forEach(t => list.push(t.querySelector('.up-name').textContent + ' — ' + t.querySelector('.up-msg').textContent));
+        document.querySelectorAll('.wz-file-drop.wz-drop-err').forEach(d => list.push(d.querySelector('.drop-title').textContent.replace(/\s*Ponów\s*$/, '')));
+        return list;
+    }
 
+    window.wzChunkedSubmit = function(form) {
+        if (wzInFlight === 0 && !wzFailedUploads().length) return false;
         (async () => {
             if (wzInFlight > 0) {
                 const start = wzInFlight;
@@ -2709,16 +2938,15 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                 clearInterval(t);
                 upd();
             }
-            const failed = window.wzUploadFailures || [];
+            const failed = wzFailedUploads();
             if (failed.length) {
                 const go = confirm('Tych plików nie udało się wgrać:\n\n• ' + failed.join('\n• ')
-                    + '\n\nZapisać ogłoszenie bez nich? (Możesz je dodać później w edycji.)');
+                    + '\n\nOK — zapisz ogłoszenie bez nich (możesz je dodać później).\nAnuluj — wróć i kliknij „Ponów” przy tych plikach.');
                 if (!go) {
                     document.getElementById('wzUploadOverlay')?.remove();
                     if (typeof wizResetSubmitState === 'function') wizResetSubmitState();
                     return;
                 }
-                window.wzUploadFailures = [];
             }
             if (window.wzClearDirty) window.wzClearDirty();
             window.wzLeavingOnPurpose = true;
@@ -2726,80 +2954,6 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         })();
         return true;
     };
-
-
-    // ===================================================================
-    //  AJAX IMAGE UPLOAD (sequential)
-    // ===================================================================
-    async function wzAjaxUploadFiles(files, type, carId) {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content
-                       || document.querySelector('input[name="_token"]')?.value;
-        const prefix = type === 'gallery' ? 'wzGallery' : 'wzDamage';
-        const progressWrap = document.getElementById(prefix + 'UploadProgress');
-        const progressBar  = document.getElementById(prefix + 'ProgressBar');
-        const progressText = document.getElementById(prefix + 'ProgressText');
-        const grid         = document.getElementById(prefix + 'UploadedGrid');
-        const drop         = document.getElementById(prefix === 'wzGallery' ? 'wzGalleryDrop' : 'wzDamageDrop');
-        const titleEl      = drop?.querySelector('.drop-title');
-
-        if (progressWrap) progressWrap.style.display = '';
-        let done = 0;
-        const total = files.length;
-        wzTrackStart(total);
-        if (progressText) progressText.textContent = `0/${total}`;
-        if (progressBar) progressBar.style.width = '0%';
-
-        for (const file of files) {
-            const fd = new FormData();
-            fd.append('image', file);
-            fd.append('type', type);
-            fd.append('_token', csrfToken);
-
-            try {
-                const res = await fetch(`/admin/cars/${carId}/upload-image`, {
-                    method: 'POST',
-                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
-                    body: fd,
-                });
-                const data = await res.json().catch(() => ({}));
-                done++;
-                if (progressBar) progressBar.style.width = Math.round((done / total) * 100) + '%';
-                if (progressText) progressText.textContent = `${done}/${total}`;
-                wzTrackEnd();
-
-                if (data.success && data.image && type === 'gallery' && window.wzGallerySortable) {
-                    window.wzGallerySortable.add(data.image);
-                } else if (data.success && data.image) {
-                    const tile = document.createElement('div');
-                    tile.className = 'wz-fp-item';
-                    tile.style.border = '2px solid #10b981';
-                    tile.innerHTML = `<img src="${data.image.url}" alt="${data.image.alt || ''}" style="width:100%;aspect-ratio:4/3;object-fit:cover;display:block"><div class="fp-name" style="color:#10b981">✓ ${file.name}</div>`;
-                    if (grid) grid.appendChild(tile);
-                } else {
-                    const tile = document.createElement('div');
-                    tile.className = 'wz-fp-item';
-                    tile.style.border = '2px solid #ef4444';
-                    tile.innerHTML = `<div style="padding:12px;font-size:11px;color:#ef4444">✗ ${file.name}<br>${data.message || 'Błąd'}</div>`;
-                    if (grid) grid.appendChild(tile);
-                }
-            } catch (err) {
-                done++;
-                wzTrackEnd();
-                if (progressBar) progressBar.style.width = Math.round((done / total) * 100) + '%';
-                if (progressText) progressText.textContent = `${done}/${total}`;
-                const tile = document.createElement('div');
-                tile.className = 'wz-fp-item';
-                tile.style.border = '2px solid #ef4444';
-                tile.innerHTML = `<div style="padding:12px;font-size:11px;color:#ef4444">✗ ${file.name}<br>Błąd sieci</div>`;
-                if (grid) grid.appendChild(tile);
-            }
-        }
-
-        if (titleEl) titleEl.textContent = `✓ Wgrano ${done}/${total} zdjęć`;
-        if (progressBar) progressBar.style.background = '#10b981';
-        if (window.toast) toast(`Wgrano ${done} zdjęć ${type === 'gallery' ? 'galerii' : 'uszkodzeń'}.`, 'success');
-    }
-
 
     // ===================================================================
     //  IMAGE DELETE TOGGLE
@@ -2879,8 +3033,20 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             onEnd: (e) => { renumber(); if (e.oldIndex !== e.newIndex) save(); },
         }));
 
+        let soonTimer = null;
         return {
-            add(image){
+            // kafelek w trakcie wysylki -> prawdziwy kafelek w tym samym miejscu
+            replace(placeholder, image){
+                placeholder.replaceWith(this.build(image));
+                renumber();
+                if (window.lucide) lucide.createIcons();
+            },
+            // rownolegle wysylki koncza sie w dowolnej kolejnosci — utrwal kolejnosc z ekranu
+            saveSoon(){
+                clearTimeout(soonTimer);
+                soonTimer = setTimeout(save, 700);
+            },
+            build(image){
                 const tile = document.createElement('div');
                 tile.className = 'wz-img-tile sort-item';
                 tile.dataset.imgId = image.id;
@@ -2893,7 +3059,10 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                   + `<input type="checkbox" name="delete_images[]" value="${image.id}" style="display:none">`
                   + `<input type="hidden" name="image_order[]" value="${image.id}" class="sort-order-input">`
                   + `<div class="tile-alt"><input type="text" name="image_alt[${image.id}]" value="" placeholder="${esc(image.alt)}" title="Alt text — opis zdjęcia dla SEO"></div>`;
-                grid.appendChild(tile);
+                return tile;
+            },
+            add(image){
+                grid.appendChild(this.build(image));
                 renumber();
                 if (window.lucide) lucide.createIcons();
             },

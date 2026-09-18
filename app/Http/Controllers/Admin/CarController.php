@@ -456,7 +456,7 @@ class CarController extends Controller
         $img = $car->images()->create([
             'path'       => $path,
             'type'       => $type,
-            'is_primary' => $car->images()->count() === 0,
+            'is_primary' => $type === 'gallery' && !$car->images()->where('is_primary', true)->exists(),
             'sort_order' => ($car->images()->max('sort_order') ?? 0) + 1,
         ]);
 
@@ -472,6 +472,199 @@ class CarController extends Controller
                 'type' => $img->type,
             ],
         ]);
+    }
+
+    /** Pola filmow 360 / panoram i ich limity (MB) przy wysylce w czesciach. */
+    private const MEDIA_LIMITS_MB = [
+        'interior_video_file' => 500,
+        'exterior_video_file' => 500,
+        'pano360_image'       => 25,
+        'pano360ext_image'    => 25,
+    ];
+
+    /** Sciezka z katalogu tymczasowego zalogowanego uzytkownika (i tylko taka). */
+    private function isOwnTempPath($p): bool
+    {
+        return is_string($p)
+            && preg_match('~^' . preg_quote($this->tempUploadDir(), '~') . '/[A-Za-z0-9]+\.[A-Za-z0-9]{2,5}$~', $p)
+            && Storage::disk('public')->exists($p);
+    }
+
+    /**
+     * Przenosi film/panorame z katalogu tymczasowego do auta: podmienia stary
+     * plik, a dla filmu ustawia status klatek i kolejkuje ich wycinanie.
+     */
+    private function attachPendingMedia(Car $car, string $field, string $path): bool
+    {
+        if (!isset(self::MEDIA_LIMITS_MB[$field]) || !$this->isOwnTempPath($path)) return false;
+        $disk = Storage::disk('public');
+
+        if ($field === 'pano360_image' || $field === 'pano360ext_image') {
+            $type = $field === 'pano360_image' ? 'pano360' : 'pano360ext';
+            $dest = 'cars/' . $car->id . '/' . $type . '/' . basename($path);
+            if (!$disk->move($path, $dest)) return false;
+            $car->images()->where('type', $type)->get()->each(function ($old) use ($disk, $dest) {
+                if ($old->path !== $dest && !str_starts_with($old->path, 'http')) $disk->delete($old->path);
+                $old->delete();
+            });
+            $car->images()->create(['path' => $dest, 'type' => $type, 'sort_order' => 0]);
+            return true;
+        }
+
+        $side = $field === 'interior_video_file' ? 'interior' : 'exterior';
+        $dest = 'cars/' . $car->id . '/' . $side . '_video/' . basename($path);
+        if (!$disk->move($path, $dest)) return false;
+
+        $oldVideo  = $car->{$side . '_video_path'};
+        $oldFrames = $car->{$side . '_frames_dir'};
+        if ($oldVideo && $oldVideo !== $dest && !str_starts_with($oldVideo, 'http')) $disk->delete($oldVideo);
+        if ($oldFrames) {
+            try { foreach ($disk->files($oldFrames) as $f) $disk->delete($f); } catch (\Throwable $e) {}
+        }
+
+        $framesDir = 'cars/' . $car->id . '/' . $side . '_frames';
+        $car->forceFill([
+            $side . '_video_path'    => $dest,
+            $side . '_frames_status' => 'pending',
+            $side . '_frames_count'  => null,
+            $side . '_frames_dir'    => $framesDir,
+            $side . '_frames_error'  => null,
+        ])->save();
+
+        $job = $side === 'interior' ? \App\Jobs\ExtractInteriorFramesJob::class : \App\Jobs\ExtractExteriorFramesJob::class;
+        $job::dispatch($car->id, $dest, $framesDir);
+        return true;
+    }
+
+    /**
+     * Jedna czesc (do 5 MB) duzego pliku. Czesci doklejane sa do pliku .part na
+     * dysku lokalnym. Klient podaje offset — ponowienie tej samej czesci po
+     * zerwanym polaczeniu nie dubluje danych, a przy rozjezdzie serwer zwraca
+     * 409 z aktualnym rozmiarem, od ktorego klient wznawia.
+     * Po ostatniej czesci plik jest sprawdzany i trafia do tmp-uploads/{user}.
+     */
+    public function uploadChunk(Request $request)
+    {
+        $data = $request->validate([
+            'upload_id' => ['required', 'string', 'regex:/^[A-Za-z0-9_-]{8,64}$/'],
+            'kind'      => ['required', 'string'],
+            'offset'    => ['required', 'integer', 'min:0'],
+            'size'      => ['required', 'integer', 'min:1'],
+            'name'      => ['required', 'string', 'max:255'],
+            'chunk'     => ['required', 'file', 'max:6144'],
+        ], [
+            'chunk.uploaded' => 'Część pliku nie dotarła — ponawiam.',
+        ]);
+
+        // walidacja 'integer' nie rzutuje — porownania nizej musza byc na liczbach
+        $data['offset'] = (int) $data['offset'];
+        $data['size']   = (int) $data['size'];
+
+        $kind = $data['kind'];
+        if (!isset(self::MEDIA_LIMITS_MB[$kind])) {
+            return response()->json(['success' => false, 'message' => 'Nieznany rodzaj pliku.'], 422);
+        }
+        $limitMb = self::MEDIA_LIMITS_MB[$kind];
+        if ($data['size'] > $limitMb * 1024 * 1024) {
+            return response()->json(['success' => false, 'message' => 'Plik jest za duży. Maksymalny rozmiar to ' . $limitMb . ' MB.'], 422);
+        }
+
+        $dir = storage_path('app/chunks/' . (int) auth()->id());
+        if (!is_dir($dir)) @mkdir($dir, 0775, true);
+
+        // porzucone czesci i znaczniki starsze niz dobe
+        foreach (array_merge(glob($dir . '/*.part') ?: [], glob($dir . '/*.done') ?: []) as $old) {
+            if (@filemtime($old) < time() - 86400) @unlink($old);
+        }
+
+        // Ostatnia czesc juz przyjeta, ale odpowiedz zginela w sieci — oddaj ten sam wynik.
+        $doneFile = $dir . '/' . $data['upload_id'] . '.done';
+        if (is_file($doneFile)) {
+            $donePath = trim((string) @file_get_contents($doneFile));
+            if ($donePath !== '' && Storage::disk('public')->exists($donePath)) {
+                return response()->json(['success' => true, 'done' => true, 'path' => $donePath]);
+            }
+        }
+
+        $part    = $dir . '/' . $data['upload_id'] . '.part';
+        $current = is_file($part) ? filesize($part) : 0;
+        $chunk   = $request->file('chunk');
+        $len     = $chunk->getSize();
+
+        if ($data['offset'] === $current) {
+            $in  = fopen($chunk->getRealPath(), 'rb');
+            $out = fopen($part, 'ab');
+            if (!$in || !$out || stream_copy_to_stream($in, $out) !== $len) {
+                if ($in) fclose($in);
+                if ($out) fclose($out);
+                return response()->json(['success' => false, 'message' => 'Nie udało się zapisać części pliku.'], 500);
+            }
+            fclose($in);
+            fclose($out);
+            clearstatcache(true, $part);
+            $current = filesize($part);
+        } elseif ($data['offset'] + $len !== $current) {
+            // rozjazd — klient wznowi od rozmiaru, ktory ma serwer
+            return response()->json(['success' => false, 'resume_from' => $current, 'message' => 'Wznawianie od ' . $current . ' B.'], 409);
+        }
+        // (else: ta czesc juz byla zapisana — ponowienie po zerwaniu, nic nie dopisujemy)
+
+        if ($current < $data['size']) {
+            return response()->json(['success' => true, 'received' => $current]);
+        }
+        if ($current > $data['size']) {
+            @unlink($part);
+            return response()->json(['success' => false, 'message' => 'Plik dotarł uszkodzony — spróbuj ponownie.'], 422);
+        }
+
+        // Ostatnia czesc: sprawdz typ po zawartosci i przenies do tmp-uploads
+        $mime = (new \finfo(FILEINFO_MIME_TYPE))->file($part) ?: '';
+        $isVideo = str_ends_with($kind, '_video_file');
+        $allowed = $isVideo
+            ? ['video/mp4' => 'mp4', 'video/quicktime' => 'mov', 'video/webm' => 'webm', 'video/x-msvideo' => 'avi', 'video/x-matroska' => 'mkv', 'application/octet-stream' => null]
+            : ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+        if (!array_key_exists($mime, $allowed)) {
+            @unlink($part);
+            return response()->json(['success' => false, 'message' => $isVideo
+                ? 'Nieobsługiwany format filmu. Dozwolone: MP4, MOV, WebM, AVI, MKV.'
+                : 'Nieobsługiwany format panoramy. Dozwolone: JPG, PNG, WebP.'], 422);
+        }
+        $ext = $allowed[$mime];
+        if ($ext === null) {
+            // niektore MOV/MP4 finfo widzi jako octet-stream — wtedy decyduje rozszerzenie
+            $ext = strtolower(pathinfo($data['name'], PATHINFO_EXTENSION));
+            if (!in_array($ext, ['mp4', 'mov', 'webm', 'avi', 'mkv', 'm4v'], true)) {
+                @unlink($part);
+                return response()->json(['success' => false, 'message' => 'Nieobsługiwany format filmu. Dozwolone: MP4, MOV, WebM, AVI, MKV.'], 422);
+            }
+        }
+
+        $name = \Illuminate\Support\Str::random(40) . '.' . $ext;
+        try {
+            $stored = Storage::disk('public')->putFileAs($this->tempUploadDir(), new \Illuminate\Http\File($part), $name);
+        } catch (\Throwable $e) {
+            \Log::error('chunk.finalize_failed', ['err' => $e->getMessage()]);
+            $stored = false;
+        }
+        @unlink($part);
+        if (!$stored) {
+            return response()->json(['success' => false, 'message' => 'Nie udało się zapisać pliku na serwerze.'], 500);
+        }
+        @file_put_contents($doneFile, $stored);
+        return response()->json(['success' => true, 'done' => true, 'path' => $stored]);
+    }
+
+    /** Istniejace auto: przypnij film/panorame wgrana w czesciach. */
+    public function attachMedia(Request $request, Car $car)
+    {
+        $field = (string) $request->input('field');
+        $path  = (string) $request->input('path');
+        if (!$this->attachPendingMedia($car, $field, $path)) {
+            return response()->json(['success' => false, 'message' => 'Nie udało się dołączyć pliku do ogłoszenia.'], 422);
+        }
+        Cache::forget('catalog.filters');
+        Cache::forget('sitemap.xml');
+        return response()->json(['success' => true]);
     }
 
     /** Rodzaje plikow wgrywanych od razu przy nowym aucie + ich reguly walidacji. */
@@ -582,32 +775,12 @@ class CarController extends Controller
             }
         }
 
-        foreach (['pano360_image' => 'pano360', 'pano360ext_image' => 'pano360ext'] as $field => $type) {
+        foreach (array_keys(self::MEDIA_LIMITS_MB) as $field) {
             $p = $request->input('pending_' . $field);
             if (!$p) continue;
-            $dest = $ok($p) ? $moveTo($p, $type) : null;
-            if ($dest === null) { $failures[] = basename((string) $p); continue; }
-            $car->images()->where('type', $type)->get()->each(function ($old) use ($disk) {
-                if (!str_starts_with($old->path, 'http')) $disk->delete($old->path);
-                $old->delete();
-            });
-            $car->images()->create(['path' => $dest, 'type' => $type, 'sort_order' => 0]);
-        }
-
-        foreach (['interior' => \App\Jobs\ExtractInteriorFramesJob::class, 'exterior' => \App\Jobs\ExtractExteriorFramesJob::class] as $side => $job) {
-            $p = $request->input('pending_' . $side . '_video_file');
-            if (!$p) continue;
-            $dest = $ok($p) ? $moveTo($p, $side . '_video') : null;
-            if ($dest === null) { $failures[] = basename((string) $p); continue; }
-            $framesDir = 'cars/' . $car->id . '/' . $side . '_frames';
-            $car->forceFill([
-                $side . '_video_path'    => $dest,
-                $side . '_frames_status' => 'pending',
-                $side . '_frames_count'  => null,
-                $side . '_frames_dir'    => $framesDir,
-                $side . '_frames_error'  => null,
-            ])->save();
-            $job::dispatch($car->id, $dest, $framesDir);
+            if (!$this->attachPendingMedia($car, $field, (string) $p)) {
+                $failures[] = basename((string) $p);
+            }
         }
 
         return $failures;
@@ -677,6 +850,12 @@ class CarController extends Controller
                     ->update(['sort_order' => $position]);
             }
         });
+
+        // Rownolegle wgrywanie moglo oznaczyc kilka zdjec jako glowne — zostaw pierwsze.
+        $primaries = $car->images()->where('is_primary', true)->orderBy('sort_order')->pluck('id');
+        if ($primaries->count() > 1) {
+            $car->images()->whereIn('id', $primaries->slice(1)->all())->update(['is_primary' => false]);
+        }
 
         Cache::forget('catalog.filters');
         Cache::forget('sitemap.xml');
