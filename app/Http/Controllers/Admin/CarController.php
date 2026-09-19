@@ -565,6 +565,7 @@ class CarController extends Controller
             $side . '_frames_count'  => null,
             $side . '_frames_dir'    => $framesDir,
             $side . '_frames_error'  => null,
+            $side . '_frames_meta'   => null,
         ])->save();
 
         $job = $side === 'interior' ? \App\Jobs\ExtractInteriorFramesJob::class : \App\Jobs\ExtractExteriorFramesJob::class;
@@ -967,8 +968,41 @@ class CarController extends Controller
         return $validated;
     }
 
+    /**
+     * Liczby wpisywane po polsku: "73.000", "73 000 km", "89 900 zł", "1.995 cm³",
+     * "89.900,50". Kropka/spacja jako separator tysięcy nie może wywalać zapisu
+     * ("Pole mileage musi być liczbą całkowitą") — zamieniamy na czystą liczbę.
+     */
+    public static function normalizeNumber($value, bool $integer)
+    {
+        if ($value === null || is_int($value) || is_float($value)) return $value;
+        $v = trim(str_replace(["\u{00A0}", "\u{202F}"], ' ', (string) $value));
+        if ($v === '') return $value;
+        $v = preg_replace('/[^\d.,\s-]/u', '', $v);          // km, zł, KM, cm³…
+        $v = preg_replace('/\s+/', '', $v);
+        if ($v === '' || $v === '-') return $value;
+        if (preg_match('/^-?\d{1,3}([.,]\d{3})+$/', $v)) {      // 73.000 / 1,995 / 1.234.567
+            $v = str_replace(['.', ','], '', $v);
+        } elseif (preg_match('/^-?\d{1,3}(\.\d{3})+,\d+$/', $v)) { // 89.900,50
+            $v = str_replace(['.', ','], ['', '.'], $v);
+        } elseif (preg_match('/^-?\d{1,3}(,\d{3})+\.\d+$/', $v)) { // 89,900.50
+            $v = str_replace(',', '', $v);
+        } else {
+            $v = str_replace(',', '.', $v);                      // 5,6 -> 5.6
+        }
+        if (!is_numeric($v)) return $value;                      // niech walidacja powie, co nie tak
+        return $integer ? (string) (int) round((float) $v) : $v;
+    }
+
     private function validateCar(Request $request): array
     {
+        $normalized = [];
+        foreach (['mileage', 'seats', 'weight', 'production_year', 'power_hp', 'power_kw', 'engine_capacity', 'last_service_mileage', 'doors'] as $f) {
+            if ($request->has($f)) $normalized[$f] = self::normalizeNumber($request->input($f), true);
+        }
+        if ($request->has('price')) $normalized['price'] = self::normalizeNumber($request->input('price'), false);
+        $request->merge($normalized);
+
         $validated = $request->validate([
             'brand_id' => 'required|exists:brands,id',
             'model' => 'required|string|max:255',
@@ -1108,6 +1142,19 @@ class CarController extends Controller
             'exterior_video_file.mimetypes'  => 'Nieobsługiwany format wideo zewnętrza. Dozwolone: MP4, WebM, MOV (QuickTime), AVI, MKV.',
             'exterior_video_file.max'        => 'Film zewnętrza 360° jest za duży. Maksymalny rozmiar to 200 MB.',
             'exterior_video_file.uploaded'   => 'Film zewnętrza 360° jest za duży lub przesyłanie zostało przerwane. Maksymalny rozmiar to 200 MB.',
+        ], [
+            'mileage'              => 'Przebieg',
+            'price'                => 'Cena',
+            'seats'                => 'Liczba miejsc',
+            'production_year'      => 'Rok produkcji',
+            'power_hp'             => 'Moc (KM)',
+            'power_kw'             => 'Moc (kW)',
+            'engine_capacity'      => 'Pojemność skokowa',
+            'last_service_mileage' => 'Przebieg przy serwisie',
+            'brand_id'             => 'Marka',
+            'model'                => 'Model',
+            'vin'                  => 'VIN',
+            'first_registration'   => 'Pierwsza rejestracja',
         ]);
 
         // Kolumny boolean sa NOT NULL z domyslnym false — pusty select ("— wybierz —")
@@ -1477,6 +1524,7 @@ class CarController extends Controller
                 'interior_frames_count'  => null,
                 'interior_frames_dir'    => null,
                 'interior_frames_error'  => null,
+            'interior_frames_meta'   => null,
             ])->save();
         }
 
@@ -1512,6 +1560,7 @@ class CarController extends Controller
             'interior_frames_count'  => null,
             'interior_frames_dir'    => $framesDir,
             'interior_frames_error'  => null,
+            'interior_frames_meta'   => null,
         ])->save();
 
         \App\Jobs\ExtractInteriorFramesJob::dispatch($car->id, $newPath, $framesDir);
@@ -1547,6 +1596,7 @@ class CarController extends Controller
                 'exterior_frames_count'  => null,
                 'exterior_frames_dir'    => null,
                 'exterior_frames_error'  => null,
+            'exterior_frames_meta'   => null,
             ])->save();
         }
 
@@ -1579,6 +1629,7 @@ class CarController extends Controller
             'exterior_frames_count'  => null,
             'exterior_frames_dir'    => $framesDir,
             'exterior_frames_error'  => null,
+            'exterior_frames_meta'   => null,
         ])->save();
 
         \App\Jobs\ExtractExteriorFramesJob::dispatch($car->id, $newPath, $framesDir);

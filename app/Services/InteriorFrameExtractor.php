@@ -29,6 +29,9 @@ class InteriorFrameExtractor
     public const JPEG_QUALITY = 4; // ffmpeg `q:v` (lower = better; 2-5 is the practical range)
     public const TIMEOUT_SECONDS = 600;
 
+    /** Meta arkuszy z ostatniego extract() (null = arkusze nie powstały). */
+    public ?array $lastSpriteMeta = null;
+
     /**
      * Decode `$videoPath` (relative path on the public disk), write 60 JPEGs
      * into `$framesDir` on the public disk, and return the count actually
@@ -117,6 +120,20 @@ class InteriorFrameExtractor
                 if (is_resource($stream)) {
                     fclose($stream);
                 }
+            }
+
+            // Arkusze (szybkie ładowanie na stronie). Nadmiarowe klatki z
+            // overshootu usuwamy, żeby nie trafiły do arkuszy. Błąd arkuszy nie
+            // psuje 360 — strona wraca wtedy do pojedynczych klatek.
+            $this->lastSpriteMeta = null;
+            foreach (glob($localFrameDir . DIRECTORY_SEPARATOR . 'frame_*.jpg') ?: [] as $f) {
+                if (!in_array($f, $localFrames, true)) @unlink($f);
+            }
+            try {
+                $this->lastSpriteMeta = app(FrameSpriteBuilder::class)->build($ffmpeg, $localFrameDir, count($localFrames), $framesDir);
+            } catch (\Throwable $e) {
+                Log::warning('frames.sprites.failed', ['dir' => $framesDir, 'err' => $e->getMessage()]);
+                \App\Models\ErrorLog::record('frames.sprites', 'Arkusze 360 nie powstały: ' . $e->getMessage(), ['dir' => $framesDir], 'warning');
             }
 
             return count($localFrames);

@@ -124,6 +124,8 @@
 .cs-interior-frames-pane{cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none}
 .cs-interior-frames-pane.is-dragging{cursor:grabbing}
 .cs-interior-frames-pane .cs-interior-frames-img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+.cs-interior-frames-pane .cs-360-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.cs-interior-frames-pane.is-lowres .cs-360-canvas{filter:blur(.4px)}
 .cs-interior-frames-pane .cs-interior-frames-progress{position:absolute;left:18px;right:18px;bottom:14px;height:3px;background:rgba(255,255,255,.22);border-radius:2px;overflow:hidden;pointer-events:none}
 .cs-interior-frames-pane .cs-interior-frames-progress span{display:block;height:100%;width:0;background:#fff;transition:width .04s linear}
 /* Fullscreen 360° lightbox — shared between interior + exterior. */
@@ -1458,7 +1460,8 @@
                      not ready (legacy or still-processing rows). --}}
                 @if($car->hasInteriorFrames())
                 <div class="cs-gallery-main cs-pano360 cs-interior-frames-pane" id="csInteriorFrames" style="background:#000"
-                     data-frames='@json($car->interiorFrameUrls())'>
+                     data-frames='@json($car->interiorFrameUrls())'
+                     data-sprites='@json($car->frameSprites("interior"))'>
                     <img class="cs-interior-frames-img" alt="Wnętrze 360°" draggable="false" decoding="async">
                     <div class="cs-interior-frames-progress"><span></span></div>
                     <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(10,10,10,.78);color:#fff;font-size:12px;padding:7px 14px;border-radius:50px;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px);font-weight:600">
@@ -1483,7 +1486,8 @@
                      below when frames are not ready. --}}
                 @if($car->hasExteriorFrames())
                 <div class="cs-gallery-main cs-pano360ext cs-interior-frames-pane" id="csExteriorFrames" style="background:#000"
-                     data-frames='@json($car->exteriorFrameUrls())'>
+                     data-frames='@json($car->exteriorFrameUrls())'
+                     data-sprites='@json($car->frameSprites("exterior"))'>
                     <img class="cs-interior-frames-img" alt="Zewnętrze 360°" draggable="false" decoding="async">
                     <div class="cs-interior-frames-progress"><span></span></div>
                     <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(10,10,10,.78);color:#fff;font-size:12px;padding:7px 14px;border-radius:50px;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px);font-weight:600">
@@ -3191,134 +3195,206 @@ window.csPano360Init = (function(){
 })();
 @endif
 
-// ==== 360° FRAME SCRUBBER (Copart-style) ====
-// Pointer-driven drag through a pre-extracted JPEG sequence. The pane reads
-// its frame URL list from `data-frames` (JSON). Frames load lazily — the
-// first one paints synchronously; the rest preload in the background so the
-// scrubber feels instant after the first ~half second. Used by both the
-// interior and exterior viewers.
+// ==== 360° — odtwarzacz jak na Copart ====
+// Klatki przychodza jako arkusze (data-sprites): maly podglad calego obrotu
+// (~300 KB) + kilka arkuszy pelnej jakosci. Po kliknieciu auto od razu sie
+// obraca na podgladzie, a ostre klatki podmieniaja go, gdy doladuja sie w tle.
+// Podglad pobiera sie juz po otwarciu strony, na komputerze takze pelna
+// jakosc; najechanie na kafelek 360 startuje pobieranie od razu.
+// Auta bez arkuszy (sprzed zmiany) dzialaja na pojedynczych klatkach.
 @if($car->hasInteriorFrames() || $car->hasExteriorFrames())
-// Manual scrubber only: user drags with mouse / finger to spin through
-// the frame sequence. No auto-rotate (the earlier autoplay path was
-// reverted per user feedback: "musi być 360 i user sobie przewija
-// myszką lub palcami a nie że to samo się przewija").
-window.csMakeFramesScrubber = function(paneId){
-    var initialized = false;
-    return function(){
-        if(initialized) return;
-        initialized = true;
-        var pane = document.getElementById(paneId);
-        if(!pane) return;
-        var img  = pane.querySelector('.cs-interior-frames-img');
-        var bar  = pane.querySelector('.cs-interior-frames-progress span');
-        var urls = [];
-        try { urls = JSON.parse(pane.getAttribute('data-frames') || '[]'); } catch(_) { urls = []; }
-        if(!Array.isArray(urls) || urls.length < 2) return;
-
-        var preloaded = new Array(urls.length);
-        function loadFrame(i){
-            if(preloaded[i]) return preloaded[i];
-            var p = new Image();
-            p.decoding = 'async';
-            p.src = urls[i];
-            preloaded[i] = p;
-            return p;
+(function(){
+    var cache = window.cs360Cache = window.cs360Cache || {};
+    function img(url, prio){
+        var im = cache[url];
+        if(!im){
+            im = new Image();
+            im.decoding = 'async';
+            if(prio) try { im.fetchPriority = prio; } catch(_){}
+            im.src = url;
+            cache[url] = im;
         }
-        loadFrame(0).addEventListener('load', function(){ if(current === 0) img.src = urls[0]; }, { once: true });
-        if(preloaded[0].complete) img.src = urls[0];
-        // Preload the whole sequence CONCURRENTLY, not one-frame-at-a-time.
-        // The old sequential loader waited for each frame's load event before
-        // requesting the next, so a fast drag outran the buffer and the image
-        // "froze" on the last decoded frame (the stop-klatki bug — worst on the
-        // exterior walk-around with more/larger frames). Firing every request
-        // up front lets the browser fetch them in parallel (capped ~6/host) so
-        // frames are ready almost immediately and scrubbing stays smooth.
-        for(var k = 1; k < urls.length; k++) loadFrame(k);
+        return im;
+    }
+    function ready(im){ return !!(im && im.complete && im.naturalWidth > 0); }
 
-        var current = 0, dragging = false, lastX = 0, accum = 0;
-        function setFrame(i){
-            // Wrap modulo frame count so the user can spin past 0/N without
-            // a hard stop — feels like a continuous 360° photo.
-            var n = urls.length;
-            i = ((i % n) + n) % n;
-            if(i === current) return;
-            current = i;
-            var src = urls[i];
-            if(preloaded[i] && preloaded[i].complete) img.src = src;
-            else loadFrame(i).addEventListener('load', function(){ if(current === i) img.src = src; }, { once: true });
-            if(bar) bar.style.width = ((i / (urls.length - 1)) * 100) + '%';
+    function source(kind){
+        var pane = document.getElementById(kind === 'int' ? 'csInteriorFrames' : 'csExteriorFrames');
+        if(!pane) return null;
+        var urls = [], sp = null;
+        try { urls = JSON.parse(pane.getAttribute('data-frames') || '[]'); } catch(_){}
+        try { sp = JSON.parse(pane.getAttribute('data-sprites') || 'null'); } catch(_){}
+        var n = sp ? sp.n : urls.length;
+        return n > 1 ? { n: n, urls: urls, sp: sp } : null;
+    }
+
+    // level: 'preview' (maly podglad + pierwszy arkusz) | 'full' (wszystko)
+    window.cs360Preload = function(kind, level){
+        var src = source(kind);
+        if(!src) return;
+        if(src.sp){
+            img(src.sp.preview, 'high');
+            img(src.sp.sheets[0], 'high');
+            if(level === 'full') src.sp.sheets.forEach(function(u){ img(u, 'low'); });
+        } else {
+            img(src.urls[0], 'high');
+            if(level === 'full') src.urls.forEach(function(u){ img(u, 'low'); });
         }
-        function pixelsPerFrame(){
-            var w = pane.clientWidth || 800;
-            return Math.max(4, w / urls.length);
+    };
+
+    // Odtwarzacz w podanym panelu (galeria albo pelny ekran). Zwraca destroy().
+    window.cs360Viewer = function(pane, kind){
+        var src = source(kind);
+        if(!pane || !src) return null;
+        var n = src.n, S = src.sp;
+        var canvas = pane.querySelector('canvas.cs-360-canvas');
+        if(!canvas){
+            canvas = document.createElement('canvas');
+            canvas.className = 'cs-360-canvas';
+            pane.insertBefore(canvas, pane.firstChild);
+        }
+        var legacyImg = pane.querySelector('.cs-interior-frames-img');
+        if(legacyImg) legacyImg.style.display = 'none';
+        var ctx = canvas.getContext('2d');
+        var bar = pane.querySelector('.cs-interior-frames-progress span');
+        cs360Preload(kind, 'full');
+
+        function frameSource(i){
+            if(S){
+                var sheet = img(S.sheets[Math.floor(i / S.per)]);
+                if(ready(sheet)) return [sheet, 0, (i % S.per) * S.h, S.w, S.h, true];
+                var pv = img(S.preview);
+                if(ready(pv)) return [pv, (i % S.pcols) * S.pw, Math.floor(i / S.pcols) * S.ph, S.pw, S.ph, false];
+                return null;
+            }
+            var im = img(src.urls[i]);
+            if(ready(im)) return [im, 0, 0, im.naturalWidth, im.naturalHeight, true];
+            for(var d = 1; d <= n / 2; d++){ // najblizsza gotowa klatka zamiast czarnego ekranu
+                var a = cache[src.urls[(i + d) % n]], b = cache[src.urls[(i - d + n) % n]];
+                if(ready(a)) return [a, 0, 0, a.naturalWidth, a.naturalHeight, false];
+                if(ready(b)) return [b, 0, 0, b.naturalWidth, b.naturalHeight, false];
+            }
+            return null;
         }
 
+        var current = 0, shownHi = false;
+        function draw(){
+            var r = pane.getBoundingClientRect();
+            var dpr = Math.min(2, window.devicePixelRatio || 1);
+            var cw = Math.max(1, Math.round(r.width * dpr)), ch = Math.max(1, Math.round(r.height * dpr));
+            if(canvas.width !== cw || canvas.height !== ch){ canvas.width = cw; canvas.height = ch; }
+            var f = frameSource(current);
+            if(!f) return false;
+            var sc = Math.max(cw / f[3], ch / f[4]);      // object-fit: cover
+            var dw = f[3] * sc, dh = f[4] * sc;
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(f[0], f[1], f[2], f[3], f[4], (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+            shownHi = f[5];
+            pane.classList.toggle('is-lowres', !f[5]);
+            if(bar) bar.style.width = (current / (n - 1) * 100) + '%';
+            return true;
+        }
+        function setFrame(i){ current = ((i % n) + n) % n; draw(); }
+
+        // przerysuj, gdy doladuje sie lepsza jakosc biezacej klatki
+        var onLoad = function(){ if(!shownHi) draw(); };
+        (S ? [S.preview].concat(S.sheets) : src.urls).forEach(function(u){
+            var im = img(u);
+            if(!ready(im)) im.addEventListener('load', onLoad, { once: true });
+        });
+        draw();
+
+        // Samoczynny obrot (Copart): przy kazdym otwarciu, do pierwszego chwytu.
+        var STEP = 85, raf = null, last = 0, acc = 0;
+        function tick(ts){
+            if(!raf) return;
+            if(!last) last = ts;
+            acc += ts - last; last = ts;
+            while(acc >= STEP){
+                acc -= STEP;
+                var nx = (current + 1) % n;
+                if(frameSource(nx)) setFrame(nx); else { acc = 0; break; }
+            }
+            raf = requestAnimationFrame(tick);
+        }
+        function stopAuto(){ if(raf){ cancelAnimationFrame(raf); raf = null; } pane.classList.remove('is-autospin'); }
+        raf = requestAnimationFrame(tick);
+        pane.classList.add('is-autospin');
+
+        var dragging = false, lastX = 0, dx = 0;
+        function px(){ return Math.max(4, (pane.clientWidth || 800) / n); }
         function onDown(e){
-            markLearned();            // first grab stops the auto-spin for good
+            stopAuto();
             dragging = true;
             pane.classList.add('is-dragging');
-            lastX = (e.touches ? e.touches[0].clientX : e.clientX);
-            accum = 0;
-            if(e.cancelable) e.preventDefault();
+            lastX = e.touches ? e.touches[0].clientX : e.clientX;
+            dx = 0;
+            if(!e.touches && e.cancelable) e.preventDefault();
         }
         function onMove(e){
             if(!dragging) return;
-            var x = (e.touches ? e.touches[0].clientX : e.clientX);
-            accum += (x - lastX);
-            lastX = x;
-            var step = pixelsPerFrame();
-            while(accum >= step){ setFrame(current + 1); accum -= step; }
-            while(accum <= -step){ setFrame(current - 1); accum += step; }
+            var x = e.touches ? e.touches[0].clientX : e.clientX;
+            dx += x - lastX; lastX = x;
+            var step = px();
+            while(dx >= step){ setFrame(current + 1); dx -= step; }
+            while(dx <= -step){ setFrame(current - 1); dx += step; }
             if(e.cancelable) e.preventDefault();
         }
-        function onUp(){
-            if(!dragging) return;
-            dragging = false;
-            pane.classList.remove('is-dragging');
-        }
-
-        // ── Auto-rotate teaser ────────────────────────────────────────────
-        // On first ever view the sequence spins on its own so the user sees
-        // it IS a 360°. The instant they grab it (mousedown/touch) the spin
-        // stops for good and they take over — and we remember that in
-        // localStorage so it never auto-spins again for this visitor until
-        // they clear their storage. Auto-advance only lands on already-decoded
-        // frames, so there are no black flashes while the set is still buffering.
-        var CC360_KEY = 'cc360_userControls';
-        var autoRAF = null, autoAcc = 0, autoLast = 0;
-        function stopAuto(){ if(autoRAF){ cancelAnimationFrame(autoRAF); autoRAF = null; } }
-        function markLearned(){ stopAuto(); try { localStorage.setItem(CC360_KEY, '1'); } catch(_){} }
-        function autoTick(ts){
-            if(!autoRAF) return;
-            if(!autoLast){ autoLast = ts; }
-            autoAcc += ts - autoLast; autoLast = ts;
-            while(autoAcc >= 90){
-                autoAcc -= 90;
-                var nxt = (current + 1) % urls.length;
-                if(preloaded[nxt] && preloaded[nxt].complete){ setFrame(nxt); }
-                else { autoAcc = 0; break; }   // wait for buffering — never blank the frame
-            }
-            autoRAF = requestAnimationFrame(autoTick);
-        }
-        var cc360Learned = false;
-        try { cc360Learned = localStorage.getItem(CC360_KEY) === '1'; } catch(_){}
-        if(!cc360Learned){ autoLast = 0; autoAcc = 0; autoRAF = requestAnimationFrame(autoTick); }
-
+        function onUp(){ if(!dragging) return; dragging = false; pane.classList.remove('is-dragging'); }
         pane.addEventListener('mousedown', onDown);
         window.addEventListener('mousemove', onMove);
         window.addEventListener('mouseup', onUp);
-        pane.addEventListener('touchstart', onDown, { passive: false });
+        pane.addEventListener('touchstart', onDown, { passive: true });
         pane.addEventListener('touchmove', onMove, { passive: false });
         pane.addEventListener('touchend', onUp);
         pane.addEventListener('touchcancel', onUp);
+        var ro = window.ResizeObserver ? new ResizeObserver(function(){ draw(); }) : null;
+        if(ro) ro.observe(pane);
+
+        return function destroy(){
+            stopAuto();
+            pane.removeEventListener('mousedown', onDown);
+            window.removeEventListener('mousemove', onMove);
+            window.removeEventListener('mouseup', onUp);
+            pane.removeEventListener('touchstart', onDown, { passive: true });
+            pane.removeEventListener('touchmove', onMove, { passive: false });
+            pane.removeEventListener('touchend', onUp);
+            pane.removeEventListener('touchcancel', onUp);
+            if(ro) ro.disconnect();
+        };
     };
-};
-@endif
-@if($car->hasInteriorFrames())
-window.csInteriorFramesInit = window.csMakeFramesScrubber('csInteriorFrames');
-@endif
-@if($car->hasExteriorFrames())
-window.csExteriorFramesInit = window.csMakeFramesScrubber('csExteriorFrames');
+
+    // Galeria (zakladki 360): jeden odtwarzacz na panel.
+    function inlineInit(paneId, kind){
+        var destroy = null;
+        return function(){ if(!destroy) destroy = cs360Viewer(document.getElementById(paneId), kind); };
+    }
+    window.csInteriorFramesInit = inlineInit('csInteriorFrames', 'int');
+    window.csExteriorFramesInit = inlineInit('csExteriorFrames', 'ext');
+
+    // Pobieranie z wyprzedzeniem — zeby po kliknieciu 360 bylo od razu.
+    var conn = navigator.connection || {};
+    var saveData = !!conn.saveData || /(^|-)2g$/.test(conn.effectiveType || '');
+    var desktop = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches;
+    function idle(fn){ (window.requestIdleCallback || function(f){ return setTimeout(f, 200); })(fn, { timeout: 3000 }); }
+    function warm(){
+        if(saveData) return;
+        idle(function(){ cs360Preload('ext', 'preview'); cs360Preload('int', 'preview'); });
+        if(desktop) setTimeout(function(){ idle(function(){ cs360Preload('ext', 'full'); cs360Preload('int', 'full'); }); }, 2500);
+    }
+    if(document.readyState === 'complete') warm(); else window.addEventListener('load', warm);
+
+    // Zamiar: najechanie / dotkniecie kafelka albo zakladki 360 = pobieraj juz teraz.
+    document.querySelectorAll('.cs-pano360-card, [data-gallery-filter="pano360"], [data-gallery-filter="pano360ext"]').forEach(function(el){
+        var ref = (el.getAttribute('onclick') || '') + ' ' + (el.getAttribute('data-gallery-filter') || '');
+        var kind = /pano360ext/.test(ref) ? 'ext' : 'int';
+        var go = function(){ cs360Preload(kind, 'full'); };
+        el.addEventListener('pointerenter', go, { once: true });
+        el.addEventListener('touchstart', go, { once: true, passive: true });
+        el.addEventListener('focus', go, { once: true });
+    });
+})();
 @endif
 
 // ==== 360° PANORAMA VIEWER (exterior gallery tab) ====
@@ -3836,108 +3912,8 @@ function csShareToast(msg) {
     // auto-rotates (per user feedback). Returns a cleanup function that
     // detaches listeners; the lightbox close path calls it so listeners
     // don't accumulate over repeated opens.
-    function bootLightboxScrubber(pane, urls){
-        var img = pane.querySelector('.cs-interior-frames-img');
-        var bar = pane.querySelector('.cs-interior-frames-progress span');
-        if(!img || !Array.isArray(urls) || urls.length < 2) return null;
-
-        var preloaded = new Array(urls.length);
-        function loadFrame(i){
-            if(preloaded[i]) return preloaded[i];
-            var p = new Image();
-            p.decoding = 'async';
-            p.src = urls[i];
-            preloaded[i] = p;
-            return p;
-        }
-        loadFrame(0);
-        if(preloaded[0].complete) img.src = urls[0];
-        else preloaded[0].addEventListener('load', function(){ if(current === 0) img.src = urls[0]; }, { once: true });
-        // Concurrent preload of the whole sequence — see the main-gallery
-        // scrubber above. Sequential loading froze the frame on fast drags
-        // (stop-klatki); firing all requests up front keeps the spin smooth.
-        for(var k = 1; k < urls.length; k++) loadFrame(k);
-
-        var current = 0, dragging = false, lastX = 0, accum = 0;
-        function setFrame(i){
-            var n = urls.length;
-            i = ((i % n) + n) % n;
-            if(i === current) return;
-            current = i;
-            var src = urls[i];
-            if(preloaded[i] && preloaded[i].complete) img.src = src;
-            else loadFrame(i).addEventListener('load', function(){ if(current === i) img.src = src; }, { once: true });
-            if(bar) bar.style.width = ((i / (urls.length - 1)) * 100) + '%';
-        }
-        function pixelsPerFrame(){
-            var w = pane.clientWidth || 800;
-            return Math.max(4, w / urls.length);
-        }
-        function onDown(e){
-            markLearned();            // first grab stops the auto-spin for good
-            dragging = true;
-            pane.classList.add('is-dragging');
-            lastX = (e.touches ? e.touches[0].clientX : e.clientX);
-            accum = 0;
-            if(e.cancelable) e.preventDefault();
-        }
-        function onMove(e){
-            if(!dragging) return;
-            var x = (e.touches ? e.touches[0].clientX : e.clientX);
-            accum += (x - lastX);
-            lastX = x;
-            var step = pixelsPerFrame();
-            while(accum >= step){ setFrame(current + 1); accum -= step; }
-            while(accum <= -step){ setFrame(current - 1); accum += step; }
-            if(e.cancelable) e.preventDefault();
-        }
-        function onUp(){
-            if(!dragging) return;
-            dragging = false;
-            pane.classList.remove('is-dragging');
-        }
-
-        // Auto-rotate teaser — same behaviour as the inline gallery scrubber:
-        // spins on first view, stops for good on first grab, remembered in
-        // localStorage. Advances only onto decoded frames (no black flashes).
-        var CC360_KEY = 'cc360_userControls';
-        var autoRAF = null, autoAcc = 0, autoLast = 0;
-        function stopAuto(){ if(autoRAF){ cancelAnimationFrame(autoRAF); autoRAF = null; } }
-        function markLearned(){ stopAuto(); try { localStorage.setItem(CC360_KEY, '1'); } catch(_){} }
-        function autoTick(ts){
-            if(!autoRAF) return;
-            if(!autoLast){ autoLast = ts; }
-            autoAcc += ts - autoLast; autoLast = ts;
-            while(autoAcc >= 90){
-                autoAcc -= 90;
-                var nxt = (current + 1) % urls.length;
-                if(preloaded[nxt] && preloaded[nxt].complete){ setFrame(nxt); }
-                else { autoAcc = 0; break; }
-            }
-            autoRAF = requestAnimationFrame(autoTick);
-        }
-        var cc360Learned = false;
-        try { cc360Learned = localStorage.getItem(CC360_KEY) === '1'; } catch(_){}
-        if(!cc360Learned){ autoLast = 0; autoAcc = 0; autoRAF = requestAnimationFrame(autoTick); }
-
-        pane.addEventListener('mousedown', onDown);
-        window.addEventListener('mousemove', onMove);
-        window.addEventListener('mouseup', onUp);
-        pane.addEventListener('touchstart', onDown, { passive: false });
-        pane.addEventListener('touchmove', onMove, { passive: false });
-        pane.addEventListener('touchend', onUp);
-        pane.addEventListener('touchcancel', onUp);
-
-        return function cleanup(){
-            stopAuto();
-            pane.removeEventListener('mousedown', onDown);
-            window.removeEventListener('mousemove', onMove);
-            window.removeEventListener('mouseup', onUp);
-            pane.removeEventListener('touchstart', onDown, { passive: false });
-            pane.removeEventListener('touchmove', onMove, { passive: false });
-            pane.removeEventListener('touchend', onUp);
-            pane.removeEventListener('touchcancel', onUp);
-        };
+    function bootLightboxScrubber(pane, kind){
+        return window.cs360Viewer ? window.cs360Viewer(pane, kind === 'pano360' ? 'int' : 'ext') : null;
     }
 
     window.cs360OpenLightbox = function(kind){
@@ -3961,7 +3937,7 @@ function csShareToast(msg) {
             pano.style.display = 'none';
             box.classList.add('open');
             document.body.style.overflow = 'hidden';
-            activeScrubberCleanup = bootLightboxScrubber(pane, urls);
+            activeScrubberCleanup = bootLightboxScrubber(pane, kind);
             return;
         }
 

@@ -23,9 +23,9 @@ class Car extends Model
         'service_book_status', 'registration_cert', 'owners_manual', 'aso_serviced', 'service_history',
         'paint_measurements', 'technical_conditions', 'equipment', 'highlighted_equipment',
         // Interior 360° (Copart-style frame scrubber) — see migration add_interior_360_video_to_cars_table.
-        'interior_video_path', 'interior_frames_status', 'interior_frames_count', 'interior_frames_dir', 'interior_frames_error',
+        'interior_video_path', 'interior_frames_status', 'interior_frames_count', 'interior_frames_dir', 'interior_frames_error', 'interior_frames_meta',
         // Exterior 360° walk-around (same scrubber pipeline) — see migration add_exterior_360_video_to_cars_table.
-        'exterior_video_path', 'exterior_frames_status', 'exterior_frames_count', 'exterior_frames_dir', 'exterior_frames_error',
+        'exterior_video_path', 'exterior_frames_status', 'exterior_frames_count', 'exterior_frames_dir', 'exterior_frames_error', 'exterior_frames_meta',
         'is_featured', 'is_sold', 'has_certicheck', 'available_now', 'home_delivery', 'has_gethelp', 'gethelp_package', 'status',
         'meta_title', 'meta_description', 'focus_keyword', 'noindex',
         // Cached-brochure state — see migration add_brochure_columns_to_cars_table.
@@ -33,6 +33,8 @@ class Car extends Model
     ];
 
     protected $casts = [
+        'interior_frames_meta' => 'array',
+        'exterior_frames_meta' => 'array',
         'paint_measurements' => 'array',
         'technical_conditions' => 'array',
         'equipment' => 'array',
@@ -231,6 +233,33 @@ class Car extends Model
             return [];
         }
         return $this->buildFrameUrls($this->exterior_frames_dir, (int) $this->exterior_frames_count);
+    }
+
+    /**
+     * Arkusze klatek 360° dla strony auta: pełne URL-e + układ.
+     * null = arkuszy jeszcze nie ma — strona używa pojedynczych klatek.
+     */
+    public function frameSprites(string $side): ?array
+    {
+        if (!in_array($side, ['interior', 'exterior'], true)) return null;
+        $has = $side === 'interior' ? $this->hasInteriorFrames() : $this->hasExteriorFrames();
+        $meta = $this->{$side . '_frames_meta'};
+        if (!$has || !is_array($meta) || empty($meta['sheets']) || empty($meta['preview'])) return null;
+
+        $disk = \Illuminate\Support\Facades\Storage::disk('public');
+        $dir  = $this->{$side . '_frames_dir'};
+        $v    = '?v=' . rawurlencode((string) ($meta['v'] ?? ''));
+        return [
+            'n'       => (int) $meta['n'],
+            'w'       => (int) $meta['w'],
+            'h'       => (int) $meta['h'],
+            'per'     => (int) $meta['per'],
+            'pcols'   => (int) $meta['pcols'],
+            'pw'      => (int) $meta['pw'],
+            'ph'      => (int) $meta['ph'],
+            'preview' => $disk->url($dir . '/' . $meta['preview']) . $v,
+            'sheets'  => array_map(fn($f) => $disk->url($dir . '/' . $f) . $v, $meta['sheets']),
+        ];
     }
 
     private function buildFrameUrls(string $dir, int $count): array

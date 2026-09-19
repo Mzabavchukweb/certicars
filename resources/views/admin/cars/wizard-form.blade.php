@@ -1004,15 +1004,15 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                 </div>
                 <div class="wz-field">
                     <label>Przebieg</label>
-                    <input type="number" name="mileage" value="{{ old('mileage',$car?->mileage) }}" min="0" placeholder="km, np. 73 000">
+                    <input type="text" inputmode="numeric" autocomplete="off" name="mileage" value="{{ old('mileage',$car?->mileage) }}" min="0" placeholder="km, np. 73 000">
                 </div>
                 <div class="wz-field">
                     <label>Rok produkcji</label>
-                    <input type="number" name="production_year" value="{{ old('production_year',$car?->production_year) }}" min="1900" max="2100" placeholder="np. 2015">
+                    <input type="text" inputmode="numeric" autocomplete="off" name="production_year" value="{{ old('production_year',$car?->production_year) }}" min="1900" max="2100" placeholder="np. 2015">
                 </div>
                 <div class="wz-field">
                     <label>Pojemność skokowa</label>
-                    <input type="number" name="engine_capacity" value="{{ old('engine_capacity',$car?->engine_capacity) }}" min="0" step="1" placeholder="cm³, np. 1995">
+                    <input type="text" inputmode="numeric" autocomplete="off" name="engine_capacity" value="{{ old('engine_capacity',$car?->engine_capacity) }}" min="0" step="1" placeholder="cm³, np. 1995">
                 </div>
             </div>
 
@@ -1038,8 +1038,8 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                 <div class="wz-field">
                     <label>Moc</label>
                     <div style="display:flex;gap:6px">
-                        <input type="number" name="power_hp" value="{{ old('power_hp',$car?->power_hp) }}" min="0" placeholder="KM, np. 143" style="flex:1;min-width:0">
-                        <input type="number" name="power_kw" value="{{ old('power_kw',$car?->power_kw) }}" min="0" placeholder="kW, np. 105" style="flex:1;min-width:0">
+                        <input type="text" inputmode="numeric" autocomplete="off" name="power_hp" value="{{ old('power_hp',$car?->power_hp) }}" min="0" placeholder="KM, np. 143" style="flex:1;min-width:0">
+                        <input type="text" inputmode="numeric" autocomplete="off" name="power_kw" value="{{ old('power_kw',$car?->power_kw) }}" min="0" placeholder="kW, np. 105" style="flex:1;min-width:0">
                     </div>
                 </div>
                 <div class="wz-field">
@@ -1060,7 +1060,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                 </div>
                 <div class="wz-field">
                     <label>Liczba miejsc</label>
-                    <input type="number" name="seats" value="{{ old('seats',$car?->seats) }}" min="1" placeholder="np. 4">
+                    <input type="text" inputmode="numeric" autocomplete="off" name="seats" value="{{ old('seats',$car?->seats) }}" min="1" placeholder="np. 4">
                 </div>
                 <div class="wz-field">
                     <label>Kolor nadwozia</label>
@@ -1087,7 +1087,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         <div class="wz-grid-2" style="margin-bottom:14px">
             <div class="wz-field">
                 <label>Cena *</label>
-                <input type="number" name="price" value="{{ old('price',$car?->price) }}" step="0.01" min="0" placeholder="np. 69 900">
+                <input type="text" inputmode="decimal" autocomplete="off" name="price" value="{{ old('price',$car?->price) }}" step="0.01" min="0" placeholder="np. 69 900">
             </div>
             <div class="wz-field">
                 <label>Waluta *</label>
@@ -1594,7 +1594,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                 <div class="wz-icon-row-ico"><x-icon name="gauge" size="20"/></div>
                 <div class="wz-icon-row-label">Przebieg przy serwisie <span class="wz-icon-row-label-info" title="Stan licznika podczas ostatniego serwisu"><i data-lucide="info"></i></span></div>
                 <div class="wz-icon-row-input">
-                    <input type="number" name="last_service_mileage" value="{{ old('last_service_mileage',$car?->last_service_mileage) }}" min="0" placeholder="np. 70 000">
+                    <input type="text" inputmode="numeric" autocomplete="off" name="last_service_mileage" value="{{ old('last_service_mileage',$car?->last_service_mileage) }}" min="0" placeholder="np. 70 000">
                     <span class="wz-icon-row-input-suffix">km</span>
                 </div>
             </div>

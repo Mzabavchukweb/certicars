@@ -31,6 +31,7 @@ class ExtractInteriorFramesJob implements ShouldQueue
         $car->forceFill([
             'interior_frames_status' => 'processing',
             'interior_frames_error'  => null,
+            'interior_frames_meta'   => null,
         ])->save();
 
         try {
@@ -39,6 +40,7 @@ class ExtractInteriorFramesJob implements ShouldQueue
             $car->forceFill([
                 'interior_frames_status' => 'ready',
                 'interior_frames_count'  => $count,
+                'interior_frames_meta'   => $extractor->lastSpriteMeta,
                 'interior_frames_dir'    => $this->framesDir,
                 'interior_frames_error'  => null,
             ])->save();

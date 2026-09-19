@@ -31,6 +31,7 @@ class ExtractExteriorFramesJob implements ShouldQueue
         $car->forceFill([
             'exterior_frames_status' => 'processing',
             'exterior_frames_error'  => null,
+            'exterior_frames_meta'   => null,
         ])->save();
 
         try {
@@ -39,6 +40,7 @@ class ExtractExteriorFramesJob implements ShouldQueue
             $car->forceFill([
                 'exterior_frames_status' => 'ready',
                 'exterior_frames_count'  => $count,
+                'exterior_frames_meta'   => $extractor->lastSpriteMeta,
                 'exterior_frames_dir'    => $this->framesDir,
                 'exterior_frames_error'  => null,
             ])->save();

@@ -145,6 +145,17 @@ class CatalogController extends Controller
 
         $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages.photos', 'tireSets.tires', 'pano360Image', 'exteriorPano360Image');
 
+        // Auta z klatkami 360 sprzed wprowadzenia arkuszy: zbuduj je raz, po
+        // wysłaniu odpowiedzi (klient nie czeka). Blokada na godzinę, żeby
+        // kolejne wejścia nie odpalały tego samego.
+        foreach (['interior', 'exterior'] as $side) {
+            $has = $side === 'interior' ? $car->hasInteriorFrames() : $car->hasExteriorFrames();
+            if ($has && empty($car->{$side . '_frames_meta'})
+                && \Illuminate\Support\Facades\Cache::add("frames-sprites:{$car->id}:{$side}", 1, now()->addHour())) {
+                \App\Jobs\BuildFrameSpritesJob::dispatchAfterResponse($car->id, $side);
+            }
+        }
+
         $prevCar = Car::available()
             ->where('created_at', '>', $car->created_at)
             ->orderBy('created_at', 'asc')
