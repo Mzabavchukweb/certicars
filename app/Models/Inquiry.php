@@ -14,9 +14,12 @@ class Inquiry extends Model
         'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
         'admin_email_sent_at', 'admin_email_failed_at', 'admin_email_error',
         'buyer_confirmation_sent_at', 'buyer_confirmation_failed_at', 'buyer_confirmation_error',
+        'is_spam', 'spam_score', 'spam_reasons',
     ];
 
     protected $casts = [
+        'is_spam' => 'boolean',
+        'spam_reasons' => 'array',
         'read_at'                    => 'datetime',
         'admin_email_sent_at'        => 'datetime',
         'admin_email_failed_at'      => 'datetime',
@@ -31,7 +34,7 @@ class Inquiry extends Model
 
     public function scopeUnread($query)
     {
-        return $query->whereNull('read_at');
+        return $query->whereNull('read_at')->where('is_spam', false);
     }
 
     public function markRead(): void

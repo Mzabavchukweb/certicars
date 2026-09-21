@@ -23,7 +23,7 @@ class InquiryController extends Controller
             'email'   => 'nullable|email|max:200',
             'message' => 'nullable|string|max:2000',
             'consent' => 'required|accepted',
-            'website' => 'max:0', // honeypot
+            'website' => 'nullable|string|max:200', // honeypot — ocenia SpamGuard
         ], [
             'consent.required' => 'Aby wysłać zapytanie, musisz wyrazić zgodę na przetwarzanie danych osobowych.',
             'consent.accepted' => 'Aby wysłać zapytanie, musisz wyrazić zgodę na przetwarzanie danych osobowych.',
@@ -31,7 +31,14 @@ class InquiryController extends Controller
 
         $car = Car::with('brand')->find($validated['car_id']);
 
+        $verdict = app(\App\Support\SpamGuard::class)->inspect(
+            $request, $validated['name'], $validated['email'] ?? null, $validated['phone'], $validated['message'] ?? null, 'inquiry'
+        );
+
         $inquiry = Inquiry::create([
+            'is_spam'      => $verdict['spam'],
+            'spam_score'   => $verdict['score'],
+            'spam_reasons' => $verdict['reasons'],
             'car_id'      => $validated['car_id'],
             'type'        => $validated['type'],
             'name'        => $validated['name'],
@@ -50,6 +57,15 @@ class InquiryController extends Controller
             'utm_content' => $this->sanitizeShort($request->input('utm_content')),
             'utm_term'    => $this->sanitizeShort($request->input('utm_term')),
         ]);
+
+        if ($verdict['spam']) {
+            // Nie powiadamiamy i nie liczymy statystyk — zapytanie czeka w
+            // zakładce Spam, gdyby filtr się pomylił.
+            return response()->json([
+                'success' => true,
+                'message' => 'Dziękujemy! Odezwiemy się jak najszybciej.',
+            ]);
+        }
 
         Event::record('inquiry_submitted', $request, $inquiry->car_id, [
             'type' => $inquiry->type,

@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         View::composer('admin.layouts.app', function ($view) {
-            $view->with('unreadMessagesCount', ContactMessage::whereNull('read_at')->count());
+            $view->with('unreadMessagesCount', ContactMessage::unread()->count()); // spam nie liczy sie do nieprzeczytanych
         });
 
         Car::saved(function () {

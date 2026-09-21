@@ -3,15 +3,36 @@
 @php
 $activeFilters = array_filter([
     'q'      => request('q') ? ['label' => 'Szukaj', 'val' => request('q')] : null,
-    'filter' => request('filter') ? ['label' => 'Filtr', 'val' => ['unread'=>'Nieprzeczytane','read'=>'Przeczytane'][request('filter')] ?? request('filter')] : null,
+    'filter' => request('filter') && request('filter') !== 'spam' ? ['label' => 'Filtr', 'val' => ['unread'=>'Nieprzeczytane','read'=>'Przeczytane'][request('filter')] ?? request('filter')] : null,
 ]);
 $chipUrl = fn($remove) => route('admin.messages.index', request()->except($remove));
 @endphp
 @section('content')
 <div class="card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+        <a href="{{ route('admin.messages.index') }}" class="btn btn-sm {{ $spamTab ? 'btn-outline' : 'btn-dark' }}"><i data-lucide="inbox"></i> Skrzynka ({{ $inboxCount }})</a>
+        <a href="{{ route('admin.messages.index', ['filter' => 'spam']) }}" class="btn btn-sm {{ $spamTab ? 'btn-dark' : 'btn-outline' }}"><i data-lucide="shield-alert"></i> Spam ({{ $spamCount }})</a>
+        @if(!$spamTab)
+        <form method="POST" action="{{ route('admin.messages.spam.sweep') }}" style="margin-left:auto" data-confirm="Przejrzeć wiadomości w skrzynce i przenieść spam do osobnej zakładki? Nic nie zostanie skasowane." data-confirm-title="Przejrzeć skrzynkę" data-confirm-ok="Przejrzyj">@csrf
+            <button type="submit" class="btn btn-sm btn-outline" data-no-loading><i data-lucide="filter"></i> Przejrzyj skrzynkę pod kątem spamu</button>
+        </form>
+        @endif
+        @if($spamTab && $spamCount)
+        <form method="POST" action="{{ route('admin.messages.spam.clear') }}" style="margin-left:auto" data-confirm="Usunąć wszystkie {{ $spamCount }} wiadomości oznaczonych jako spam?" data-confirm-title="Wyczyścić spam" data-confirm-ok="Usuń wszystko">@csrf
+            <button type="submit" class="btn btn-sm btn-ghost-red" data-no-loading><i data-lucide="trash-2"></i> Usuń cały spam</button>
+        </form>
+        @endif
+    </div>
+    @if($spamTab)
+    <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:#9a3412">
+        Te wiadomości zostały uznane za spam i nie trafiły do skrzynki ani do licznika nieprzeczytanych. Jeśli któraś jest prawdziwa, kliknij <b>„To nie spam”</b> — wróci do skrzynki.
+    </div>
+    @endif
+
     <form method="GET" style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
         <input type="text" name="q" value="{{ request('q') }}" placeholder="Szukaj: imię, email, telefon, treść" style="flex:1;min-width:240px;padding:10px 14px;border:1px solid var(--border);border-radius:9px;font-size:13px">
-        <select name="filter" style="padding:10px 14px;border:1px solid var(--border);border-radius:9px;font-size:13px;background:#fff">
+        @if($spamTab)<input type="hidden" name="filter" value="spam">@endif
+        <select name="filter" style="padding:10px 14px;border:1px solid var(--border);border-radius:9px;font-size:13px;background:#fff;{{ $spamTab ? 'display:none' : '' }}">
             <option value="">Wszystkie</option>
             <option value="unread" {{ request('filter')=='unread'?'selected':'' }}>Nieprzeczytane</option>
             <option value="read" {{ request('filter')=='read'?'selected':'' }}>Przeczytane</option>
@@ -36,6 +57,11 @@ $chipUrl = fn($remove) => route('admin.messages.index', request()->except($remov
             <div id="bulkIdsContainer"></div>
             <button type="button" onclick="submitBulk('read')"><i data-lucide="mail-open"></i> Oznacz jako przeczytane</button>
             <button type="button" onclick="submitBulk('unread')"><i data-lucide="mail"></i> Nieprzeczytane</button>
+            @if($spamTab)
+            <button type="button" onclick="submitBulk('not_spam')"><i data-lucide="shield-check"></i> To nie spam</button>
+            @else
+            <button type="button" onclick="submitBulk('spam')"><i data-lucide="shield-alert"></i> To spam</button>
+            @endif
             <button type="button" onclick="confirmBulkDelete()" style="background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.3)"><i data-lucide="trash-2"></i> Usuń</button>
         </form>
         <button class="close" type="button" onclick="clearSelection()"><i data-lucide="x"></i></button>
@@ -65,8 +91,22 @@ $chipUrl = fn($remove) => route('admin.messages.index', request()->except($remov
                 <a href="mailto:{{ $m->email }}" style="color:var(--blue)">{{ $m->email }}</a>
                 @if($m->phone)<br><a href="tel:{{ $m->phone }}" style="color:var(--text-3)">{{ $m->phone }}</a>@endif
             </td>
-            <td style="color:var(--text-3);font-size:12px">{{ $m->created_at->diffForHumans() }}</td>
+            <td style="color:var(--text-3);font-size:12px">
+                {{ $m->created_at->diffForHumans() }}
+                @if($m->is_spam && $m->spam_reasons)
+                <div style="margin-top:4px;color:#b45309;font-size:11px;max-width:220px;white-space:normal" title="{{ implode(' · ', $m->spam_reasons) }}">{{ \Illuminate\Support\Str::limit($m->spam_reasons[0] ?? '', 46) }}</div>
+                @endif
+            </td>
             <td style="text-align:right;white-space:nowrap">
+                @if($m->is_spam)
+                <form method="POST" action="{{ route('admin.messages.not-spam',$m) }}" style="display:inline">@csrf
+                    <button type="submit" class="btn btn-outline btn-sm" title="To nie spam — wróć do skrzynki" data-no-loading><i data-lucide="shield-check"></i></button>
+                </form>
+                @else
+                <form method="POST" action="{{ route('admin.messages.spam',$m) }}" style="display:inline">@csrf
+                    <button type="submit" class="btn btn-outline btn-sm" title="Oznacz jako spam" data-no-loading><i data-lucide="shield-alert"></i></button>
+                </form>
+                @endif
                 <a href="{{ route('admin.messages.show',$m) }}" class="btn btn-outline btn-sm"><i data-lucide="eye"></i></a>
                 <form method="POST" action="{{ route('admin.messages.destroy',$m) }}" style="display:inline" data-confirm="Usunąć tę wiadomość?" data-confirm-title="Usunąć wiadomość" data-confirm-ok="Usuń">@csrf @method('DELETE')
                     <button type="submit" class="btn btn-sm btn-ghost-red" data-no-loading><i data-lucide="trash-2"></i></button>

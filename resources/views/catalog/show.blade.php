@@ -2743,6 +2743,11 @@
             <input type="hidden" id="csInquiryUtmContent" name="utm_content" value="">
             <input type="hidden" id="csInquiryUtmTerm" name="utm_term" value="">
             <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off">
+            <input type="hidden" name="_ts" value="{{ \App\Support\SpamGuard::timestampField() }}">
+            @if(config('services.turnstile.sitekey'))
+            <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.sitekey') }}" data-language="pl" data-size="flexible" style="margin:4px 0"></div>
+            <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+            @endif
             <div class="cs-inquiry-field">
                 <label>Imię i nazwisko *</label>
                 <input type="text" name="name" required placeholder="Jan Kowalski" maxlength="100">

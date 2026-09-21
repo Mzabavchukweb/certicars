@@ -246,6 +246,11 @@ a.kt-side-val:hover{color:var(--blue)}
                     @csrf
                     {{-- honeypot --}}
                     <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+                    {{-- podpisany znacznik czasu: wysyłka w mniej niż 3 s = bot --}}
+                    <input type="hidden" name="_ts" value="{{ \App\Support\SpamGuard::timestampField() }}">
+                    @if(config('services.turnstile.sitekey'))
+                    <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.sitekey') }}" data-language="pl" data-size="flexible" style="margin:0 0 14px"></div>
+                    @endif
                     <div class="kt-form-row">
                         <div class="kt-field">
                             <label for="kt-name">Imię i nazwisko *</label>
@@ -273,6 +278,9 @@ a.kt-side-val:hover{color:var(--blue)}
                         Wyślij wiadomość
                     </button>
                 </form>
+                @if(config('services.turnstile.sitekey'))
+                <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+                @endif
             </div>
 
             <aside class="kt-side" aria-label="Inne sposoby kontaktu">

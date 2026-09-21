@@ -52,17 +52,30 @@ class PageController extends Controller
             'email'   => 'required|email|max:200',
             'phone'   => 'nullable|string|max:30',
             'message' => 'required|string|min:10|max:2000',
-            'website' => 'nullable|size:0',
+            'website' => 'nullable|string|max:200', // honeypot — ocenia SpamGuard, nie walidacja
         ]);
 
         unset($validated['website']);
 
+        // Filtr antyspamowy — spam ląduje w kwarantannie (zakładka Spam w
+        // adminie), nadawca dostaje normalne potwierdzenie, żeby bot nie
+        // wiedział, że został złapany, i nie próbował dalej.
+        $verdict = app(\App\Support\SpamGuard::class)->inspect(
+            $request, $validated['name'], $validated['email'], $validated['phone'] ?? null, $validated['message']
+        );
+
         ContactMessage::create($validated + [
-            'ip'         => $request->ip(),
-            'user_agent' => substr((string) $request->userAgent(), 0, 500),
+            'ip'           => $request->ip(),
+            'user_agent'   => substr((string) $request->userAgent(), 0, 500),
+            'is_spam'      => $verdict['spam'],
+            'spam_score'   => $verdict['score'],
+            'spam_reasons' => $verdict['reasons'],
+            'body_hash'    => \App\Support\SpamGuard::bodyHash($validated['message']),
         ]);
 
-        Event::record('contact_submitted', $request);
+        if (!$verdict['spam']) {
+            Event::record('contact_submitted', $request);
+        }
 
         // AJAX (fetch) submit → return JSON so the page never reloads and the
         // visitor stays exactly where they are (no scroll jump). Validation

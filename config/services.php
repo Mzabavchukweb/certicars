@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+
+    // Cloudflare Turnstile — opcjonalny, niewidoczny test „czy to człowiek”.
+    // Bez kluczy formularze działają na pozostałych warstwach ochrony.
+    'turnstile' => [
+        'sitekey' => env('TURNSTILE_SITE_KEY'),
+        'secret'  => env('TURNSTILE_SECRET_KEY'),
+    ],
+
 ];

@@ -100,6 +100,10 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::resource('brands', AdminBrandController::class)->names('admin.brands')->except(['create', 'show', 'edit']);
 
     Route::post('messages/bulk', [AdminMessageController::class, 'bulk'])->name('admin.messages.bulk');
+    Route::post('messages/spam/clear', [AdminMessageController::class, 'clearSpam'])->name('admin.messages.spam.clear');
+    Route::post('messages/spam/sweep', [AdminMessageController::class, 'sweep'])->name('admin.messages.spam.sweep');
+    Route::post('messages/{message}/not-spam', [AdminMessageController::class, 'notSpam'])->name('admin.messages.not-spam');
+    Route::post('messages/{message}/spam', [AdminMessageController::class, 'markSpam'])->name('admin.messages.spam');
     Route::patch('messages/{message}/unread', [AdminMessageController::class, 'markUnread'])->name('admin.messages.unread');
     Route::resource('messages', AdminMessageController::class)->names('admin.messages')->only(['index', 'show', 'destroy']);
 
