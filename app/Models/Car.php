@@ -322,15 +322,15 @@ class Car extends Model
 
     public function getTitleAttribute(): string
     {
-        // Formula: Marka + Model + Silnik (engine_version) + Wersja wyposażenia.
-        // Engine + trim are admin-entered free-text strings; both are
-        // optional, so the title gracefully falls back to "Brand Model"
-        // when the dealer hasn't filled them yet.
+        // Wzór: Marka + Model + Wersja wyposażenia + Silnik.
+        // Wersja idzie przed silnikiem, bo tak zapisuje się nazwy aut
+        // ("Mercedes-Benz Klasa B 180 2.0 CDI", nie "... 2.0 CDI 180").
+        // Oba pola są opcjonalne — bez nich tytuł to po prostu "Marka Model".
         $parts = array_filter([
             $this->brand?->name ?? '',
             $this->model ?? '',
-            $this->engine_version ?? '',
             $this->equipment_version ?? '',
+            $this->engine_version ?? '',
         ], fn($v) => trim((string) $v) !== '');
         return trim(implode(' ', $parts));
     }

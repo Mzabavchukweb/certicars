@@ -938,7 +938,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         <div class="tp-icon"><i data-lucide="type"></i></div>
         <div>
             <div class="tp-text" id="wzAutoTitle">{{ $car ? $car->title : 'Tytuł wygeneruje się automatycznie' }}</div>
-            <div class="tp-sub">Tytuł buduje się z: Marka + Model + Silnik + Wersja wyposażenia</div>
+            <div class="tp-sub">Tytuł buduje się z: Marka + Model + Wersja wyposażenia + Silnik</div>
         </div>
     </div>
 
@@ -2228,8 +2228,8 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         const engineVersion    = $v('[name="engine_version"]');
         const equipmentVersion = $v('[name="equipment_version"]');
 
-        // Auto title: Marka + Model + Silnik (engine_version) + Wersja wyposażenia
-        let parts = [brand, model, engineVersion, equipmentVersion];
+        // Tytuł: Marka + Model + Wersja wyposażenia + Silnik
+        let parts = [brand, model, equipmentVersion, engineVersion];
         const title = parts.filter(Boolean).join(' ');
         const titleEl = $('#wzAutoTitle');
         const prevTitleEl = $('#wzPreviewTitle');
