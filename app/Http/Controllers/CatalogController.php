@@ -143,7 +143,7 @@ class CatalogController extends Controller
 
         $this->trackCarView($request, $car);
 
-        $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages.photos', 'tireSets.tires', 'pano360Image', 'exteriorPano360Image');
+        $car->load('brand', 'images', 'galleryImages', 'damageImages', 'documentImages', 'damages.photos', 'tireSets.tires', 'pano360Image', 'exteriorPano360Image');
 
         // Auta z klatkami 360 sprzed wprowadzenia arkuszy: zbuduj je raz, po
         // wysłaniu odpowiedzi (klient nie czeka). Blokada na godzinę, żeby
@@ -203,7 +203,7 @@ class CatalogController extends Controller
             Event::record('certicheck_open', request(), $car->id);
         }
 
-        $car->load('brand', 'images', 'galleryImages', 'damageImages', 'damages.photos', 'tireSets.tires', 'pano360Image', 'exteriorPano360Image');
+        $car->load('brand', 'images', 'galleryImages', 'damageImages', 'documentImages', 'damages.photos', 'tireSets.tires', 'pano360Image', 'exteriorPano360Image');
 
         return view('catalog.certicheck', compact('car'));
     }

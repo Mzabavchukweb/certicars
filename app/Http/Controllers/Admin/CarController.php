@@ -479,15 +479,15 @@ class CarController extends Controller
     {
         $request->validate([
             'image' => 'required|image|mimes:jpg,jpeg,png,webp,avif|max:20480',
-            'type'  => 'required|in:gallery,damage',
+            'type'  => 'required|in:gallery,damage,document',
         ]);
 
         $type = $request->input('type', 'gallery');
-        $subdir = $type === 'damage' ? 'damage' : 'gallery';
+        $subdir = ['damage' => 'damage', 'document' => 'documents'][$type] ?? 'gallery';
 
         Storage::disk('public')->makeDirectory('cars/' . $car->id . '/' . $subdir);
         $path = $request->file('image')->store('cars/' . $car->id . '/' . $subdir, 'public');
-        $this->optimizeImage($path, $type === 'damage' ? 1280 : 1920);
+        $this->optimizeImage($path, $type === 'gallery' ? 1920 : 1600);
 
         $img = $car->images()->create([
             'path'       => $path,
@@ -714,6 +714,7 @@ class CarController extends Controller
         return [
             'gallery'             => $image,
             'damage'              => $image,
+            'document'            => $image,
             'damage_marker'       => $image,
             'interior_video_file' => $video,
             'exterior_video_file' => $video,
@@ -771,8 +772,8 @@ class CarController extends Controller
             ErrorLog::record('upload.temp', 'Nie udało się zapisać pliku na serwerze: ' . $request->file('file')->getClientOriginalName(), ['kind' => $kind]);
             return response()->json(['success' => false, 'message' => 'Nie udało się zapisać pliku na serwerze.'], 500);
         }
-        if ($kind === 'gallery' || $kind === 'damage' || $kind === 'damage_marker') {
-            $this->optimizeImage($path, $kind === 'gallery' ? 1920 : 1280);
+        if (in_array($kind, ['gallery', 'damage', 'document', 'damage_marker'], true)) {
+            $this->optimizeImage($path, $kind === 'gallery' ? 1920 : ($kind === 'document' ? 1600 : 1280));
         }
 
         return response()->json(['success' => true, 'path' => $path, 'url' => $disk->url($path)]);
@@ -802,9 +803,9 @@ class CarController extends Controller
             }
         };
 
-        foreach (['gallery' => 'pending_gallery', 'damage' => 'pending_damage'] as $type => $field) {
+        foreach (['gallery' => 'pending_gallery', 'damage' => 'pending_damage', 'document' => 'pending_document'] as $type => $field) {
             foreach ((array) $request->input($field, []) as $p) {
-                $dest = $ok($p) ? $moveTo($p, $type) : null;
+                $dest = $ok($p) ? $moveTo($p, $type === 'document' ? 'documents' : $type) : null;
                 if ($dest === null) { $failures[] = basename((string) $p); continue; }
                 $car->images()->create([
                     'path'       => $dest,
@@ -1085,6 +1086,8 @@ class CarController extends Controller
             'image_alt.*' => 'nullable|string|max:255',
             'gallery_images' => 'nullable|array|max:40',
             'gallery_images.*' => 'nullable|image|mimes:jpg,jpeg,png,webp,avif|max:20480',
+            'document_images' => 'nullable|array|max:40',
+            'document_images.*' => 'nullable|image|mimes:jpg,jpeg,png,webp,avif|max:20480',
             'damage_images' => 'nullable|array|max:40',
             'damage_images.*' => 'nullable|image|mimes:jpg,jpeg,png,webp,avif|max:20480',
             'pano360_image'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:25600',
@@ -1394,6 +1397,20 @@ class CarController extends Controller
                     'path' => $path,
                     'type' => 'damage',
                     'sort_order' => $car->images()->max('sort_order') + 1,
+                ]);
+            }
+        }
+
+        if ($request->hasFile('document_images')) {
+            Storage::disk('public')->makeDirectory('cars/' . $car->id . '/documents');
+            foreach ($request->file('document_images') as $file) {
+                $path = $this->safeStore($file, 'cars/' . $car->id . '/documents');
+                if ($path === null) { $failures[] = $file->getClientOriginalName(); continue; }
+                $this->optimizeImage($path, 1600);
+                $car->images()->create([
+                    'path' => $path,
+                    'type' => 'document',
+                    'sort_order' => ($car->images()->max('sort_order') ?? 0) + 1,
                 ]);
             }
         }

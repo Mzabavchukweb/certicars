@@ -1368,7 +1368,8 @@
     @php
         $galleryList = $car->galleryImages->count() ? $car->galleryImages : ($car->primaryImage ? collect([$car->primaryImage]) : collect());
         $damageImgList = $car->damageImages ?? collect();
-        $allMediaCount = $galleryList->count() + $damageImgList->count();
+        $documentImgList = $car->documentImages ?? collect();
+        $allMediaCount = $galleryList->count() + $damageImgList->count() + $documentImgList->count();
     @endphp
 
     <div class="cs-grid">
@@ -1425,7 +1426,7 @@
             </button>
             <button type="button" class="cs-gallery-tab" data-gallery-filter="documents" onclick="csFilterGallery(this,'documents')" role="tab" aria-selected="false">
                 <x-icon name="file-text" size="14" :strokeWidth="1.8"/>
-                Dokumenty
+                Dokumenty{{ $documentImgList->count() ? ' (' . $documentImgList->count() . ')' : '' }}
             </button>
             <button type="button" class="cs-gallery-tab" data-gallery-filter="paint" onclick="csFilterGallery(this,'paint')" role="tab" aria-selected="false">
                 <x-icon name="scan-line" size="14" :strokeWidth="1.8"/>
@@ -1519,6 +1520,10 @@
                 @endforeach
                 @foreach($damageImgList as $j => $dimg)
                     <img src="{{ $dimg->url }}" loading="lazy" alt="{{ $dimg->alt }}" class="cs-thumb" data-type="damage" data-idx="{{ $galleryList->count() + $j }}" onclick="csSelImg(this,{{ $galleryList->count() + $j + 1 }})" tabindex="0" data-hidden>
+                @endforeach
+                @foreach($documentImgList as $k => $docimg)
+                    @php $docIdx = $galleryList->count() + $damageImgList->count() + $k; @endphp
+                    <img src="{{ $docimg->url }}" loading="lazy" alt="{{ $docimg->alt }}" class="cs-thumb" data-type="document" data-idx="{{ $docIdx }}" onclick="csSelImg(this,{{ $docIdx + 1 }})" ondblclick="openCarGallery({{ $docIdx }})" tabindex="0" data-hidden>
                 @endforeach
             </div>
             @endif
@@ -2810,7 +2815,11 @@
 function csSelImg(el,n){
     const m=document.getElementById('csMainImg');if(!m)return;
     m.src=el.src;m.alt=el.alt;
-    document.getElementById('csImgCounter').textContent=n;
+    // licznik pokazuje pozycję w AKTYWNEJ zakładce (Wszystkie / stan / dokumenty),
+    // a nie numer w całej galerii — inaczej pierwszy dokument wychodził jako „2 / 3”
+    const vis=Array.from(document.querySelectorAll('#csGalleryThumbs .cs-thumb:not([data-hidden])'));
+    const pos=vis.indexOf(el);
+    document.getElementById('csImgCounter').textContent=pos>=0?(pos+1):n;
     document.querySelectorAll('.cs-thumb').forEach(t=>t.classList.remove('active'));
     el.classList.add('active');
 }
@@ -2830,7 +2839,8 @@ function csGalleryNext(){
 }
 window.CAR_GALLERY=@json($galleryList->map(fn($i)=>['src'=>$i->url,'caption'=>$i->alt])->values());
 window.CAR_DAMAGE_GALLERY=@json($damageImgList->map(fn($i)=>['src'=>$i->url,'caption'=>$i->alt])->values());
-window.CAR_ALL_GALLERY=[...CAR_GALLERY,...CAR_DAMAGE_GALLERY];
+window.CAR_DOCUMENT_GALLERY=@json($documentImgList->map(fn($i)=>['src'=>$i->url,'caption'=>$i->alt_text ?: 'Dokument pojazdu'])->values());
+window.CAR_ALL_GALLERY=[...CAR_GALLERY,...CAR_DAMAGE_GALLERY,...CAR_DOCUMENT_GALLERY];
 window.openCarGallery=(i)=>{csOpenLb(i||0)};
 
 // ==== iOS-SAFE BODY SCROLL LOCK ====
@@ -3119,7 +3129,8 @@ function csFilterGallery(btn,filter){
         if(paintSec)paintSec.scrollIntoView({behavior:'smooth',block:'center'});
         return;
     }
-    if(filter==='documents'){
+    if(filter==='documents' && !document.querySelector('#csGalleryThumbs .cs-thumb[data-type="document"]')){
+        // brak zdjęć dokumentów → jak dawniej: przewiń do sekcji z danymi
         var docSec=document.querySelector('[data-panel-documents]');
         if(docSec)docSec.scrollIntoView({behavior:'smooth',block:'center'});
         else{ var dataSec=document.querySelector('.cs-data-columns'); if(dataSec)dataSec.scrollIntoView({behavior:'smooth',block:'center'}); }
@@ -3134,6 +3145,7 @@ function csFilterGallery(btn,filter){
         if(filter==='all')show=true;
         else if(filter==='gallery')show=(type==='gallery');
         else if(filter==='damage')show=(type==='damage');
+        else if(filter==='documents')show=(type==='document');
         if(show){t.removeAttribute('data-hidden');if(!first)first=t;}
         else{t.setAttribute('data-hidden','');t.classList.remove('active');}
     });

@@ -22,7 +22,7 @@ class CarImage extends Model
     public function getAltAttribute(): string
     {
         if (!empty($this->alt_text)) return $this->alt_text;
-        $typeLabel = ['gallery' => 'zdjęcie', 'damage' => 'zdjęcie uszkodzenia', 'exterior' => 'zdjęcie', 'interior' => 'wnętrze'][$this->type] ?? 'zdjęcie';
+        $typeLabel = ['gallery' => 'zdjęcie', 'document' => 'dokument', 'damage' => 'zdjęcie uszkodzenia', 'exterior' => 'zdjęcie', 'interior' => 'wnętrze'][$this->type] ?? 'zdjęcie';
         // Don't lazy-load car/brand for the alt fallback — every gallery thumb
         // in the catalog detail page would fire a Car+Brand lookup. Public
         // page profile showed 5×{cars,brands} N+1 traceable to this single

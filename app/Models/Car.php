@@ -154,6 +154,12 @@ class Car extends Model
         return $this->hasMany(CarImage::class)->where('type', 'damage')->orderBy('sort_order');
     }
 
+    /** Zdjęcia dokumentów (dowód, faktura, książka serwisowa) — zakładka „Dokumenty” w galerii. */
+    public function documentImages(): HasMany
+    {
+        return $this->hasMany(CarImage::class)->where('type', 'document')->orderBy('sort_order');
+    }
+
     public function pano360Image()
     {
         return $this->hasOne(CarImage::class)->where('type', 'pano360');

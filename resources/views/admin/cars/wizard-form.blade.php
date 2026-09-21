@@ -1268,6 +1268,43 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             </div>
         </div>
         <div id="wzDamageUploadedGrid" class="wz-file-preview-grid"></div>
+
+    {{-- Zdjęcia dokumentów — osobne pole, w ogłoszeniu pokazują się w galerii
+         pod zakładką „Dokumenty”. --}}
+    <div class="wz-section">
+        <div class="wz-section-header">
+            <div class="wz-section-badge">3</div>
+            <div>
+                <div class="wz-section-title">Zdjęcia dokumentów</div>
+                <div class="wz-section-subtitle">Dowód rejestracyjny, faktura, książka serwisowa, potwierdzenia serwisów. W ogłoszeniu trafiają do galerii, do zakładki <b>Dokumenty</b>.</div>
+            </div>
+        </div>
+
+        @if($car)
+        <div id="wzDocumentGrid" class="wz-img-grid" style="margin-bottom:14px">
+            @foreach($car->documentImages as $img)
+            <div class="wz-img-tile" data-img-id="{{ $img->id }}">
+                <img src="{{ $img->url }}" alt="{{ $img->alt }}">
+                <div class="tile-actions">
+                    <button type="button" class="tile-del" onclick="wzToggleDelete(this,{{ $img->id }})"><i data-lucide="x"></i></button>
+                </div>
+                <input type="checkbox" name="delete_images[]" value="{{ $img->id }}" style="display:none">
+                <div class="tile-alt">
+                    <input type="text" name="image_alt[{{ $img->id }}]" value="{{ $img->alt_text }}" placeholder="{{ $img->alt }}" title="Opis dokumentu (np. „Dowód rejestracyjny”)">
+                </div>
+            </div>
+            @endforeach
+        </div>
+        <p id="wzDocumentEmpty" style="color:var(--text-3);font-size:12.5px;margin-bottom:10px;{{ $car->documentImages->count() ? 'display:none' : '' }}">Brak zdjęć dokumentów.</p>
+        @endif
+
+        <label class="wz-file-drop" id="wzDocumentDrop" data-upload-type="document">
+            <i data-lucide="file-text"></i>
+            <div class="drop-title">Kliknij lub przeciągnij zdjęcia dokumentów</div>
+            <div class="drop-hint">JPG, PNG, WebP, HEIC (iPhone) — wgrywają się od razu · zasłoń dane, których nie chcesz pokazywać publicznie</div>
+            <input type="file" name="document_images[]" multiple accept="image/*,.heic,.heif">
+        </label>
+    </div>
     </div>
 
     {{-- 360° interior — jedna sekcja z radio toggle: Film vs Panorama.
@@ -2559,9 +2596,17 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
     }
 
     // --- kafelki zdjec w trakcie wysylki ---
+    const WZ_PHOTO_KINDS = {
+        gallery:  { grid: 'wzGalleryGrid',  drop: 'wzGalleryDrop',  empty: 'wzGalleryEmpty',  pending: 'pending_gallery[]' },
+        damage:   { grid: 'wzDamageGrid',   drop: 'wzDamageDrop',   empty: 'wzDamageEmpty',   pending: 'pending_damage[]' },
+        document: { grid: 'wzDocumentGrid', drop: 'wzDocumentDrop', empty: 'wzDocumentEmpty', pending: 'pending_document[]' },
+    };
+
     function wzPhotoGrid(kind) {
-        if (WZ_CAR_ID) return document.getElementById(kind === 'gallery' ? 'wzGalleryGrid' : 'wzDamageGrid');
-        const drop = document.getElementById(kind === 'gallery' ? 'wzGalleryDrop' : 'wzDamageDrop');
+        const cfg = WZ_PHOTO_KINDS[kind];
+        if (!cfg) return null;
+        if (WZ_CAR_ID) return document.getElementById(cfg.grid);
+        const drop = document.getElementById(cfg.drop);
         if (!drop) return null;
         let pg = drop.parentElement.querySelector('.wz-file-preview-grid.wz-fp-local');
         if (!pg) {
@@ -2650,7 +2695,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
     function wzAfterTilesChanged(kind) {
         const grid = wzPhotoGrid(kind);
         if (!grid) return;
-        const empty = document.getElementById(kind === 'gallery' ? 'wzGalleryEmpty' : 'wzDamageEmpty');
+        const empty = document.getElementById((WZ_PHOTO_KINDS[kind] || {}).empty);
         if (empty) empty.style.display = grid.children.length ? 'none' : '';
         if (!WZ_CAR_ID) {
             grid.querySelectorAll('.wz-fp-item').forEach((it, i) => {
@@ -2723,7 +2768,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             wzTileState(tile, 'done', '✓ Wgrano');
             const hid = document.createElement('input');
             hid.type = 'hidden';
-            hid.name = kind === 'damage' ? 'pending_damage[]' : 'pending_gallery[]';
+            hid.name = (WZ_PHOTO_KINDS[kind] || WZ_PHOTO_KINDS.gallery).pending;
             hid.value = data.path;
             tile.appendChild(hid);
             return;
@@ -2733,7 +2778,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             window.wzGallerySortable.saveSoon();
             return;
         }
-        // zdjecia stanu — zwykly kafelek jak po odswiezeniu strony
+        // zdjecia stanu / dokumenty — zwykly kafelek jak po odswiezeniu strony
         const img = data.image;
         const real = document.createElement('div');
         real.className = 'wz-img-tile';
@@ -2897,6 +2942,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
             };
             restoreList('pending_gallery[]', 'gallery');
             restoreList('pending_damage[]', 'damage');
+            restoreList('pending_document[]', 'document');
             // wybor Zwykle/CertiCheck: odswiez widocznosc krokow wg przywroconej wartosci
             const picked = document.querySelector('[name=has_certicheck_picker]:checked');
             if (picked) picked.closest('.wz-std-card')?.click();
@@ -2934,7 +2980,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
         const titleEl = drop.querySelector('.drop-title');
         const kind = drop.dataset.uploadType;
 
-        if (kind === 'gallery' || kind === 'damage') {
+        if (WZ_PHOTO_KINDS[kind]) {
             const files = incoming.filter(wzIsImage);
             input.value = '';
             const notImages = incoming.length - files.length;
