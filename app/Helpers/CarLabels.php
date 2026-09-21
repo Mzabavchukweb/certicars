@@ -111,7 +111,7 @@ class CarLabels
     {
         if ($value === null || $value === '') return null;
         $map = [
-            'complete' => 'Kompletna', 'kompletna' => 'Kompletna', 'full' => 'Kompletna',
+            'complete' => 'Dostępna', 'kompletna' => 'Dostępna', 'full' => 'Dostępna',
             'incomplete' => 'Niekompletna', 'niekompletna' => 'Niekompletna', 'partial' => 'Częściowa',
             'available' => 'Dostępna', 'dostepna' => 'Dostępna', 'present' => 'Dostępna',
             'missing' => 'Brak', 'brak' => 'Brak', 'none' => 'Brak',

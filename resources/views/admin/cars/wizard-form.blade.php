@@ -1593,8 +1593,8 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                 <select name="service_book_status">
                     <option value="">— wybierz —</option>
                     @php $cur_service_book_status = (string) old('service_book_status', $car?->service_book_status); $cur_service_book_status = (string) (\App\Helpers\CarLabels::status($cur_service_book_status) ?? $cur_service_book_status); @endphp
-                    @if($cur_service_book_status !== '' && !in_array($cur_service_book_status, ['Kompletna','Częściowa','Elektroniczna','Brak'], true))<option value="{{ $cur_service_book_status }}" selected>{{ $cur_service_book_status }}</option>@endif
-                    @foreach(['Kompletna','Częściowa','Elektroniczna','Brak'] as $opt)
+                    @if($cur_service_book_status !== '' && !in_array($cur_service_book_status, ['Dostępna','Częściowa','Elektroniczna','Brak'], true))<option value="{{ $cur_service_book_status }}" selected>{{ $cur_service_book_status }}</option>@endif
+                    @foreach(['Dostępna','Częściowa','Elektroniczna','Brak'] as $opt)
                     <option value="{{ $opt }}" {{ $cur_service_book_status === (string) $opt ? 'selected' : '' }}>{{ $opt }}</option>
                     @endforeach
                 </select>
