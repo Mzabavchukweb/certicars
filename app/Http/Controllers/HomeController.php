@@ -42,6 +42,13 @@ class HomeController extends Controller
             foreach ($rows as $raw => $total) {
                 $label = CarLabels::bodyType((string) $raw);
                 if (!$label) continue;
+                // Minivan i Dostawczy liczą się do kafelka „Bus” (ten sam obrazek)
+                foreach (['Bus'] as $group) {
+                    if ($label !== $group && in_array($label, CarLabels::bodyTypeGroup($group), true)) {
+                        $label = $group;
+                        break;
+                    }
+                }
                 $bodyTypeCounts[$label] = ($bodyTypeCounts[$label] ?? 0) + (int) $total;
             }
             // Return as a plain array keyed by display label so the Blade can

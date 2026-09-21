@@ -1053,7 +1053,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                     <label>Nadwozie</label>
                     <select name="body_type" id="wzBodyTypeSelect">
                         <option value="">— wybierz —</option>
-                        @foreach(['Sedan','SUV','Coupé','Bus','Kombi','Hatchback','Kabriolet','Pickup'] as $bt)
+                        @foreach(['Sedan','SUV','Coupé','Kombi','Hatchback','Minivan','Bus','Dostawczy','Kabriolet','Pickup'] as $bt)
                         <option value="{{ $bt }}" {{ old('body_type',$car?->body_type)==$bt?'selected':'' }}>{{ $bt }}</option>
                         @endforeach
                     </select>
@@ -1800,7 +1800,7 @@ html.wz-no-certicheck [data-certicheck-only="1"] { display: none !important; }
                         @php
                             $bodyTypeMap = [
                                 'sedan' => 'sedan', 'suv' => 'suv', 'coupé' => 'coupe', 'coupe' => 'coupe',
-                                'bus' => 'van', 'van' => 'van', 'kombi' => 'kombi', 'hatchback' => 'hatchback',
+                                'bus' => 'van', 'van' => 'van', 'minivan' => 'van', 'dostawczy' => 'van', 'kombi' => 'kombi', 'hatchback' => 'hatchback',
                                 'kabriolet' => 'sedan', 'cabriolet' => 'sedan', 'pickup' => 'suv',
                             ];
                             $btKey = strtolower(old('body_type', $car?->body_type ?? 'sedan'));

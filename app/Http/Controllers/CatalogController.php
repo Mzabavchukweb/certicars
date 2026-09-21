@@ -83,10 +83,13 @@ class CatalogController extends Controller
             // ignore casing so "?category=SUV" hits rows with body_type="suv".
             // CarLabels::bodyType normalises both sides to one canonical
             // Polish display label, then we lower-compare.
-            $canon = mb_strtolower((string) (CarLabels::bodyType($filters['category']) ?? $filters['category']));
-            $query->where(function ($q) use ($canon) {
-                $q->whereRaw('LOWER(TRIM(body_type)) = ?', [$canon])
-                  ->orWhereRaw('LOWER(TRIM(category)) = ?', [$canon]);
+            // Kafelki nadwozi zostają te same, więc „Bus” obejmuje też Minivan
+            // i Dostawczy (CarLabels::bodyTypeAliases zwraca wszystkie zapisy).
+            $label   = CarLabels::bodyType($filters['category']) ?? $filters['category'];
+            $aliases = CarLabels::bodyTypeAliases((string) $label);
+            $query->where(function ($q) use ($aliases) {
+                $q->whereIn(\Illuminate\Support\Facades\DB::raw('LOWER(TRIM(body_type))'), $aliases)
+                  ->orWhereIn(\Illuminate\Support\Facades\DB::raw('LOWER(TRIM(category))'), $aliases);
             });
         }
         if (!empty($filters['transmission'])) $query->where('transmission', 'like', '%' . $filters['transmission'] . '%');

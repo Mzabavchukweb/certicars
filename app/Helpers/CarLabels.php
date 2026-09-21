@@ -51,19 +51,29 @@ class CarLabels
     }
 
     /** Body type / category → Polish display. */
-    public static function bodyType(?string $value): ?string
+    /** Wszystkie warianty zapisu → jedna nazwa typu nadwozia. */
+    public static function bodyTypeMap(): array
     {
-        if ($value === null || $value === '') return null;
-        $map = [
-            'sedan' => 'Sedan',
-            'suv' => 'SUV',
+        return [
+            'sedan' => 'Sedan', 'limuzyna' => 'Sedan', 'saloon' => 'Sedan',
+            'suv' => 'SUV', 'crossover' => 'SUV',
             'coupe' => 'Coupé', 'coupé' => 'Coupé',
             'hatchback' => 'Hatchback',
             'kombi' => 'Kombi', 'wagon' => 'Kombi', 'estate' => 'Kombi',
-            'van' => 'Bus', 'minivan' => 'Bus', 'bus' => 'Bus',
+            'van' => 'Bus', 'bus' => 'Bus', 'minibus' => 'Bus',
+            'minivan' => 'Minivan', 'mpv' => 'Minivan', 'monovolume' => 'Minivan',
+            'dostawczy' => 'Dostawczy', 'dostawcze' => 'Dostawczy', 'transporter' => 'Dostawczy',
+            'kastenwagen' => 'Dostawczy', 'lieferwagen' => 'Dostawczy', 'cargo' => 'Dostawczy',
             'cabrio' => 'Kabriolet', 'convertible' => 'Kabriolet', 'cabriolet' => 'Kabriolet',
             'pickup' => 'Pickup', 'pick-up' => 'Pickup',
         ];
+    }
+
+    /** Body type → Polish display. */
+    public static function bodyType(?string $value): ?string
+    {
+        if ($value === null || $value === '') return null;
+        $map = self::bodyTypeMap();
         $k = self::key($value);
         return $map[$k] ?? ucfirst(mb_strtolower($value));
     }
@@ -369,4 +379,31 @@ class CarLabels
         $v = trim((string) $value);
         return preg_replace('/^(euro)\s*(\d.*)$/i', 'Euro $2', $v);
     }
+
+    /**
+     * Kafelki nadwozi na stronie głównej i w ofercie zostają te same (6 sztuk),
+     * więc Minivan i Dostawczy liczą się i filtrują razem z Busem.
+     * @return array<int,string> nazwy, które należą do danego kafelka
+     */
+    public static function bodyTypeGroup(string $label): array
+    {
+        $groups = [
+            'Bus' => ['Bus', 'Minivan', 'Dostawczy'],
+        ];
+        return $groups[$label] ?? [$label];
+    }
+
+    /** Wszystkie zapisy (małymi literami), które oznaczają dany typ nadwozia. */
+    public static function bodyTypeAliases(string $label): array
+    {
+        $out = [mb_strtolower($label)];
+        foreach (self::bodyTypeGroup($label) as $member) {
+            $out[] = mb_strtolower($member);
+            foreach (self::bodyTypeMap() as $raw => $canonical) {
+                if ($canonical === $member) $out[] = $raw;
+            }
+        }
+        return array_values(array_unique($out));
+    }
+
 }

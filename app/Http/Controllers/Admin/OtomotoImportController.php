@@ -374,7 +374,7 @@ class OtomotoImportController extends Controller
     {
         $lower = mb_strtolower(trim($raw));
         $map = [
-            'sedan' => 'Sedan', 'suv' => 'SUV', 'hatchback' => 'Hatchback',
+            'sedan' => 'Sedan', 'suv' => 'SUV', 'hatchback' => 'Hatchback', 'minivan' => 'Minivan', 'auta-dostawcze' => 'Dostawczy', 'dostawczy' => 'Dostawczy',
             'kombi' => 'Kombi', 'estate' => 'Kombi', 'wagon' => 'Kombi',
             'coupe' => 'Coupé', 'cabrio' => 'Kabriolet',
             'van' => 'Van', 'minivan' => 'Minivan', 'pickup' => 'Pickup',

@@ -1420,18 +1420,27 @@
                 360° wnętrza
             </button>
             @endif
+            {{-- Stan pojazdu i pomiary lakieru to zakres CertiCheck — w zwykłym
+                 ogłoszeniu te zakładki w ogóle się nie pokazują (nie wyszarzone). --}}
+            @if($car->has_certicheck)
             <button type="button" class="cs-gallery-tab {{ $damageImgList->count() ? '' : 'disabled' }}" data-gallery-filter="damage" onclick="csFilterGallery(this,'damage')" role="tab" aria-selected="false">
                 <x-icon name="scan-search" size="14" :strokeWidth="1.8"/>
                 Zdjęcia stanu pojazdu
             </button>
+            @endif
+            {{-- Dokumenty: tylko gdy są zdjęcia (pusta zakładka się nie pokazuje). --}}
+            @if($documentImgList->count())
             <button type="button" class="cs-gallery-tab" data-gallery-filter="documents" onclick="csFilterGallery(this,'documents')" role="tab" aria-selected="false">
                 <x-icon name="file-text" size="14" :strokeWidth="1.8"/>
-                Dokumenty{{ $documentImgList->count() ? ' (' . $documentImgList->count() . ')' : '' }}
+                Dokumenty ({{ $documentImgList->count() }})
             </button>
+            @endif
+            @if($car->has_certicheck)
             <button type="button" class="cs-gallery-tab" data-gallery-filter="paint" onclick="csFilterGallery(this,'paint')" role="tab" aria-selected="false">
                 <x-icon name="scan-line" size="14" :strokeWidth="1.8"/>
                 Pomiary lakieru
             </button>
+            @endif
         </div>
         </div>{{-- /cs-gallery-tabs-wrap --}}
         <div class="cs-gallery">
