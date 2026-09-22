@@ -388,7 +388,7 @@ class CarLabels
     public static function bodyTypeGroup(string $label): array
     {
         $groups = [
-            'Bus' => ['Bus', 'Minivan', 'Dostawczy'],
+            'Bus' => ['Bus', 'Dostawczy'],
         ];
         return $groups[$label] ?? [$label];
     }

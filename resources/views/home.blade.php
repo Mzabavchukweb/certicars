@@ -406,7 +406,7 @@
 .body-types-head p{font-size:14px;color:var(--text-3);margin-top:6px}
 .body-types-head-link{font-size:13px;font-weight:700;color:var(--blue);display:inline-flex;align-items:center;gap:5px;white-space:nowrap;text-decoration:none;flex-shrink:0}
 .body-types-head-link svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4}
-.body-types-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.body-types-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
 .body-type-card{display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px 8px 12px;border-radius:12px;background:transparent;border:none;cursor:pointer;transition:all .2s;text-decoration:none}
 .body-type-card:hover{background:rgba(0,0,0,.03)}
 .body-type-card:active{transform:scale(.96)}
@@ -441,7 +441,7 @@
     .hero-search-wrap{margin-top:-50px}
     .hero-search-header{flex-direction:column;align-items:flex-start;gap:12px}
     .hero-search-fields{grid-template-columns:1fr 1fr}
-    .body-types-grid{grid-template-columns:repeat(3,1fr)}
+    .body-types-grid{grid-template-columns:repeat(4,1fr)}
     .body-types-card{padding:24px 24px 20px;border-radius:16px}
     .body-types-head{flex-direction:column;align-items:flex-start;gap:8px}
     .lcard-img{width:180px;min-width:180px;height:160px}
@@ -614,6 +614,7 @@
                     ['Sedan',     'sedan.png'],
                     ['SUV',       'suv.png'],
                     ['Coupé',     'coupe.png'],
+                    ['Minivan',   'minivan.png'],
                     ['Bus',       'van.png'],
                     ['Kombi',     'kombi.png'],
                     ['Hatchback', 'hatchback.png'],

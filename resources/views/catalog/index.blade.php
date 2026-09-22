@@ -16,7 +16,7 @@
 .cat-header-row h1{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.4px;line-height:1}
 .cat-header-row h1 span{font-size:14px;font-weight:500;color:var(--text-3);margin-left:10px;letter-spacing:0}
 /* Body-type card grid — compact tabs with car images */
-.cat-bt-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:14px 0 16px}
+.cat-bt-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;padding:14px 0 16px}
 @media(max-width:700px){.cat-bt-grid{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:460px){.cat-bt-grid{display:flex;overflow-x:auto;gap:8px;padding:14px 0 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.cat-bt-grid::-webkit-scrollbar{display:none}.cat-bt-card{flex-shrink:0;min-width:72px}}
 .cat-bt-card{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 8px 10px;border-radius:10px;background:transparent;border:1.5px solid transparent;cursor:pointer;transition:all .18s;text-decoration:none}
@@ -149,14 +149,15 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
                 'bus'       => 'van.png',
                 'van'       => 'van.png',
                 'hatchback' => 'hatchback.png',
-                'minivan'   => 'van.png',
+                'minivan'   => 'minivan.png',
+                'dostawczy' => 'van.png',
                 'pickup'    => 'suv.png',
             ];
 
             // Strict whitelist — only the six body-type tiles + the leading "Wszystkie" card.
             // Catch-all DB categories like "Samochód osobowy" must not leak into the tile bar;
             // they're still selectable through the sidebar filter, just not promoted up here.
-            $allTypes = collect(['Sedan', 'SUV', 'Coupé', 'Bus', 'Kombi', 'Hatchback']);
+            $allTypes = collect(['Sedan', 'SUV', 'Coupé', 'Minivan', 'Bus', 'Kombi', 'Hatchback']);
         @endphp
         <div class="cat-bt-grid">
             {{-- Karta: Wszystkie --}}
