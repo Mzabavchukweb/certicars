@@ -1674,56 +1674,15 @@
         $drivetrain = $rowOk($car->drivetrain) ? trim((string) $car->drivetrain) : null;
         $dispBody = CarLabels::bodyType($car->body_type ?? $car->category);
         $dispCountry = CarLabels::country($car->country_registration);
-        $dispImportedFrom = CarLabels::country($car->imported_from);
-
-        // Benefit row — 5 short reassurance tiles. Items that depend on car
-        // fields render dynamic text; the rest are universal CertiCars offers.
-        // Resolve the imported-from country once so the leftmost tile can always
-        // render with the matching national flag. Falls back to Germany — the
-        // CertiCars default sourcing country — when admin hasn't filled the
-        // country fields yet (so the row stays at 5 cells like the reference).
-        $countryRaw    = $car->country_registration ?: $car->imported_from ?: 'Niemcy';
-        $countryName   = CarLabels::country($countryRaw) ?? $countryRaw;
-        $importedText  = CarLabels::importedFromStatement($car)
-                         ?? ('Sprowadzony z ' . match ($countryName) {
-                             'Niemcy' => 'Niemiec', 'Włochy' => 'Włoch', 'Czechy' => 'Czech',
-                             'Francja' => 'Francji', 'Hiszpania' => 'Hiszpanii', 'Holandia' => 'Holandii',
-                             'Belgia' => 'Belgii', 'Austria' => 'Austrii', 'Szwajcaria' => 'Szwajcarii',
-                             'Dania' => 'Danii', 'Szwecja' => 'Szwecji', 'Norwegia' => 'Norwegii',
-                             'Japonia' => 'Japonii', 'Polska' => 'Polski',
-                             'USA' => 'USA', 'Wielka Brytania' => 'Wielkiej Brytanii',
-                             default => $countryName,
-                         });
-        // Horizontal-stripe palette per country (top → bottom). Keys match the
-        // values returned by CarLabels::country(). Fallback is the German flag.
-        $flagPalettes = [
-            'Niemcy'           => ['#000000', '#dd0000', '#ffce00'],
-            'Polska'           => ['#ffffff', '#dc143c', '#dc143c'],
-            'Francja'          => ['#0055a4', '#ffffff', '#ef4135'],
-            'Włochy'           => ['#009246', '#ffffff', '#ce2b37'],
-            'Hiszpania'        => ['#aa151b', '#f1bf00', '#aa151b'],
-            'Holandia'         => ['#ae1c28', '#ffffff', '#21468b'],
-            'Belgia'           => ['#000000', '#fdda24', '#ef3340'],
-            'Austria'          => ['#ed2939', '#ffffff', '#ed2939'],
-            'Szwajcaria'       => ['#d52b1e', '#ffffff', '#d52b1e'],
-            'Dania'            => ['#c8102e', '#ffffff', '#c8102e'],
-            'Szwecja'          => ['#006aa7', '#fecc00', '#006aa7'],
-            'Norwegia'         => ['#ef2b2d', '#ffffff', '#002868'],
-            'Czechy'           => ['#ffffff', '#11457e', '#d7141a'],
-            'USA'              => ['#b22234', '#ffffff', '#3c3b6e'],
-            'Wielka Brytania'  => ['#012169', '#ffffff', '#c8102e'],
-            'Japonia'          => ['#ffffff', '#bc002d', '#ffffff'],
+        // Pasek pod galerią — stałe usługi CertiCars, identyczne w każdym
+        // ogłoszeniu (dane konkretnego auta są w kafelkach niżej).
+        $benefits = [
+            ['ico' => 'clipboard-check', 'text' => 'Pomoc w rejestracji'],
+            ['ico' => 'shield-check',    'text' => 'Ubezpieczenie OC / AC'],
+            ['ico' => 'truck',           'text' => 'Dostawa pod dom'],
+            ['ico' => 'laptop',          'text' => 'Zakup zdalny'],
+            ['ico' => 'search-check',    'text' => 'Możliwość sprawdzenia auta przed zakupem'],
         ];
-        $flagStripes = $flagPalettes[$countryName] ?? $flagPalettes['Niemcy'];
-
-        $exciseLine   = CarLabels::exciseStatement($car);
-        $benefits = [];
-        $benefits[] = ['ico' => 'flag',            'text' => $importedText, 'stripes' => $flagStripes];
-        if ($exciseLine || $car->taxation === null) $benefits[] = ['ico' => 'badge-check', 'text' => $exciseLine ?: 'Akcyza opłacona'];
-        $benefits[] = ['ico' => 'clipboard-check', 'text' => 'Przygotowany do rejestracji'];
-        $benefits[] = ['ico' => 'percent',         'text' => 'Kupujący zwolniony z PCC 2%'];
-        $benefits[] = ['ico' => 'search-check',    'text' => 'Możliwość sprawdzenia auta przed zakupem'];
-        $benefits = array_slice($benefits, 0, 5);
     @endphp
 
     {{-- =================== BENEFIT ROW (5 items) =================== --}}
@@ -1732,16 +1691,8 @@
     <div class="cs-benefits-row">
         @foreach($benefits as $b)
         <div class="cs-benefit-item">
-            <span class="cs-benefit-ico{{ $b['ico'] === 'flag' ? ' flag' : '' }}" aria-hidden="true">
-                @if($b['ico'] === 'flag')
-                    <span class="cs-flag">
-                        <span style="background:{{ $b['stripes'][0] }}"></span>
-                        <span style="background:{{ $b['stripes'][1] }}"></span>
-                        <span style="background:{{ $b['stripes'][2] }}"></span>
-                    </span>
-                @else
-                    <x-icon :name="$b['ico']" size="18"/>
-                @endif
+            <span class="cs-benefit-ico" aria-hidden="true">
+                <x-icon :name="$b['ico']" size="18"/>
             </span>
             <span class="cs-benefit-text">{{ $b['text'] }}</span>
         </div>
