@@ -195,7 +195,8 @@ class CarController extends Controller
         ]);
 
         if (!empty($imageFailures)) {
-            ErrorLog::record('car.store', 'Auto zapisane, nie udało się dołączyć plików: ' . implode(', ', $imageFailures), [], 'warning', $car->id);
+            ErrorLog::record('car.store', 'Auto zapisane, nie udało się dołączyć plików: ' . implode(', ', $imageFailures),
+                ['wskazowka' => 'Powód każdego pliku jest w osobnych wpisach „storage.move” w tym rejestrze.'], 'warning', $car->id);
         }
         $redirect = redirect($this->editUrlWithTab($car, $request));
         if ($request->expectsJson()) {
@@ -518,6 +519,48 @@ class CarController extends Controller
         'pano360ext_image'    => 25,
     ];
 
+    /**
+     * Dysk publiczny z włączonymi wyjątkami. Zwykły ma `throw => false`, przez co
+     * nieudany zapis na R2 zwracał tylko `false` i nie było wiadomo, co poszło nie tak.
+     */
+    private function loudDisk()
+    {
+        return Storage::build(array_merge(config('filesystems.disks.public'), ['throw' => true]));
+    }
+
+    /**
+     * Przenosi plik w obrębie dysku: odczyt strumieniem + zapis + kasowanie źródła.
+     *
+     * Nie używamy move()/copy(), bo na Cloudflare R2 kopiowanie po stronie serwera
+     * wymaga uprawnień ACL, których R2 nie obsługuje — przenoszenie zdjęć z katalogu
+     * tymczasowego do ogłoszenia kończyło się komunikatem „nie udało się dołączyć plików”.
+     */
+    private function moveStored(string $from, string $to): bool
+    {
+        $disk = $this->loudDisk();
+        $stream = null;
+        try {
+            $stream = $disk->readStream($from);
+            if (!is_resource($stream)) {
+                throw new \RuntimeException('nie udało się otworzyć pliku źródłowego');
+            }
+            $disk->writeStream($to, $stream);
+            if (is_resource($stream)) { fclose($stream); $stream = null; }
+            if (!$disk->exists($to)) {
+                throw new \RuntimeException('plik docelowy nie powstał');
+            }
+            try { $disk->delete($from); } catch (\Throwable $e) { /* i tak zniknie przy sprzątaniu katalogu tymczasowego */ }
+            return true;
+        } catch (\Throwable $e) {
+            if (is_resource($stream)) fclose($stream);
+            ErrorLog::record('storage.move', "Nie udało się przenieść pliku {$from} → {$to}: " . $e->getMessage(), [
+                'exception' => get_class($e),
+                'dysk'      => config('filesystems.disks.public.driver'),
+            ]);
+            return false;
+        }
+    }
+
     /** Sciezka z katalogu tymczasowego zalogowanego uzytkownika (i tylko taka). */
     private function isOwnTempPath($p): bool
     {
@@ -538,7 +581,7 @@ class CarController extends Controller
         if ($field === 'pano360_image' || $field === 'pano360ext_image') {
             $type = $field === 'pano360_image' ? 'pano360' : 'pano360ext';
             $dest = 'cars/' . $car->id . '/' . $type . '/' . basename($path);
-            if (!$disk->move($path, $dest)) return false;
+            if (!$this->moveStored($path, $dest)) return false;
             $car->images()->where('type', $type)->get()->each(function ($old) use ($disk, $dest) {
                 if ($old->path !== $dest && !str_starts_with($old->path, 'http')) $disk->delete($old->path);
                 $old->delete();
@@ -549,7 +592,7 @@ class CarController extends Controller
 
         $side = $field === 'interior_video_file' ? 'interior' : 'exterior';
         $dest = 'cars/' . $car->id . '/' . $side . '_video/' . basename($path);
-        if (!$disk->move($path, $dest)) return false;
+        if (!$this->moveStored($path, $dest)) return false;
 
         $oldVideo  = $car->{$side . '_video_path'};
         $oldFrames = $car->{$side . '_frames_dir'};
@@ -793,14 +836,9 @@ class CarController extends Controller
                 && preg_match('~^' . preg_quote($dir, '~') . '/[A-Za-z0-9]+\.[A-Za-z0-9]{2,5}$~', $p)
                 && $disk->exists($p);
         };
-        $moveTo = function (string $p, string $sub) use ($disk, $car): ?string {
+        $moveTo = function (string $p, string $sub) use ($car): ?string {
             $dest = 'cars/' . $car->id . '/' . $sub . '/' . basename($p);
-            try {
-                return $disk->move($p, $dest) ? $dest : null;
-            } catch (\Throwable $e) {
-                \Log::error('temp.attach.move_failed', ['car_id' => $car->id, 'path' => $p, 'err' => $e->getMessage()]);
-                return null;
-            }
+            return $this->moveStored($p, $dest) ? $dest : null;
         };
 
         foreach (['gallery' => 'pending_gallery', 'damage' => 'pending_damage', 'document' => 'pending_document'] as $type => $field) {
@@ -1262,12 +1300,7 @@ class CarController extends Controller
                     foreach ($damage['pending_images'] as $tmp) {
                         if (!$this->isOwnTempPath($tmp)) continue;
                         $dest = 'cars/' . $car->id . '/damages/' . basename($tmp);
-                        try {
-                            if (!Storage::disk('public')->move($tmp, $dest)) continue;
-                        } catch (\Throwable $e) {
-                            ErrorLog::record('car.damages', 'Nie udało się przenieść zdjęcia oznaczenia: ' . $e->getMessage(), ['tmp' => $tmp], 'error', $car->id);
-                            continue;
-                        }
+                        if (!$this->moveStored($tmp, $dest)) continue;
                         \App\Models\CarImage::create([
                             'car_id'     => $car->id,
                             'damage_id'  => $dmgRecord->id,
