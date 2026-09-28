@@ -20,14 +20,34 @@ namespace App\Helpers;
  */
 class EquipmentCatalog
 {
-    /** Display category keys → Polish display labels + Lucide head icon. */
+    /**
+     * Kategorie wyposażenia — DOKŁADNIE te same, co pola w panelu dodawania auta.
+     * Wcześniej strona miała własny podział (Komfort / Multimedia / Systemy
+     * wspomagające / Inne), przez co wpisy z pól „Wyposażenie wewnętrzne”
+     * i „Dodatkowe” lądowały w ogłoszeniu w koszu „Inne”.
+     */
     public const CATEGORIES = [
-        'komfort'      => ['label' => 'Komfort',           'icon' => 'sofa'],
-        'safety'       => ['label' => 'Bezpieczeństwo',    'icon' => 'shield'],
-        'multimedia'   => ['label' => 'Multimedia',        'icon' => 'tv'],
-        'exterior'     => ['label' => 'Światła i nadwozie','icon' => 'lightbulb'],
-        'assist'       => ['label' => 'Systemy wspomagające', 'icon' => 'compass'],
-        'other'        => ['label' => 'Inne',              'icon' => 'list-checks'],
+        'safety'   => ['label' => 'Bezpieczeństwo',          'icon' => 'shield'],
+        'comfort'  => ['label' => 'Komfort / multimedia',    'icon' => 'tv'],
+        'exterior' => ['label' => 'Wyposażenie zewnętrzne',  'icon' => 'lightbulb'],
+        'interior' => ['label' => 'Wyposażenie wewnętrzne',  'icon' => 'armchair'],
+        'extra'    => ['label' => 'Dodatkowe',               'icon' => 'list-checks'],
+    ];
+
+    /** Stare klucze (z wcześniejszego podziału na stronie) → obecne kategorie. */
+    private const LEGACY_MAP = [
+        'safety'     => 'safety',
+        'comfort'    => 'comfort',
+        'komfort'    => 'comfort',
+        'multimedia' => 'comfort',
+        'exterior'   => 'exterior',
+        'lights'     => 'exterior',
+        'interior'   => 'interior',
+        'assist'     => 'safety',
+        'driving'    => 'safety',
+        'extra'      => 'extra',
+        'inne'       => 'extra',
+        'other'      => 'extra',
     ];
 
     /**
@@ -37,15 +57,15 @@ class EquipmentCatalog
      */
     public const OPTIONS = [
         // --- Komfort ---
-        'air_auto_2zone'   => ['label' => 'Klimatyzacja automatyczna 2-strefowa', 'icon' => 'snowflake', 'cat' => 'komfort'],
-        'air_auto'         => ['label' => 'Klimatyzacja automatyczna',            'icon' => 'snowflake', 'cat' => 'komfort'],
-        'heated_seats'     => ['label' => 'Podgrzewane fotele przednie',          'icon' => 'flame',     'cat' => 'komfort'],
-        'electric_windows' => ['label' => 'Elektryczne szyby przód i tył',        'icon' => 'square',    'cat' => 'komfort'],
-        'electric_mirrors' => ['label' => 'Elektrycznie regulowane lusterka',     'icon' => 'square',    'cat' => 'komfort'],
-        'heated_wheel'     => ['label' => 'Podgrzewana kierownica',               'icon' => 'flame',     'cat' => 'komfort'],
-        'tinted_rear'      => ['label' => 'Przyciemniane szyby tylne',            'icon' => 'square-dashed','cat' => 'komfort'],
-        'auto_skrzynia'    => ['label' => 'Automatyczna skrzynia',                'icon' => 'settings-2','cat' => 'komfort'],
-        'seven_seats'      => ['label' => '7 miejsc',                             'icon' => 'users',     'cat' => 'komfort'],
+        'air_auto_2zone'   => ['label' => 'Klimatyzacja automatyczna 2-strefowa', 'icon' => 'snowflake', 'cat' => 'comfort'],
+        'air_auto'         => ['label' => 'Klimatyzacja automatyczna',            'icon' => 'snowflake', 'cat' => 'comfort'],
+        'heated_seats'     => ['label' => 'Podgrzewane fotele przednie',          'icon' => 'flame',     'cat' => 'comfort'],
+        'electric_windows' => ['label' => 'Elektryczne szyby przód i tył',        'icon' => 'square',    'cat' => 'comfort'],
+        'electric_mirrors' => ['label' => 'Elektrycznie regulowane lusterka',     'icon' => 'square',    'cat' => 'comfort'],
+        'heated_wheel'     => ['label' => 'Podgrzewana kierownica',               'icon' => 'flame',     'cat' => 'comfort'],
+        'tinted_rear'      => ['label' => 'Przyciemniane szyby tylne',            'icon' => 'square-dashed','cat' => 'comfort'],
+        'auto_skrzynia'    => ['label' => 'Automatyczna skrzynia',                'icon' => 'settings-2','cat' => 'comfort'],
+        'seven_seats'      => ['label' => '7 miejsc',                             'icon' => 'users',     'cat' => 'comfort'],
 
         // --- Bezpieczeństwo ---
         'abs'              => ['label' => 'ABS',                                  'icon' => 'shield-check','cat' => 'safety'],
@@ -56,12 +76,12 @@ class EquipmentCatalog
         'blind_spot'       => ['label' => 'System monitorowania martwego pola',   'icon' => 'eye',       'cat' => 'safety'],
 
         // --- Multimedia ---
-        'rlink2'           => ['label' => 'System multimedialny R-Link 2',        'icon' => 'tv',        'cat' => 'multimedia'],
-        'nav'              => ['label' => 'Nawigacja satelitarna',                'icon' => 'map-pin',   'cat' => 'multimedia'],
-        'carplay'          => ['label' => 'Apple CarPlay / Android Auto',         'icon' => 'smartphone','cat' => 'multimedia'],
-        'bluetooth'        => ['label' => 'Bluetooth',                            'icon' => 'bluetooth', 'cat' => 'multimedia'],
-        'dab'              => ['label' => 'Radio DAB',                            'icon' => 'radio',     'cat' => 'multimedia'],
-        'usb_aux'          => ['label' => 'USB / AUX',                            'icon' => 'usb',       'cat' => 'multimedia'],
+        'rlink2'           => ['label' => 'System multimedialny R-Link 2',        'icon' => 'tv',        'cat' => 'comfort'],
+        'nav'              => ['label' => 'Nawigacja satelitarna',                'icon' => 'map-pin',   'cat' => 'comfort'],
+        'carplay'          => ['label' => 'Apple CarPlay / Android Auto',         'icon' => 'smartphone','cat' => 'comfort'],
+        'bluetooth'        => ['label' => 'Bluetooth',                            'icon' => 'bluetooth', 'cat' => 'comfort'],
+        'dab'              => ['label' => 'Radio DAB',                            'icon' => 'radio',     'cat' => 'comfort'],
+        'usb_aux'          => ['label' => 'USB / AUX',                            'icon' => 'usb',       'cat' => 'comfort'],
 
         // --- Światła i nadwozie ---
         'led_full'         => ['label' => 'Reflektory Full LED',                  'icon' => 'lightbulb', 'cat' => 'exterior'],
@@ -75,23 +95,23 @@ class EquipmentCatalog
         'metallic_paint'   => ['label' => 'Lakier metalik',                       'icon' => 'sparkles',  'cat' => 'exterior'],
 
         // --- Systemy wspomagające ---
-        'parking_front_rear'=> ['label' => 'Czujniki parkowania przód i tył',     'icon' => 'radio-tower','cat' => 'assist'],
-        'parking_sensors'  => ['label' => 'Czujniki parkowania',                  'icon' => 'radio-tower','cat' => 'assist'],
-        'rear_camera'      => ['label' => 'Kamera cofania',                       'icon' => 'video',     'cat' => 'assist'],
-        'camera_360'       => ['label' => 'Kamera 360°',                          'icon' => 'rotate-3d', 'cat' => 'assist'],
-        'cruise'           => ['label' => 'Tempomat',                             'icon' => 'gauge',     'cat' => 'assist'],
-        'auto_hold'        => ['label' => 'Auto Hold',                            'icon' => 'hand',      'cat' => 'assist'],
-        'sign_recognition' => ['label' => 'System rozpoznawania znaków drogowych','icon' => 'scan-line', 'cat' => 'assist'],
-        'rain_sensor'      => ['label' => 'Czujnik deszczu',                      'icon' => 'cloud-rain','cat' => 'assist'],
+        'parking_front_rear'=> ['label' => 'Czujniki parkowania przód i tył',     'icon' => 'radio-tower','cat' => 'safety'],
+        'parking_sensors'  => ['label' => 'Czujniki parkowania',                  'icon' => 'radio-tower','cat' => 'safety'],
+        'rear_camera'      => ['label' => 'Kamera cofania',                       'icon' => 'video',     'cat' => 'safety'],
+        'camera_360'       => ['label' => 'Kamera 360°',                          'icon' => 'rotate-3d', 'cat' => 'safety'],
+        'cruise'           => ['label' => 'Tempomat',                             'icon' => 'gauge',     'cat' => 'safety'],
+        'auto_hold'        => ['label' => 'Auto Hold',                            'icon' => 'hand',      'cat' => 'safety'],
+        'sign_recognition' => ['label' => 'System rozpoznawania znaków drogowych','icon' => 'scan-line', 'cat' => 'safety'],
+        'rain_sensor'      => ['label' => 'Czujnik deszczu',                      'icon' => 'cloud-rain','cat' => 'safety'],
 
         // --- Inne ---
-        'keyless'          => ['label' => 'System bezkluczykowy',                 'icon' => 'key',       'cat' => 'other'],
-        'folding_mirrors'  => ['label' => 'Składane lusterka elektrycznie',       'icon' => 'fold-vertical','cat' => 'other'],
-        'cargo_blind'      => ['label' => 'Roleta bagażnika',                     'icon' => 'square',    'cat' => 'other'],
-        'trip_computer'    => ['label' => 'Komputer pokładowy',                   'icon' => 'gauge',     'cat' => 'other'],
-        'multi_wheel'      => ['label' => 'Wielofunkcyjna kierownica',            'icon' => 'circle',    'cat' => 'other'],
-        'leather_wheel'    => ['label' => 'Skórzana kierownica',                  'icon' => 'circle',    'cat' => 'other'],
-        'tow_hook'         => ['label' => 'Hak holowniczy',                       'icon' => 'link',      'cat' => 'other'],
+        'keyless'          => ['label' => 'System bezkluczykowy',                 'icon' => 'key',       'cat' => 'extra'],
+        'folding_mirrors'  => ['label' => 'Składane lusterka elektrycznie',       'icon' => 'fold-vertical','cat' => 'extra'],
+        'cargo_blind'      => ['label' => 'Roleta bagażnika',                     'icon' => 'square',    'cat' => 'extra'],
+        'trip_computer'    => ['label' => 'Komputer pokładowy',                   'icon' => 'gauge',     'cat' => 'extra'],
+        'multi_wheel'      => ['label' => 'Wielofunkcyjna kierownica',            'icon' => 'circle',    'cat' => 'extra'],
+        'leather_wheel'    => ['label' => 'Skórzana kierownica',                  'icon' => 'circle',    'cat' => 'extra'],
+        'tow_hook'         => ['label' => 'Hak holowniczy',                       'icon' => 'link',      'cat' => 'extra'],
     ];
 
     /** Returns the option row for a key, or null. */
@@ -112,7 +132,7 @@ class EquipmentCatalog
 
     /**
      * Convert a car's persisted equipment data (flat list, list-of-categories,
-     * or category map) into the 6 display categories used by the public page.
+     * or category map) into the categories used by the public page.
      *
      * Existing data shape on cars.equipment is `{safety:[...], comfort:[...],
      * exterior:[...], interior:[...], extra:[...]}` from the admin wizard form.
@@ -130,20 +150,9 @@ class EquipmentCatalog
             $isAssoc = array_keys($carEquipment) !== range(0, count($carEquipment) - 1);
             if ($isAssoc) {
                 // Legacy admin shape: {safety:[...], comfort:[...], ...}
-                $legacyMap = [
-                    'safety'   => 'safety',
-                    'comfort'  => 'komfort',
-                    'multimedia' => 'multimedia',
-                    'exterior' => 'exterior',
-                    'interior' => 'other',
-                    'extra'    => 'other',
-                    'inne'     => 'other',
-                    'lights'   => 'exterior',
-                    'assist'   => 'assist',
-                ];
                 foreach ($carEquipment as $cat => $items) {
                     $items = is_array($items) ? $items : [$items];
-                    $displayCat = $legacyMap[strtolower((string) $cat)] ?? self::categorizeByLabel($cat);
+                    $displayCat = self::LEGACY_MAP[strtolower((string) $cat)] ?? self::categorizeByLabel($cat);
                     foreach ($items as $item) {
                         if (!is_string($item) || trim($item) === '') continue;
                         $out[$displayCat][] = trim($item);
@@ -164,24 +173,25 @@ class EquipmentCatalog
 
     /**
      * Best-effort categorization of a free-text equipment label into one of
-     * the 6 display categories, by matching it against keyword hints. Used
+     * the display categories, by matching it against keyword hints. Used
      * when the legacy data doesn't pre-categorize.
      */
     private static function categorizeByLabel(string $label): string
     {
         $needle = mb_strtolower($label);
         $rules = [
-            'safety'     => ['abs', 'esp', 'airbag', 'poduszk', 'isofix', 'asystent pasa', 'martwego', 'bezpiecz'],
-            'multimedia' => ['radio', 'dab', 'bluetooth', 'usb', 'aux', 'nawigacj', 'carplay', 'android', 'multimedia', 'r-link'],
-            'assist'     => ['kamera', 'czujnik', 'tempomat', 'parkowani', 'auto hold', 'rozpozna', 'deszczu', 'wspomag'],
-            'exterior'   => ['lakier', 'felg', 'reling', 'led', 'reflektor', 'światł', 'klapa', 'mgieln', 'dachow', 'metalik'],
-            'komfort'    => ['klimat', 'podgrz', 'fotel', 'lusterk', 'szyb', 'siedz', 'kierownic', 'skrzyni', 'automatyczn', '7 miejs'],
+            'safety'   => ['abs', 'esp', 'airbag', 'poduszk', 'isofix', 'asystent pasa', 'martwego', 'bezpiecz',
+                           'kamera', 'czujnik', 'tempomat', 'parkowani', 'auto hold', 'rozpozna', 'deszczu', 'wspomag'],
+            'exterior' => ['lakier', 'felg', 'reling', 'led', 'reflektor', 'światł', 'klapa', 'mgieln', 'dachow', 'metalik', 'hak'],
+            'comfort'  => ['klimat', 'podgrz', 'lusterk', 'szyb', 'kierownic', 'skrzyni', 'automatyczn',
+                           'radio', 'dab', 'bluetooth', 'usb', 'aux', 'nawigacj', 'carplay', 'android', 'multimedia', 'r-link', 'głośnik'],
+            'interior' => ['fotel', 'siedz', 'tapicer', 'skóra', 'welur', 'podłok', 'schowek', 'bagażnik', '7 miejs', 'kanap'],
         ];
         foreach ($rules as $cat => $needles) {
             foreach ($needles as $n) {
                 if (mb_strpos($needle, $n) !== false) return $cat;
             }
         }
-        return 'other';
+        return 'extra';
     }
 }

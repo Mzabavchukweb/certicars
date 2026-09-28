@@ -10,13 +10,8 @@
 @php
     $existingDamages   = $car?->damages ?? collect();
     $existingTireSets  = $car?->tireSets ?? collect();
-    $eqCategories = [
-        'safety'       => 'Bezpieczeństwo',
-        'comfort'      => 'Komfort / multimedia',
-        'exterior'     => 'Wyposażenie zewnętrzne',
-        'interior'     => 'Wyposażenie wewnętrzne',
-        'extra'        => 'Dodatkowe',
-    ];
+    // Jedno źródło prawdy dla panelu, ogłoszenia i broszury PDF.
+    $eqCategories = collect(\App\Helpers\EquipmentCatalog::CATEGORIES)->map(fn($c) => $c['label'])->all();
     // 8 canonical technical inspection items — same keys consumed by the public
     // show.blade.php and PDF brochure. Order matches the inspection report layout.
     $techCategories = [

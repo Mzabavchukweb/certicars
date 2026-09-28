@@ -523,16 +523,13 @@ final class BrochureBuilder
     {
         if (!$car->equipment || !is_array($car->equipment)) return [];
 
-        $catLabels = [
-            'safety'     => 'Bezpieczeństwo',
-            'comfort'    => 'Komfort',
-            'multimedia' => 'Multimedia',
-            'exterior'   => 'Światła i nadwozie',
-            'interior'   => 'Wnętrze',
-            'driving'    => 'Wspomaganie jazdy',
-            'extra'      => 'Inne',
-            'other'      => 'Inne',
-        ];
+        // Nazwy kategorii jak w panelu i w ogłoszeniu (jedno źródło prawdy).
+        $cats = \App\Helpers\EquipmentCatalog::CATEGORIES;
+        $catLabels = [];
+        foreach ($cats as $k => $c) $catLabels[$k] = $c['label'];
+        foreach (['komfort' => 'comfort', 'multimedia' => 'comfort', 'assist' => 'safety', 'driving' => 'safety', 'lights' => 'exterior', 'other' => 'extra', 'inne' => 'extra'] as $old => $new) {
+            $catLabels[$old] = $cats[$new]['label'] ?? 'Dodatkowe';
+        }
         $out = [];
         foreach ($car->equipment as $cat => $items) {
             if (!is_array($items)) continue;
