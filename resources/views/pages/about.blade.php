@@ -21,31 +21,33 @@
 .ab-link svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.4}
 
 /* ---------- HERO ---------- */
-.ab-hero{position:relative;background:#0a1740 url('/img/about/tlo_hero_1920x720.webp') no-repeat;background-size:104% auto;background-position:center calc(100% + 2.7vw);padding:0;overflow:hidden;min-height:36.2vw}
+.ab-hero{position:relative;background:#0a1740 url('/img/about/tlo_hero_1920x720.webp') no-repeat;background-size:108% auto;background-position:center calc(100% + 3.65vw);padding:0;overflow:hidden;min-height:36.2vw}
 .ab-hero-grid{min-height:36.2vw;display:flex;align-items:flex-start}
-.ab-hero-copy{position:relative;z-index:3;padding:4.92vw 0 3.05vw;max-width:62%}
-.ab-hero .ab-eyebrow{color:#7fb2ff}
-.ab-hero h1{font-size:clamp(30px,4.1vw,66px);font-weight:900;color:#fff;letter-spacing:-1.8px;line-height:1.1;margin:0 0 16px}
+.ab-hero-copy{position:relative;z-index:3;padding:4.14vw 0 3.05vw;max-width:62%}
+.ab-hero .ab-eyebrow{color:#7fb2ff;font-size:clamp(11px,.98vw,16px);letter-spacing:2.4px;gap:14px;margin-bottom:27px}
+.ab-hero .ab-eyebrow::before{width:40px;height:2px}
+.ab-hero h1{font-size:clamp(30px,4.18vw,68px);font-weight:900;color:#fff;letter-spacing:-.2px;line-height:1.1;margin:0 0 18px}
 .ab-hero h1 span{color:#3b8bff;display:block}
-.ab-hero p{font-size:clamp(14.5px,1.31vw,21px);color:rgba(255,255,255,.85);line-height:1.7;margin:0 0 26px;max-width:35vw}
-.ab-hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+.ab-hero p{font-size:clamp(15px,1.44vw,23px);color:rgba(255,255,255,.85);line-height:1.52;margin:0 0 16px;max-width:40vw}
+.ab-hero-btns{display:flex;gap:clamp(12px,2.3vw,40px);flex-wrap:wrap;margin-bottom:22px}
 .ab-nl{display:none}
 @media(min-width:1180px){.ab-nl{display:inline}}
-.ab-hero .ab-btn{padding:1.12vw 2.85vw;font-size:clamp(13.5px,1.13vw,18px);border-radius:13px}
+.ab-hero .ab-btn{padding:clamp(13px,1vw,20px) clamp(22px,3.25vw,55px);font-size:clamp(14px,1.32vw,21px);border-radius:13px}
 .ab-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:14px 26px;border-radius:12px;font-size:14.5px;font-weight:700;text-decoration:none;transition:transform .15s,background .15s,box-shadow .15s;border:none;cursor:pointer}
 .ab-btn-primary{background:#0066ff;color:#fff;box-shadow:0 8px 24px rgba(0,102,255,.32)}
 .ab-btn-primary:hover{background:#0052cc;color:#fff;transform:translateY(-1px)}
 .ab-btn-dark{background:#0c1b3f;color:#fff;border:1px solid rgba(255,255,255,.22)}
 .ab-btn-dark:hover{background:#12274f;color:#fff}
-.ab-hero-place{display:inline-flex;align-items:center;gap:8px;font-size:clamp(12.5px,.96vw,15px);color:rgba(255,255,255,.72)}
-.ab-hero-place svg{width:15px;height:15px;stroke:#7fb2ff;fill:none;stroke-width:2}
+.ab-hero-place{display:inline-flex;align-items:center;gap:9px;font-size:clamp(13px,1.2vw,20px);font-weight:500;color:rgba(255,255,255,.9)}
+.ab-hero-place svg{stroke:#3b8bff;fill:#3b8bff;stroke-width:1.6}
+.ab-hero-place svg circle{fill:#0d2258;stroke:#0d2258}
 /* Postać sięga prawej krawędzi ekranu (jak w projekcie), więc jest poza siatką treści.
    Dołem wychodzi poza sekcję — przycina ją biała fala (nakładka niżej). */
-.ab-hero-fig{position:absolute;right:9vw;top:0;display:flex;align-items:flex-start;pointer-events:none;z-index:0}
-.ab-hero-fig img{width:auto;height:45vw;max-height:780px;display:block;filter:drop-shadow(0 24px 42px rgba(4,12,38,.45))}
+.ab-hero-fig{position:absolute;right:12.83vw;top:.46vw;display:flex;align-items:flex-start;pointer-events:none;z-index:0}
+.ab-hero-fig img{width:auto;height:43.29vw;max-height:750px;display:block;filter:drop-shadow(0 24px 42px rgba(4,12,38,.45))}
 /* Ten sam pasek tła co pod spodem, ale NAD postacią — dzięki temu falę widać
    przed sylwetką, dokładnie jak w projekcie (a nie prostą krawędź sekcji). */
-.ab-hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:4.5vw;background:url('/img/about/tlo_hero_1920x720.webp') no-repeat;background-size:104% auto;background-position:center calc(100% + 2.7vw);z-index:2;pointer-events:none}
+.ab-hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:4.5vw;background:url('/img/about/tlo_hero_1920x720.webp') no-repeat;background-size:108% auto;background-position:center calc(100% + 3.65vw);z-index:2;pointer-events:none}
 
 /* ---------- 3 kafelki „Po ludzku o samochodach” ---------- */
 .ab-intro{background:#fff;padding:64px 0 10px}
@@ -182,7 +184,7 @@
                 <a href="{{ route('contact') }}" class="ab-btn ab-btn-dark">Porozmawiajmy</a>
             </div>
             <span class="ab-hero-place">
-                <x-icon name="map-pin" size="15"/>
+                <x-icon name="map-pin" size="22"/>
                 Lipnik k. Stargardu · Auta osobowe i dostawcze
             </span>
         </div>
