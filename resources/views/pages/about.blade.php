@@ -11,15 +11,15 @@
    zakup na odległość, kroki zakupu, CTA). Grafiki: /img/about/*.webp
    ===================================================================== */
 .ab-in{max-width:1240px;margin:0 auto;padding:0 30px;width:100%;box-sizing:border-box}
-.ab-eyebrow{display:inline-flex;align-items:center;gap:13px;font-size:clamp(11px,.98vw,16px);font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:#0066ff;margin-bottom:20px}
-.ab-eyebrow::before{content:'';width:clamp(22px,2.2vw,38px);height:2px;background:currentColor;border-radius:1px}
-.ab-h2{font-size:clamp(26px,3.78vw,62px);font-weight:900;color:#0a0a0a;letter-spacing:-1.5px;line-height:1.02;margin:0 0 18px}
-.ab-h2-bar::after{content:'';display:block;width:86px;height:6px;border-radius:3px;background:#0066ff;margin-top:18px}
-.ab-lead{font-size:clamp(15px,1.43vw,24px);color:#4b5563;line-height:1.6;margin:0}
-.ab-note{font-size:clamp(12.5px,1.08vw,17px);color:#9ca3af;line-height:1.55;margin:clamp(16px,1.55vw,25px) 0 0;padding-top:clamp(12px,1.15vw,19px);border-top:1px solid #dfe8fa}
-.ab-link{display:inline-flex;align-items:center;gap:9px;font-size:clamp(14.5px,1.3vw,21px);font-weight:700;color:#0066ff;text-decoration:none;margin-top:18px}
+.ab-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11.5px;font-weight:800;letter-spacing:1.9px;text-transform:uppercase;color:#0066ff;margin-bottom:14px}
+.ab-eyebrow::before{content:'';width:24px;height:2px;background:currentColor;border-radius:1px}
+.ab-h2{font-size:clamp(25px,2.5vw,38px);font-weight:900;color:#0a0a0a;letter-spacing:-1px;line-height:1.1;margin:0 0 14px}
+.ab-h2-bar::after{content:'';display:block;width:58px;height:4px;border-radius:2px;background:#0066ff;margin-top:14px}
+.ab-lead{font-size:clamp(14.5px,1.05vw,16.5px);color:#4b5563;line-height:1.65;margin:0}
+.ab-note{font-size:clamp(12px,.85vw,13.5px);color:#9ca3af;line-height:1.55;margin:clamp(16px,1.3vw,20px) 0 0;padding-top:clamp(12px,1vw,15px);border-top:1px solid #dfe8fa}
+.ab-link{display:inline-flex;align-items:center;gap:8px;font-size:clamp(14px,.98vw,15.5px);font-weight:700;color:#0066ff;text-decoration:none;margin-top:18px}
 .ab-link:hover{color:#0052cc}
-.ab-link svg{width:clamp(15px,1.3vw,21px)!important;height:clamp(15px,1.3vw,21px)!important;stroke:currentColor;fill:none;stroke-width:2.4}
+.ab-link svg{width:16px!important;height:16px!important;stroke:currentColor;fill:none;stroke-width:2.4}
 
 /* ---------- HERO ---------- */
 .ab-hero{position:relative;background:#0a1740 url('/img/about/tlo_hero_1920x720.webp') no-repeat;background-size:108% auto;background-position:center calc(100% + 3.65vw);padding:0;overflow:hidden;min-height:36.2vw}
@@ -51,74 +51,74 @@
 .ab-hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:4.5vw;background:url('/img/about/tlo_hero_1920x720.webp') no-repeat;background-size:108% auto;background-position:center calc(100% + 3.65vw);z-index:2;pointer-events:none}
 
 /* ---------- 3 kafelki „Po ludzku o samochodach” ---------- */
-.ab-intro{background:#fff;padding:clamp(28px,2.86vw,46px) 0 10px}
-.ab-intro-top{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);gap:clamp(24px,3.6vw,58px);align-items:start;margin-bottom:clamp(26px,3.1vw,50px)}
+.ab-intro{background:#fff;padding:clamp(40px,4.4vw,68px) 0 10px}
+.ab-intro-top{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(24px,2.6vw,42px);align-items:start;margin-bottom:clamp(24px,2.4vw,38px)}
 .ab-intro-top .ab-h2{margin:0}
-.ab-cards-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,1.7vw,28px)}
-.ab-card{background:#fff;border:1px solid #eaeef5;border-radius:clamp(14px,1.3vw,22px);padding:clamp(22px,2.5vw,40px) clamp(20px,2.2vw,36px);box-shadow:0 1px 3px rgba(15,32,80,.04);transition:border-color .18s,box-shadow .18s,transform .18s}
+.ab-cards-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,1.3vw,20px)}
+.ab-card{background:#fff;border:1px solid #eaeef5;border-radius:clamp(14px,1.3vw,22px);padding:clamp(20px,1.7vw,27px) clamp(18px,1.6vw,25px);box-shadow:0 1px 3px rgba(15,32,80,.04);transition:border-color .18s,box-shadow .18s,transform .18s}
 .ab-card:hover{border-color:#cfdcf5;box-shadow:0 10px 28px rgba(15,32,80,.08);transform:translateY(-2px)}
-.ab-card-ico{width:clamp(52px,6.8vw,112px);height:clamp(52px,6.8vw,112px);border-radius:clamp(14px,1.7vw,28px);background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-bottom:clamp(16px,1.9vw,30px)}
-.ab-card-ico svg{width:clamp(25px,3.4vw,56px)!important;height:clamp(25px,3.4vw,56px)!important;stroke:currentColor;fill:none;stroke-width:2.1}
-.ab-card h3{font-size:clamp(17px,1.83vw,30px);font-weight:800;color:#0a0a0a;letter-spacing:-.4px;margin:0 0 10px;line-height:1.3}
-.ab-card p{font-size:clamp(14px,1.34vw,22px);color:#6b7280;line-height:1.6;margin:0}
+.ab-card-ico{width:clamp(48px,3.5vw,54px);height:clamp(48px,3.5vw,54px);border-radius:14px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center;margin-bottom:clamp(14px,1.1vw,17px)}
+.ab-card-ico svg{width:clamp(24px,1.75vw,27px)!important;height:clamp(24px,1.75vw,27px)!important;stroke:currentColor;fill:none;stroke-width:2.1}
+.ab-card h3{font-size:clamp(16px,1.15vw,17.5px);font-weight:800;color:#0a0a0a;letter-spacing:-.2px;margin:0 0 7px;line-height:1.3}
+.ab-card p{font-size:clamp(13.5px,.95vw,14.5px);color:#6b7280;line-height:1.6;margin:0}
 
 /* ---------- Panele (CertiCheck / zakup na odległość) ---------- */
-.ab-panel{background:#f2f7ff;border:1px solid #e2ecff;border-radius:clamp(18px,1.9vw,30px);padding:clamp(22px,2.6vw,42px) clamp(16px,3.2vw,50px);margin:clamp(32px,4vw,64px) calc(-1 * clamp(16px,3.2vw,50px)) 0}
-.ab-panel-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:clamp(26px,3.6vw,58px);align-items:center}
-.ab-panel .ab-h2{font-size:clamp(24px,3.28vw,54px)}
-.ab-panel .ab-lead{font-size:clamp(14.5px,1.3vw,21px);line-height:1.52}
-.ab-mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,1.35vw,22px)}
-.ab-mini-card{background:#fff;border:1px solid #e6edf8;border-radius:clamp(12px,1.2vw,20px);padding:clamp(16px,1.55vw,25px) clamp(13px,1.35vw,22px);text-align:center}
-.ab-mini-card .ab-card-ico{width:clamp(40px,3.5vw,56px);height:clamp(40px,3.5vw,56px);border-radius:clamp(11px,1.1vw,18px);margin:0 auto clamp(12px,1.4vw,22px)}
-.ab-mini-card .ab-card-ico svg{width:clamp(20px,2.1vw,34px)!important;height:clamp(20px,2.1vw,34px)!important}
-.ab-mini-card h3{font-size:clamp(14px,1.24vw,20px);font-weight:800;color:#0a0a0a;margin:0 0 8px;line-height:1.3}
-.ab-mini-card p{font-size:clamp(12.5px,1.02vw,16.5px);color:#6b7280;line-height:1.55;margin:0}
+.ab-panel{background:#f2f7ff;border:1px solid #e2ecff;border-radius:clamp(18px,1.9vw,30px);padding:clamp(24px,2.2vw,34px) clamp(18px,2.3vw,36px);margin:clamp(40px,4.4vw,68px) calc(-1 * clamp(16px,3.2vw,50px)) 0}
+.ab-panel-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:clamp(26px,2.6vw,42px);align-items:center}
+.ab-panel .ab-h2{font-size:clamp(23px,2.15vw,33px)}
+.ab-panel .ab-lead{font-size:clamp(14px,1vw,15.5px);line-height:1.6}
+.ab-mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,1vw,16px)}
+.ab-mini-card{background:#fff;border:1px solid #e6edf8;border-radius:clamp(12px,1.2vw,20px);padding:clamp(16px,1.3vw,21px) clamp(13px,1.15vw,18px);text-align:center}
+.ab-mini-card .ab-card-ico{width:clamp(40px,2.8vw,44px);height:clamp(40px,2.8vw,44px);border-radius:12px;margin:0 auto clamp(10px,.85vw,13px)}
+.ab-mini-card .ab-card-ico svg{width:clamp(19px,1.4vw,22px)!important;height:clamp(19px,1.4vw,22px)!important}
+.ab-mini-card h3{font-size:clamp(14px,.98vw,15px);font-weight:800;color:#0a0a0a;margin:0 0 8px;line-height:1.3}
+.ab-mini-card p{font-size:clamp(12.5px,.86vw,13.2px);color:#6b7280;line-height:1.55;margin:0}
 
 /* ---------- Usługi ---------- */
-.ab-services{padding:clamp(44px,6vw,98px) 0 0}
-.ab-services-head{margin-bottom:clamp(22px,2.4vw,38px)}
-.ab-cards-6{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,1.55vw,25px)}
-.ab-srv{display:flex;gap:clamp(12px,1.25vw,20px);align-items:flex-start;background:#fff;border:1px solid #eaeef5;border-radius:clamp(14px,1.3vw,22px);padding:clamp(12px,1.05vw,17px) clamp(13px,1.25vw,20px);box-shadow:0 1px 3px rgba(15,32,80,.04);transition:border-color .18s,box-shadow .18s}
+.ab-services{padding:clamp(40px,4.4vw,68px) 0 0}
+.ab-services-head{margin-bottom:clamp(20px,1.8vw,28px)}
+.ab-cards-6{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,1.15vw,18px)}
+.ab-srv{display:flex;gap:clamp(12px,1vw,15px);align-items:flex-start;background:#fff;border:1px solid #eaeef5;border-radius:clamp(14px,1.3vw,22px);padding:clamp(16px,1.35vw,21px) clamp(16px,1.35vw,21px);box-shadow:0 1px 3px rgba(15,32,80,.04);transition:border-color .18s,box-shadow .18s}
 .ab-srv:hover{border-color:#cfdcf5;box-shadow:0 8px 22px rgba(15,32,80,.07)}
-.ab-srv-ico{flex-shrink:0;width:clamp(46px,5.6vw,86px);height:clamp(46px,5.6vw,86px);border-radius:clamp(12px,1.45vw,23px);background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
-.ab-srv-ico svg{width:clamp(22px,2.8vw,45px)!important;height:clamp(22px,2.8vw,45px)!important;stroke:currentColor;fill:none;stroke-width:2.1}
-.ab-srv h3{font-size:clamp(15px,1.3vw,21px);font-weight:800;color:#0a0a0a;margin:0 0 7px;line-height:1.3}
-.ab-srv p{font-size:clamp(12.5px,.98vw,15.8px);color:#6b7280;line-height:1.45;margin:0}
+.ab-srv-ico{flex-shrink:0;width:clamp(44px,3.1vw,48px);height:clamp(44px,3.1vw,48px);border-radius:13px;background:#eff6ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
+.ab-srv-ico svg{width:clamp(21px,1.5vw,23px)!important;height:clamp(21px,1.5vw,23px)!important;stroke:currentColor;fill:none;stroke-width:2.1}
+.ab-srv h3{font-size:clamp(15px,1.05vw,16px);font-weight:800;color:#0a0a0a;margin:0 0 7px;line-height:1.3}
+.ab-srv p{font-size:clamp(13px,.92vw,14px);color:#6b7280;line-height:1.55;margin:0}
 
 /* ---------- Zakup na odległość ---------- */
 /* W projekcie naglowek tego panelu miesci sie w dwoch wierszach obok laptopa —
    nasz krój jest szerszy, wiec skala jest tu nieco mniejsza niz w pozostalych panelach. */
-.ab-remote-grid .ab-h2{font-size:clamp(22px,2.47vw,38px)}
-.ab-remote-grid .ab-lead{font-size:clamp(14px,1.13vw,18px);line-height:1.55}
-.ab-remote-grid .ab-link{font-size:clamp(14px,1.2vw,19.5px)}
-.ab-remote-grid{padding:clamp(6px,1.4vw,21px) 0;grid-template-columns:minmax(0,1.54fr) minmax(0,1.38fr) minmax(0,1fr);gap:clamp(12px,1.1vw,17px)}
+.ab-remote-grid .ab-h2{font-size:clamp(22px,1.95vw,30px)}
+.ab-remote-grid .ab-lead{font-size:clamp(14px,.98vw,15px);line-height:1.6}
+.ab-remote-grid .ab-link{font-size:clamp(14px,.98vw,15.5px)}
+.ab-remote-grid{padding:0;grid-template-columns:minmax(0,1.54fr) minmax(0,1.38fr) minmax(0,1fr);gap:clamp(12px,1.1vw,17px)}
 .ab-remote-fig{display:flex;align-items:center;justify-content:center}
-.ab-remote-fig img{width:100%;max-width:404px;height:auto;display:block}
-.ab-remote-list{display:flex;flex-direction:column;gap:clamp(14px,1.9vw,30px)}
-.ab-remote-item{display:flex;align-items:center;gap:clamp(12px,1.25vw,20px);background:none;border:none;border-radius:0;padding:0;font-size:clamp(14px,1.22vw,20px);font-weight:600;color:#1a1a1a}
-.ab-remote-item .ab-card-ico{width:clamp(38px,3.6vw,58px);height:clamp(38px,3.6vw,58px);border-radius:clamp(10px,1.05vw,17px);margin:0;flex-shrink:0}
-.ab-remote-item .ab-card-ico svg{width:clamp(19px,1.95vw,32px)!important;height:clamp(19px,1.95vw,32px)!important}
+.ab-remote-fig img{width:100%;max-width:430px;height:auto;display:block}
+.ab-remote-list{display:flex;flex-direction:column;gap:clamp(12px,1.1vw,17px)}
+.ab-remote-item{display:flex;align-items:center;gap:clamp(11px,.85vw,14px);background:none;border:none;border-radius:0;padding:0;font-size:clamp(13.5px,.95vw,14.5px);font-weight:600;color:#1a1a1a}
+.ab-remote-item .ab-card-ico{width:clamp(38px,2.6vw,40px);height:clamp(38px,2.6vw,40px);border-radius:11px;margin:0;flex-shrink:0}
+.ab-remote-item .ab-card-ico svg{width:19px!important;height:19px!important}
 
 /* ---------- Kroki zakupu ---------- */
-.ab-steps{padding:clamp(34px,4.1vw,66px) 0 0}
-.ab-steps-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(18px,2vw,32px);margin-top:clamp(20px,2.1vw,34px);position:relative}
-.ab-step{position:relative;padding-top:clamp(56px,5.2vw,86px)}
-.ab-step::before{content:'';position:absolute;top:clamp(21px,1.95vw,32px);left:clamp(52px,4.8vw,78px);right:calc(-1 * clamp(18px,2vw,32px));height:2px;background:#e2e8f3}
+.ab-steps{padding:clamp(40px,4.4vw,68px) 0 0}
+.ab-steps-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(18px,1.4vw,22px);margin-top:clamp(20px,1.8vw,28px);position:relative}
+.ab-step{position:relative;padding-top:clamp(52px,3.7vw,58px)}
+.ab-step::before{content:'';position:absolute;top:clamp(21px,1.5vw,23px);left:clamp(50px,3.5vw,54px);right:calc(-1 * clamp(18px,1.4vw,22px));height:2px;background:#e2e8f3}
 .ab-step:last-child::before{display:none}
-.ab-step-num{position:absolute;top:0;left:0;width:clamp(44px,3.9vw,64px);height:clamp(44px,3.9vw,64px);border-radius:50%;background:#0066ff;color:#fff;display:flex;align-items:center;justify-content:center;font-size:clamp(14px,1.25vw,21px);font-weight:800;letter-spacing:.3px}
-.ab-step h3{font-size:clamp(16px,1.5vw,25px);font-weight:800;color:#0a0a0a;margin:0 0 9px;line-height:1.3}
-.ab-step p{font-size:clamp(14px,1.22vw,20px);color:#6b7280;line-height:1.6;margin:0}
+.ab-step-num{position:absolute;top:0;left:0;width:clamp(42px,3vw,46px);height:clamp(42px,3vw,46px);border-radius:50%;background:#0066ff;color:#fff;display:flex;align-items:center;justify-content:center;font-size:clamp(13.5px,.98vw,15px);font-weight:800;letter-spacing:.3px}
+.ab-step h3{font-size:clamp(15.5px,1.1vw,16.5px);font-weight:800;color:#0a0a0a;margin:0 0 6px;line-height:1.3}
+.ab-step p{font-size:clamp(13.5px,.95vw,14.5px);color:#6b7280;line-height:1.6;margin:0}
 
 /* ---------- CTA ---------- */
-.ab-cta-wrap{padding:clamp(30px,2.9vw,46px) 0 clamp(40px,4.6vw,74px)}
-.ab-cta{background:#0a1740;border-radius:clamp(18px,1.9vw,30px);margin:0 calc(-1 * clamp(16px,3.2vw,50px));padding:clamp(22px,2.6vw,42px) clamp(24px,3.2vw,50px);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(24px,2.8vw,46px);align-items:center}
-.ab-cta h2{font-size:clamp(24px,2.95vw,48px);font-weight:900;color:#fff;letter-spacing:-1.2px;line-height:1.1;margin:0 0 16px}
-.ab-cta p{font-size:clamp(15px,1.28vw,21px);color:rgba(255,255,255,.72);line-height:1.55;margin:0}
-.ab-cta-actions{display:flex;flex-direction:column;align-items:flex-end;gap:clamp(14px,1.5vw,24px)}
-.ab-cta-actions .ab-btn-primary{font-size:clamp(16px,1.35vw,22px);padding:clamp(16px,1.5vw,25px) clamp(26px,2.7vw,44px);border-radius:12px}
-.ab-cta-link{display:inline-flex;align-items:center;gap:9px;font-size:clamp(14px,1.22vw,20px);font-weight:600;color:rgba(255,255,255,.8);text-decoration:none}
+.ab-cta-wrap{padding:clamp(40px,4.4vw,68px) 0 clamp(46px,5vw,78px)}
+.ab-cta{background:#0a1740;border-radius:clamp(18px,1.9vw,30px);margin:0 calc(-1 * clamp(10px,2.3vw,36px));padding:clamp(28px,2.6vw,40px) clamp(26px,2.8vw,44px);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(24px,2.8vw,46px);align-items:center}
+.ab-cta h2{font-size:clamp(23px,2.05vw,31px);font-weight:900;color:#fff;letter-spacing:-.8px;line-height:1.18;margin:0 0 12px}
+.ab-cta p{font-size:clamp(14.5px,1vw,15.5px);color:rgba(255,255,255,.72);line-height:1.6;margin:0}
+.ab-cta-actions{display:flex;flex-direction:column;align-items:flex-end;gap:clamp(12px,1vw,16px)}
+.ab-cta-actions .ab-btn-primary{font-size:15px;padding:15px 26px;border-radius:12px}
+.ab-cta-link{display:inline-flex;align-items:center;gap:8px;font-size:clamp(13.5px,.95vw,14.5px);font-weight:600;color:rgba(255,255,255,.8);text-decoration:none}
 .ab-cta-link:hover{color:#fff}
-.ab-cta-link svg{width:clamp(15px,1.25vw,21px)!important;height:clamp(15px,1.25vw,21px)!important;stroke:currentColor;fill:none;stroke-width:2.2}
+.ab-cta-link svg{width:15px!important;height:15px!important;stroke:currentColor;fill:none;stroke-width:2.2}
 
 /* ---------- Tablet ---------- */
 @media(max-width:1024px){
