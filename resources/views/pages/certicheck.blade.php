@@ -24,7 +24,7 @@
 .cclp-hero h1{font-size:48px;font-weight:900;color:var(--cc-ink);letter-spacing:-1.2px;line-height:1.05;margin:0 0 18px}
 .cclp-hero h1 .blue{color:var(--cc-blue)}
 .cclp-hero .lead{font-size:16px;color:var(--cc-muted);line-height:1.65;margin:0 0 24px;max-width:520px}
-.cclp-cta-primary{display:inline-flex;align-items:center;gap:8px;background:var(--cc-blue);color:#fff;padding:16px 30px;border-radius:50px;font-size:14px;font-weight:700;letter-spacing:.1px;text-decoration:none;box-shadow:0 8px 24px rgba(0,102,255,.4);transition:all .18s}
+.cclp-cta-primary{display:inline-flex;align-items:center;gap:8px;background:var(--cc-blue);color:#fff;padding:15px 26px;border-radius:12px;font-size:15px;font-weight:700;letter-spacing:.1px;text-decoration:none;box-shadow:0 8px 24px rgba(0,102,255,.4);transition:all .18s}
 .cclp-cta-primary:hover{background:var(--cc-blue-d);color:#fff;transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,102,255,.5)}
 .cclp-cta-primary svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4}
 /* Info note under the CTA — w referencji lezy bezposrednio na tle sekcji,
@@ -212,9 +212,9 @@
 .cclp-cta-strip h3{font-size:26px;font-weight:800;color:var(--cc-ink);margin:0 0 6px;letter-spacing:-.4px}
 .cclp-cta-strip p{font-size:14px;color:var(--cc-muted);margin:0}
 .cclp-cta-strip-btns{display:flex;gap:12px;flex-wrap:wrap}
-.cclp-btn-solid{display:inline-flex;align-items:center;gap:8px;background:var(--cc-blue);color:#fff;padding:13px 24px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;transition:all .15s;box-shadow:0 6px 16px rgba(0,102,255,.26)}
+.cclp-btn-solid{display:inline-flex;align-items:center;gap:8px;background:var(--cc-blue);color:#fff;padding:14px 24px;border-radius:12px;font-size:14px;font-weight:700;text-decoration:none;transition:all .15s;box-shadow:0 6px 16px rgba(0,102,255,.26)}
 .cclp-btn-solid:hover{background:var(--cc-blue-d);color:#fff;transform:translateY(-1px)}
-.cclp-btn-ghost{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--cc-blue);padding:13px 24px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid #cdddf7;transition:all .15s}
+.cclp-btn-ghost{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--cc-blue);padding:14px 24px;border-radius:12px;font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid #cdddf7;transition:all .15s}
 .cclp-btn-ghost:hover{border-color:var(--cc-blue);background:#f5f9ff}
 .cclp-btn-solid svg,.cclp-btn-ghost svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.4}
 

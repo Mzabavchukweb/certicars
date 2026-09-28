@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset hasła — CertiCars</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" defer></script>
     <style>
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        body{font-family:'Inter',system-ui,sans-serif;background:#f7f7f8;color:#0a0a0a;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+        body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;background:#f7f7f8;color:#0a0a0a;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
         .login-box{background:#fff;border-radius:16px;padding:40px 36px;width:100%;max-width:440px;box-shadow:0 8px 32px rgba(0,0,0,.08);border:1px solid #eeeef0}
         .login-logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:8px}
         .login-logo .ic{width:38px;height:38px;background:#0066ff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff}

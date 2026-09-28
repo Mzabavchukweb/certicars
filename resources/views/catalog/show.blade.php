@@ -81,13 +81,13 @@
 .cs-nav-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 0;margin-bottom:8px;border-bottom:1px solid #e5e5e7}
 .cs-nav-bar-left{display:flex;align-items:center;gap:8px}
 .cs-nav-bar-right{display:flex;align-items:center;gap:8px}
-.cs-nav-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#fff;border:1px solid #e5e5e7;border-radius:8px;font-size:13px;font-weight:600;color:#374151;cursor:pointer;transition:all .15s;text-decoration:none;white-space:nowrap;line-height:1.3}
+.cs-nav-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#fff;border:1px solid #e5e5e7;border-radius:10px;font-size:13px;font-weight:700;color:#374151;cursor:pointer;transition:all .15s;text-decoration:none;white-space:nowrap;line-height:1.3}
 .cs-nav-btn:hover{border-color:#0066ff;color:#0066ff;box-shadow:0 1px 4px rgba(0,102,255,.1)}
 .cs-nav-btn.disabled{opacity:.4;pointer-events:none;cursor:default}
 .cs-nav-btn svg{width:14px;height:14px;flex-shrink:0;stroke-width:2.2}
 
 .cs-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:4px;flex-wrap:wrap}
-.cs-head h1{font-size:30px;font-weight:900;letter-spacing:-.7px;color:#0a0a0a;margin:0;line-height:1.15;font-family:'Inter',sans-serif}
+.cs-head h1{font-size:30px;font-weight:900;letter-spacing:-.7px;color:#0a0a0a;margin:0;line-height:1.15}
 .cs-meta{display:flex;flex-wrap:wrap;gap:6px;font-size:13px;color:#6b7280;font-weight:500;margin:0}
 .cs-meta span{display:inline-flex;align-items:center;gap:4px}
 .cs-meta svg{width:0;height:0;display:none}
@@ -209,7 +209,7 @@
 
 /* CTA BUTTONS (inside card) */
 .cs-price-actions{padding:18px 22px 22px;display:flex;flex-direction:column;gap:8px}
-.cs-btn-phone{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:15px 24px;background:#0066ff;color:#fff;border:none;border-radius:50px;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;box-shadow:0 4px 14px rgba(0,102,255,.35)}
+.cs-btn-phone{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:15px 26px;background:#0066ff;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;box-shadow:0 4px 14px rgba(0,102,255,.35)}
 .cs-btn-phone:hover{background:#0052cc;color:#fff;box-shadow:0 8px 24px rgba(0,102,255,.45);transform:translateY(-1px)}
 .cs-btn-phone svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2;flex-shrink:0}
 .cs-btn-message{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 20px;background:#f8f9fa;border:1.5px solid #e5e7eb;border-radius:12px;cursor:pointer;transition:all .15s;text-decoration:none;color:#1a1a1a}
@@ -223,7 +223,7 @@
 .cs-pano360-embed{width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;position:relative}
 .cs-pano360-grid{display:grid;gap:16px}
 .cs-price-actions .btn{width:100%;justify-content:center;padding:13px 20px;font-weight:700;border-radius:10px}
-.cs-price-actions .cs-btn-secondary{background:#f5f5f5;color:#1a1a1a;border:1px solid #e5e5e5;font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:10px;cursor:pointer;transition:all .15s;text-decoration:none}
+.cs-price-actions .cs-btn-secondary{background:#f5f5f5;color:#1a1a1a;border:1px solid #e5e5e5;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:12px;cursor:pointer;transition:all .15s;text-decoration:none}
 .cs-price-actions .cs-btn-secondary:hover{background:#ebebeb}
 .cs-price-actions .cs-btn-secondary svg{width:16px;height:16px;flex-shrink:0}
 
@@ -383,7 +383,7 @@
 .cs-finance-rrso{display:inline-block;margin-top:5px;font-size:11px;font-weight:800;letter-spacing:.3px;color:#0066ff;background:#eef4ff;border-radius:6px;padding:2px 8px;width:fit-content}
 .cs-finance-result-value{font-size:22px;font-weight:900;color:#0066ff;letter-spacing:-.4px;line-height:1.1}
 .cs-finance-result-value .suffix{font-size:12px;font-weight:700;color:#0066ff;letter-spacing:0;opacity:.85}
-.cs-finance-cta{height:40px;padding:0 18px;background:#0066ff;color:#fff;border:none;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,102,255,.25);transition:all .15s;flex-shrink:0}
+.cs-finance-cta{height:40px;padding:0 18px;background:#0066ff;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,102,255,.25);transition:all .15s;flex-shrink:0}
 .cs-finance-cta:hover{background:#0052cc;box-shadow:0 4px 14px rgba(0,102,255,.35);transform:translateY(-1px)}
 .cs-finance-foot{font-size:10.5px;color:#9ca3af;line-height:1.5;margin-top:auto;padding-top:6px}
 
@@ -844,7 +844,7 @@
 .cs-data-section{background:#fff;border:1px solid #eef1f6;border-radius:18px;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);max-width:100%}
 .cs-wrap > .cs-data-section,.cs-wrap > div:not(.container) > .cs-data-section{max-width:calc(1200px - 48px);margin-left:auto;margin-right:auto}
 .cs-data-header{display:flex;align-items:center;justify-content:space-between;padding:19px 24px;user-select:none;border-bottom:1px solid #eef1f6;background:#fff}
-.cs-data-header h2{font-size:16px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;display:flex;align-items:center;gap:14px;margin:0;line-height:1.3;font-family:'Inter',sans-serif}
+.cs-data-header h2{font-size:16px;font-weight:800;color:#0a0a0a;letter-spacing:-.2px;display:flex;align-items:center;gap:14px;margin:0;line-height:1.3}
 .cs-data-header h2 i,.cs-data-header h2 svg{display:inline-flex;align-items:center;justify-content:center}
 /* Header icon: 44x44 contained pill (matches cs-info-3card-ico / cs-equip-cat-ico) */
 .cs-data-header h2 svg,.cs-data-header h2 i[data-lucide],.cs-data-header h2 i.cs-icon{width:24px!important;height:24px!important;flex-shrink:0;color:#0066ff;stroke-width:1.9;box-sizing:content-box;padding:11px;background:#e8f0ff;border-radius:12px}

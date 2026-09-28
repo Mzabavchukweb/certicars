@@ -27,7 +27,7 @@ $color   = $color ?? '#ef4444';
         h1{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-bottom:10px}
         p{font-size:14.5px;color:#4b5563;line-height:1.6;margin-bottom:26px}
         .btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-        .btn{display:inline-flex;align-items:center;gap:7px;padding:12px 22px;border-radius:50px;font-size:13.5px;font-weight:600;text-decoration:none;transition:all .15s;border:1px solid transparent}
+        .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:700;text-decoration:none;transition:all .15s;border:1px solid transparent}
         .btn-primary{background:#0066ff;color:#fff;box-shadow:0 4px 14px rgba(0,102,255,.35)}
         .btn-primary:hover{background:#0052cc;transform:translateY(-1px)}
         .btn-outline{background:#fff;border-color:#e5e5e7;color:#0f0f10}

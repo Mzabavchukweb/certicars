@@ -37,7 +37,7 @@
 .kt-prow-eyebrow{font-size:10.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.45);margin:0 0 3px}
 .kt-prow-val{font-size:17px;font-weight:800;color:#fff;letter-spacing:-.2px;text-decoration:none;line-height:1.25;display:block}
 .kt-prow a.kt-prow-val:hover{color:#5fa1ff}
-.kt-panel-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:18px;padding:14px 22px;background:var(--blue);color:#fff;font-weight:700;font-size:15px;border-radius:8px;text-decoration:none;letter-spacing:-.1px;transition:background .15s ease}
+.kt-panel-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:18px;padding:15px 26px;background:var(--blue);color:#fff;font-weight:700;font-size:15px;border-radius:12px;text-decoration:none;letter-spacing:-.1px;transition:background .15s ease}
 .kt-panel-btn:hover{background:var(--blue-h)}
 .kt-panel-btn svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.2}
 
@@ -102,7 +102,7 @@ a.kt-side-val:hover{color:var(--blue)}
 .kt-call-strip-ico svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:2}
 .kt-call-strip-body h2{font-size:28px;font-weight:800;color:#fff;letter-spacing:-.4px;margin:0 0 6px;line-height:1.15}
 .kt-call-strip-body p{font-size:14.5px;color:rgba(255,255,255,.78);line-height:1.6;margin:0;max-width:580px}
-.kt-call-strip-btn{display:inline-flex;align-items:center;gap:12px;background:#fff;color:var(--blue);padding:16px 30px;border-radius:8px;font-weight:700;font-size:17px;text-decoration:none;letter-spacing:-.2px;transition:background .15s ease;flex-shrink:0}
+.kt-call-strip-btn{display:inline-flex;align-items:center;gap:12px;background:#fff;color:var(--blue);padding:15px 26px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;letter-spacing:-.2px;transition:background .15s ease;flex-shrink:0}
 .kt-call-strip-btn:hover{background:#f4f7fb}
 .kt-call-strip-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.2}
 
@@ -134,7 +134,7 @@ a.kt-side-val:hover{color:var(--blue)}
     .kt-call-strip-in{grid-template-columns:1fr;gap:18px;text-align:center;justify-items:center}
     .kt-call-strip-ico{margin:0 auto}
     .kt-call-strip-body h2{font-size:24px}
-    .kt-call-strip-btn{font-size:16px;padding:14px 24px;justify-self:center}
+    .kt-call-strip-btn{font-size:15px;padding:13px 22px;justify-self:center}
 }
 @endsection
 @section('content')

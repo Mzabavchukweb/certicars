@@ -157,7 +157,7 @@
         .header-nav .nav-link{font-size:14.5px;font-weight:500;color:var(--text);padding:10px 12px;border-radius:8px;transition:color .15s,background .15s;line-height:1;white-space:nowrap;flex-shrink:0}
         .header-nav .nav-link:hover{color:var(--blue)}
         .header-nav .nav-link.active{color:var(--blue);font-weight:700;background:var(--blue-bg)}
-        .header-cta{background:var(--blue);color:#fff;padding:12px 22px;border-radius:50px;font-weight:600;font-size:13.5px;display:inline-flex;align-items:center;gap:7px;transition:all .2s;line-height:1;flex-shrink:0;box-shadow:0 4px 14px rgba(0,102,255,.35)}
+        .header-cta{background:var(--blue);color:#fff;padding:12px 20px;border-radius:12px;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:7px;transition:all .2s;line-height:1;flex-shrink:0;box-shadow:0 4px 14px rgba(0,102,255,.35)}
         .header-cta i{width:15px;height:15px;stroke-width:2.4}
         .header-cta:hover{background:var(--blue-h);color:#fff;box-shadow:0 8px 24px rgba(0,102,255,.45);transform:translateY(-1px)}
 
@@ -321,8 +321,12 @@
         }
 
         /* ============ COMPONENTS ============ */
-        .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;border:none;cursor:pointer;transition:all .15s;text-decoration:none;line-height:1}
+        /* Jedna skala przyciskow dla calego serwisu: promien 12 px (10 px dla malych),
+           grubosc 700, rozmiary 13/14/15 px. Podstrony nie ustawiaja juz wlasnych ksztaltow. */
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:700;font-family:inherit;border:none;cursor:pointer;transition:all .15s;text-decoration:none;line-height:1}
         .btn i{width:16px;height:16px;stroke-width:2.2}
+        .btn svg{width:16px;height:16px;stroke-width:2.2}
+        .btn-sm{padding:9px 16px;font-size:13px;border-radius:10px}
         .btn-blue{background:var(--blue);color:#fff}
         .btn-blue:hover{background:var(--blue-h);color:#fff}
         .btn-dark{background:#0a0a0a;color:#fff}
@@ -331,8 +335,8 @@
         .btn-outline:hover{background:var(--bg);border-color:var(--text-4)}
         .btn-ghost{background:transparent;color:var(--text)}
         .btn-ghost:hover{background:var(--bg)}
-        .btn-lg{padding:14px 26px;font-size:15px;border-radius:12px}
-        .btn-pill{border-radius:50px}
+        .btn-lg{padding:15px 26px;font-size:15px;border-radius:12px}
+        .btn-pill{border-radius:12px}  /* dawne „pigulki” — jeden ksztalt w calym serwisie */
 
         .badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:50px;font-size:11px;font-weight:600;line-height:1}
         .badge i{width:12px;height:12px;stroke-width:2.4}
@@ -884,7 +888,7 @@
 
     /* Bottom CTA on the homepage's featured section. Centered pill. */
     .home-listings-cta{display:flex;justify-content:center;margin-top:20px}
-    .home-listings-cta-btn{display:inline-flex;align-items:center;gap:8px;background:#0066ff;color:#fff;padding:13px 26px;border-radius:50px;font-size:13.5px;font-weight:700;text-decoration:none;transition:all .18s ease;box-shadow:0 4px 12px rgba(0,102,255,.25)}
+    .home-listings-cta-btn{display:inline-flex;align-items:center;gap:8px;background:#0066ff;color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:700;text-decoration:none;transition:all .18s ease;box-shadow:0 4px 12px rgba(0,102,255,.25)}
     .home-listings-cta-btn:hover{background:#0052cc;box-shadow:0 6px 18px rgba(0,102,255,.32);transform:translateY(-1px)}
     .home-listings-cta-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
     @media(max-width:720px){

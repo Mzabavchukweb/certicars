@@ -42,7 +42,7 @@
 .hero-text .lead a{color:#4ea3ff;font-weight:600;text-decoration:none;border-bottom:1px dotted rgba(78,163,255,.5)}
 .hero-text .lead a:hover{border-bottom-color:#4ea3ff}
 .hero-text .hero-ctas{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
-.hero-text .btn{padding:16px 30px;font-size:14px;border-radius:50px;box-shadow:0 8px 24px rgba(0,102,255,.4);font-weight:700;letter-spacing:.1px;display:inline-flex;align-items:center;gap:8px}
+.hero-text .btn{padding:15px 26px;font-size:15px;border-radius:12px;box-shadow:0 8px 24px rgba(0,102,255,.4);font-weight:700;letter-spacing:.1px;display:inline-flex;align-items:center;gap:8px}
 .hero-text .btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,102,255,.5)}
 .hero-text .btn svg{width:16px;height:16px;stroke-width:2.4}
 .hero-secondary-link{color:rgba(255,255,255,.75);font-size:14px;font-weight:500;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:color .15s}
@@ -119,7 +119,7 @@
 .cs-jwz-benefit-ico svg,.cs-jwz-benefit-ico i[data-lucide]{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
 
 .cs-jwz-cta-wrap{text-align:center}
-.cs-jwz-cta{display:inline-flex;align-items:center;gap:9px;background:#0066ff;color:#fff;padding:14px 32px;border-radius:50px;font-size:15px;font-weight:700;text-decoration:none;transition:all .18s ease;box-shadow:0 6px 20px rgba(0,102,255,.4)}
+.cs-jwz-cta{display:inline-flex;align-items:center;gap:9px;background:#0066ff;color:#fff;padding:15px 26px;border-radius:12px;font-size:15px;font-weight:700;text-decoration:none;transition:all .18s ease;box-shadow:0 6px 20px rgba(0,102,255,.4)}
 .cs-jwz-cta:hover{background:#0052cc;box-shadow:0 8px 26px rgba(0,102,255,.5);transform:translateY(-1px);color:#fff}
 .cs-jwz-cta svg,.cs-jwz-cta i[data-lucide]{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2}
 
@@ -201,9 +201,9 @@
 .cs-cc-left h2{font-size:44px;font-weight:900;color:#0a0a0a;letter-spacing:-1px;line-height:1.05;margin:0 0 18px}
 .cs-cc-left p{font-size:16.5px;color:#475569;line-height:1.65;margin:0 0 22px;max-width:440px}
 .cs-cc-ctas{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.cs-cc-cta-primary{display:inline-flex;align-items:center;gap:8px;background:#0066ff;color:#fff;padding:12px 22px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;transition:all .18s ease;box-shadow:0 4px 16px rgba(0,102,255,.3)}
+.cs-cc-cta-primary{display:inline-flex;align-items:center;gap:8px;background:#0066ff;color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:700;text-decoration:none;transition:all .18s ease;box-shadow:0 4px 16px rgba(0,102,255,.3)}
 .cs-cc-cta-primary:hover{background:#0052cc;box-shadow:0 6px 20px rgba(0,102,255,.42);transform:translateY(-1px);color:#fff}
-.cs-cc-cta-secondary{display:inline-flex;align-items:center;gap:6px;color:#0066ff;padding:10px 4px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid transparent;transition:color .15s,border-color .15s}
+.cs-cc-cta-secondary{display:inline-flex;align-items:center;gap:6px;color:#0066ff;padding:10px 4px;border-radius:12px;font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid transparent;transition:color .15s,border-color .15s}
 .cs-cc-cta-secondary:hover{color:#0052cc;border-color:#dbeafe}
 .cs-cc-ctas svg,.cs-cc-ctas i[data-lucide]{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
 .cs-cc-info{display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,.7);border:1px solid rgba(219,234,254,.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-radius:10px;padding:12px 14px;font-size:12.5px;color:#475569;line-height:1.55;max-width:none}
@@ -476,7 +476,7 @@
     .hero-text h1{font-size:36px;letter-spacing:-1.2px}
     .hero-text .lead{font-size:15px}
     .hero-text .hero-ctas{flex-direction:column;align-items:stretch;gap:12px}
-    .hero-text .btn{justify-content:center;padding:14px 24px;font-size:13px}
+    .hero-text .btn{justify-content:center;padding:13px 22px;font-size:14px}
     .hero-secondary-link{justify-content:center}
     .hero-search{padding:16px 16px 18px}
     .hero-search-title{font-size:16px}
@@ -509,7 +509,7 @@
     .section-head p{font-size:13px}
     .home-listings{gap:10px}
     .home-listings-cta{margin-top:14px}
-    .home-listings-cta-btn{padding:11px 24px;font-size:13px}
+    .home-listings-cta-btn{padding:12px 20px;font-size:14px}
 }
 @endsection
 
