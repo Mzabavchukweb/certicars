@@ -21,7 +21,7 @@
 .ab-link svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.4}
 
 /* ---------- HERO ---------- */
-.ab-hero{position:relative;background:#0a1740 url('/img/about/tlo_hero_1920x720.webp') no-repeat;background-size:100% auto;background-position:center calc(100% + 2.7vw);padding:0;overflow:hidden;min-height:36.2vw}
+.ab-hero{position:relative;background:#0a1740 url('/img/about/tlo_hero_1920x720.webp') no-repeat;background-size:104% auto;background-position:center calc(100% + 2.7vw);padding:0;overflow:hidden;min-height:36.2vw}
 .ab-hero-grid{min-height:36.2vw;display:flex;align-items:flex-start}
 .ab-hero-copy{position:relative;z-index:3;padding:4.92vw 0 3.05vw;max-width:62%}
 .ab-hero .ab-eyebrow{color:#7fb2ff}
@@ -41,11 +41,11 @@
 .ab-hero-place svg{width:15px;height:15px;stroke:#7fb2ff;fill:none;stroke-width:2}
 /* Postać sięga prawej krawędzi ekranu (jak w projekcie), więc jest poza siatką treści.
    Dołem wychodzi poza sekcję — przycina ją biała fala (nakładka niżej). */
-.ab-hero-fig{position:absolute;right:8.5vw;top:.4vw;display:flex;align-items:flex-start;pointer-events:none;z-index:0}
-.ab-hero-fig img{width:auto;height:48.5vw;max-height:840px;display:block;filter:drop-shadow(0 24px 42px rgba(4,12,38,.45))}
+.ab-hero-fig{position:absolute;right:9vw;top:0;display:flex;align-items:flex-start;pointer-events:none;z-index:0}
+.ab-hero-fig img{width:auto;height:45vw;max-height:780px;display:block;filter:drop-shadow(0 24px 42px rgba(4,12,38,.45))}
 /* Ten sam pasek tła co pod spodem, ale NAD postacią — dzięki temu falę widać
    przed sylwetką, dokładnie jak w projekcie (a nie prostą krawędź sekcji). */
-.ab-hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:4.5vw;background:url('/img/about/tlo_hero_1920x720.webp') no-repeat;background-size:100% auto;background-position:center calc(100% + 2.7vw);z-index:2;pointer-events:none}
+.ab-hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:4.5vw;background:url('/img/about/tlo_hero_1920x720.webp') no-repeat;background-size:104% auto;background-position:center calc(100% + 2.7vw);z-index:2;pointer-events:none}
 
 /* ---------- 3 kafelki „Po ludzku o samochodach” ---------- */
 .ab-intro{background:#fff;padding:64px 0 10px}
