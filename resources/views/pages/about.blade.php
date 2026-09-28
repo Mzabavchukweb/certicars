@@ -10,7 +10,7 @@
    O NAS — układ wg projektu (hero z postacią, CertiCheck, usługi,
    zakup na odległość, kroki zakupu, CTA). Grafiki: /img/about/*.webp
    ===================================================================== */
-.ab-in{max-width:1200px;margin:0 auto;padding:0 24px;width:100%;box-sizing:border-box}
+.ab-in{max-width:1240px;margin:0 auto;padding:0 30px;width:100%;box-sizing:border-box}
 .ab-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:#0066ff;margin-bottom:14px}
 .ab-eyebrow::before{content:'';width:22px;height:1.5px;background:currentColor;border-radius:1px}
 .ab-h2{font-size:34px;font-weight:900;color:#0a0a0a;letter-spacing:-.9px;line-height:1.15;margin:0 0 14px}
@@ -21,23 +21,31 @@
 .ab-link svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.4}
 
 /* ---------- HERO ---------- */
-.ab-hero{position:relative;background:#0a1740 url('/img/about/tlo_hero_1920x720.webp') center bottom/cover no-repeat;padding:70px 0 0;overflow:hidden}
-.ab-hero-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:28px;align-items:end;min-height:470px}
-.ab-hero-copy{padding-bottom:104px}
+.ab-hero{position:relative;background:#0a1740 url('/img/about/tlo_hero_1920x720.webp') no-repeat;background-size:100% auto;background-position:center calc(100% + 2.7vw);padding:0;overflow:hidden;min-height:36.2vw}
+.ab-hero-grid{min-height:36.2vw;display:flex;align-items:flex-start}
+.ab-hero-copy{position:relative;z-index:3;padding:4.92vw 0 3.05vw;max-width:62%}
 .ab-hero .ab-eyebrow{color:#7fb2ff}
-.ab-hero h1{font-size:46px;font-weight:900;color:#fff;letter-spacing:-1.4px;line-height:1.12;margin:0 0 18px}
+.ab-hero h1{font-size:clamp(30px,4.1vw,66px);font-weight:900;color:#fff;letter-spacing:-1.8px;line-height:1.1;margin:0 0 16px}
 .ab-hero h1 span{color:#3b8bff;display:block}
-.ab-hero p{font-size:16px;color:rgba(255,255,255,.82);line-height:1.65;margin:0 0 26px;max-width:520px}
-.ab-hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.ab-hero p{font-size:clamp(14.5px,1.31vw,21px);color:rgba(255,255,255,.85);line-height:1.7;margin:0 0 26px;max-width:35vw}
+.ab-hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+.ab-nl{display:none}
+@media(min-width:1180px){.ab-nl{display:inline}}
+.ab-hero .ab-btn{padding:1.12vw 2.85vw;font-size:clamp(13.5px,1.13vw,18px);border-radius:13px}
 .ab-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:14px 26px;border-radius:12px;font-size:14.5px;font-weight:700;text-decoration:none;transition:transform .15s,background .15s,box-shadow .15s;border:none;cursor:pointer}
 .ab-btn-primary{background:#0066ff;color:#fff;box-shadow:0 8px 24px rgba(0,102,255,.32)}
 .ab-btn-primary:hover{background:#0052cc;color:#fff;transform:translateY(-1px)}
 .ab-btn-dark{background:#0c1b3f;color:#fff;border:1px solid rgba(255,255,255,.22)}
 .ab-btn-dark:hover{background:#12274f;color:#fff}
-.ab-hero-place{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:rgba(255,255,255,.7)}
+.ab-hero-place{display:inline-flex;align-items:center;gap:8px;font-size:clamp(12.5px,.96vw,15px);color:rgba(255,255,255,.72)}
 .ab-hero-place svg{width:15px;height:15px;stroke:#7fb2ff;fill:none;stroke-width:2}
-.ab-hero-fig{position:relative;display:flex;justify-content:center;align-items:flex-end;min-height:470px}
-.ab-hero-fig img{width:100%;max-width:430px;height:auto;display:block;filter:drop-shadow(0 24px 42px rgba(4,12,38,.45))}
+/* Postać sięga prawej krawędzi ekranu (jak w projekcie), więc jest poza siatką treści.
+   Dołem wychodzi poza sekcję — przycina ją biała fala (nakładka niżej). */
+.ab-hero-fig{position:absolute;right:8.5vw;top:.4vw;display:flex;align-items:flex-start;pointer-events:none;z-index:0}
+.ab-hero-fig img{width:auto;height:48.5vw;max-height:840px;display:block;filter:drop-shadow(0 24px 42px rgba(4,12,38,.45))}
+/* Ten sam pasek tła co pod spodem, ale NAD postacią — dzięki temu falę widać
+   przed sylwetką, dokładnie jak w projekcie (a nie prostą krawędź sekcji). */
+.ab-hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:4.5vw;background:url('/img/about/tlo_hero_1920x720.webp') no-repeat;background-size:100% auto;background-position:center calc(100% + 2.7vw);z-index:2;pointer-events:none}
 
 /* ---------- 3 kafelki „Po ludzku o samochodach” ---------- */
 .ab-intro{background:#fff;padding:64px 0 10px}
@@ -107,11 +115,14 @@
 @media(max-width:1024px){
     /* Tło 1920×720 przy wąskim ekranie przycina wbudowaną falę, więc rysujemy ją
        jako element — postać ma na niej stać, tak jak w projekcie. */
-    .ab-hero{padding-top:52px;background-position:center top}
+    .ab-hero{padding-top:52px;background-size:cover;background-position:center top}
     .ab-hero::after{content:'';position:absolute;left:-12%;right:-12%;bottom:-46px;height:120px;background:#fff;border-radius:50% 50% 0 0/100% 100% 0 0;z-index:2;pointer-events:none}
     .ab-hero-grid{position:relative;z-index:1}
-    .ab-hero-grid{grid-template-columns:1fr;gap:0;min-height:0}
-    .ab-hero-copy{padding-bottom:28px}
+    .ab-hero-grid{flex-direction:column;min-height:0}
+    .ab-hero-copy{padding:0 0 28px;max-width:100%}
+    .ab-hero p{max-width:none;font-size:15.5px;line-height:1.65}
+    .ab-hero-fig{position:static;justify-content:center;width:100%}
+    .ab-hero-fig img{height:auto;width:100%;max-width:330px}
     .ab-hero h1{font-size:38px}
     .ab-hero-fig{min-height:0;justify-content:center}
     .ab-hero-fig img{max-width:330px}
@@ -140,7 +151,17 @@
     .ab-cards-3,.ab-cards-6,.ab-mini{grid-template-columns:1fr}
     .ab-panel{margin-top:44px;padding:26px 20px;border-radius:18px}
     .ab-services,.ab-steps{padding-top:44px}
-    .ab-steps-grid{grid-template-columns:1fr;gap:22px}
+    /* Telefon wg makiety: kroki jako oś pionowa z linią, karty CertiCheck poziome,
+       a „Porozmawiajmy” jako link ze strzałką zamiast drugiego przycisku. */
+    .ab-steps-grid{grid-template-columns:1fr;gap:0}
+    .ab-step{padding:0 0 26px 62px;min-height:44px}
+    .ab-step::before{display:block;content:'';top:44px;bottom:-4px;left:21px;right:auto;width:2px;height:auto;background:#e2e8f3}
+    .ab-step:last-child{padding-bottom:0}
+    .ab-mini-card{display:grid;grid-template-columns:42px 1fr;column-gap:14px;row-gap:4px;align-items:start;padding:16px}
+    .ab-mini-card .ab-card-ico{grid-row:1/span 2;margin-bottom:0}
+    .ab-hero-btns{gap:6px}
+    .ab-hero-btns .ab-btn-dark{background:none;border:none;color:#fff;width:auto;padding:10px 0;justify-content:flex-start;font-weight:700}
+    .ab-hero-btns .ab-btn-dark::after{content:'→';margin-left:8px;font-weight:700}
     .ab-cta{padding:28px 22px;border-radius:18px}
     .ab-cta h2{font-size:25px}
     .ab-cta-wrap{padding:44px 0 56px}
@@ -155,7 +176,7 @@
         <div class="ab-hero-copy">
             <div class="ab-eyebrow">O nas · CertiCars</div>
             <h1>Poznaj auto wcześniej.<span>Kupuj spokojniej.</span></h1>
-            <p>Pokazujemy dostępne informacje o autach i pomagamy przejść przez zakup — od pierwszych pytań po formalności i odbiór.</p>
+            <p>Pokazujemy dostępne informacje o autach i pomagamy <br class="ab-nl">przejść przez zakup — od pierwszych pytań <br class="ab-nl">po formalności i odbiór.</p>
             <div class="ab-hero-btns">
                 <a href="{{ route('catalog') }}" class="ab-btn ab-btn-primary">Sprawdź ofertę</a>
                 <a href="{{ route('contact') }}" class="ab-btn ab-btn-dark">Porozmawiajmy</a>
