@@ -236,7 +236,7 @@ $activeFilters = collect($filterKeys)->filter(fn($k)=>request()->filled($k))->co
 
                     <div class="cat-filter-group">
                         <div class="cat-flabel">
-                            <x-icon name="ph-fill:car" size="14"/>
+                            <x-icon name="car-front" size="14"/>
                             Typ nadwozia
                         </div>
                         <select name="category" class="cat-select">

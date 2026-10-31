@@ -10,13 +10,11 @@ class PageController extends Controller
 {
     public function about()
     {
-        $stats = [
-            'cars'     => \App\Models\Car::count(),
-            'brands'   => \App\Models\Brand::count(),
-            'featured' => \App\Models\Car::where('is_featured', true)->count(),
-        ];
+        // Przykładowe auto do prezentacji 360° i podglądu CertiCheck
+        // (config/certicars.php → about_showcase_car, z rezerwą w AboutShowcase).
+        $showcase = \App\Support\AboutShowcase::build();
 
-        return view('pages.about', compact('stats'));
+        return view('pages.about', compact('showcase'));
     }
 
     public function contact()
