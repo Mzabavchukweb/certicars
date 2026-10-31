@@ -659,15 +659,65 @@
 .onas .tire-reading>b.bad{color:#b91c1c;background:#fee2e2}
 .onas .wheel-info>strong.warn{color:#b45309}
 
-/* ===== Spójność z resztą serwisu (31.10.2026): krój, przyciski, nagłówki i etykiety jak na stronie głównej,
-   w CertiChecku i Kontakcie. Układ i treść zostają z projektu. ===== */
-.onas{--blue:#0066ff;font-family:var(--font-body)}
-.onas h1,.onas h2{font-weight:900}
-.onas h1{letter-spacing:-1.6px}
-.onas h2{letter-spacing:-.9px}
-.onas h3{font-weight:800;letter-spacing:-.3px}
-.onas .brand-motto span{font-weight:700}
-.onas .eyebrow{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+/* ===== System serwisu (31.10.2026, po uwagach Maksa): te same wartości co CertiCheck/strona główna.
+   Kontener 1200, sekcje 96 px z naprzemiennym tłem, nagłówki 40/900, tekst #475569, karty 12 px z obramowaniem. ===== */
+.onas{--blue:#0066ff;--ink:#0a0a0a;--muted:#475569;--line:#e5edfa;--ice:#f6f8fc;font-family:var(--font-body);color:var(--ink)}
+.onas .container,.onas .wide{width:auto;max-width:1200px;margin-left:auto;margin-right:auto;padding-left:24px;padding-right:24px}
+.onas p{color:var(--muted);font-size:15px;line-height:1.7}
+.onas h1,.onas h2{font-weight:900;color:var(--ink)}
+.onas h2,.onas .human-title .brand-motto,.onas .explore-copy h2,.onas .certi-copy h2,.onas .certi-v2 .certi-copy h2,.onas .remote-copy h2,.onas .remote-v2 .remote-copy h2,.onas .purchase-early h2{font-size:40px;letter-spacing:-.9px;line-height:1.1}
+.onas .brand-motto span,.onas h1 span{font-size:inherit;font-weight:900;letter-spacing:inherit;color:var(--blue)}
+.onas h3{font-weight:800;color:var(--ink);letter-spacing:-.3px}
+.onas .eyebrow,.onas .human-title .eyebrow,.onas .certi-v2 .eyebrow,.onas .remote-v2 .remote-copy .eyebrow{font-size:11px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:var(--blue);margin-bottom:14px;gap:10px}
+.onas .eyebrow:before{width:18px}
+.onas .eyebrow.light{color:#8fc3ff}
+/* hero jak na stronie głównej (ciemny) */
+.onas .hero h1{font-size:52px;letter-spacing:-1.4px;line-height:1.05;color:#fff}
+.onas .hero h1 span{color:#4b95ff}
+.onas .hero-copy>p{font-size:16px;line-height:1.65;color:rgba(255,255,255,.75)}
+/* sekcje i tła */
+.onas .human-section,.onas .purchase-early,.onas .explore-section,.onas .certi-section,.onas .services,.onas .remote-section{padding:96px 0}
+.onas .purchase-early,.onas .certi-section,.onas .remote-section{background:var(--ice)}
+.onas .purchase-early>.container{border:0;padding-top:0;padding-bottom:0}
+.onas .human-title>p,.onas .human-story p{font-size:15.5px;line-height:1.75;color:var(--muted)}
+.onas .human-story strong{color:var(--ink);font-weight:700}
+/* nagłówki wyśrodkowane jak „Co otrzymujesz w CertiCheck” */
+.onas .purchase-early .container>.eyebrow,.onas .service-intro .eyebrow{justify-content:center}
+.onas .purchase-early .container>.eyebrow:after,.onas .service-intro .eyebrow:after{content:'';width:18px;height:2px;background:currentColor}
+.onas .purchase-early h2{text-align:center;margin-bottom:56px}
+.onas .service-intro{display:block!important;text-align:center;max-width:640px;margin:0 auto 56px}
+.onas .service-intro>p{width:auto!important;margin:14px auto 0;font-size:15.5px}
+.onas .service-intro>p br{display:none}
+/* kroki jak „Jak powstaje CertiCheck” */
+.onas .steps{grid-template-columns:repeat(4,1fr);gap:20px;margin-top:0}
+.onas .steps:before{display:none}
+.onas .steps article{background:#fff;border:1px solid var(--line);border-radius:12px;padding:32px 26px}
+.onas .step-number{width:48px;height:48px;margin:0 0 20px;border:0;outline:0;box-sizing:border-box;font-size:18px;font-weight:800;box-shadow:0 6px 14px rgba(0,102,255,.28)}
+.onas .steps h3{font-size:16.5px;margin:0 0 14px;padding-bottom:14px;position:relative}
+.onas .steps h3:after{content:'';position:absolute;left:0;bottom:0;width:28px;height:3px;border-radius:2px;background:var(--blue)}
+.onas .steps p{font-size:13.5px;line-height:1.7}
+.onas .steps p br{display:none}
+/* usługi jak karty CertiCheck */
+.onas .service-grid{gap:24px}
+.onas .service-grid article{border:1px solid var(--line);border-radius:12px;padding:32px 28px;background:#fff;min-height:0;gap:18px}
+.onas .service-grid .icon{width:52px;height:52px;border-radius:14px;background:#eef4ff;color:var(--blue)}
+.onas .service-grid .icon svg{width:24px;height:24px}
+.onas .service-grid h3{font-size:17px;margin-top:4px}
+.onas .service-grid p{font-size:14px;line-height:1.7;margin-top:8px}
+.onas .services-note{font-size:13px;color:var(--muted);text-align:center;border:0;margin-top:28px;padding-top:0}
+/* panele CertiCheck i zakupu na odległość: tło sekcji zamiast osobnej „wyspy” */
+.onas .certi-panel,.onas .remote-panel,.onas .remote-v2 .remote-panel{background:transparent;border:0;border-radius:0;padding:0;box-shadow:none}
+.onas .certi-copy>p,.onas .certi-v2 .certi-copy>p,.onas .remote-copy>p,.onas .remote-v2 .remote-copy>p,.onas .explore-copy>p{font-size:15.5px;line-height:1.75}
+.onas .certi-features h3{font-size:15px}
+.onas .certi-features p{font-size:13.5px;line-height:1.6}
+.onas .scope-note p{font-size:12.5px;color:var(--muted)}
+.onas .check-viewer,.onas .real-viewer{border:1px solid var(--line);border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.04)}
+.onas .remote-list>div{font-size:13.5px;color:var(--ink)}
+.onas .remote-v2 .remote-panel{grid-template-columns:minmax(0,1fr) 360px 200px;gap:48px}
+.onas .remote-v2 .remote-visual{width:100%}
+.onas .service-grid p br,.onas .certi-features p br{display:none}
+@media(max-width:1100px){.onas .remote-v2 .remote-panel{grid-template-columns:minmax(0,1fr) 300px;gap:32px}.onas .remote-list{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;gap:24px}}
+/* przyciski i linki jak w serwisie */
 .onas .button{height:auto;padding:15px 26px;border-radius:12px;font-size:15px;font-weight:700;gap:8px;line-height:1;letter-spacing:.1px}
 .onas .button svg{width:16px;height:16px;stroke-width:2.2}
 .onas .primary{background:var(--blue);color:#fff;box-shadow:0 8px 24px rgba(0,102,255,.4)}
@@ -675,8 +725,14 @@
 .onas .contact-actions .button{height:auto;font-size:15px}
 .onas .text-link{font-size:14px;font-weight:700;gap:8px}
 .onas .text-link svg{width:16px;height:16px}
-.onas .viewer-tabs button,.onas .check-tabs button{font-weight:700}
-@media(max-width:760px){.onas .button,.onas .hero .button,.onas .contact-actions .button{height:auto;padding:13px 16px;font-size:14px;border-radius:12px}.onas .eyebrow{font-size:10.5px;letter-spacing:1.8px}}
+/* końcowy kontakt */
+.onas .contact-section{padding:96px 0}
+.onas .contact-panel{border-radius:18px;padding:48px 56px}
+.onas .contact-panel h2{font-size:32px;color:#fff;letter-spacing:-.6px}
+.onas .contact-panel p{font-size:15px;color:rgba(255,255,255,.7)}
+@media(max-width:1100px){.onas .steps{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.onas h2,.onas .human-title .brand-motto,.onas .explore-copy h2,.onas .certi-copy h2,.onas .certi-v2 .certi-copy h2,.onas .remote-copy h2,.onas .remote-v2 .remote-copy h2,.onas .purchase-early h2{font-size:32px}.onas .human-section,.onas .purchase-early,.onas .explore-section,.onas .certi-section,.onas .services,.onas .remote-section,.onas .contact-section{padding:64px 0}.onas .service-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.onas .container,.onas .wide{padding-left:20px;padding-right:20px}.onas h2,.onas .human-title .brand-motto,.onas .explore-copy h2,.onas .certi-copy h2,.onas .certi-v2 .certi-copy h2,.onas .remote-copy h2,.onas .remote-v2 .remote-copy h2,.onas .purchase-early h2{font-size:28px;letter-spacing:-.6px}.onas .hero h1{font-size:34px;letter-spacing:-.8px}.onas .human-section,.onas .purchase-early,.onas .explore-section,.onas .certi-section,.onas .services,.onas .remote-section,.onas .contact-section{padding:48px 0}.onas .purchase-early h2,.onas .service-intro{margin-bottom:30px}.onas .steps,.onas .service-grid{grid-template-columns:1fr;gap:16px}.onas .service-grid article{padding:24px 22px}.onas .contact-panel{padding:32px 24px}.onas .contact-panel h2{font-size:26px}.onas .button,.onas .hero .button,.onas .contact-actions .button{height:auto;padding:13px 16px;font-size:14px;border-radius:12px}}
 @endsection
 
 @section('content')
