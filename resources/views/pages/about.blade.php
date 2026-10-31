@@ -717,6 +717,8 @@
 .onas .remote-v2 .remote-visual{width:100%}
 .onas .service-grid p br,.onas .certi-features p br{display:none}
 @media(max-width:1100px){.onas .remote-v2 .remote-panel{grid-template-columns:minmax(0,1fr) 300px;gap:32px}.onas .remote-list{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;gap:24px}}
+/* ikony: Lucide jak w całym serwisie (grubość linii 2) */
+.onas svg.lucide,.onas i[data-lucide]{stroke-width:2;fill:none;flex-shrink:0}
 /* przyciski i linki jak w serwisie */
 .onas .button{height:auto;padding:15px 26px;border-radius:12px;font-size:15px;font-weight:700;gap:8px;line-height:1;letter-spacing:.1px}
 .onas .button svg{width:16px;height:16px;stroke-width:2.2}
@@ -750,25 +752,6 @@
     }
 @endphp
 <div class="onas">
-<svg class="defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
-<symbol id="onas-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
-<symbol id="onas-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
-<symbol id="onas-file" viewBox="0 0 24 24"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8l-5-5Z"/><path d="M14 3v5h5M9 12h6m-6 4h6"/></symbol>
-<symbol id="onas-search" viewBox="0 0 24 24"><path d="M8 3H4a1 1 0 0 0-1 1v4m13-5h4a1 1 0 0 1 1 1v4M3 16v4a1 1 0 0 0 1 1h4m8 0h4a1 1 0 0 0 1-1v-4"/><circle cx="11" cy="11" r="4"/><path d="m14 14 3 3"/></symbol>
-<symbol id="onas-camera" viewBox="0 0 24 24"><path d="M4 7h4l2-3h4l2 3h4a1 1 0 0 1 1 1v11H3V8a1 1 0 0 1 1-1Z"/><circle cx="12" cy="12.5" r="3.5"/></symbol>
-<symbol id="onas-shield" viewBox="0 0 24 24"><path d="m12 2 8 3v6c0 6-8 11-8 11S4 17 4 11V5l8-3Z"/><path d="m8 11 3 3 5-5"/></symbol>
-<symbol id="onas-coins" viewBox="0 0 24 24"><ellipse cx="9" cy="6" rx="6" ry="3"/><path d="M3 6v4c0 2 3 3 6 3m-6-3v4c0 2 3 3 6 3m-6-3v4c0 2 3 3 6 3"/><circle cx="16" cy="14" r="6"/><path d="M16 11v6m-2-1h4"/></symbol>
-<symbol id="onas-truck" viewBox="0 0 24 24"><path d="M2 5h12v12H2V5Zm12 5h4l4 4v3h-8"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><path d="M14 10v4h8"/></symbol>
-<symbol id="onas-tool" viewBox="0 0 24 24"><path d="M20 3a6 6 0 0 0-7 8L3 21l-2-2L11 9a6 6 0 0 1 8-7l-4 4 3 3 4-4a6 6 0 0 1-2 8"/></symbol>
-<symbol id="onas-video" viewBox="0 0 24 24"><rect x="3" y="5" width="12" height="14" rx="3"/><path d="m15 9 6-3v12l-6-3"/></symbol>
-<symbol id="onas-phone" viewBox="0 0 24 24"><path d="m5 3 4 1 1 5-3 2a15 15 0 0 0 6 6l2-3 5 1 1 4c-1 3-5 3-9 1A22 22 0 0 1 4 12C2 8 2 4 5 3Z"/></symbol>
-<symbol id="onas-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M6 10v2a6 6 0 0 0 12 0v-2m-6 8v4m-4 0h8"/></symbol>
-<symbol id="onas-check" viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></symbol>
-<symbol id="onas-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.5"/></symbol>
-<symbol id="onas-car" viewBox="0 0 24 24"><path d="m4 10 2-6h12l2 6m-16 0h16a1 1 0 0 1 1 1v7H3v-7a1 1 0 0 1 1-1ZM5 18v3m14-3v3M6 14h2m8 0h2"/></symbol>
-<symbol id="onas-wheel" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="m3.5 9 6 2m11-2-6 2M12 15v6M6 5.5h12"/></symbol>
-<symbol id="onas-tire" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="7" ry="10"/><ellipse cx="12" cy="12" rx="3" ry="7"/><path d="m6 5 3 2m-4 4 4 1m-3 6 3-2m9-11-3 2m4 4-4 1m3 6-3-2"/></symbol>
-</defs></svg>
 
 <section id="01-hero" class="hero">
  <div class="container hero-inner">
@@ -778,8 +761,8 @@
    <p>Pokazujemy dostępne informacje o autach<br>
 i pomagamy przejść przez zakup — od pierwszych<br>
 pytań po formalności i odbiór.</p>
-   <div class="actions"><a class="button primary" href="{{ route('catalog') }}">Sprawdź ofertę <svg aria-hidden="true"><use href="#onas-arrow"/></svg></a><a href="tel:+48515440623" class="button secondary">Porozmawiajmy</a></div>
-   <div class="hero-location"><svg aria-hidden="true"><use href="#onas-pin"/></svg><span>Lipnik k. Stargardu</span><span class="dot"></span><span>Auta osobowe i dostawcze</span></div>
+   <div class="actions"><a class="button primary" href="{{ route('catalog') }}">Sprawdź ofertę <x-icon name="arrow-right" size="16"/></a><a href="tel:+48515440623" class="button secondary">Porozmawiajmy</a></div>
+   <div class="hero-location"><x-icon name="map-pin" size="14"/><span>Lipnik k. Stargardu</span><span class="dot"></span><span>Auta osobowe i dostawcze</span></div>
   </div>
   <div class="hero-art"><div class="hero-glow"></div><img src="/img/about/doradca-tablet.webp" width="800" height="1422" alt="Doradca CertiCars z tabletem" fetchpriority="high" decoding="async"></div>
  </div>
@@ -815,8 +798,8 @@ z uzgodnionym transportem.</p></article>
   <div class="real-viewer">
    @if($hasOut && $hasIn)
    <div class="viewer-tabs" role="tablist" aria-label="Widok samochodu">
-    <button id="view-outside" type="button" role="tab" aria-selected="true" aria-controls="outside-panel"><svg aria-hidden="true"><use href="#onas-car"/></svg>{{ $outSpins ? '360° z zewnątrz' : 'Z zewnątrz' }}</button>
-    <button id="view-inside" type="button" role="tab" aria-selected="false" aria-controls="inside-panel"><svg aria-hidden="true"><use href="#onas-wheel"/></svg>360° wnętrza</button>
+    <button id="view-outside" type="button" role="tab" aria-selected="true" aria-controls="outside-panel"><x-icon name="car" size="16"/>{{ $outSpins ? '360° z zewnątrz' : 'Z zewnątrz' }}</button>
+    <button id="view-inside" type="button" role="tab" aria-selected="false" aria-controls="inside-panel"><x-icon name="armchair" size="16"/>360° wnętrza</button>
    </div>
    @endif
    <div class="viewer-stage" aria-label="Interaktywna prezentacja {{ $sc['name'] }}" data-onas-stage>
@@ -844,7 +827,7 @@ z uzgodnionym transportem.</p></article>
    </div>
    <div class="viewer-caption"><span>Rzeczywiste zdjęcia z ogłoszenia</span><span>{{ $sc['name'] }}</span></div>
   </div>
-  <div class="explore-copy"><div class="eyebrow">PREZENTACJE 360°</div><h2>Obejrzyj auto dookoła.<br>Zajrzyj do środka.</h2><p>Na CertiCars możesz oglądać samochody w 360° — z zewnątrz i we wnętrzu. Przyjrzyj się nadwoziu, rozejrzyj po kabinie i poznaj więcej szczegółów jeszcze przed wizytą.</p><a class="text-link" href="{{ route('catalog') }}">Zobacz auta w ofercie <svg aria-hidden="true"><use href="#onas-arrow"/></svg></a></div>
+  <div class="explore-copy"><div class="eyebrow">PREZENTACJE 360°</div><h2>Obejrzyj auto dookoła.<br>Zajrzyj do środka.</h2><p>Na CertiCars możesz oglądać samochody w 360° — z zewnątrz i we wnętrzu. Przyjrzyj się nadwoziu, rozejrzyj po kabinie i poznaj więcej szczegółów jeszcze przed wizytą.</p><a class="text-link" href="{{ route('catalog') }}">Zobacz auta w ofercie <x-icon name="arrow-right" size="16"/></a></div>
  </div>
 </section>
 @endif
@@ -854,20 +837,20 @@ z uzgodnionym transportem.</p></article>
   <div class="certi-main">
    <div class="certi-copy"><div class="eyebrow">CERTICHECK · DODATKOWE MATERIAŁY</div><h2>Więcej niż opis<br>i zdjęcia.</h2><p>Przy wybranych samochodach do ogłoszenia dokładamy pomiary i materiały pokazujące stan auta.</p>
     <div class="certi-features">
-     <div><svg aria-hidden="true"><use href="#onas-search"/></svg><div><h3>Pomiary lakieru</h3><p>Grubość powłoki w wybranych punktach.</p></div></div>
-     <div><svg aria-hidden="true"><use href="#onas-tire"/></svg><div><h3>Pomiary opon</h3><p>Zmierzona głębokość bieżnika.</p></div></div>
-     <div><svg aria-hidden="true"><use href="#onas-camera"/></svg><div><h3>Stan wizualny</h3><p>Ujęcia nadwozia, wnętrza i detali.</p></div></div>
-     <div><svg aria-hidden="true"><use href="#onas-pin"/></svg><div><h3>Ślady eksploatacji</h3><p>Zauważone ślady zaznaczone na mapie auta.</p></div></div>
+     <div><x-icon name="scan-line" size="21"/><div><h3>Pomiary lakieru</h3><p>Grubość powłoki w wybranych punktach.</p></div></div>
+     <div><x-icon name="tabler:wheel" size="21"/><div><h3>Pomiary opon</h3><p>Zmierzona głębokość bieżnika.</p></div></div>
+     <div><x-icon name="camera" size="21"/><div><h3>Stan wizualny</h3><p>Ujęcia nadwozia, wnętrza i detali.</p></div></div>
+     <div><x-icon name="map-pin" size="21"/><div><h3>Ślady eksploatacji</h3><p>Zauważone ślady zaznaczone na mapie auta.</p></div></div>
     </div>
-    <a class="text-link" href="{{ route('certicheck.landing') }}">Poznaj CertiCheck <svg aria-hidden="true"><use href="#onas-arrow"/></svg></a>
+    <a class="text-link" href="{{ route('certicheck.landing') }}">Poznaj CertiCheck <x-icon name="arrow-right" size="16"/></a>
    </div>
    @if($checkTabs)
    <div class="check-viewer">
     <div class="check-header"><strong>Zajrzyj do CertiCheck</strong><span>PRZYKŁADOWE AUTO · {{ $sc['name'] }}</span></div>
     <div class="check-tabs" role="tablist" aria-label="Materiały CertiCheck">
-     @if(in_array('paint', $checkTabs))<button id="check-paint" type="button" role="tab" aria-selected="{{ $checkTabs[0] === 'paint' ? 'true' : 'false' }}" aria-controls="paint-panel"><svg aria-hidden="true"><use href="#onas-search"/></svg>Lakier</button>@endif
-     @if(in_array('tires', $checkTabs))<button id="check-tires" type="button" role="tab" aria-selected="{{ $checkTabs[0] === 'tires' ? 'true' : 'false' }}" aria-controls="tires-panel"><svg aria-hidden="true"><use href="#onas-tire"/></svg>Opony</button>@endif
-     @if(in_array('wear', $checkTabs))<button id="check-wear" type="button" role="tab" aria-selected="{{ $checkTabs[0] === 'wear' ? 'true' : 'false' }}" aria-controls="wear-panel"><svg aria-hidden="true"><use href="#onas-pin"/></svg>Stan i ślady</button>@endif
+     @if(in_array('paint', $checkTabs))<button id="check-paint" type="button" role="tab" aria-selected="{{ $checkTabs[0] === 'paint' ? 'true' : 'false' }}" aria-controls="paint-panel"><x-icon name="scan-line" size="16"/>Lakier</button>@endif
+     @if(in_array('tires', $checkTabs))<button id="check-tires" type="button" role="tab" aria-selected="{{ $checkTabs[0] === 'tires' ? 'true' : 'false' }}" aria-controls="tires-panel"><x-icon name="tabler:wheel" size="16"/>Opony</button>@endif
+     @if(in_array('wear', $checkTabs))<button id="check-wear" type="button" role="tab" aria-selected="{{ $checkTabs[0] === 'wear' ? 'true' : 'false' }}" aria-controls="wear-panel"><x-icon name="map-pin" size="16"/>Stan i ślady</button>@endif
     </div>
     <div class="check-panels">
      @if(in_array('paint', $checkTabs))
@@ -880,8 +863,8 @@ z uzgodnionym transportem.</p></article>
      <div id="tires-panel" role="tabpanel" aria-labelledby="check-tires" @if($checkTabs[0] !== 'tires') hidden @endif>
       <h3>Koła i opony</h3><p>{{ $check['tires']['mounted'] ? 'Zamontowany komplet' : 'Komplet opon' }} · głębokość bieżnika.</p>
       <div class="tires-grid">@foreach($check['tires']['rows'] as $t)<div class="tire-reading"><div><strong>{{ $t['label'] }}</strong>@if($t['type'])<span>{{ $t['type'] }}</span>@endif</div><b @class([$t['status'] => $t['status'] !== 'ok'])>{{ $t['depth'] }} <small>mm</small></b></div>@endforeach</div>
-      <div class="wheel-info">@if($check['tires']['rim'])<span><svg aria-hidden="true"><use href="#onas-wheel"/></svg>{{ $check['tires']['rim'] }}</span>@else<span></span>@endif
-       @if($check['tires']['anyIssue'])<strong class="warn"><svg aria-hidden="true"><use href="#onas-info"/></svg>Wymaga uwagi</strong>@else<strong><svg aria-hidden="true"><use href="#onas-check"/></svg>Stan bardzo dobry</strong>@endif</div>
+      <div class="wheel-info">@if($check['tires']['rim'])<span><x-icon name="armchair" size="16"/>{{ $check['tires']['rim'] }}</span>@else<span></span>@endif
+       @if($check['tires']['anyIssue'])<strong class="warn"><x-icon name="info" size="15"/>Wymaga uwagi</strong>@else<strong><x-icon name="check" size="15"/>Stan bardzo dobry</strong>@endif</div>
      </div>
      @endif
      @if(in_array('wear', $checkTabs))
@@ -892,11 +875,11 @@ z uzgodnionym transportem.</p></article>
      </div>
      @endif
     </div>
-    <a class="check-footer" href="{{ $sc['checkUrl'] }}">Zobacz materiały w ogłoszeniu <svg aria-hidden="true"><use href="#onas-arrow"/></svg></a>
+    <a class="check-footer" href="{{ $sc['checkUrl'] }}">Zobacz materiały w ogłoszeniu <x-icon name="arrow-right" size="16"/></a>
    </div>
    @endif
   </div>
-  <div class="scope-note"><svg aria-hidden="true"><use href="#onas-info"/></svg><p>CertiCheck jest dostępny przy wybranych autach. Zakres materiałów zależy od samochodu i nie zastępuje jego oględzin.</p></div>
+  <div class="scope-note"><x-icon name="info" size="15"/><p>CertiCheck jest dostępny przy wybranych autach. Zakres materiałów zależy od samochodu i nie zastępuje jego oględzin.</p></div>
  </div>
 </section>
 
@@ -905,17 +888,17 @@ z uzgodnionym transportem.</p></article>
   <div class="section-intro service-intro"><div><div class="eyebrow">NASZE USŁUGI</div><h2>Wsparcie przy zakupie<br>i po odbiorze auta.</h2></div><p>Zakres pomocy dobieramy<br>
 do Twoich potrzeb.</p></div>
   <div class="service-grid">
-   <article><div class="icon"><svg aria-hidden="true"><use href="#onas-coins"/></svg></div><div><h3>Kredyt i leasing</h3><p>Pomagamy zorganizować<br>
+   <article><div class="icon"><x-icon name="wallet" size="24"/></div><div><h3>Kredyt i leasing</h3><p>Pomagamy zorganizować<br>
 finansowanie zakupu.</p></div></article>
-   <article><div class="icon"><svg aria-hidden="true"><use href="#onas-file"/></svg></div><div><h3>Rejestracja auta</h3><p>Możemy zająć się formalnościami<br>
+   <article><div class="icon"><x-icon name="file-text" size="24"/></div><div><h3>Rejestracja auta</h3><p>Możemy zająć się formalnościami<br>
 związanymi z rejestracją.</p></div></article>
-   <article><div class="icon"><svg aria-hidden="true"><use href="#onas-shield"/></svg></div><div><h3>Ubezpieczenie OC / AC</h3><p>Pomagamy dobrać polisę<br>
+   <article><div class="icon"><x-icon name="shield-check" size="24"/></div><div><h3>Ubezpieczenie OC / AC</h3><p>Pomagamy dobrać polisę<br>
 do samochodu.</p></div></article>
-   <article><div class="icon"><svg aria-hidden="true"><use href="#onas-truck"/></svg></div><div><h3>Transport pod dom</h3><p>Ustalamy adres, termin<br>
+   <article><div class="icon"><x-icon name="truck" size="24"/></div><div><h3>Transport pod dom</h3><p>Ustalamy adres, termin<br>
 i koszt dowozu samochodu.</p></div></article>
-   <article><div class="icon"><svg aria-hidden="true"><use href="#onas-tool"/></svg></div><div><h3>Pierwszy serwis</h3><p>Organizujemy uzgodniony<br>
+   <article><div class="icon"><x-icon name="wrench" size="24"/></div><div><h3>Pierwszy serwis</h3><p>Organizujemy uzgodniony<br>
 serwis eksploatacyjny.</p></div></article>
-   <article><div class="icon"><svg aria-hidden="true"><use href="#onas-shield"/></svg></div><div><h3>Gwarancja GetHelp</h3><p>Zapytaj o dostępne pakiety<br>
+   <article><div class="icon"><x-icon name="shield-check" size="24"/></div><div><h3>Gwarancja GetHelp</h3><p>Zapytaj o dostępne pakiety<br>
 i warunki ochrony.</p></div></article>
   </div>
   <p class="services-note">Zapytaj również o wymianę opon i usuwanie wgnieceń. Zakres, dostępność i koszt usług ustalamy indywidualnie.</p>
@@ -924,27 +907,27 @@ i warunki ochrony.</p></div></article>
 
 <section id="07-odleglosc" class="remote-section remote-v2">
  <div class="wide remote-panel">
-  <div class="remote-copy"><div class="eyebrow">ZAKUP NA ODLEGŁOŚĆ</div><h2>Mieszkasz dalej?<br>Poznaj auto na odległość.</h2><p>Umów prezentację wideo, poproś o dodatkowe ujęcia i omów szczegóły auta. Jeśli zdecydujesz się na zakup, ustalimy formalności oraz odbiór lub transport.</p><a class="text-link" href="tel:+48515440623">Zapytaj o zakup na odległość <svg aria-hidden="true"><use href="#onas-arrow"/></svg></a></div>
+  <div class="remote-copy"><div class="eyebrow">ZAKUP NA ODLEGŁOŚĆ</div><h2>Mieszkasz dalej?<br>Poznaj auto na odległość.</h2><p>Umów prezentację wideo, poproś o dodatkowe ujęcia i omów szczegóły auta. Jeśli zdecydujesz się na zakup, ustalimy formalności oraz odbiór lub transport.</p><a class="text-link" href="tel:+48515440623">Zapytaj o zakup na odległość <x-icon name="arrow-right" size="16"/></a></div>
   <div class="remote-visual">
    <div class="laptop">
     <div class="laptop-screen">
-     <div class="call-top"><div><svg aria-hidden="true"><use href="#onas-video"/></svg><span>Prezentacja samochodu</span></div><span class="call-indicator"></span></div>
+     <div class="call-top"><div><x-icon name="video" size="11"/><span>Prezentacja samochodu</span></div><span class="call-indicator"></span></div>
      <div class="call-main">
       <img class="car-render" src="/img/about/prezentacja-auto.webp" width="640" height="427" alt="Poglądowa ilustracja samochodu na ekranie prezentacji" loading="lazy" decoding="async">
-      <div class="call-thumb"><svg aria-hidden="true"><use href="#onas-video"/></svg></div>
+      <div class="call-thumb"><x-icon name="video" size="11"/></div>
      </div>
-     <div class="call-controls"><span><svg aria-hidden="true"><use href="#onas-mic"/></svg></span><span class="hangup"><svg aria-hidden="true"><use href="#onas-phone"/></svg></span><span><svg aria-hidden="true"><use href="#onas-video"/></svg></span></div>
+     <div class="call-controls"><span><x-icon name="mic" size="11"/></span><span class="hangup"><x-icon name="phone" size="11"/></span><span><x-icon name="video" size="11"/></span></div>
     </div>
     <div class="laptop-base"><i></i></div>
    </div>
   </div>
-  <div class="remote-list"><div><svg aria-hidden="true"><use href="#onas-video"/></svg><span>Prezentacja wideo</span></div><div><svg aria-hidden="true"><use href="#onas-camera"/></svg><span>Dodatkowe zdjęcia</span></div><div><svg aria-hidden="true"><use href="#onas-truck"/></svg><span>Ustalenie odbioru</span></div></div>
+  <div class="remote-list"><div><x-icon name="video" size="17"/><span>Prezentacja wideo</span></div><div><x-icon name="camera" size="17"/><span>Dodatkowe zdjęcia</span></div><div><x-icon name="truck" size="17"/><span>Ustalenie odbioru</span></div></div>
  </div>
 </section>
 
 <section id="08-kontakt" class="contact-section">
  <div class="wide contact-panel"><div><h2>Porozmawiajmy<br>o Twoim kolejnym aucie.</h2><p>Powiedz, czego szukasz i jaki masz budżet.<br>
-Pomożemy sprawdzić dostępne możliwości.</p></div><div class="contact-actions"><a href="tel:+48515440623" class="button primary"><svg aria-hidden="true"><use href="#onas-phone"/></svg>Zadzwoń 515 440 623</a><a class="text-link light-link" href="{{ route('catalog') }}">Zobacz dostępne auta <svg aria-hidden="true"><use href="#onas-arrow"/></svg></a></div></div>
+Pomożemy sprawdzić dostępne możliwości.</p></div><div class="contact-actions"><a href="tel:+48515440623" class="button primary"><x-icon name="phone" size="16"/>Zadzwoń 515 440 623</a><a class="text-link light-link" href="{{ route('catalog') }}">Zobacz dostępne auta <x-icon name="arrow-right" size="16"/></a></div></div>
 </section>
 </div>
 @endsection
