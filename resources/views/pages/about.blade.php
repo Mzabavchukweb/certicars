@@ -5,10 +5,6 @@
 @section('og_title','O nas — komis samochodowy pod Stargardem | CertiCars')
 @section('og_description','CertiCars z Lipnika koło Stargardu — auta osobowe i dostawcze. Pokazujemy dostępne informacje o autach i pomagamy przejść przez zakup: formalności, ubezpieczenie, transport, zakup na odległość.')
 
-@section('extra_head')
-    {{-- Strona „O nas” jest złożona krojem Manrope (zaakceptowany projekt); reszta serwisu zostaje na Plus Jakarta Sans. --}}
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-@endsection
 
 @section('styles')
 /* =====================================================================
@@ -645,7 +641,7 @@
 .onas .remote-list>div{font-size:10px}}
 
 /* ---------- Wdrożenie w serwisie ---------- */
-.onas{font-family:Manrope,var(--font-body);line-height:normal;text-rendering:auto}
+.onas{font-family:var(--font-body);line-height:normal;text-rendering:auto}
 .onas h1,.onas h2,.onas h3,.onas h4{font-family:inherit}
 /* globalny .container serwisu ma max-width i padding, tutaj szerokość daje projekt */
 .onas .container{max-width:none;padding:0}
@@ -662,6 +658,25 @@
 .onas .tire-reading>b.warn{color:#b45309;background:#fef3c7}
 .onas .tire-reading>b.bad{color:#b91c1c;background:#fee2e2}
 .onas .wheel-info>strong.warn{color:#b45309}
+
+/* ===== Spójność z resztą serwisu (31.10.2026): krój, przyciski, nagłówki i etykiety jak na stronie głównej,
+   w CertiChecku i Kontakcie. Układ i treść zostają z projektu. ===== */
+.onas{--blue:#0066ff;font-family:var(--font-body)}
+.onas h1,.onas h2{font-weight:900}
+.onas h1{letter-spacing:-1.6px}
+.onas h2{letter-spacing:-.9px}
+.onas h3{font-weight:800;letter-spacing:-.3px}
+.onas .brand-motto span{font-weight:700}
+.onas .eyebrow{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+.onas .button{height:auto;padding:15px 26px;border-radius:12px;font-size:15px;font-weight:700;gap:8px;line-height:1;letter-spacing:.1px}
+.onas .button svg{width:16px;height:16px;stroke-width:2.2}
+.onas .primary{background:var(--blue);color:#fff;box-shadow:0 8px 24px rgba(0,102,255,.4)}
+.onas .secondary{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.35)}
+.onas .contact-actions .button{height:auto;font-size:15px}
+.onas .text-link{font-size:14px;font-weight:700;gap:8px}
+.onas .text-link svg{width:16px;height:16px}
+.onas .viewer-tabs button,.onas .check-tabs button{font-weight:700}
+@media(max-width:760px){.onas .button,.onas .hero .button,.onas .contact-actions .button{height:auto;padding:13px 16px;font-size:14px;border-radius:12px}.onas .eyebrow{font-size:10.5px;letter-spacing:1.8px}}
 @endsection
 
 @section('content')
