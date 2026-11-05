@@ -342,21 +342,22 @@ class Car extends Model
         if ($this->first_registration) $parts[] = $this->first_registration;
         if ($this->mileage) $parts[] = number_format($this->mileage, 0, ',', ' ') . ' km';
         if ($this->price) $parts[] = $this->formatted_price;
-        return trim(implode(' · ', array_filter($parts)));
+        return trim(implode(' · ', array_filter($parts))) . ' | CertiCars';
     }
 
     public function getSeoDescriptionAttribute(): string
     {
         if ($this->meta_description) return $this->meta_description;
         $bits = [];
-        if ($this->first_registration) $bits[] = 'Rok ' . $this->first_registration;
+        if ($this->first_registration) $bits[] = 'rok ' . $this->first_registration;
         if ($this->mileage) $bits[] = 'przebieg ' . number_format($this->mileage, 0, ',', ' ') . ' km';
-        if ($this->fuel_type) $bits[] = $this->fuel_type;
+        if ($this->fuel_type) $bits[] = mb_strtolower($this->fuel_type);
         if ($this->power_hp) $bits[] = $this->power_hp . ' KM';
-        if ($this->transmission) $bits[] = $this->transmission;
-        $tail = $bits ? ' — ' . implode(', ', $bits) . '.' : '.';
-        $price = $this->price ? ' Cena: ' . $this->formatted_price . '.' : '';
-        return trim("Sprawdź ofertę: {$this->title}{$tail}{$price} Certyfikowany samochód używany w CertiCars.");
+        if ($this->transmission) $bits[] = mb_strtolower($this->transmission);
+        $tail = $bits ? ': ' . implode(', ', $bits) . '.' : '.';
+        $price = $this->price ? ' Cena ' . $this->formatted_price . '.' : '';
+        $check = $this->has_certicheck ? ' Raport CertiCheck w ogłoszeniu.' : '';
+        return trim("{$this->title}{$tail}{$price} Komis CertiCars, Lipnik koło Stargardu, jazda próbna.{$check}");
     }
 
     public function getExistingDamagesCountAttribute(): int

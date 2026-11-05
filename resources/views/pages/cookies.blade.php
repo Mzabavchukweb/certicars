@@ -1,7 +1,7 @@
 @extends('layouts.public')
 @section('meta_title_full','Polityka plików cookies | CertiCars')
 @section('title','Polityka plików cookies')
-@section('description','Polityka plików cookies serwisu CertiCars — jakie pliki cookies stosujemy, w jakim celu oraz jak zarządzać zgodami.')
+@section('description','Polityka plików cookies serwisu CertiCars: jakie pliki cookies stosujemy, w jakim celu oraz jak zarządzać zgodami.')
 
 @section('styles')
 @include('pages.partials.legal-styles')

@@ -1,614 +1,689 @@
 @extends('layouts.public')
-@section('meta_title_full','CertiCheck — rozszerzona prezentacja wybranych aut | CertiCars')
-@section('title','CertiCheck — rozszerzona prezentacja wybranych aut')
-@section('description','CertiCheck to rozszerzona prezentacja wybranych samochodów w CertiCars: pomiary lakieru, stan opon, mapa śladów, nagranie pracy silnika oraz dokumenty — abyś wiedział więcej przed przyjazdem.')
-@section('og_title','CertiCheck — rozszerzona prezentacja wybranych aut | CertiCars')
-@section('og_description','Pomiary lakieru, stan opon, mapa zauważonych śladów, nagranie pracy silnika i dokumenty. Poznaj auto jeszcze przed oględzinami.')
+@section('meta_title_full','CertiCheck: pomiar lakieru, opony i 360° auta | CertiCars')
+@section('title','CertiCheck: pomiar lakieru, opony i 360° auta')
+@section('description','Sprawdź auto przed zakupem: pomiary grubości lakieru, głębokość bieżnika, zdjęcia śladów użytkowania i widok 360°. CertiCheck przy wybranych autach CertiCars.')
+@section('og_title','CertiCheck: pomiar lakieru, opony i 360° auta | CertiCars')
+@section('og_description','Sprawdź auto przed zakupem: pomiary grubości lakieru, głębokość bieżnika, zdjęcia śladów użytkowania i widok 360°. CertiCheck przy wybranych autach CertiCars.')
+
+@php
+    // Projekt z 4.11.2026 (podgląd interaktywny v3). Wszystkie liczby, zdjęcia i 360° pochodzą
+    // z ogłoszenia auta pokazowego (App\Support\AboutShowcase, to samo auto co na „O nas”).
+    // Brak danych w danej części = ta część się nie pokazuje, nic nie jest wpisane na sztywno.
+    $sc       = $showcase;
+    $check    = $sc['check'] ?? null;
+    $hasOut   = $sc && ($sc['exterior'] || $sc['poster']);
+    $outSpins = $sc && $sc['exterior'];
+    $hasIn    = $sc && $sc['interior'];
+    $paint    = $check['paint']['items'] ?? [];
+    $tires    = $check['tires'] ?? null;
+    $dmg      = $check['damages']['items'] ?? [];
+    $dmgN     = count($dmg);
+
+    $tabs = [];
+    if ($hasOut) $tabs[] = 'outside';
+    if ($hasIn)  $tabs[] = 'inside';
+    if ($paint)  $tabs[] = 'paint';
+    if ($tires)  $tabs[] = 'tires';
+    if ($dmg)    $tabs[] = 'wear';
+    $first = $tabs[0] ?? null;
+
+    $tabLabel = [
+        'outside' => [$outSpins ? '360° nadwozia' : 'Nadwozie', 'car'],
+        'inside'  => ['360° wnętrza', 'armchair'],
+        'paint'   => ['Lakier', 'scan-line'],
+        'tires'   => ['Koła i opony', 'tabler:wheel'],
+        'wear'    => ['Stan i ślady', 'map-pin'],
+    ];
+    $nextLabel = [
+        'outside' => $outSpins ? 'Wróć do widoku 360°' : 'Zobacz nadwozie',
+        'inside'  => 'Zajrzyj do wnętrza',
+        'paint'   => 'Sprawdź pomiary lakieru',
+        'tires'   => 'Sprawdź koła i opony',
+        'wear'    => 'Zobacz stan i ślady',
+    ];
+    $nextTab = function (string $t) use ($tabs) {
+        return $tabs[(array_search($t, $tabs, true) + 1) % count($tabs)];
+    };
+
+    $carName  = $sc['name'] ?? null;
+    $tireType = $tires['rows'][0]['type'] ?? null;
+    $miejsca  = $dmgN === 1 ? 'Jedno sfotografowane miejsce'
+              : ($dmgN % 10 >= 2 && $dmgN % 10 <= 4 && ($dmgN % 100 < 12 || $dmgN % 100 > 14)
+                  ? $dmgN . ' sfotografowane miejsca' : $dmgN . ' sfotografowanych miejsc');
+
+    $faqs = [
+        ['Czy każde auto w ofercie ma CertiCheck?', 'Nie. CertiCheck jest dostępny przy wybranych samochodach. Jego materiały znajdziesz w ogłoszeniu konkretnego auta.'],
+        ['Czy każdy CertiCheck zawiera te same materiały?', 'Zakres może się różnić między autami. W ogłoszeniu zobaczysz, jakie pomiary, zdjęcia i dostępne dokumenty przygotowaliśmy dla danego egzemplarza.'],
+        ['Jak odczytywać pomiary lakieru?', 'Odczyt w mikrometrach pokazuje grubość powłoki w miejscu pomiaru. Sam wynik nie przesądza o historii samochodu. Warto zestawić go ze zdjęciami, dokumentami i oględzinami.'],
+        ['Czy mogę sprawdzić auto w wybranym serwisie?', 'Tak. Skontaktuj się z nami przed wizytą, żeby ustalić miejsce, termin i szczegóły dodatkowego sprawdzenia.'],
+        ['Gdzie znajdę pełne materiały?', 'W ogłoszeniu samochodu objętego CertiCheck. Jeśli potrzebujesz dodatkowego zdjęcia lub wyjaśnienia odczytu, zadzwoń. Porozmawiamy o konkretnym aucie.'],
+    ];
+@endphp
+
+@section('extra_head')
+<script type="application/ld+json">{!! json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'FAQPage',
+    'mainEntity' => array_map(fn ($f) => [
+        '@type' => 'Question',
+        'name' => $f[0],
+        'acceptedAnswer' => ['@type' => 'Answer', 'text' => $f[1]],
+    ], $faqs),
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+@endsection
 
 @section('styles')
-:root{--cc-blue:#0066ff;--cc-blue-d:#0052cc;--cc-ink:#0a0a0a;--cc-muted:#475569;--cc-line:#e5edfa;--cc-bg:#f6f8fc}
+@include('partials.onas-styl')
+/* ===== CertiCheck (projekt 4.11.2026) w systemie strony „O nas” ===== */
+.onas .cc-hero .hero-art img{width:600px;right:-46px;bottom:56px}
+.onas .cc-hero .hero-glow{right:40px;top:90px;width:560px}
+.onas .cc-hero-note{display:flex;align-items:center;gap:9px;margin-top:22px;font-size:13px;color:rgba(255,255,255,.62)}
+.onas .cc-hero-note svg{width:16px;height:16px;color:#8fc3ff}
 
-/* ===== HERO ===== */
-/* Seamless light→blue gradient across the whole band; the hero character's
-   own light-blue background melts into it (edges masked), so the panel +
-   character read as ONE composed scene. Kept intentionally short. */
-/* Horizontal wash: LEFT stays the panel graphic's own light background
-   (#f4f6fd) so certicheck.png melts in; it glides across to the character's
-   own bluish backdrop on the RIGHT so the figure melts in too. Both graphics
-   sit on a colour that matches their baked-in background — no hard block. */
-.cclp-hero{position:relative;overflow:hidden;isolation:isolate;padding:40px 0;background:linear-gradient(95deg, #f4f6fd 0%, #f4f6fd 40%, #ebf1fc 56%, #dbe6fb 74%, #cddcfa 88%, #cddcfa 100%)}
-.cclp-in{max-width:1200px;margin:0 auto;padding:0 24px}
-.cclp-hero-in{max-width:1200px;margin:0 auto;padding:0 24px;position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,0.92fr) minmax(0,1.22fr);gap:20px;align-items:center}
-.cclp-eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11px;font-weight:800;color:var(--cc-blue);text-transform:uppercase;letter-spacing:1.8px;margin-bottom:16px}
-.cclp-eyebrow::before{content:'';width:24px;height:1.5px;background:var(--cc-blue);border-radius:1px}
-.cclp-hero h1{font-size:48px;font-weight:900;color:var(--cc-ink);letter-spacing:-1.2px;line-height:1.05;margin:0 0 18px}
-.cclp-hero h1 .blue{color:var(--cc-blue)}
-.cclp-hero .lead{font-size:16px;color:var(--cc-muted);line-height:1.65;margin:0 0 24px;max-width:520px}
-.cclp-cta-primary{display:inline-flex;align-items:center;gap:8px;background:var(--cc-blue);color:#fff;padding:15px 26px;border-radius:12px;font-size:15px;font-weight:700;letter-spacing:.1px;text-decoration:none;box-shadow:0 8px 24px rgba(0,102,255,.4);transition:all .18s}
-.cclp-cta-primary:hover{background:var(--cc-blue-d);color:#fff;transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,102,255,.5)}
-.cclp-cta-primary svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4}
-/* Info note under the CTA — w referencji lezy bezposrednio na tle sekcji,
-   bez bialej ramki (inaczej niz cs-cc-info na home). */
-.cclp-hero-note{display:flex;align-items:flex-start;gap:10px;margin-top:26px;max-width:520px;font-size:12.5px;color:#475569;line-height:1.7}
-.cclp-hero-note svg{flex-shrink:0;width:17px;height:17px;stroke:var(--cc-blue);fill:none;stroke-width:2;margin-top:1px}
+.onas .cc-define{padding:96px 0 0}
+.onas .cc-define .human-layout{padding-bottom:56px;border-bottom:1px solid var(--line)}
+.onas .cc-define .human-story{padding-top:34px}
 
-/* Hero visual: report panel (white card) + character bled to the right.
-   Kolejnosc warstw: panel NAJNIZEJ, bohater NAD nim — tablet w jego dloni
-   nachodzi na prawa krawedz panelu (wczesniej bylo odwrotnie).
-   Pozycja panelu siedzi w zmiennych, bo badge 360° musi trzymac sie jego
-   prawej krawedzi, a jest wypiety poza panel (inaczej bohater by go zakryl,
-   bedac wyzej w stosie). */
-.cclp-hero-visual{position:relative;height:430px;--rep-l:0%;--rep-w:min(84%,478px)}
-.cclp-hero-report{position:absolute;left:var(--rep-l);top:50%;transform:translateY(-50%);z-index:1;width:var(--rep-w)}
-/* Hand-built CertiCheck report card (1:1 with the design, no image).
-   Panel jest LEKKI, nie biala karta: pol-przezroczysta biel + blur, cienka
-   jasna ramka i miekki cien. Solidne #fff z mocnym cieniem odcinalo sie od
-   gradientu sekcji jak naklejka — w referencji panel ledwo odstaje od tla. */
-.cc-rep{position:relative;background:rgba(255,255,255,.58);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.85);border-radius:26px;box-shadow:0 20px 54px rgba(15,32,72,.09);padding:24px 34px 24px 26px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;align-items:center}
-/* 360° — dziecko .cclp-hero-visual, nie panelu. Wysrodkowany na prawej
-   krawedzi panelu (calc ze zmiennych) i najwyzej w stosie, wiec bohater
-   go nie przykrywa. */
-.cc-rep-360{position:absolute;top:30px;left:calc(var(--rep-l) + var(--rep-w) - 54px);width:84px;height:84px;border-radius:50%;background:#fff;box-shadow:0 14px 30px rgba(15,32,72,.16);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;z-index:4}
-.cc-rep-360 svg{width:26px;height:16px}
-.cc-rep-360 b{font-size:13.5px;font-weight:800;color:#0066ff;letter-spacing:.2px;line-height:1}
-.cc-rep-list{display:flex;flex-direction:column}
-.cc-rep-row{display:flex;align-items:center;gap:11px;padding:14px 2px;border-top:1px solid #eef1f7}
-.cc-rep-row:first-child{border-top:0;padding-top:0}
-.cc-rep-row:last-child{padding-bottom:0}
-.cc-rep-ico{flex-shrink:0;width:40px;height:40px;border-radius:12px;background:#eef4ff;color:#0066ff;display:flex;align-items:center;justify-content:center}
-.cc-rep-ico svg,.cc-rep-ico i{width:20px !important;height:20px !important;stroke-width:1.8}
-.cc-rep-tx{min-width:0}
-.cc-rep-tx b{display:block;font-size:14px;white-space:nowrap;font-weight:800;color:#0a1a3a;letter-spacing:-.25px;line-height:1.25;margin-bottom:1px}
-.cc-rep-tx span{display:block;font-size:12.5px;color:#5b6b86;letter-spacing:-.1px;line-height:1.35}
-.cc-rep-diagram{position:relative;border-left:1px solid rgba(15,32,72,.07);padding-left:18px;display:flex;align-items:center;justify-content:flex-start;height:100%}
-/* .cc-rep-car opina sie na obrazku (inline-block), zeby numerki liczyly % od
-   sylwetki auta, a nie od calej kolumny — inaczej przy kazdej szerokosci
-   ladowaly gdzie indziej wzgledem karoserii. */
-.cc-rep-car{position:relative;display:inline-block;line-height:0}
-.cc-rep-car img{width:100%;max-width:100%;height:auto;display:block}
-/* Numerki wokol auta — jak w referencji: dach, prawy przod, prawy tyl,
-   zderzak tylny, lewy bok. */
-.cc-rep-pin{position:absolute;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;background:#0066ff;color:#fff;font-size:12.5px;font-weight:800;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(0,102,255,.35);z-index:2}
-.cc-rep-pin.p1{top:1%;left:56%}
-.cc-rep-pin.p2{top:24%;left:82%}
-.cc-rep-pin.p3{top:63%;left:82%}
-.cc-rep-pin.p4{top:97%;left:46%}
-.cc-rep-pin.p5{top:44%;left:3%}
-.cc-rep-360 i,.cc-rep-360 svg{width:21px !important;height:21px !important;stroke:#0066ff}
-/* Two masks combined (intersect):
-   1) an elliptical radial hugging the figure — fades his backdrop out all
-      around into the hero colour;
-   2) a horizontal wash whose LEFT side fades long & very soft (delicate
-      tonal transition toward the lighter text side) and whose right stays
-      cleaner. Together: seamless soft blend on the left, clean on the right.
-   Bohater ma wypalone jasnoniebieskie tlo (941x1672), wiec maski sa konieczne
-   — bez nich widac prostokat zdjecia na gradiencie sekcji. Rozmiar z wysokosci
-   (width:auto), bo proporcja jest pionowa 0.56. */
-/* Bohater jest kotwiczony do prawej krawedzi SIATKI (right:0), nie viewportu.
-   Wczesniej siedzial na krawedzi okna (ujemny right z 100vw) i przez to jego
-   odleglosc od panelu zmieniala sie z kazda szerokoscia: na 1280 tablet
-   zaslanial auto, a na 1440+ odjezdzal od panelu i nie bylo zadnego nachodzenia.
-   Teraz .cclp-hero-in ma sufit 1200px, wiec kompozycja panel → tablet → bohater
-   jest IDENTYCZNA na kazdym ekranie powyzej 1200px.
-   Kosztem jest prawa krawedz zdjecia, ktora na szerokim ekranie nie wychodzi juz
-   poza viewport — dlatego doszedl krotki fade od prawej (wczesniej niepotrzebny).
-   Gora i dol sa przyciete przez overflow:hidden sekcji. */
-.cclp-hero-char{position:absolute;right:auto;left:calc(var(--rep-l) + var(--rep-w) - 50px);bottom:-140px;height:calc(100% + 260px);width:auto;z-index:3;pointer-events:none;
-    -webkit-mask-image:linear-gradient(to right, rgba(0,0,0,0) 0, rgba(0,0,0,.55) 4%, #000 10%), linear-gradient(to left, rgba(0,0,0,0) 0, rgba(0,0,0,.55) 3%, #000 9%), linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,.5) 3%, #000 8%);
-    -webkit-mask-composite:source-in;
-            mask-image:linear-gradient(to right, rgba(0,0,0,0) 0, rgba(0,0,0,.55) 4%, #000 10%), linear-gradient(to left, rgba(0,0,0,0) 0, rgba(0,0,0,.55) 3%, #000 9%), linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,.5) 3%, #000 8%);
-            mask-composite:intersect}
+.onas .cc-materials{padding:56px 0 96px}
+.onas .cc-materials .section-intro{margin-bottom:40px}
+.onas .cc-mat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.onas .cc-mat{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:24px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:28px;color:inherit;text-decoration:none}
+.onas .cc-mat.no-visual{grid-template-columns:1fr}
+.onas .cc-over{display:block;font-size:11px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--blue)}
+.onas .cc-mat h3{font-size:18px;margin:10px 0 8px}
+.onas .cc-mat p{font-size:14px;line-height:1.65}
+.onas .cc-mat-link{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:14px;font-weight:700;color:var(--blue)}
+.onas .cc-mat-link svg{width:16px;height:16px}
+.onas .cc-mat-vis{position:relative;aspect-ratio:1;border-radius:12px;background:var(--ice);overflow:hidden;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:12px}
+.onas .cc-mat-vis img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.onas .cc-mat-vis .chip{position:absolute;left:8px;bottom:8px;display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;background:#fff;font-size:11px;font-weight:700;color:var(--ink)}
+.onas .cc-mat-vis .chip i{width:7px;height:7px;border-radius:50%;background:#f59e0b}
+.onas .cc-mini{display:flex;justify-content:space-between;align-items:baseline;gap:6px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 10px}
+.onas .cc-mini span{font-size:11px;color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.onas .cc-mini strong{font-size:19px;font-weight:800;color:var(--ink);white-space:nowrap}
+.onas .cc-mini small{font-size:10px;font-weight:600;color:var(--muted)}
+.onas .cc-tread{align-items:center;text-align:center}
+.onas .cc-tread svg{width:30px;height:30px;color:var(--blue)}
+.onas .cc-tread span{font-size:11px;color:var(--muted)}
+.onas .cc-tread strong{font-size:26px;font-weight:800;color:var(--ink);line-height:1}
+.onas .cc-tread small{font-size:12px;font-weight:600;color:var(--muted)}
+.onas .cc-mat-foot{display:flex;justify-content:space-between;gap:20px;margin-top:22px;font-size:13px;color:var(--muted)}
+.onas .cc-mat-foot p{display:flex;align-items:center;gap:8px;font-size:13px}
+.onas .cc-mat-foot svg{width:15px;height:15px;color:var(--blue)}
 
-/* ===== SECTION SHELL ===== */
-.cclp-sec{padding:96px 0}
-.cclp-sec.alt{background:var(--cc-bg)}
-.cclp-head{text-align:center;max-width:640px;margin:0 auto 56px}
-/* Centered eyebrow label with flanking hairlines — mirrors the
-   .about-section-label / .kt-section-label used on the O nas + Kontakt
-   pages so every section on the site opens the same way. */
-.cclp-eyebrow-c{font-size:11px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:var(--cc-blue);margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:10px}
-.cclp-eyebrow-c::before,.cclp-eyebrow-c::after{content:'';width:24px;height:2px;background:var(--cc-blue);border-radius:2px;opacity:.5}
-.cclp-head h2{font-size:40px;font-weight:900;letter-spacing:-.9px;color:var(--cc-ink);margin:0 0 14px;line-height:1.1}
-.cclp-head p{font-size:15.5px;color:var(--cc-muted);line-height:1.7;margin:0}
+.onas .cc-example{padding:96px 0;background:var(--ice)}
+.onas .cc-example .section-intro{margin-bottom:40px}
+.onas .cc-report{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,.04);overflow:hidden}
+.onas .cc-report-top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding:24px 26px 0}
+.onas .cc-report-top h3{font-size:22px;margin-top:6px}
+.onas .cc-report-top .tag{font-size:12px;font-weight:600;color:var(--muted);background:var(--ice);border-radius:8px;padding:7px 11px;white-space:nowrap}
+.onas .cc-tabs{display:flex;gap:4px;margin:18px 26px 0;padding:4px;background:#f2f6fc;border-radius:10px;overflow-x:auto;scrollbar-width:none}
+.onas .cc-tabs::-webkit-scrollbar{display:none}
+.onas .cc-tabs button{flex:1 0 auto;display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 14px;border:0;border-radius:8px;background:transparent;font:inherit;font-size:13px;font-weight:700;color:#637895;white-space:nowrap;cursor:pointer}
+.onas .cc-tabs button svg{width:16px;height:16px}
+.onas .cc-tabs button[aria-selected=true]{background:#fff;color:var(--blue);box-shadow:0 2px 7px #213f6d14}
+.onas .cc-panel{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;padding:22px 26px 26px}
+.onas .cc-panel[hidden]{display:none}
+.onas .cc-panel .viewer-stage{border-radius:12px;aspect-ratio:16/10}
+.onas .viewer-stage>.cc-media{position:absolute;inset:0}
+.onas .cc-panel .viewer-badge{left:14px;top:14px}
+.onas .cc-pane{border:1px solid var(--line);border-radius:12px;padding:24px;min-width:0}
+.onas .cc-pane>h4{font-size:18px;font-weight:800;color:var(--ink)}
+.onas .cc-pane>p{font-size:13.5px;margin-top:4px}
+.onas .cc-pane .paint-grid{margin-top:18px}
+.onas .cc-pane .reading-note{font-size:12px;color:var(--muted);margin-top:14px}
+.onas .cc-aside{display:flex;flex-direction:column;background:var(--ice);border-radius:12px;padding:24px}
+.onas .cc-aside h3{font-size:22px;line-height:1.2;margin:10px 0 12px}
+.onas .cc-aside>p{font-size:14px;line-height:1.7}
+.onas .cc-point{display:flex;gap:12px;margin-top:18px}
+.onas .cc-point>svg{width:20px;height:20px;color:var(--blue);margin-top:2px}
+.onas .cc-point strong{display:block;font-size:14px;color:var(--ink)}
+.onas .cc-point span{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.onas .cc-tip{font-size:12.5px;line-height:1.65;color:var(--muted);border-top:1px solid #dfe8f5;margin-top:18px;padding-top:16px}
+.onas .cc-next{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;width:100%;min-height:48px;padding:12px 16px;border:1px solid #cdddf7;border-radius:12px;background:#fff;font:inherit;font-size:14px;font-weight:700;color:var(--blue);cursor:pointer;text-align:left}
+.onas .cc-aside .cc-tip+.cc-next,.onas .cc-aside .cc-point+.cc-next{margin-top:22px}
+.onas .cc-next svg{width:16px;height:16px;flex-shrink:0}
+.onas .cc-report-foot{display:flex;justify-content:space-between;align-items:center;gap:16px;border-top:1px solid var(--line);padding:16px 26px;font-size:13px;color:var(--muted)}
+.onas .cc-report-foot p{display:flex;align-items:center;gap:8px;font-size:13px}
+.onas .cc-report-foot p svg{width:15px;height:15px;color:var(--blue)}
+.onas .cc-example-note{text-align:center;font-size:12.5px;margin-top:18px}
 
-/* ===== BENEFITS (6 cards) ===== */
-.cclp-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.cclp-card{background:#fff;border:1px solid var(--cc-line);border-radius:12px;padding:36px 32px;transition:border-color .15s}
-.cclp-card:hover{border-color:var(--cc-blue)}
-.cclp-card-ico{width:60px;height:60px;border-radius:16px;background:#eef4ff;color:var(--cc-blue);display:flex;align-items:center;justify-content:center;margin-bottom:22px}
-.cclp-card-ico svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.8}
-.cclp-card h3{font-size:19px;font-weight:800;color:var(--cc-ink);margin:0 0 12px;letter-spacing:-.3px;line-height:1.25}
-.cclp-card p{font-size:14.5px;color:var(--cc-muted);line-height:1.75;margin:0}
+.onas .cc-process{padding:96px 0}
+.onas .cc-scope{padding:96px 0;background:var(--ice)}
+.onas .cc-scope-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.onas .cc-scope-col{display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.onas .cc-scope-head{display:flex;align-items:center;gap:14px;padding:24px 26px;border-bottom:1px solid var(--line)}
+.onas .cc-scope-head .ico{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:var(--blue);color:#fff;flex-shrink:0}
+.onas .cc-scope-col.no .cc-scope-head .ico{background:#eef2f7;color:#475569}
+.onas .cc-scope-head .ico svg{width:20px;height:20px}
+.onas .cc-scope-head h3{font-size:20px;margin-top:3px}
+.onas .cc-scope-col ul{list-style:none;margin:0;padding:6px 26px 10px;flex:1}
+.onas .cc-scope-col li{display:grid;grid-template-columns:20px 1fr;gap:12px;padding:18px 0;border-top:1px solid #eef2f8}
+.onas .cc-scope-col li:first-child{border-top:0}
+.onas .cc-scope-col li>svg{width:18px;height:18px;margin-top:2px;color:var(--blue)}
+.onas .cc-scope-col.no li>svg{color:#64748b}
+.onas .cc-scope-col h4{font-size:15px;font-weight:800;color:var(--ink)}
+.onas .cc-scope-col li p{font-size:13.5px;line-height:1.65;margin-top:4px}
+.onas .cc-scope-docs{display:flex;align-items:flex-start;gap:9px;background:#f8fafd;border-top:1px solid var(--line);padding:16px 26px;font-size:13px;color:var(--muted)}
+.onas .cc-scope-docs svg{width:16px;height:16px;color:var(--blue);margin-top:2px}
+.onas .cc-scope-bottom{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-top:24px;padding-top:18px;border-top:1px solid #dfe8f5}
+.onas .cc-scope-bottom p{display:flex;align-items:center;gap:8px;font-size:13px}
+.onas .cc-scope-bottom p svg{width:15px;height:15px;color:var(--blue)}
 
-/* ===== PRACTICE (example report) ===== */
-.cclp-practice-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:26px}
-.cclp-ptab{border:1px solid var(--cc-line);background:#fff;color:#475569;font-size:13px;font-weight:700;padding:9px 16px;border-radius:50px;cursor:pointer;transition:all .15s}
-.cclp-ptab:hover{border-color:#c7d8f5}
-.cclp-ptab.active{background:var(--cc-blue);border-color:var(--cc-blue);color:#fff;box-shadow:0 6px 16px rgba(0,102,255,.28)}
-.cclp-report-card{background:#fff;border:1px solid var(--cc-line);border-radius:18px;padding:22px;box-shadow:0 12px 40px rgba(15,32,72,.06);display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:22px;align-items:stretch}
-.cclp-rc-visual{position:relative;background:linear-gradient(180deg,#f7f9fd,#eef3fb);border-radius:16px;overflow:hidden;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.cclp-rc-car{width:78%;max-width:360px;filter:drop-shadow(0 18px 22px rgba(15,32,72,.20))}
-.cclp-rc-turn{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);width:74%;height:38px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,102,255,.14),rgba(0,102,255,0) 70%);border:2px solid rgba(0,102,255,.18)}
-.cclp-rc-360{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);font-size:12px;font-weight:800;color:var(--cc-blue);letter-spacing:1px;display:flex;align-items:center;gap:6px}
-.cclp-rc-360 svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2}
-.cclp-rc-caption{position:absolute;top:14px;left:14px;background:rgba(10,20,50,.82);color:#fff;font-size:11.5px;font-weight:600;padding:6px 12px;border-radius:50px;backdrop-filter:blur(4px)}
-.cclp-rc-info{display:flex;flex-direction:column}
-.cclp-rc-title{font-size:22px;font-weight:900;color:var(--cc-ink);letter-spacing:-.4px;margin:0 0 4px}
-.cclp-rc-sub{font-size:13px;color:var(--cc-muted);margin:0 0 16px}
-.cclp-rc-sub b{color:#334155;font-weight:700}
-.cclp-rc-specs{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;margin-bottom:16px}
-.cclp-rc-spec{display:flex;align-items:center;gap:10px}
-.cclp-rc-spec .ico{flex-shrink:0;width:34px;height:34px;border-radius:9px;background:#f1f5fb;color:var(--cc-blue);display:flex;align-items:center;justify-content:center}
-.cclp-rc-spec .ico svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.9}
-.cclp-rc-spec .txt small{display:block;font-size:10.5px;color:#94a3b8;text-transform:uppercase;letter-spacing:.4px;font-weight:700}
-.cclp-rc-spec .txt b{font-size:13px;color:var(--cc-ink);font-weight:700}
-.cclp-rc-summary{margin-top:auto;background:#f7f9fd;border:1px solid var(--cc-line);border-radius:14px;padding:14px 16px}
-.cclp-rc-sumrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid #eaeff6}
-.cclp-rc-sumrow:first-child{border-top:0}
-.cclp-rc-sumrow .lbl b{display:block;font-size:12.5px;font-weight:700;color:var(--cc-ink)}
-.cclp-rc-sumrow .lbl span{font-size:11px;color:#94a3b8}
-.cclp-rc-badge{flex-shrink:0;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center}
-.cclp-rc-badge.ok{background:#dcfce7;color:#16a34a}
-.cclp-rc-badge.warn{background:#fef3c7;color:#d97706}
-.cclp-rc-badge svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:3}
-.cclp-rc-cta{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;background:var(--cc-blue);color:#fff;padding:12px;border-radius:12px;font-size:13.5px;font-weight:700;text-decoration:none;transition:background .15s}
-.cclp-rc-cta:hover{background:var(--cc-blue-d);color:#fff}
-.cclp-rc-cta svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4}
-.cclp-practice-note{display:flex;align-items:center;gap:10px;justify-content:center;max-width:820px;margin:22px auto 0;font-size:12.5px;color:#64748b;line-height:1.6}
-.cclp-practice-note svg{flex-shrink:0;width:16px;height:16px;stroke:var(--cc-blue);fill:none;stroke-width:2}
+.onas .cc-faq{padding:96px 0}
+.onas .cc-faq-layout{display:grid;grid-template-columns:360px minmax(0,1fr);gap:64px;align-items:start}
+.onas .cc-faq-list{background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 24px}
+.onas .cc-faq-list details{border-top:1px solid #eef2f8}
+.onas .cc-faq-list details:first-child{border-top:0}
+.onas .cc-faq-list summary{display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:44px;padding:18px 0;font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;list-style:none}
+.onas .cc-faq-list summary::-webkit-details-marker{display:none}
+.onas .cc-faq-list summary svg{width:18px;height:18px;color:var(--blue);flex-shrink:0}
+.onas .cc-faq-list details[open] summary{color:var(--blue)}
+.onas .cc-faq-list details[open] summary svg{transform:rotate(180deg)}
+.onas .cc-faq-list details p{font-size:14.5px;line-height:1.75;padding:0 0 20px}
 
-/* ===== PROCESS ===== */
-.cclp-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;align-items:stretch}
-.cclp-step{position:relative;padding:32px 26px;background:#fff;border-radius:12px;border:1px solid var(--cc-line);transition:border-color .15s}
-.cclp-step:hover{border-color:var(--cc-blue)}
-.cclp-step-num{width:48px;height:48px;border-radius:50%;background:var(--cc-blue);color:#fff;font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(0,102,255,.28);margin-bottom:20px}
-.cclp-step h3{font-size:16.5px;font-weight:800;color:var(--cc-ink);margin:0 0 14px;padding-bottom:14px;letter-spacing:-.2px;position:relative}
-.cclp-step h3::after{content:'';position:absolute;left:0;bottom:0;width:28px;height:3px;border-radius:2px;background:var(--cc-blue)}
-.cclp-step p{font-size:13.5px;color:var(--cc-muted);line-height:1.7;margin:0}
-.cclp-step-arrow{position:absolute;top:50%;right:-11px;transform:translateY(-50%);z-index:2;color:#c7d8f5}
-.cclp-step-arrow svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.4}
-.cclp-step:last-child .cclp-step-arrow{display:none}
-.cclp-infobar{display:flex;align-items:center;gap:12px;justify-content:center;max-width:900px;margin:40px auto 0;background:#eef4ff;border:1px solid #d7e5fd;border-radius:14px;padding:16px 22px;font-size:13px;color:#3f5578;line-height:1.6}
-.cclp-infobar svg{flex-shrink:0;width:18px;height:18px;stroke:var(--cc-blue);fill:none;stroke-width:2}
+.onas .cc-contact{padding:0 0 96px}
+.onas .cc-contact .contact-actions{display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.onas .cc-contact .cc-place{display:flex;align-items:center;gap:7px;font-size:13px;color:rgba(255,255,255,.62)}
+.onas .cc-contact .cc-place svg{width:15px;height:15px}
 
-/* ===== SCOPE ===== */
-.cclp-scope-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-.cclp-scope-col{padding:34px 30px;border-radius:16px;border:1px solid var(--cc-line);background:#fff}
-.cclp-scope-col.ok{background:linear-gradient(180deg,#f2f9f4 0%,#fbfefb 100%);border-color:#c9ecd4}
-.cclp-scope-col.no{background:linear-gradient(180deg,#fdf4f4 0%,#fffbfb 100%);border-color:#f4d3d3}
-.cclp-scope-title{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:800;color:var(--cc-ink);margin:0 0 22px;letter-spacing:-.2px}
-.cclp-scope-title .ico{flex-shrink:0;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center}
-.cclp-scope-col.ok .ico{background:#dcfce7;color:#16a34a}
-.cclp-scope-col.no .ico{background:#fee2e2;color:#dc2626}
-.cclp-scope-title svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.6}
-.cclp-scope-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:15px}
-.cclp-scope-list li{display:flex;align-items:flex-start;gap:12px;font-size:14.5px;color:#334155;line-height:1.6}
-.cclp-scope-list li .li-ico{flex-shrink:0;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:1px}
-.cclp-scope-col.ok li .li-ico{background:#dcfce7;color:#16a34a}
-.cclp-scope-col.no li .li-ico{background:#fee2e2;color:#dc2626}
-.cclp-scope-list li .li-ico svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:3}
-
-/* ===== FAQ (2 cols) ===== */
-.cclp-faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:980px;margin:0 auto}
-.cclp-faq-item{background:#fff;border:1px solid var(--cc-line);border-radius:12px;overflow:hidden;align-self:start}
-.cclp-faq-q{width:100%;text-align:left;background:transparent;border:0;padding:20px 22px;font-size:15px;font-weight:700;color:var(--cc-ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:14px;letter-spacing:-.15px;list-style:none}
-.cclp-faq-q::-webkit-details-marker{display:none}
-.cclp-faq-q svg{width:18px;height:18px;stroke:var(--cc-blue);fill:none;stroke-width:2.4;flex-shrink:0;transition:transform .18s}
-.cclp-faq-item[open] .cclp-faq-q svg{transform:rotate(180deg)}
-.cclp-faq-a{padding:0 22px 20px;font-size:13.5px;color:var(--cc-muted);line-height:1.7}
-
-/* ===== DISCLAIMER ===== */
-.cclp-disc{position:relative;overflow:hidden;padding:64px 0;background:#0a1432;color:rgba(255,255,255,.82)}
-.cclp-disc::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
-.cclp-disc-in{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 24px;display:flex;gap:18px;align-items:flex-start}
-.cclp-disc-ico{flex-shrink:0;width:46px;height:46px;border-radius:50%;background:rgba(95,161,255,.12);border:1.5px solid rgba(95,161,255,.4);color:#5fa1ff;display:flex;align-items:center;justify-content:center}
-.cclp-disc-ico svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.2}
-.cclp-disc h3{font-size:18px;font-weight:800;color:#fff;margin:0 0 8px;letter-spacing:-.2px}
-.cclp-disc p{font-size:14px;line-height:1.8;margin:0}
-
-/* ===== BOTTOM CTA ===== */
-.cclp-cta-strip{padding:80px 0;background:#fff}
-.cclp-cta-strip-in{max-width:1000px;margin:0 auto;padding:40px 48px;background:linear-gradient(135deg,#f4f8ff 0%,#eaf1fe 100%);border:1px solid #d7e5fd;border-radius:22px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
-.cclp-cta-strip h3{font-size:26px;font-weight:800;color:var(--cc-ink);margin:0 0 6px;letter-spacing:-.4px}
-.cclp-cta-strip p{font-size:14px;color:var(--cc-muted);margin:0}
-.cclp-cta-strip-btns{display:flex;gap:12px;flex-wrap:wrap}
-.cclp-btn-solid{display:inline-flex;align-items:center;gap:8px;background:var(--cc-blue);color:#fff;padding:14px 24px;border-radius:12px;font-size:14px;font-weight:700;text-decoration:none;transition:all .15s;box-shadow:0 6px 16px rgba(0,102,255,.26)}
-.cclp-btn-solid:hover{background:var(--cc-blue-d);color:#fff;transform:translateY(-1px)}
-.cclp-btn-ghost{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--cc-blue);padding:14px 24px;border-radius:12px;font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid #cdddf7;transition:all .15s}
-.cclp-btn-ghost:hover{border-color:var(--cc-blue);background:#f5f9ff}
-.cclp-btn-solid svg,.cclp-btn-ghost svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.4}
-
-/* ===== RESPONSIVE ===== */
-/* Desktop posredni: .cclp-hero-in ma sufit 1200px, wiec kolumny sa tu tak samo
-   szerokie jak na 1920 — ale bohater jest przyklejony do prawej krawedzi
-   VIEWPORTU, wiec im wezsze okno, tym glebiej wchodzi w tresc i tablet zaczyna
-   zaslaniac auto z numerkami. Tu zwezamy panel i zmniejszamy bohatera, zeby
-   tablet nachodzil tylko na krawedz panelu. */
-/* Ponizej 1200px na panel + auto + bohatera juz nie ma miejsca — tablet zaslanial
-   pol auta razem z numerkami. Diagram znika (tak jak ponizej 1025px), zostaje
-   sama lista i bohater nachodzacy na jej krawedz. */
-@media(min-width:1025px) and (max-width:1199px){
-    .cclp-hero-visual{--rep-w:min(66%,340px)}
-    .cc-rep{grid-template-columns:1fr}
-    .cc-rep-diagram{display:none}
+@media(max-width:1100px){
+  .onas .cc-hero .hero-art img{width:480px;right:-40px;bottom:80px}
+  .onas .cc-panel{grid-template-columns:minmax(0,1fr) 260px}
 }
-@media(max-width:1024px){
-    .cclp-hero{padding:52px 0 64px}
-    .cclp-hero-in{grid-template-columns:1fr;gap:32px}
-    .cclp-hero h1{font-size:42px}
-    .cclp-hero-visual{order:-1;min-height:auto;justify-content:center}
-    /* Tablet/mobile: rozmiar z wysokosci (szerokosc min(88%,420px) przy
-       pionowej proporcji 0.56 dawalaby ~750px wysokosci). Desktopowy wash
-       wygaszal tylko lewa krawedz — tu zdjecie nie dochodzi do zadnej krawedzi
-       viewportu, wiec prostokat tla bylby widoczny z prawej i od dolu.
-       Zamiast washa winieta: elipsa + fade od dolu i od prawej (intersect). */
-    .cclp-hero-char{width:auto;height:calc(100% + 40px)}
-    /* Cztery fade'y na krawedziach zamiast elipsy: elipsa wygaszala tez srodek
-       kadru i tablet w dloni bohatera wygladal jak duch. Tu srodek zostaje
-       w pelni kryjacy, znika tylko prostokat tla przy krawedziach. */
-    .cclp-hero-char{
-        -webkit-mask-image:
-            linear-gradient(to right,transparent 0,rgba(0,0,0,.5) 5%,#000 14%),
-            linear-gradient(to left,transparent 0,rgba(0,0,0,.5) 5%,#000 14%),
-            linear-gradient(to top,transparent 0,rgba(0,0,0,.45) 6%,#000 18%),
-            linear-gradient(to bottom,transparent 0,rgba(0,0,0,.5) 4%,#000 11%);
-        mask-image:
-            linear-gradient(to right,transparent 0,rgba(0,0,0,.5) 5%,#000 14%),
-            linear-gradient(to left,transparent 0,rgba(0,0,0,.5) 5%,#000 14%),
-            linear-gradient(to top,transparent 0,rgba(0,0,0,.45) 6%,#000 18%),
-            linear-gradient(to bottom,transparent 0,rgba(0,0,0,.5) 4%,#000 11%);
-        -webkit-mask-composite:source-in;mask-composite:intersect}
-    /* Panel przez ZMIENNE, nie bezposrednio — badge 360° liczy z nich swoja
-       pozycje, wiec inaczej rozjechalby sie z krawedzia panelu. */
-    .cclp-hero-visual{--rep-l:-3%;--rep-w:min(64%,320px)}
-    /* Panel kryjacy: na tablecie/mobile bohater lezy POD nim i przez
-       pol-przezroczysta biel przebijal jego tablet. */
-    .cc-rep{grid-template-columns:1fr;padding:18px 18px;background:rgba(255,255,255,.94)}
-    .cc-rep-diagram{display:none}
-    .cclp-cards{grid-template-columns:repeat(2,1fr)}
-    .cclp-report-card{grid-template-columns:1fr}
-    .cclp-steps{grid-template-columns:repeat(2,1fr);gap:22px}
-    .cclp-step-arrow{display:none!important}
-    .cclp-sec{padding:64px 0}
-    .cclp-head h2{font-size:32px}
-    .cclp-scope-grid,.cclp-faq-grid{grid-template-columns:1fr}
+@media(max-width:900px){
+  .onas .cc-define,.onas .cc-example,.onas .cc-process,.onas .cc-scope,.onas .cc-faq{padding-top:64px}
+  .onas .cc-materials,.onas .cc-example,.onas .cc-process,.onas .cc-scope,.onas .cc-faq{padding-bottom:64px}
+  .onas .cc-define .human-layout{padding-bottom:40px}
+  .onas .cc-materials{padding-top:40px}
+  .onas .cc-mat-grid,.onas .cc-scope-grid{grid-template-columns:1fr}
+  .onas .cc-panel{grid-template-columns:1fr}
+  .onas .cc-faq-layout{grid-template-columns:1fr;gap:28px}
+  .onas .cc-contact{padding-bottom:64px}
 }
-@media(max-width:640px){
-    .cclp-hero{padding:40px 0 52px}
-    .cclp-hero h1{font-size:32px;letter-spacing:-.8px}
-    .cclp-hero .lead{font-size:15px}
-    .cclp-hero-char{width:auto;height:calc(100% + 30px)}
-    .cclp-hero-visual{--rep-l:-2%;--rep-w:min(72%,290px)}
-    .cclp-cards{grid-template-columns:1fr;gap:16px}
-    .cclp-card{padding:28px 24px}
-    .cclp-card-ico{margin-bottom:16px}
-    .cclp-rc-specs{grid-template-columns:1fr}
-    .cclp-steps{grid-template-columns:1fr}
-    .cclp-sec{padding:44px 0}
-    .cclp-head{margin-bottom:30px}
-    .cclp-head h2{font-size:25px}
-    .cclp-cta-strip-in{padding:24px;flex-direction:column;text-align:center}
-    .cclp-cta-strip-btns{justify-content:center}
-    .cclp-disc-in{flex-direction:column}
+@media(max-width:760px){
+  .onas .cc-hero .hero-art{height:auto;padding:8px 0 40px}
+  .onas .cc-hero .hero-art img{position:relative;right:auto;bottom:auto;width:100%;max-width:440px;margin:0 auto}
+  .onas .cc-hero .hero-glow{left:0;right:0;top:20px;width:100%}
+  .onas .cc-hero .actions{flex-direction:column;align-items:stretch}
+  .onas .cc-hero .button{flex:none;width:100%;height:auto;padding:15px 18px;font-size:15px}
+  .onas .cc-mat{grid-template-columns:1fr;gap:16px;padding:20px}
+  .onas .cc-mat-vis{aspect-ratio:auto;min-height:150px;flex-direction:row;align-items:stretch}
+  .onas .cc-mat-vis .cc-mini{flex:1;flex-direction:column;justify-content:center;gap:4px}
+  .onas .cc-tread{flex-direction:row;justify-content:center;align-items:center;gap:12px;min-height:96px}
+  .onas .cc-tread strong{font-size:22px}
+  .onas .cc-mat-foot,.onas .cc-scope-bottom,.onas .cc-report-foot{flex-direction:column;align-items:flex-start}
+  .onas .cc-report-top{padding:20px 16px 0;flex-direction:column;align-items:flex-start}
+  .onas .cc-report-top .tag{display:none}
+  .onas .cc-tabs{margin:16px 16px 0}
+  .onas .cc-panel{padding:16px}
+  .onas .cc-pane{padding:18px 16px}
+  .onas .cc-aside{padding:20px}
+  .onas .cc-report-foot{padding:16px}
+  .onas .cc-scope-head,.onas .cc-scope-docs{padding-left:18px;padding-right:18px}
+  .onas .cc-scope-col ul{padding-left:18px;padding-right:18px}
+  .onas .cc-faq-list{padding:4px 18px}
 }
 @endsection
 
 @section('content')
-
-{{-- ═══════════════ HERO ═══════════════ --}}
-<section class="cclp-hero">
-    <div class="cclp-hero-in">
-        <div>
-            <div class="cclp-eyebrow">CertiCheck</div>
-            <h1>Wiesz więcej<br><span class="blue">przed przyjazdem.</span></h1>
-            <p class="lead">CertiCheck to rozszerzona prezentacja wybranych samochodów w CertiCars. Pokazujemy pomiary lakieru, stan opon, zauważone ślady użytkowania, nagranie pracy silnika oraz dostępne dokumenty, aby ułatwić Ci wstępne zapoznanie się z autem jeszcze przed oględzinami.</p>
-            <a class="cclp-cta-primary" href="{{ route('catalog') }}">
-                Zobacz auta z CertiCheck
-                <x-icon name="arrow-right" size="17" :strokeWidth="2.4"/>
-            </a>
-            <div class="cclp-hero-note">
-                <x-icon name="info" size="17" :strokeWidth="2"/>
-                <span>CertiCheck to wewnętrzny standard kontroli jakości CertiCars, a nie opinia rzeczoznawcy. Materiały pokazują stan auta na dzień oględzin, w zakresie możliwym do oceny bez specjalistycznego demontażu.</span>
-            </div>
-        </div>
-        <div class="cclp-hero-visual">
-            <img class="cclp-hero-char" src="/images/bohater-certicheck.png" alt="Konsultant CertiCars prezentujący podsumowanie CertiCheck" loading="eager" decoding="async" width="941" height="1672">
-            <div class="cclp-hero-report cc-rep" role="img" aria-label="Panel CertiCheck — pomiary lakieru 118–164 µm, stan opon przód 6 mm tył 5 mm, 5 zauważonych śladów, 8 dokumentów">
-                <div class="cc-rep-list">
-                    @php
-                        $ccRows = [
-                            ['scan-line','Pomiary lakieru',['118 – 164 µm']],
-                            ['tabler:wheel','Stan opon',['Przód 6 mm, Tył 5 mm']],
-                            ['triangle-alert','Ślady użytkowania',['5 elementów']],
-                            ['file-text','Dokumenty',['8 plików']],
-                        ];
-                    @endphp
-                    @foreach($ccRows as [$ic,$t,$vals])
-                    <div class="cc-rep-row">
-                        <span class="cc-rep-ico"><x-icon :name="$ic" size="22" :strokeWidth="1.8"/></span>
-                        <span class="cc-rep-tx"><b>{{ $t }}</b>@foreach($vals as $vl)<span>{{ $vl }}</span>@endforeach</span>
-                    </div>
-                    @endforeach
-                </div>
-                {{-- Numerki 1-5 rozstawione wokol auta jak w referencji: dach, prawy
-                     przod, prawy tyl, zderzak tylny, lewy bok. Pozycje w % pudelka
-                     diagramu, wiec skaluja sie razem z nim. --}}
-                <div class="cc-rep-diagram">
-                    <span class="cc-rep-car">
-                        <img src="/images/certicheck-car.png" alt="" loading="eager" decoding="async">
-                        @for($n = 1; $n <= 5; $n++)
-                            <span class="cc-rep-pin p{{ $n }}">{{ $n }}</span>
-                        @endfor
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="onas">
+<section id="hero" class="hero cc-hero">
+ <div class="container hero-inner">
+  <div class="hero-copy">
+   <div class="eyebrow light">POZNAJ CERTICHECK</div>
+   <h1>Wiesz więcej.<br><span>Zanim przyjedziesz.</span></h1>
+   <p>Pomiary lakieru, stan opon, zdjęcia śladów użytkowania i widoki 360°. Zobacz szczegóły konkretnego samochodu, zanim umówisz oględziny.</p>
+   <div class="actions">
+    @if($tabs)<a class="button primary" href="#przyklad">Zobacz przykładowy raport <x-icon name="arrow-right" size="16"/></a>@endif
+    <a class="button secondary" href="{{ route('catalog') }}">Przejdź do oferty</a>
+   </div>
+   <div class="cc-hero-note"><x-icon name="info" size="16"/><span>CertiCheck jest dostępny przy wybranych samochodach.</span></div>
+  </div>
+  <div class="hero-art"><div class="hero-glow"></div><img src="/img/certicheck/doradca-lupa-1200.webp" srcset="/img/certicheck/doradca-lupa-760.webp 760w, /img/certicheck/doradca-lupa-1200.webp 1200w" sizes="(max-width: 760px) 92vw, 600px" width="1200" height="800" alt="Doradca CertiCars z lupą przy białym SUV-ie" fetchpriority="high" decoding="async"></div>
+ </div>
+ <svg class="hero-curve" viewBox="0 0 1440 58" preserveAspectRatio="none" aria-hidden="true"><path d="M0 8C390 58 1050 58 1440 8V58H0Z" fill="white"/></svg>
 </section>
 
-{{-- ═══════════════ BENEFITS ═══════════════ --}}
-<section class="cclp-sec">
-    <div class="cclp-in">
-        <div class="cclp-head">
-            <div class="cclp-eyebrow-c">Co zyskujesz</div>
-            <h2>Co otrzymujesz w CertiCheck</h2>
-            <p>Komplet materiałów i informacji, które pokazują stan auta w sposób rzetelny i przejrzysty.</p>
-        </div>
-        <div class="cclp-cards">
-            @php
-                $benefits = [
-                    ['audio-lines','Nagranie pracy silnika','Posłuchaj, jak pracuje silnik, jeszcze przed przyjazdem na oględziny.'],
-                    ['scan-line','Pomiary grubości lakieru','Sprawdź rzeczywiste wartości lakieru na poszczególnych elementach.'],
-                    ['map-pin','Mapa zauważonych śladów','Zaznaczamy rysy, odpryski, wgniecenia i inne ślady normalnej eksploatacji.'],
-                    ['tabler:wheel','Stan opon i bieżnika','Informacja o oponach oraz zmierzona głębokość bieżnika w mm.'],
-                    ['file-text','Dokumenty i historia serwisowa','Zdjęcia dostępnych dokumentów oraz wpisów serwisowych pojazdu.'],
-                    ['clipboard-check','Szczegółowy opis stanu pojazdu','Opis wybranych elementów pojazdu oraz zauważonych informacji podczas oględzin.'],
-                ];
-            @endphp
-            @foreach($benefits as [$ico,$t,$d])
-                <div class="cclp-card">
-                    <div class="cclp-card-ico"><x-icon :name="$ico" size="28" :strokeWidth="1.8"/></div>
-                    <h3>{{ $t }}</h3>
-                    <p>{{ $d }}</p>
-                </div>
-            @endforeach
-        </div>
-    </div>
+<section id="czym-jest" class="human-section cc-define">
+ <div class="container human-layout">
+  <div class="human-title"><div class="eyebrow">NASZ STANDARD PREZENTACJI</div><h2 class="brand-motto">Czym jest<br><span>CertiCheck?</span></h2></div>
+  <div class="human-story"><p><strong>CertiCheck to przygotowany przez nas raport o samochodzie, dostępny przy wybranych autach z oferty.</strong> Zbieramy w nim pomiary, zdjęcia i zauważone ślady użytkowania, żebyś mógł poznać auto jeszcze przed wizytą.</p></div>
+ </div>
 </section>
 
-{{-- ═══════════════ PRACTICE / EXAMPLE ═══════════════ --}}
-<section class="cclp-sec alt">
-    <div class="cclp-in">
-        <div class="cclp-head">
-            <div class="cclp-eyebrow-c">Przykładowy raport</div>
-            <h2>Zobacz CertiCheck w praktyce</h2>
-            <p>Przykładowy raport dla jednego z naszych samochodów.</p>
-        </div>
-        <div class="cclp-practice-tabs" id="ccPracticeTabs">
-            @php
-                $ptabs = [
-                    ['360zew','360° zewnętrzne','Obejrzyj auto dookoła — nadwozie z każdej strony.'],
-                    ['360wew','360° wewnętrzne','Zajrzyj do kabiny — kokpit i przestrzeń pasażerska.'],
-                    ['lakier','Pomiary lakieru','Grubość powłoki w wyznaczonych punktach kontrolnych.'],
-                    ['slady','Mapa śladów','Zaznaczone rysy, odpryski i ślady eksploatacji.'],
-                    ['opony','Opony','Stan opon i zmierzona głębokość bieżnika.'],
-                    ['dok','Dokumenty','Zdjęcia dokumentów i wpisów serwisowych.'],
-                ];
-            @endphp
-            @foreach($ptabs as $i => [$key,$label,$cap])
-                <button type="button" class="cclp-ptab {{ $i===0 ? 'active' : '' }}" data-cap="{{ $cap }}" onclick="ccPracticeTab(this)">{{ $label }}</button>
-            @endforeach
-        </div>
-
-        <div class="cclp-report-card">
-            <div class="cclp-rc-visual">
-                <div class="cclp-rc-caption" id="ccPracticeCaption">Obejrzyj auto dookoła — nadwozie z każdej strony.</div>
-                {{-- Gotowa ilustracja auta (Microsoft Fluent Emoji, MIT), przemalowana
-                     na brandowy niebieski. Nadwozie SUV pasuje do X5 z karty raportu. --}}
-                <img class="cclp-rc-car" src="/images/certicheck-car-360.svg" alt="" loading="eager" decoding="async" width="326" height="244">
-                <div class="cclp-rc-turn"></div>
-                <div class="cclp-rc-360"><x-icon name="rotate-3d" size="14" :strokeWidth="2.2"/> 360°</div>
-            </div>
-            <div class="cclp-rc-info">
-                <h3 class="cclp-rc-title">BMW X5 xDrive25d</h3>
-                <p class="cclp-rc-sub"><b>2017</b> · 163 000 km · Diesel · Automatyczna</p>
-                <div class="cclp-rc-specs">
-                    @php
-                        $specs = [
-                            ['ph-fill:engine','Silnik','2.0 Diesel 231 KM'],
-                            ['tabler:manual-gearbox','Skrzynia biegów','Automatyczna'],
-                            ['tabler-fill:car-4wd','Napęd','4x4'],
-                            ['ph-fill:car','Nadwozie','SUV'],
-                            ['palette','Kolor','Czarny metalik'],
-                            ['badge-check','Zarejestrowany w PL','Tak'],
-                        ];
-                    @endphp
-                    @foreach($specs as [$ico,$l,$v])
-                    <div class="cclp-rc-spec">
-                        <span class="ico"><x-icon :name="$ico" size="16" :strokeWidth="1.9"/></span>
-                        <span class="txt"><small>{{ $l }}</small><b>{{ $v }}</b></span>
-                    </div>
-                    @endforeach
-                </div>
-                <div class="cclp-rc-summary">
-                    @php
-                        $sum = [
-                            ['Pomiary lakieru','118–164 µm','ok'],
-                            ['Stan opon','Przód 6 mm · Tył 5 mm','ok'],
-                            ['Zauważone ślady','5 elementów','warn'],
-                            ['Dokumenty','8 plików','ok'],
-                        ];
-                    @endphp
-                    @foreach($sum as [$l,$v,$st])
-                    <div class="cclp-rc-sumrow">
-                        <span class="lbl"><b>{{ $l }}</b><span>{{ $v }}</span></span>
-                        <span class="cclp-rc-badge {{ $st }}"><x-icon :name="$st==='ok' ? 'check' : 'alert-triangle'" size="13" :strokeWidth="3"/></span>
-                    </div>
-                    @endforeach
-                    <a class="cclp-rc-cta" href="{{ route('catalog') }}">Zobacz pełny raport <x-icon name="arrow-right" size="14" :strokeWidth="2.4"/></a>
-                </div>
-            </div>
-        </div>
-        <p class="cclp-practice-note">
-            <x-icon name="info" size="16" :strokeWidth="2"/>
-            Raporty CertiCheck pokazują stan pojazdu zauważony w dniu przygotowania materiałów, w zakresie dostępnym bez demontażu elementów.
-        </p>
-    </div>
+<section id="materialy" class="cc-materials">
+ <div class="container">
+  <div class="section-intro"><div><div class="eyebrow">SZCZEGÓŁY MAJĄ ZNACZENIE</div><h2>Co znajdziesz<br>w CertiCheck?</h2></div></div>
+  @php $card = fn ($t) => in_array($t, $tabs, true) ? '#przyklad' : route('catalog'); @endphp
+  <div class="cc-mat-grid">
+   <a class="cc-mat {{ count($paint) < 2 ? 'no-visual' : '' }}" href="{{ $card('paint') }}" data-open-tab="paint">
+    <div><span class="cc-over">Lakier</span><h3>Pomiary grubości lakieru</h3><p>Sprawdź odczyty przypisane do poszczególnych elementów nadwozia.</p><span class="cc-mat-link">Zobacz pomiary <x-icon name="arrow-right" size="16"/></span></div>
+    @if(count($paint) >= 2)
+    <div class="cc-mat-vis" aria-hidden="true">@foreach(array_slice($paint, 0, 2) as $r)<div class="cc-mini"><span>{{ $r['label'] }}</span><strong>{{ $r['value'] }} <small>µm</small></strong></div>@endforeach</div>
+    @endif
+   </a>
+   <a class="cc-mat {{ $tires ? '' : 'no-visual' }}" href="{{ $card('tires') }}" data-open-tab="tires">
+    <div><span class="cc-over">Koła i opony</span><h3>Stan opon i bieżnika</h3><p>Zobacz pomiar dla każdego koła i informacje o zamontowanym komplecie.</p><span class="cc-mat-link">Sprawdź opony <x-icon name="arrow-right" size="16"/></span></div>
+    @if($tires)
+    <div class="cc-mat-vis cc-tread" aria-hidden="true"><x-icon name="tabler:wheel" size="30"/><span>Głębokość bieżnika</span><strong>{{ $tires['rows'][0]['depth'] }} <small>mm</small></strong></div>
+    @endif
+   </a>
+   <a class="cc-mat {{ $dmg ? '' : 'no-visual' }}" href="{{ $card('wear') }}" data-open-tab="wear">
+    <div><span class="cc-over">Stan i ślady</span><h3>Zdjęcia śladów użytkowania</h3><p>Przyjrzyj się zauważonym rysom, otarciom i innym śladom użytkowania.</p><span class="cc-mat-link">Obejrzyj ślady <x-icon name="arrow-right" size="16"/></span></div>
+    @if($dmg)
+    <div class="cc-mat-vis" aria-hidden="true"><img src="{{ $dmg[0]['photo'] }}" alt="" loading="lazy" decoding="async"><span class="chip"><i></i>Ślad 1 z {{ $dmgN }}</span></div>
+    @endif
+   </a>
+   <a class="cc-mat {{ $sc && $sc['poster'] ? '' : 'no-visual' }}" href="{{ $card('outside') }}" data-open-tab="outside">
+    <div><span class="cc-over">Prezentacje 360°</span><h3>Nadwozie i wnętrze w 360°</h3><p>Obejrzyj auto dookoła i rozejrzyj się po kabinie, obracając widok.</p><span class="cc-mat-link">Uruchom widok 360° <x-icon name="arrow-right" size="16"/></span></div>
+    @if($sc && $sc['poster'])
+    <div class="cc-mat-vis" aria-hidden="true"><img src="{{ $sc['poster'] }}" alt="" loading="lazy" decoding="async"><span class="chip">360°</span></div>
+    @endif
+   </a>
+  </div>
+  <div class="cc-mat-foot"><p><x-icon name="file-text" size="15"/>Dokumenty i historia serwisowa: w ogłoszeniu pokazujemy dostępne materiały.</p>@if($sc)<span>Pokazane przykłady: {{ $sc['name'] }}</span>@endif</div>
+ </div>
 </section>
 
-{{-- ═══════════════ PROCESS ═══════════════ --}}
-<section class="cclp-sec">
-    <div class="cclp-in">
-        <div class="cclp-head">
-            <div class="cclp-eyebrow-c">Jak to działa</div>
-            <h2>Jak powstaje CertiCheck</h2>
-            <p>Prosty proces, który zapewnia rzetelność i przejrzystość.</p>
-        </div>
-        <div class="cclp-steps">
-            @php
-                $steps = [
-                    ['1','Oględziny samochodu','Oglądamy pojazd i dokumentujemy jego stan oraz wyposażenie.'],
-                    ['2','Pomiary i materiały','Wykonujemy pomiary lakieru, nagrywamy pracę silnika, robimy zdjęcia i zbieramy dokumenty.'],
-                    ['3','Opis i mapa śladów','Opisujemy wybrane elementy i zaznaczamy wszystkie zauważone ślady użytkowania.'],
-                    ['4','Publikacja przy ogłoszeniu','Materiały CertiCheck udostępniamy w ogłoszeniu, abyś wiedział więcej przed przyjazdem.'],
-                ];
-            @endphp
-            @foreach($steps as [$n,$t,$d])
-                <div class="cclp-step">
-                    <div class="cclp-step-num">{{ $n }}</div>
-                    <h3>{{ $t }}</h3>
-                    <p>{{ $d }}</p>
-                    <span class="cclp-step-arrow"><x-icon name="arrow-right" size="20" :strokeWidth="2.4"/></span>
-                </div>
-            @endforeach
-        </div>
-        <div class="cclp-infobar">
-            <x-icon name="info" size="18" :strokeWidth="2"/>
-            Materiały pokazują stan pojazdu zauważony w dniu ich przygotowania, w zakresie dostępnym bez demontażu elementów.
-        </div>
+@if($tabs)
+<section id="przyklad" class="cc-example">
+ <div class="container">
+  <div class="section-intro"><div><div class="eyebrow">CERTICHECK W PRAKTYCE</div><h2>Zajrzyj do raportu.</h2></div><p>Zdjęcia i pomiary jednego samochodu. Przełącz widok, żeby poznać szczegóły.</p></div>
+  <div class="cc-report">
+   <div class="cc-report-top"><div><span class="cc-over">Przykładowe materiały</span><h3>{{ $carName }}</h3></div><span class="tag">Poznaj zawartość CertiCheck</span></div>
+   <div class="cc-tabs" role="tablist" aria-label="Przykładowe materiały CertiCheck">
+    @foreach($tabs as $t)
+    <button id="cc-tab-{{ $t }}" type="button" role="tab" aria-selected="{{ $t === $first ? 'true' : 'false' }}" aria-controls="cc-panel-{{ $t }}"><x-icon :name="$tabLabel[$t][1]" size="16"/>{{ $tabLabel[$t][0] }}</button>
+    @endforeach
+   </div>
+
+   @if(in_array('outside', $tabs, true))
+   <div id="cc-panel-outside" class="cc-panel" role="tabpanel" aria-labelledby="cc-tab-outside" @if($first !== 'outside') hidden @endif>
+    <div class="viewer-stage" data-cc-stage aria-label="Interaktywna prezentacja {{ $sc['name'] }}">
+     <div class="cc-media" data-kind="{{ $outSpins ? 'frames' : 'static' }}" @if($outSpins) data-frames='@json($sc['exterior']['urls'])' data-sprites='@json($sc['exterior']['sprites'])' @endif>
+      @if($sc['poster'])<img class="viewer-poster" src="{{ $sc['poster'] }}" alt="{{ $sc['name'] }}, zdjęcie z ogłoszenia" draggable="false" loading="lazy" decoding="async">@endif
+      @if($outSpins)<canvas role="img" aria-label="{{ $sc['name'] }}: widok 360° nadwozia z ogłoszenia"></canvas>@endif
+     </div>
+     @if($outSpins)
+     <span class="viewer-badge">360°</span>
+     <div class="viewer-controls"><button type="button" data-rotate="-1" aria-label="Obróć widok w lewo">←</button><span>Przeciągnij, aby obrócić auto</span><button type="button" data-rotate="1" aria-label="Obróć widok w prawo">→</button></div>
+     @endif
     </div>
+    <aside class="cc-aside">
+     <span class="cc-over">{{ $outSpins ? '360° nadwozia' : 'Nadwozie' }}</span>
+     <h3>Obejrzyj auto<br>z każdej strony.</h3>
+     <p>@if($outSpins)Przeciągnij zdjęcie lub użyj strzałek. Zatrzymaj widok tam, gdzie chcesz przyjrzeć się detalom.@else Zdjęcie nadwozia z ogłoszenia tego samochodu.@endif</p>
+     <div class="cc-point"><x-icon name="camera" size="20"/><div><strong>Rzeczywiste zdjęcia</strong><span>@if($outSpins)Pełny obrót tego samego samochodu.@else Zdjęcie z ogłoszenia, bez retuszu.@endif</span></div></div>
+     @if($dmg)<p class="cc-tip">Zauważone rysy i otarcia pokazujemy osobno w zakładce „Stan i ślady”.</p>@endif
+     @if(count($tabs) > 1)<button class="cc-next" type="button" data-open-tab="{{ $nextTab('outside') }}">{{ $nextLabel[$nextTab('outside')] }} <x-icon name="arrow-right" size="16"/></button>@endif
+    </aside>
+   </div>
+   @endif
+
+   @if(in_array('inside', $tabs, true))
+   <div id="cc-panel-inside" class="cc-panel" role="tabpanel" aria-labelledby="cc-tab-inside" @if($first !== 'inside') hidden @endif>
+    <div class="viewer-stage" data-cc-stage aria-label="Wnętrze {{ $sc['name'] }} w 360°">
+     <div class="cc-media" data-kind="{{ $sc['interior']['type'] }}" @if($sc['interior']['type'] === 'frames') data-frames='@json($sc['interior']['urls'])' data-sprites='@json($sc['interior']['sprites'])' @endif>
+      @if($sc['interior']['type'] === 'frames')
+       <canvas role="img" aria-label="{{ $sc['name'] }}: widok 360° wnętrza z ogłoszenia"></canvas>
+      @else
+       <div class="pano-host" data-pano-src="{{ $sc['interior']['src'] }}" role="img" aria-label="Panorama 360 stopni wnętrza {{ $sc['name'] }}"></div><span class="pano-loading" role="status">Wczytuję wnętrze…</span>
+      @endif
+     </div>
+     <span class="viewer-badge">360°</span>
+     <div class="viewer-controls"><button type="button" data-rotate="-1" aria-label="Obróć widok w lewo">←</button><span>Przeciągnij, aby się rozejrzeć</span><button type="button" data-rotate="1" aria-label="Obróć widok w prawo">→</button></div>
+    </div>
+    <aside class="cc-aside">
+     <span class="cc-over">360° wnętrza</span>
+     <h3>Rozejrzyj się<br>po kabinie.</h3>
+     <p>Przesuwaj panoramę na boki, w górę i w dół. Obejrzyj deskę rozdzielczą, fotele i przestrzeń dla pasażerów.</p>
+     <div class="cc-point"><x-icon name="armchair" size="20"/><div><strong>Ty wybierasz kierunek</strong><span>Zobacz wnętrze z różnych stron.</span></div></div>
+     <p class="cc-tip">Chcesz przyjrzeć się konkretnemu detalowi? Zapytaj nas o dodatkowe zdjęcie.</p>
+     @if(count($tabs) > 1)<button class="cc-next" type="button" data-open-tab="{{ $nextTab('inside') }}">{{ $nextLabel[$nextTab('inside')] }} <x-icon name="arrow-right" size="16"/></button>@endif
+    </aside>
+   </div>
+   @endif
+
+   @if(in_array('paint', $tabs, true))
+   <div id="cc-panel-paint" class="cc-panel" role="tabpanel" aria-labelledby="cc-tab-paint" @if($first !== 'paint') hidden @endif>
+    <div class="cc-pane">
+     <h4>Pomiary grubości lakieru</h4><p>Odczyty w wybranych punktach nadwozia.</p>
+     <div class="paint-grid">@foreach($paint as $r)<div class="paint-reading"><span>{{ $r['label'] }}</span><strong>{{ $r['value'] }} <small>µm</small></strong></div>@endforeach</div>
+     <p class="reading-note">µm to mikrometry, jednostka grubości powłoki.</p>
+    </div>
+    <aside class="cc-aside">
+     <span class="cc-over">Pomiary lakieru</span>
+     <h3>Zobacz odczyty.<br>Porównaj elementy.</h3>
+     <p>Każdy wynik jest przypisany do konkretnego elementu. Możesz wskazać miejsce, o które chcesz dopytać podczas oględzin.</p>
+     <div class="cc-point"><x-icon name="scan-line" size="20"/><div><strong>Pomiary punktowe</strong><span>Odczyt dotyczy miejsca, w którym wykonano pomiar.</span></div></div>
+     <p class="cc-tip">Sama grubość powłoki nie przesądza o historii auta. Zestaw wynik ze zdjęciami i oględzinami.</p>
+     @if(count($tabs) > 1)<button class="cc-next" type="button" data-open-tab="{{ $nextTab('paint') }}">{{ $nextLabel[$nextTab('paint')] }} <x-icon name="arrow-right" size="16"/></button>@endif
+    </aside>
+   </div>
+   @endif
+
+   @if(in_array('tires', $tabs, true))
+   <div id="cc-panel-tires" class="cc-panel" role="tabpanel" aria-labelledby="cc-tab-tires" @if($first !== 'tires') hidden @endif>
+    <div class="cc-pane">
+     <h4>Koła i opony</h4><p>{{ $tires['mounted'] ? 'Zamontowany komplet' : 'Komplet opon' }}, zmierzona głębokość bieżnika.</p>
+     <div class="tires-grid">@foreach($tires['rows'] as $t)<div class="tire-reading"><div><strong>{{ $t['label'] }}</strong>@if($t['type'])<span>{{ $t['type'] }}</span>@endif</div><b @class([$t['status'] => $t['status'] !== 'ok'])>{{ $t['depth'] }} <small>mm</small></b></div>@endforeach</div>
+     <div class="wheel-info">@if($tires['rim'])<span>{{ $tires['rim'] }}</span>@else<span></span>@endif
+      @if($tires['anyIssue'])<strong class="warn"><x-icon name="info" size="15"/>Wymaga uwagi</strong>@else<strong><x-icon name="check" size="15"/>Stan bardzo dobry</strong>@endif</div>
+    </div>
+    <aside class="cc-aside">
+     <span class="cc-over">Koła i opony</span>
+     <h3>Każde koło<br>ma swój pomiar.</h3>
+     <p>Sprawdź zmierzoną głębokość bieżnika każdej opony oraz informacje o komplecie zamontowanym na aucie.</p>
+     <div class="cc-point"><x-icon name="tabler:wheel" size="20"/><div><strong>{{ $tires['mounted'] ? 'Zamontowany komplet' : 'Komplet opon' }}</strong>@if($tireType)<span>W tym przykładzie: {{ mb_strtolower($tireType) }}.</span>@endif</div></div>
+     <p class="cc-tip">Głębokość bieżnika to jedna z informacji o kondycji opon. Ich stan oceń także podczas oględzin.</p>
+     @if(count($tabs) > 1)<button class="cc-next" type="button" data-open-tab="{{ $nextTab('tires') }}">{{ $nextLabel[$nextTab('tires')] }} <x-icon name="arrow-right" size="16"/></button>@endif
+    </aside>
+   </div>
+   @endif
+
+   @if(in_array('wear', $tabs, true))
+   <div id="cc-panel-wear" class="cc-panel" role="tabpanel" aria-labelledby="cc-tab-wear" @if($first !== 'wear') hidden @endif>
+    <div class="cc-pane">
+     <h4>Stan wizualny i ślady eksploatacji</h4><p>Wybierz oznaczenie, aby zobaczyć zdjęcie tego miejsca.</p>
+     <div class="wear-layout"><div class="wear-map-wrap"><div class="wear-map"><img src="{{ $check['damages']['map'] }}" alt="Poglądowa mapa nadwozia z oznaczonymi śladami ({{ $dmgN }})" loading="lazy" decoding="async">@foreach($dmg as $i => $d)<button type="button" class="wear-marker" data-damage="{{ $i + 1 }}" data-photo="{{ $d['photo'] }}" data-label="{{ $d['label'] }}" data-area="{{ $d['area'] }}" aria-pressed="{{ $i === 0 ? 'true' : 'false' }}" aria-label="Ślad {{ $i + 1 }}: zobacz zdjęcie" style="left:{{ $d['x'] }}%;top:{{ $d['y'] }}%">{{ $i + 1 }}</button>@endforeach</div><span>Poglądowa mapa nadwozia</span></div><div class="wear-photo"><img data-damage-photo src="{{ $dmg[0]['photo'] }}" alt="Ślad 1: {{ mb_strtolower($dmg[0]['label']) }}@if($dmg[0]['area']), {{ $dmg[0]['area'] }}@endif" loading="lazy" decoding="async"><div class="wear-caption"><span data-damage-label>{{ $dmg[0]['label'] }}</span><strong data-damage-counter aria-live="polite">1 / {{ $dmgN }}</strong></div><div class="wear-selectors" aria-label="Wybierz zdjęcie śladu">@foreach($dmg as $i => $d)<button type="button" data-damage="{{ $i + 1 }}" data-photo="{{ $d['photo'] }}" data-label="{{ $d['label'] }}" data-area="{{ $d['area'] }}" aria-label="Zobacz ślad {{ $i + 1 }}" aria-pressed="{{ $i === 0 ? 'true' : 'false' }}">{{ $i + 1 }}</button>@endforeach</div></div></div>
+    </div>
+    <aside class="cc-aside">
+     <span class="cc-over">Stan i ślady</span>
+     <h3>Tak wyglądają<br>zauważone ślady.</h3>
+     <p>Rysy, otarcia i inne zauważone ślady pokazujemy z bliska. Punkt na mapie prowadzi do zdjęcia danego miejsca.</p>
+     <div class="cc-point"><x-icon name="map-pin" size="20"/><div><strong>{{ $miejsca }}</strong><span>Wybierz punkt na mapie lub numer pod zdjęciem.</span></div></div>
+     <p class="cc-tip">Zdjęcia dokumentują zauważone miejsca. Nie zastępują obejrzenia samochodu z bliska.</p>
+     @if(count($tabs) > 1)<button class="cc-next" type="button" data-open-tab="{{ $nextTab('wear') }}">{{ $nextLabel[$nextTab('wear')] }} <x-icon name="arrow-right" size="16"/></button>@endif
+    </aside>
+   </div>
+   @endif
+
+   <div class="cc-report-foot"><p><x-icon name="info" size="15"/>Przykład materiałów {{ $carName }}.</p><a class="text-link" href="{{ $sc['checkUrl'] }}">Otwórz ogłoszenie <x-icon name="arrow-right" size="16"/></a></div>
+  </div>
+  <p class="cc-example-note">To przykład prezentacji. Dostępność materiałów i aktualne informacje sprawdzisz w ogłoszeniu konkretnego samochodu.</p>
+ </div>
+</section>
+@endif
+
+<section id="proces" class="purchase purchase-early cc-process">
+ <div class="container"><div class="eyebrow">KROK PO KROKU</div><h2>Od oględzin do raportu.</h2>
+  <div class="steps">
+   <article><div class="step-number">01</div><h3>Oglądamy samochód</h3><p>Przyglądamy się nadwoziu i wnętrzu. Zbieramy dostępne informacje.</p></article>
+   <article><div class="step-number">02</div><h3>Wykonujemy pomiary</h3><p>Mierzymy grubość powłoki lakierniczej i głębokość bieżnika.</p></article>
+   <article><div class="step-number">03</div><h3>Dokumentujemy stan</h3><p>Przygotowujemy zdjęcia, prezentacje 360° i mapę zauważonych śladów.</p></article>
+   <article><div class="step-number">04</div><h3>Udostępniamy w ogłoszeniu</h3><p>Dodajemy je do ogłoszenia, żebyś mógł obejrzeć je przed wizytą.</p></article>
+  </div>
+ </div>
 </section>
 
-{{-- ═══════════════ SCOPE ═══════════════ --}}
-<section class="cclp-sec alt">
-    <div class="cclp-in">
-        <div class="cclp-head">
-            <div class="cclp-eyebrow-c">Zakres</div>
-            <h2>Co CertiCheck obejmuje, a czego nie</h2>
-            <p>Jasno pokazujemy, na co odpowiadają materiały CertiCheck, a czego nie zastępują.</p>
-        </div>
-        <div class="cclp-scope-grid">
-            <div class="cclp-scope-col ok">
-                <div class="cclp-scope-title">
-                    <span class="ico"><x-icon name="check" size="16" :strokeWidth="2.6"/></span>
-                    CertiCheck obejmuje
-                </div>
-                <ul class="cclp-scope-list">
-                    @foreach([
-                        'Pomiary grubości lakieru w wybranych punktach kontrolnych',
-                        'Nagranie pracy silnika i zdjęcia stanu pojazdu',
-                        'Zaznaczenie wszystkich zauważonych śladów użytkowania',
-                        'Informacje o oponach i głębokości bieżnika',
-                        'Zdjęcia dostępnych dokumentów i historii serwisowej',
-                        'Opis zauważonego stanu wybranych elementów pojazdu',
-                    ] as $li)
-                    <li><span class="li-ico"><x-icon name="check" size="12" :strokeWidth="3"/></span>{{ $li }}</li>
-                    @endforeach
-                </ul>
-            </div>
-            <div class="cclp-scope-col no">
-                <div class="cclp-scope-title">
-                    <span class="ico"><x-icon name="x" size="16" :strokeWidth="2.6"/></span>
-                    CertiCheck nie obejmuje
-                </div>
-                <ul class="cclp-scope-list">
-                    @foreach([
-                        'Pełnej diagnostyki technicznej ani komputerowej',
-                        'Demontażu elementów pojazdu',
-                        'Ekspertyzy rzeczoznawcy ani certyfikatu bezwypadkowości',
-                        'Gwarancji wykrycia wszystkich wad, w tym ukrytych',
-                        'Oceny wnętrza silnika, skrzyni biegów i innych podzespołów',
-                        'Zastąpienia oględzin, jazdy próbnej ani kontroli w serwisie',
-                    ] as $li)
-                    <li><span class="li-ico"><x-icon name="x" size="12" :strokeWidth="3"/></span>{{ $li }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        </div>
-    </div>
+<section id="zakres" class="cc-scope">
+ <div class="container">
+  <div class="section-intro service-intro"><div><div class="eyebrow">JASNY ZAKRES</div><h2>Co obejmuje CertiCheck,<br><span style="color:var(--blue)">a czego nie?</span></h2></div><p>Sprawdź, jakie informacje otrzymujesz i co warto dodatkowo zweryfikować przed zakupem.</p></div>
+  <div class="cc-scope-grid">
+   <article class="cc-scope-col ok">
+    <div class="cc-scope-head"><span class="ico"><x-icon name="check" size="20"/></span><div><span class="cc-over">Materiały o samochodzie</span><h3>Co obejmuje</h3></div></div>
+    <ul>
+     <li><x-icon name="check" size="18"/><div><h4>Pomiary grubości lakieru</h4><p>Odczyty w mikrometrach (µm), przypisane do sprawdzonych elementów nadwozia.</p></div></li>
+     <li><x-icon name="check" size="18"/><div><h4>Koła i opony</h4><p>Głębokość bieżnika każdej opony w milimetrach oraz informacje o zamontowanym komplecie i felgach.</p></div></li>
+     <li><x-icon name="check" size="18"/><div><h4>Stan wizualny i ślady użytkowania</h4><p>Zdjęcia zauważonych rys, otarć i innych śladów wraz z oznaczeniem ich miejsca na mapie auta.</p></div></li>
+     <li><x-icon name="check" size="18"/><div><h4>Prezentacje 360°</h4><p>Widok samochodu dookoła i panorama wnętrza, które możesz samodzielnie obracać.</p></div></li>
+    </ul>
+    <p class="cc-scope-docs"><x-icon name="file-text" size="16"/><span>Dostępne dokumenty i informacje serwisowe znajdziesz również w ogłoszeniu.</span></p>
+   </article>
+   <article class="cc-scope-col no">
+    <div class="cc-scope-head"><span class="ico"><x-icon name="info" size="20"/></span><div><span class="cc-over">Ograniczenia zakresu</span><h3>Czego nie obejmuje</h3></div></div>
+    <ul>
+     <li><x-icon name="minus" size="18"/><div><h4>Badania technicznego i pełnej diagnostyki</h4><p>Nie zastępuje badania na stacji kontroli pojazdów ani sprawdzenia samochodu w serwisie.</p></div></li>
+     <li><x-icon name="minus" size="18"/><div><h4>Niezależnej ekspertyzy</h4><p>To wewnętrzny standard CertiCars, a nie opinia rzeczoznawcy ani zewnętrzny certyfikat.</p></div></li>
+     <li><x-icon name="minus" size="18"/><div><h4>Potwierdzenia bezwypadkowości</h4><p>Pomiary i zdjęcia nie stanowią pełnej dokumentacji historii samochodu.</p></div></li>
+     <li><x-icon name="minus" size="18"/><div><h4>Gwarancji braku usterek</h4><p>Oględziny nie obejmują demontażu podzespołów ani nie gwarantują wykrycia wszystkich wad, także ukrytych.</p></div></li>
+    </ul>
+    <p class="cc-scope-docs"><x-icon name="search" size="16"/><span>Chcesz sprawdzić auto w wybranym serwisie? Ustal z nami szczegóły przed wizytą.</span></p>
+   </article>
+  </div>
+  <div class="cc-scope-bottom"><p><x-icon name="info" size="15"/>Zdjęcia i pomiary pokazują stan z dnia ich wykonania. Dostępność materiałów sprawdzisz w ogłoszeniu konkretnego auta.</p><a class="text-link" href="tel:+48515440623">Ustal oględziny <x-icon name="arrow-right" size="16"/></a></div>
+ </div>
 </section>
 
-{{-- ═══════════════ FAQ ═══════════════ --}}
-<section class="cclp-sec">
-    <div class="cclp-in">
-        <div class="cclp-head">
-            <div class="cclp-eyebrow-c">Masz pytania?</div>
-            <h2>Najczęściej zadawane pytania</h2>
-            <p>Zebraliśmy najważniejsze pytania o zakres i charakter materiałów CertiCheck.</p>
-        </div>
-        <div class="cclp-faq-grid">
-            @php
-                $faqs = [
-                    ['Czy CertiCheck to badanie techniczne?','Nie. CertiCheck to rozszerzona prezentacja stanu widocznego pojazdu — nie zastępuje badania technicznego, opinii rzeczoznawcy ani diagnostyki komputerowej. Pokazujemy to, co da się zobaczyć i zmierzyć bez demontażu.'],
-                    ['Czy zakres CertiCheck jest taki sam przy każdym aucie?','Zakres może różnić się w zależności od pojazdu i dostępnej dokumentacji. Staramy się przygotować komplet materiałów, ale niektóre elementy mogą być niedostępne dla danego egzemplarza.'],
-                    ['Czy CertiCheck zastępuje sprawdzenie auta w serwisie?','Nie. Zawsze zalecamy oględziny, jazdę próbną oraz — przy chęci głębszej weryfikacji — sprawdzenie auta u niezależnego mechanika lub w stacji diagnostycznej.'],
-                    ['Czy raport CertiCheck jest aktualny?','Materiały przedstawiają stan pojazdu na dzień ich przygotowania. Jeśli od publikacji minęło więcej czasu, aktualny stan potwierdzamy podczas oględzin.'],
-                    ['Czy CertiCheck wykrywa wszystkie wady samochodu?','Nie. Materiały pokazują ślady i stan zauważone w dniu przygotowania, w zakresie dostępnym bez demontażu. Nie stanowią gwarancji wykrycia wszystkich wad, w tym ukrytych.'],
-                    ['Czy mogę pobrać raport CertiCheck?','Tak. Materiały CertiCheck są dostępne na stronie ogłoszenia, a podsumowanie możesz pobrać w formacie PDF — bez logowania i bezpłatnie.'],
-                ];
-            @endphp
-            <div>
-                @foreach(array_slice($faqs,0,3) as $i => [$q,$a])
-                <details class="cclp-faq-item" @if($i===0) open @endif>
-                    <summary class="cclp-faq-q">{{ $q }} <x-icon name="chevron-down" size="18" :strokeWidth="2.4"/></summary>
-                    <div class="cclp-faq-a">{{ $a }}</div>
-                </details>
-                @endforeach
-            </div>
-            <div>
-                @foreach(array_slice($faqs,3,3) as [$q,$a])
-                <details class="cclp-faq-item">
-                    <summary class="cclp-faq-q">{{ $q }} <x-icon name="chevron-down" size="18" :strokeWidth="2.4"/></summary>
-                    <div class="cclp-faq-a">{{ $a }}</div>
-                </details>
-                @endforeach
-            </div>
-        </div>
-    </div>
+<section id="pytania" class="cc-faq">
+ <div class="container cc-faq-layout">
+  <div class="human-title"><div class="eyebrow">WARTO WIEDZIEĆ</div><h2>Najczęstsze pytania.</h2><p>O materiałach, pomiarach i sprawdzeniu auta przed zakupem.</p></div>
+  <div class="cc-faq-list">
+   @foreach($faqs as $i => [$q, $a])
+   <details @if($i === 0) open @endif><summary>{{ $q }}<x-icon name="chevron-down" size="18"/></summary><p>{{ $a }}</p></details>
+   @endforeach
+  </div>
+ </div>
 </section>
 
-{{-- ═══════════════ DISCLAIMER ═══════════════ --}}
-<section class="cclp-disc">
-    <div class="cclp-disc-in">
-        <div class="cclp-disc-ico"><x-icon name="shield-check" size="20" :strokeWidth="2.2"/></div>
-        <div>
-            <h3>Ważne informacje o zakresie CertiCheck</h3>
-            <p>CertiCheck jest materiałem informacyjnym przedstawiającym zauważony stan pojazdu w dniu przygotowania materiałów. Nie stanowi ekspertyzy technicznej, zapewnienia o braku wad ani gwarancji wykrycia wszystkich usterek, w tym wad ukrytych. Zakres materiałów może różnić się w zależności od pojazdu i dostępnej dokumentacji. Klient ma możliwość przeprowadzenia oględzin, jazdy próbnej oraz sprawdzenia samochodu w wybranym serwisie przed zakupem.</p>
-        </div>
-    </div>
+<section id="kontakt" class="contact-section cc-contact">
+ <div class="wide contact-panel"><div><div class="eyebrow light">POROZMAWIAJMY O KONKRETNYM AUCIE</div><h2>Masz już auto na oku?</h2><p>Masz pytanie o pomiar, zdjęcie lub stan samochodu? Zadzwoń, omówimy szczegóły i ustalimy oględziny.</p></div><div class="contact-actions"><a class="button primary" href="{{ route('catalog') }}">Sprawdź dostępne auta <x-icon name="arrow-right" size="16"/></a><a class="text-link light-link" href="tel:+48515440623"><x-icon name="phone" size="16"/>515 440 623</a><span class="cc-place"><x-icon name="map-pin" size="15"/>Lipnik k. Stargardu</span></div></div>
 </section>
-
-{{-- ═══════════════ BOTTOM CTA ═══════════════ --}}
-<section class="cclp-cta-strip">
-    <div class="cclp-cta-strip-in">
-        <div>
-            <h3>Poznaj samochód jeszcze przed przyjazdem</h3>
-            <p>Zobacz pojazdy objęte rozszerzoną prezentacją CertiCheck.</p>
-        </div>
-        <div class="cclp-cta-strip-btns">
-            <a class="cclp-btn-solid" href="{{ route('catalog') }}">Zobacz auta z CertiCheck <x-icon name="arrow-right" size="15" :strokeWidth="2.4"/></a>
-            <a class="cclp-btn-ghost" href="{{ route('catalog') }}">Przejdź do całej oferty</a>
-        </div>
-    </div>
-</section>
-
-<script>
-function ccPracticeTab(btn){
-    document.querySelectorAll('#ccPracticeTabs .cclp-ptab').forEach(function(b){ b.classList.remove('active'); });
-    btn.classList.add('active');
-    var cap = document.getElementById('ccPracticeCaption');
-    if(cap && btn.dataset.cap) cap.textContent = btn.dataset.cap;
-}
-</script>
-
+</div>
 @endsection
+
+@push('scripts')
+<script>
+/* CertiCheck: zakładki raportu, ślady i prezentacje 360° (ten sam odtwarzacz co na „O nas”).
+   360°: auto obraca się samo, gdy zakładka jest widoczna; przeciągnięcie albo strzałki
+   zatrzymują obrót, po ok. 2,5 s wraca. Przy prefers-reduced-motion bez samoczynnego obrotu. */
+(function(){
+ 'use strict';
+ var root = document.querySelector('.onas');
+ if(!root) return;
+ var REV_MS = 9000, PANO_SPEED = -6, RESUME_MS = 2500;
+ var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+ /* ---------- Ślady ---------- */
+ var markers = [].slice.call(root.querySelectorAll('[data-damage]'));
+ var photo = root.querySelector('[data-damage-photo]');
+ markers.forEach(function(marker){
+  marker.addEventListener('click', function(){
+   var n = marker.getAttribute('data-damage');
+   markers.forEach(function(m){ m.setAttribute('aria-pressed', String(m.getAttribute('data-damage') === n)); });
+   var area = marker.getAttribute('data-area');
+   photo.src = marker.getAttribute('data-photo');
+   photo.alt = 'Ślad ' + n + ': ' + marker.getAttribute('data-label').toLowerCase() + (area ? ', ' + area : '');
+   root.querySelector('[data-damage-label]').textContent = marker.getAttribute('data-label');
+   root.querySelector('[data-damage-counter]').textContent = n + ' / ' + root.querySelectorAll('.wear-marker').length;
+  });
+ });
+
+ /* ---------- Odtwarzacze 360° ---------- */
+ function FramePlayer(panel){
+  var sp = null, urls = [];
+  try { sp = JSON.parse(panel.getAttribute('data-sprites') || 'null'); } catch(_){}
+  try { urls = JSON.parse(panel.getAttribute('data-frames') || '[]'); } catch(_){}
+  var n = sp ? sp.n : urls.length;
+  var canvas = panel.querySelector('canvas'), ctx = canvas.getContext('2d');
+  var poster = panel.querySelector('.viewer-poster');
+  var cache = {}, current = 0, shownHi = false, started = false;
+  function img(url){
+   var im = cache[url];
+   if(!im){ im = new Image(); im.decoding = 'async'; im.addEventListener('load', function(){ if(!shownHi) draw(); }); im.src = url; cache[url] = im; }
+   return im;
+  }
+  function ready(im){ return !!(im && im.complete && im.naturalWidth > 0); }
+  function load(){ if(started) return; started = true; if(sp){ img(sp.preview); sp.sheets.forEach(img); } else urls.forEach(img); }
+  function frameSource(i){
+   if(!started) return null;
+   if(sp){
+    var sheet = cache[sp.sheets[Math.floor(i / sp.per)]];
+    if(ready(sheet)) return [sheet, 0, (i % sp.per) * sp.h, sp.w, sp.h, true];
+    var pv = cache[sp.preview];
+    if(ready(pv)) return [pv, (i % sp.pcols) * sp.pw, Math.floor(i / sp.pcols) * sp.ph, sp.pw, sp.ph, false];
+    return null;
+   }
+   var im = cache[urls[i]];
+   return ready(im) ? [im, 0, 0, im.naturalWidth, im.naturalHeight, true] : null;
+  }
+  function draw(){
+   var r = panel.getBoundingClientRect();
+   if(!r.width) return false;
+   var dpr = Math.min(2, window.devicePixelRatio || 1);
+   var cw = Math.round(r.width * dpr), ch = Math.round(r.height * dpr);
+   if(canvas.width !== cw || canvas.height !== ch){ canvas.width = cw; canvas.height = ch; }
+   var f = frameSource(current);
+   if(!f) return false;
+   var s = Math.max(cw / f[3], ch / f[4]), dw = f[3] * s, dh = f[4] * s;
+   ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+   ctx.drawImage(f[0], f[1], f[2], f[3], f[4], (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+   shownHi = f[5]; canvas.dataset.frame = current + 1;
+   if(poster) poster.hidden = true;
+   return true;
+  }
+  function set(i){ current = ((Math.round(i) % n) + n) % n; draw(); }
+  return { type: 'frames', n: n, load: load, draw: draw, set: set,
+   get frame(){ return current; },
+   canShow: function(i){ return !!frameSource(((i % n) + n) % n); } };
+ }
+
+ function PanoPlayer(panel){
+  var host = panel.querySelector('.pano-host'), status = panel.querySelector('.pano-loading');
+  var viewer = null, loaded = false, started = false, want = false, running = false;
+  function fail(){ if(status){ status.hidden = false; status.textContent = 'Nie udało się wczytać panoramy wnętrza.'; } }
+  function init(){
+   viewer = pannellum.viewer(host, { type: 'equirectangular', panorama: host.getAttribute('data-pano-src'), autoLoad: true,
+    showControls: false, mouseZoom: false, keyboardZoom: false, doubleClickZoom: false,
+    compass: false, hfov: 100, minHfov: 100, maxHfov: 100, pitch: -15, yaw: 0 });
+   viewer.on('load', function(){ loaded = true; if(status) status.hidden = true; apply(); });
+   viewer.on('error', fail);
+  }
+  function load(){
+   if(started) return;
+   started = true;
+   if(!document.querySelector('link[data-pannellum]')){
+    var css = document.createElement('link');
+    css.rel = 'stylesheet'; css.href = 'https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css';
+    css.dataset.pannellum = '1'; document.head.appendChild(css);
+   }
+   if(window.pannellum){ init(); return; }
+   var s = document.createElement('script');
+   s.src = 'https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js'; s.onload = init; s.onerror = fail;
+   document.body.appendChild(s);
+  }
+  function apply(){
+   if(!viewer || !loaded) return;
+   if(want && !running){ viewer.startAutoRotate(PANO_SPEED); running = true; }
+   else if(!want && running){ viewer.stopAutoRotate(); running = false; }
+  }
+  return { type: 'pano', load: load, draw: function(){},
+   run: function(on){ want = on; apply(); },
+   turn: function(dir){ if(viewer && loaded) viewer.setYaw(viewer.getYaw() + dir * 20, 500); },
+   stopNow: function(){ if(viewer && loaded){ viewer.stopAutoRotate(); running = false; } } };
+ }
+
+ // Każda scena 360° ma jeden odtwarzacz; obraca się tylko scena z otwartej zakładki, gdy jest na ekranie.
+ var stages = [].slice.call(root.querySelectorAll('[data-cc-stage]')).map(function(stage){
+  var media = stage.querySelector('.cc-media'), kind = media.getAttribute('data-kind');
+  var player = kind === 'frames' ? FramePlayer(media) : kind === 'pano' ? PanoPlayer(media) : null;
+  return { el: stage, panel: stage.closest('[role=tabpanel]'), player: player, visible: false, held: false, timer: null };
+ });
+ function shown(s){ return !s.panel.hidden; }
+
+ var raf = null, last = 0, acc = 0;
+ function tick(ts){
+  if(!raf) return;
+  if(!last) last = ts;
+  acc += ts - last; last = ts;
+  stages.forEach(function(s){
+   var p = s.player;
+   if(!p || p.type !== 'frames' || !shown(s) || !s.visible || s.held) return;
+   var step = REV_MS / p.n;
+   if(acc > 1000) acc = step;
+   while(acc >= step){ acc -= step; if(p.canShow(p.frame + 1)) p.set(p.frame + 1); else { acc = 0; break; } }
+  });
+  raf = requestAnimationFrame(tick);
+ }
+ function sync(){
+  var anyFrames = false;
+  stages.forEach(function(s){
+   var run = shown(s) && s.visible && !s.held && !reduce && !document.hidden;
+   if(!s.player) return;
+   if(s.player.type === 'pano') s.player.run(run);
+   else if(run) anyFrames = true;
+  });
+  if(anyFrames && !raf){ last = 0; acc = 0; raf = requestAnimationFrame(tick); }
+  else if(!anyFrames && raf){ cancelAnimationFrame(raf); raf = null; }
+ }
+ function hold(s){ s.held = true; clearTimeout(s.timer); if(s.player && s.player.type === 'pano') s.player.stopNow(); sync(); }
+ function release(s){ clearTimeout(s.timer); s.timer = setTimeout(function(){ s.held = false; sync(); }, RESUME_MS); }
+ function rotate(s, dir){
+  var p = s.player; if(!p) return;
+  hold(s);
+  if(p.type === 'frames') p.set(p.frame + dir * 2); else p.turn(dir);
+  release(s);
+ }
+
+ stages.forEach(function(s){
+  var p = s.player, stage = s.el;
+  if(!p){ stage.classList.add('is-static'); return; }
+  [].forEach.call(stage.querySelectorAll('[data-rotate]'), function(b){
+   b.addEventListener('click', function(){ rotate(s, Number(b.getAttribute('data-rotate'))); });
+  });
+  stage.tabIndex = 0;
+  stage.addEventListener('keydown', function(e){
+   if(e.target !== stage) return;
+   if(e.key === 'ArrowLeft' || e.key === 'ArrowRight'){ e.preventDefault(); rotate(s, e.key === 'ArrowLeft' ? -1 : 1); }
+  });
+  var drag = null;
+  stage.addEventListener('pointerdown', function(e){
+   if(e.target.closest('button') || e.button !== 0) return;
+   hold(s);
+   if(p.type === 'frames'){ drag = { x: e.clientX, frame: p.frame }; stage.setPointerCapture(e.pointerId); stage.classList.add('dragging'); }
+   else drag = { pano: true };
+  });
+  stage.addEventListener('pointermove', function(e){ if(drag && !drag.pano) p.set(drag.frame - (e.clientX - drag.x) / 7); });
+  function stopDrag(){ if(!drag) return; drag = null; stage.classList.remove('dragging'); release(s); }
+  stage.addEventListener('pointerup', stopDrag);
+  stage.addEventListener('pointercancel', stopDrag);
+  stage.addEventListener('lostpointercapture', stopDrag);
+  window.addEventListener('pointerup', stopDrag);
+  if('IntersectionObserver' in window){
+   new IntersectionObserver(function(en){ if(en[en.length - 1].isIntersecting && shown(s)) p.load(); }, { rootMargin: '400px 0px' }).observe(stage);
+   new IntersectionObserver(function(en){ s.visible = en[en.length - 1].isIntersecting; sync(); }, { threshold: 0.2 }).observe(stage);
+  } else { s.visible = true; if(shown(s)) p.load(); }
+  if(window.ResizeObserver) new ResizeObserver(function(){ p.draw(); }).observe(stage);
+ });
+ document.addEventListener('visibilitychange', sync);
+
+ /* ---------- Zakładki raportu ---------- */
+ var tabs = [].slice.call(root.querySelectorAll('.cc-tabs [role=tab]'));
+ function activate(button, focus){
+  tabs.forEach(function(b){
+   var on = b === button, panel = document.getElementById(b.getAttribute('aria-controls'));
+   b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1;
+   panel.hidden = !on; panel.inert = !on;
+  });
+  if(focus) button.focus();
+  button.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  stages.forEach(function(s){ if(shown(s) && s.player){ s.player.load(); s.player.draw(); } });
+  sync();
+ }
+ tabs.forEach(function(button, index){
+  button.tabIndex = button.getAttribute('aria-selected') === 'true' ? 0 : -1;
+  document.getElementById(button.getAttribute('aria-controls')).inert = button.tabIndex !== 0;
+  button.addEventListener('click', function(){ activate(button); });
+  button.addEventListener('keydown', function(e){
+   var next;
+   if(e.key === 'ArrowRight') next = (index + 1) % tabs.length;
+   else if(e.key === 'ArrowLeft') next = (index + tabs.length - 1) % tabs.length;
+   else if(e.key === 'Home') next = 0;
+   else if(e.key === 'End') next = tabs.length - 1;
+   else return;
+   e.preventDefault(); activate(tabs[next], true);
+  });
+ });
+ // „Dalej” w panelu i karty „Co znajdziesz” otwierają wskazaną zakładkę raportu.
+ [].forEach.call(root.querySelectorAll('[data-open-tab]'), function(el){
+  var b = document.getElementById('cc-tab-' + el.getAttribute('data-open-tab'));
+  if(!b) return;
+  el.addEventListener('click', function(e){
+   activate(b, el.classList.contains('cc-next'));
+   if(!el.classList.contains('cc-next')){ e.preventDefault(); document.getElementById('przyklad').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }
+  });
+ });
+})();
+</script>
+@endpush

@@ -1,7 +1,7 @@
 @extends('layouts.public')
 @section('meta_title_full','Regulamin | CertiCars')
 @section('title','Regulamin serwisu')
-@section('description','Regulamin serwisu internetowego CertiCars — zasady korzystania z serwisu, charakter prezentowanych treści oraz postanowienia końcowe.')
+@section('description','Regulamin serwisu internetowego CertiCars: zasady korzystania z serwisu, charakter prezentowanych treści oraz postanowienia końcowe.')
 
 @section('styles')
 @include('pages.partials.legal-styles')

@@ -1,9 +1,9 @@
 @extends('layouts.public')
 
-@section('title', 'CertiCheck — ' . $car->title)
-@section('description', 'Pełny raport inspekcji CertiCheck dla ' . $car->title . '. Historia lakieru, stan techniczny, wyposażenie i dokumentacja pojazdu.')
-@section('og_title', 'Raport CertiCheck — ' . $car->title)
-@section('og_description', 'Pełny raport inspekcji CertiCheck dla ' . $car->title . '. Historia lakieru, stan techniczny, wyposażenie i dokumentacja pojazdu.')
+@section('title', 'CertiCheck: ' . $car->title)
+@section('description', 'Materiały CertiCheck dla ' . $car->title . ': pomiary, zdjęcia i zauważone ślady użytkowania. Obejrzyj auto przed wizytą w Lipniku koło Stargardu.')
+@section('og_title', 'CertiCheck: ' . $car->title . ' | CertiCars')
+@section('og_description', 'Materiały CertiCheck dla ' . $car->title . ': pomiary, zdjęcia i zauważone ślady użytkowania. Obejrzyj auto przed wizytą w Lipniku koło Stargardu.')
 @section('og_type', 'article')
 @if($car->primaryImage)
 @section('og_image', $car->primaryImage->url)
@@ -117,7 +117,7 @@
             <div class="cc-brand-name">Certi<span>Cars</span></div>
             <span class="cc-badge">CertiCheck</span>
         </div>
-        <div class="cc-car-title">{{ $car->title }}</div>
+        <h1 class="cc-car-title">{{ $car->title }}</h1>
         <div class="cc-car-meta">
             @if($car->first_registration){{ $car->first_registration }} · @endif
             @if($car->mileage){{ number_format($car->mileage,0,'',' ') }} km · @endif

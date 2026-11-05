@@ -24,7 +24,10 @@ class PageController extends Controller
 
     public function certicheckLanding()
     {
-        return view('pages.certicheck');
+        // Raport na stronie pokazuje prawdziwe materiały tego samego auta co „O nas”.
+        $showcase = \App\Support\AboutShowcase::build();
+
+        return view('pages.certicheck', compact('showcase'));
     }
 
     public function privacy()

@@ -1,9 +1,9 @@
 @extends('layouts.public')
-@section('meta_title_full','Samochody używane Stargard — oferta | CertiCars')
+@section('meta_title_full','Samochody używane Stargard: oferta komisu | CertiCars')
 @section('title','Oferta samochodów')
-@section('description','Przeglądaj sprawdzone samochody używane z Lipnika koło Stargardu. Przejrzysty opis stanu, historia i dokumentacja. Wybrane auta z rozszerzonym opisem CertiCheck.')
-@section('og_title','Samochody używane Stargard — oferta | CertiCars')
-@section('og_description','Przeglądaj sprawdzone samochody używane z Lipnika koło Stargardu. Przejrzysty opis stanu, historia i dokumentacja. Wybrane auta z rozszerzonym opisem CertiCheck.')
+@section('description','Samochody używane z komisu w Lipniku koło Stargardu, blisko Szczecina: auta osobowe i dostawcze ze zdjęciami i opisem stanu. Przy wybranych autach CertiCheck.')
+@section('og_title','Samochody używane Stargard: oferta komisu | CertiCars')
+@section('og_description','Samochody używane z komisu w Lipniku koło Stargardu, blisko Szczecina: auta osobowe i dostawcze ze zdjęciami i opisem stanu. Przy wybranych autach CertiCheck.')
 @section('styles')
 /* ===== CATALOG HEADER (Otomoto-style: compact, functional) ===== */
 .cat-header{background:#fff;border-bottom:1px solid var(--border-l);padding:20px 0 0}

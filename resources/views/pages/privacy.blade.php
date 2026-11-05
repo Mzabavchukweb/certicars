@@ -1,7 +1,7 @@
 @extends('layouts.public')
 @section('meta_title_full','Polityka prywatności | CertiCars')
 @section('title','Polityka prywatności')
-@section('description','Polityka prywatności serwisu CertiCars — informacje o administratorze danych, celach i podstawach przetwarzania oraz prawach użytkownika zgodnie z RODO.')
+@section('description','Polityka prywatności serwisu CertiCars: informacje o administratorze danych, celach i podstawach przetwarzania oraz prawach użytkownika zgodnie z RODO.')
 
 @section('styles')
 @include('pages.partials.legal-styles')

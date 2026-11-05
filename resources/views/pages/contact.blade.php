@@ -1,9 +1,9 @@
 @extends('layouts.public')
-@section('meta_title_full','Kontakt — Lipnik koło Stargardu | CertiCars')
+@section('meta_title_full','Kontakt: komis CertiCars, Lipnik koło Stargardu')
 @section('title','Kontakt')
-@section('description','Skontaktuj się z CertiCars. Zadzwoń, napisz lub umów oględziny auta w Lipniku koło Stargardu. Odpowiadamy szybko i konkretnie.')
-@section('og_title','Kontakt — Lipnik koło Stargardu | CertiCars')
-@section('og_description','Skontaktuj się z CertiCars. Zadzwoń, napisz lub umów oględziny auta w Lipniku koło Stargardu. Odpowiadamy szybko i konkretnie.')
+@section('description','Zadzwoń 515 440 623 albo napisz i umów oględziny lub jazdę próbną w Lipniku koło Stargardu. Pn-Pt 9:00-18:00, sob.-niedz. 10:00-15:00.')
+@section('og_title','Kontakt: komis CertiCars, Lipnik koło Stargardu')
+@section('og_description','Zadzwoń 515 440 623 albo napisz i umów oględziny lub jazdę próbną w Lipniku koło Stargardu. Pn-Pt 9:00-18:00, sob.-niedz. 10:00-15:00.')
 @section('styles')
 /* ===== CONTACT PAGE — premium refresh ===== */
 .kt-section-in{max-width:1200px;margin:0 auto;padding:0 24px;position:relative;width:100%;box-sizing:border-box}
